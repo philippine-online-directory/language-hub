@@ -59,3 +59,8 @@ async function loginUser(req, res, next){
         next(err)
     }
 }
+
+module.exports = {
+    registerUser,
+    loginUser
+}
