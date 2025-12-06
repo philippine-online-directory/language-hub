@@ -1,5 +1,4 @@
 const auth = require('../middleware/auth')
-const isAdmin = require('../middleware/roleAuth')
 const languageService = require('../services/languageService')
 
 const getAllLanguages = [

@@ -36,11 +36,6 @@ model Language {
   translations Translation[]
 }
 
-model Word {
-  id           String        @id @default(cuid())
-  translations Translation[]
-}
-
 model Translation {
   id                String    @id @default(cuid())
   wordText          String
@@ -54,9 +49,6 @@ model Translation {
   // Relations
   languageId String
   language   Language @relation(fields: [languageId], references: [id])
-
-  wordId String
-  word   Word   @relation(fields: [wordId], references: [id])
 
   authorId String
   author   User   @relation(fields: [authorId], references: [id])
