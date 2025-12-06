@@ -22,7 +22,7 @@ const getLanguageByCode = [
         const { isoCode } = req.params
         
         try {
-            const language = languageService.findLanguageByIsoCode(isoCode)
+            const language = await languageService.findLanguageByIsoCode(isoCode)
 
             return res.status(200).json(language)
         }
@@ -36,10 +36,10 @@ const getLanguageByCode = [
 const getLanguageByName = [
     auth,
     async (req, res, next) => {
-        const { name } = req.body
+        const { name } = req.query
 
         try {
-            const language = languageService.findLanguageByName(name)
+            const language = await languageService.findLanguageByName(name)
 
             return res.status(200).json(language)
         }
@@ -56,7 +56,7 @@ const getPublishedTranslations = [
         const { isoCode } = req.params
 
         try {
-            const translations = languageService.getPublishedDictionary(isoCode)
+            const translations = await languageService.getPublishedDictionary(isoCode)
 
             return res.status(200).json(translations)
         }

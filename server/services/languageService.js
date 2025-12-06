@@ -21,7 +21,8 @@ async function findLanguageByName(phrase){
     const language = await prisma.language.findMany({
         where: {
             name: {
-                startsWith: phrase
+                startsWith: `%${phrase}%`,
+                mode: 'insensitive'
             }
         }
     })
