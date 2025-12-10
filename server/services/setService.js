@@ -40,3 +40,13 @@ async function getSetWords(setId){
     return words;
 }
 
+async function publishSet(setId){
+    const updatedSet = await prisma.vocabSet.update({
+        where: {
+            id: setId
+        },
+        data: {
+            isPublic: true
+        }
+    })
+}
