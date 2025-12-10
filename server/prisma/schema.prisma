@@ -22,7 +22,7 @@ model User {
   role      Role     @default(LEARNER)
 
   contributions Translation[]
-  vocabSets     VocabSet[]
+  createdSets   VocabSet[]
   gameScores    GameSession[]
 }
 
@@ -34,6 +34,7 @@ model Language {
   preservationNote String?
 
   translations Translation[]
+  vocabSets    VocabSet[]
 }
 
 model Translation {
@@ -67,6 +68,9 @@ model VocabSet {
 
   ownerId String
   owner   User   @relation(fields: [ownerId], references: [id])
+
+  languageId String
+  language   Language @relation(fields: [languageId], references: [id])
 
   setWords     SetWord[]
   gameSessions GameSession[]
