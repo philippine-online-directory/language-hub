@@ -86,3 +86,11 @@ const deleteSet = [
         }
     }
 ]
+
+module.exports = {
+    getUserSets,
+    createSet,
+    getSetWords,
+    publishSet,
+    deleteSet
+}
