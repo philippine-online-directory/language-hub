@@ -49,4 +49,13 @@ async function publishSet(setId){
             isPublic: true
         }
     })
+
+    return updatedSet;
+}
+
+module.exports = {
+    getUserSets,
+    createSet,
+    getSetWords,
+    publishSet
 }

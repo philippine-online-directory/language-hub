@@ -1,0 +1,71 @@
+const setService = require('../services/setService')
+
+const getUserSets = [
+    auth,
+    async (req, res, next) => {
+        const { userId } = req.user;
+
+        try {
+            const sets = await setService.getUserSets(userId);
+
+            res.status(200).json(sets)
+        }
+        catch (err) {
+            console.error(err);
+            next(err);
+        }
+    }
+]
+
+const createSet = [
+    auth,
+    async (req, res, next) => {
+        const { userId } = req.user;
+        const { name, description } = req.body;
+
+        try {
+            const newSet = await setService.createSet(name, description, userId);
+
+            res.status(201).json(newSet);
+        }
+        catch (err) {
+            console.error(err);
+            next(err);
+        }
+    }
+]
+
+const getSetWords = [
+    auth,
+    async (req, res, next) => {
+        const { setId } = req.params;
+        
+        try {
+            const translations = await setService.getSetWords(setId);
+
+            res.status(200).json(translations);
+        }
+        catch (err) {
+            console.error(err);
+            next(err);
+        }
+    }
+]
+
+const publishSet = [
+    auth,
+    async (req, res, next) => {
+        const { setId } = req.params;
+
+        try {
+            const publishedSet = await setService.publishSet(setId);
+
+            res.status(200).json(publishedSet);
+        }
+        catch (err) {
+            console.error(err);
+            next(err);
+        }
+    }
+]
+
