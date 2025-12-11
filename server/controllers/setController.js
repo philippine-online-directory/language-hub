@@ -69,3 +69,20 @@ const publishSet = [
     }
 ]
 
+const deleteSet = [
+    auth, 
+    async (req, res, next) => {
+        const { setId } = req.params;
+        const { userId } = req.user
+
+        try {
+            const deletedSet = await setService.deleteSet(setId, userId);
+
+            res.status(200).json(deletedSet);
+        }
+        catch (err) {
+            console.error(err);
+            next(err);
+        }
+    }
+]

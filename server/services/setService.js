@@ -53,9 +53,21 @@ async function publishSet(setId){
     return updatedSet;
 }
 
+async function deleteSet(setId, userId){
+    const deletedSet = await prisma.vocabSet.delete({
+        where: {
+            id: setId,
+            ownerId: userId
+        }
+    }) 
+
+    return deletedSet;
+}
+
 module.exports = {
     getUserSets,
     createSet,
     getSetWords,
-    publishSet
+    publishSet,
+    deleteSet
 }
