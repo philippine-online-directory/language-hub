@@ -7,7 +7,7 @@ const getTranslationInfo = [
         const { translationId } = req.params
 
         try {
-            const translation = await translationService.findTranslationInfo(Number(translationId))
+            const translation = await translationService.findTranslationInfo(translationId)
 
             if (!translation) {
                 return res.status(404).json({ message: "Translation not found" })
@@ -53,8 +53,37 @@ const searchTranslations = [
     }
 ];
 
+const addTranslationToSet = [
+    auth,
+    async (req, res, next) => {
+        const { vocabSetId } = req.params;
+        const { translationId } = req.body;
+        const userId = req.user.id;
+
+        if (!translationId) {
+            return res.status(400).json({
+                message: "translationId is required"
+            });
+        }
+
+        try {
+            const setWord = await translationService.addTranslationToSet(
+                vocabSetId,
+                translationId,
+                userId
+            );
+
+            res.status(201).json(setWord);
+        } 
+        catch (err) {
+            console.error(err); 
+        }
+    }
+]
+
 module.exports = {
     getTranslationInfo,
-    searchTranslations
+    searchTranslations,
+    addTranslationToSet
 }
 

@@ -45,8 +45,61 @@ async function searchTranslationByWordDefinition(code, word){
     return translations
 }
 
+async function addTranslationToSet(vocabSetId, translationId, userId){
+    const vocabSet = await prisma.vocabSet.findUnique({
+        where: { id: vocabSetId }
+    });
+
+    if (!vocabSet) {
+        throw new Error(`Vocab set ID ${vocabSetId} not found.`);
+    }
+
+    if (vocabSet.ownerId !== userId) {
+        throw new Error("Permission denied: You can only add translations to sets you own.");
+    }
+    
+    const translation = await prisma.translation.findUnique({
+        where: { id: translationId, status: 'PUBLISHED' }
+    });
+
+    if (!translation) {
+        throw new Error(`Translation ID ${translationId} not found or is not published.`);
+    }
+
+    const existingEntry = await prisma.setWord.findUnique({
+        where: {
+            translationId_vocabSetId: {
+                translationId,
+                vocabSetId,
+            }
+        }
+    });
+
+    if (existingEntry) {
+        throw new Error("This translation is already in the vocabulary set.");
+    }
+
+    const newSetWord = await prisma.setWord.create({
+        data: {
+            vocabSetId: vocabSetId,
+            translationId: translationId
+        },
+        include: {
+            translation: {
+                select: {
+                    wordText: true,
+                    englishDefinition: true
+                }
+            }
+        }
+    });
+
+    return newSetWord;
+}
+
 module.exports = {
     findTranslationInfo,
     searchTranslationByWordText,
-    searchTranslationByWordDefinition
+    searchTranslationByWordDefinition,
+    addTranslationToSet
 }
