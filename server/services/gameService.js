@@ -26,3 +26,8 @@ async function uploadGameSession(userId, setId, gameType, score, duration){
 
     return createdSession
 }
+
+module.exports = {
+    viewGameSessions,
+    uploadGameSession
+}
