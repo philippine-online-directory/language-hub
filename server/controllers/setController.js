@@ -3,10 +3,10 @@ const setService = require('../services/setService')
 const getUserSets = [
     auth,
     async (req, res, next) => {
-        const { userId } = req.user;
+        const { id } = req.user;
 
         try {
-            const sets = await setService.getUserSets(userId);
+            const sets = await setService.getUserSets(id);
 
             res.status(200).json(sets)
         }
@@ -20,11 +20,11 @@ const getUserSets = [
 const createSet = [
     auth,
     async (req, res, next) => {
-        const { userId } = req.user;
+        const { id } = req.user;
         const { name, description } = req.body;
 
         try {
-            const newSet = await setService.createSet(name, description, userId);
+            const newSet = await setService.createSet(name, description, id);
 
             res.status(201).json(newSet);
         }
@@ -73,10 +73,10 @@ const deleteSet = [
     auth, 
     async (req, res, next) => {
         const { setId } = req.params;
-        const { userId } = req.user
+        const { id } = req.user;
 
         try {
-            const deletedSet = await setService.deleteSet(setId, userId);
+            const deletedSet = await setService.deleteSet(setId, id);
 
             res.status(200).json(deletedSet);
         }
