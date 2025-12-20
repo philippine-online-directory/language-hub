@@ -1,6 +1,23 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient();
 
+async function searchUsers(username){
+    if (!username){
+        throw new Error("Must search by username");
+    }
+
+    const users = await prisma.user.findMany({
+        where: {
+            username: {
+                startsWith: `${username}`,
+                mode: 'insensitive'
+            }
+        }
+    })
+
+    return users
+}
+
 async function getMyProfile(userId){
     const myProfile = await prisma.user.findUnique({
         where: {
@@ -47,6 +64,7 @@ async function getPublicProfile(userId){
 
 module.exports = {
     getMyProfile,
-    getPublicProfile
+    getPublicProfile,
+    searchUsers
 }
 

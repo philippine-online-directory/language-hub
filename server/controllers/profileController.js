@@ -1,27 +1,61 @@
 const auth = require('../middleware/auth')
 const profileService = require('../services/profileService')
 
-const getProfile = [
+const getMyProfile = [
     auth,
     async (req, res, next) => {
-        const requestedId = req.params.id;
-        const sessionUserId = req.user.id;
+        const { id } = req.user.id
 
         try {
-            if (requestedId === sessionUserId) {
-                const fullProfile = await profileService.getMyProfile(requestedId);
-                return res.status(200).json(fullProfile);
-            }
+            const profile = await profileService.getMyProfile(id)
 
-            const publicProfile = await profileService.getPublicProfile(requestedId);
-            res.status(200).json(publicProfile)
+            res.status(200).json(profile)
         }
         catch (err) {
             console.error(err)
             next(err)
         }
-
     }
 ]
 
-module.exports = getProfile;
+const getPublicProfile = [
+    auth,
+    async (req, res, next) => {
+        const { userId } = req.params
+        
+        try {
+            const profile = await profileService.getPublicProfile(userId)
+
+            res.status(200).json(profile)
+        }
+        catch (err) {
+            console.error(err)
+            next(err)
+        }
+    }
+]
+
+const searchUsers = [
+    auth,
+    async (req, res, next) => {
+        const { name } = req.query
+
+        try {
+            const users = await profileService.searchUsers(name)
+
+            res.status(200).json(users)
+        }
+        catch (err) {
+            console.error(err)
+            next(err)
+        }
+    }
+]
+
+
+
+module.exports = {
+    getMyProfile,
+    getPublicProfile,
+    searchUsers
+}
