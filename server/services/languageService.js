@@ -30,19 +30,47 @@ async function findLanguageByName(phrase){
     return language
 }
 
-async function getPublishedDictionary(code){
-    const language = await prisma.language.findUnique({
-        where: { 
-            isoCode: code 
-        },
-        include: {
-            translations: {
-                where: {
-                    status: "PUBLISHED"
+async function getDictionary(code, mode){
+    let language;
+    if (mode === "Verified Only"){
+        language = await prisma.language.findUnique({
+            where: { 
+                isoCode: code 
+            },
+            include: {
+                translations: {
+                    where: {
+                        status: "VERIFIED"
+                    }
                 }
             }
-        }
-    });
+        });
+    }
+    else if (mode === "All"){
+        language = await prisma.language.findUnique({
+            where: { 
+                isoCode: code 
+            },
+            include: {
+                translations
+            }
+        });
+    }
+    else {
+        language = await prisma.language.findUnique({
+            where: { 
+                isoCode: code 
+            },
+            include: {
+                translations: {
+                    where: {
+                        status: "VERIFIED"
+                    }
+                }
+            }
+        });
+    }
+    
 
     return language?.translations
 }
@@ -52,6 +80,6 @@ async function getPublishedDictionary(code){
 module.exports = {
     findLanguages,
     findLanguageByIsoCode,
-    getPublishedDictionary,
+    getDictionary,
     findLanguageByName
 }

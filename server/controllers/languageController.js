@@ -42,7 +42,7 @@ const getPublishedTranslations = [
     auth,
     async (req, res, next) => {
         const { isoCode } = req.params;
-        const { text, definition } = req.query;
+        const { text, definition, mode } = req.query;
 
         try {
             let translations;
@@ -50,17 +50,19 @@ const getPublishedTranslations = [
             if (text) {
                 translations = await translationService.searchTranslationByWordText(
                     isoCode,
-                    text
+                    text,
+                    mode
                 );
             } 
             else if (definition) {
                 translations = await translationService.searchTranslationByWordDefinition(
                     isoCode,
-                    definition
+                    definition,
+                    mode
                 );
             } 
             else {
-                translations = await languageService.getPublishedDictionary(isoCode);
+                translations = await languageService.getDictionary(isoCode, mode);
             }
 
             res.status(200).json(translations);

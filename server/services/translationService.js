@@ -11,24 +11,55 @@ async function findTranslationInfo(id){
     return translation
 }
 
-async function searchTranslationByWordText(code, word){
-    const translations = await prisma.translation.findMany({
-        where: {
-            language: {
-                isoCode: code
-            },
-            wordText: {
-                contains: word,
-                mode: 'insensitive'
-            },
-            status: 'PUBLISHED'
-        }
-    })
+async function searchTranslationByWordText(code, word, mode){
+    let translations
 
+    if (mode === "Verified Only"){
+        translations = await prisma.translation.findMany({
+            where: {
+                language: {
+                    isoCode: code
+                },
+                wordText: {
+                    contains: word,
+                    mode: 'insensitive'
+                },
+                status: 'VERIFIED'
+            }
+        })
+    }
+    else if (mode === "All"){
+        translations = await prisma.translation.findMany({
+            where: {
+                language: {
+                    isoCode: code
+                },
+                wordText: {
+                    contains: word,
+                    mode: 'insensitive'
+                }
+            }
+        })
+    }
+    else {
+        translations = await prisma.translation.findMany({
+            where: {
+                language: {
+                    isoCode: code
+                },
+                wordText: {
+                    contains: word,
+                    mode: 'insensitive'
+                },
+                status: 'VERIFIED'
+            }
+        })
+    }
+    
     return translations
 }
 
-async function searchTranslationByWordDefinition(code, word){
+async function searchTranslationByWordDefinition(code, word, mode){
     const translations = await prisma.translation.findMany({
         where: {
             language: {

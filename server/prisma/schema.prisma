@@ -43,7 +43,7 @@ model Translation {
   ipa               String?
   englishDefinition String
   exampleSentence   String
-  status            Status    @default(PENDING)
+  status            Status    @default(UNVERIFIED)
   createdAt         DateTime  @default(now())
   publishedAt       DateTime?
 
@@ -107,9 +107,8 @@ enum Role {
 }
 
 enum Status {
-  PENDING
-  PUBLISHED
-  REJECTED
+  UNVERIFIED
+  VERIFIED
 }
 
 enum GameType {
