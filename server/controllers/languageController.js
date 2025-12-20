@@ -1,20 +1,25 @@
 const auth = require('../middleware/auth')
 const languageService = require('../services/languageService')
+const translationService = require('../services/translationService')
 
-const getAllLanguages = [
+const getLanguages = [
     auth,
     async (req, res, next) => {
+        const { name } = req.query;
+
         try {
-            const languages = await languageService.findLanguages()
-            
-            return res.status(200).json(languages)
-        }
+            const languages = name
+            ? await languageService.findLanguageByName(name)
+            : await languageService.findLanguages();
+
+            res.status(200).json(languages);
+        } 
         catch (err) {
-            console.error(err)
-            next(err)
+            next(err);
         }
     }
-]
+];
+
 
 const getLanguageByCode = [
     auth,
@@ -33,43 +38,41 @@ const getLanguageByCode = [
     }
 ]
 
-const getLanguageByName = [
-    auth,
-    async (req, res, next) => {
-        const { name } = req.query
-
-        try {
-            const language = await languageService.findLanguageByName(name)
-
-            return res.status(200).json(language)
-        }
-        catch (err) {
-            console.error(err)
-            next(err)
-        }
-    }
-]
-
 const getPublishedTranslations = [
     auth,
     async (req, res, next) => {
-        const { isoCode } = req.params
+        const { isoCode } = req.params;
+        const { text, definition } = req.query;
 
         try {
-            const translations = await languageService.getPublishedDictionary(isoCode)
+            let translations;
 
-            return res.status(200).json(translations)
+            if (text) {
+                translations = await translationService.searchTranslationByWordText(
+                    isoCode,
+                    text
+                );
+            } 
+            else if (definition) {
+                translations = await translationService.searchTranslationByWordDefinition(
+                    isoCode,
+                    definition
+                );
+            } 
+            else {
+                translations = await languageService.getPublishedDictionary(isoCode);
+            }
+
+            res.status(200).json(translations);
         }
         catch (err) {
-            console.error(err)
-            next(err)
+            next(err);
         }
     }
-]
+];
 
 module.exports = {
-    getAllLanguages,
+    getLanguages,
     getLanguageByCode,
-    getLanguageByName,
     getPublishedTranslations
 }
