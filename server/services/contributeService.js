@@ -26,3 +26,17 @@ async function contributeTranslation(userId, wordText, ipa, englishDefinition, e
     return contributedTranslation
 }
 
+async function getUserContributions(userId){
+    const contributions = await prisma.translation.findMany({
+        where: {
+            authorId: userId
+        }
+    })
+
+    return contributions
+}
+
+module.exports = {
+    contributeTranslation,
+    getUserContributions
+}
