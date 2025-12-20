@@ -1,12 +1,13 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient();
 
-async function getProfile(userId) {
-    const user = await prisma.user.findUnique({
+async function getMyProfile(userId){
+    const myProfile = await prisma.user.findUnique({
         where: {
             id: userId
         },
         select: {
+            email: true,
             username: true,
             createdAt: true,
             role: true,
@@ -18,10 +19,34 @@ async function getProfile(userId) {
                 }
             }
         }
+    })
+
+    return myProfile
+}
+
+async function getPublicProfile(userId){
+    const user = await prisma.user.findUnique({
+        where: {
+            id: userId
+        },
+        select: {
+            username: true,
+            createdAt: true,
+            role: true,
+            _count: {
+                select: {
+                    contributions: true,
+                    createdSets: true
+                }
+            }
+        }
     });
     
     return user;
 }
 
-module.exports = getProfile
+module.exports = {
+    getMyProfile,
+    getPublicProfile
+}
 
