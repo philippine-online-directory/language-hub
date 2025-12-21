@@ -60,18 +60,49 @@ async function searchTranslationByWordText(code, word, mode){
 }
 
 async function searchTranslationByWordDefinition(code, word, mode){
-    const translations = await prisma.translation.findMany({
-        where: {
-            language: {
-                isoCode: code
-            },
-            englishDefinition: {
-                contains: word,
-                mode: 'insensitive'
-            },
-            status: 'PUBLISHED'
-        }
-    })
+    let translations;
+
+    if (mode === "Verified Only"){
+        translations = await prisma.translation.findMany({
+            where: {
+                language: {
+                    isoCode: code
+                },
+                englishDefinition: {
+                    contains: word,
+                    mode: 'insensitive'
+                },
+                status: 'VERIFIED'
+            }
+        })
+    }
+    else if (mode === "All"){
+        translations = await prisma.translation.findMany({
+            where: {
+                language: {
+                    isoCode: code
+                },
+                englishDefinition: {
+                    contains: word,
+                    mode: 'insensitive'
+                }
+            }
+        })
+    }
+    else {
+        translations = await prisma.translation.findMany({
+            where: {
+                language: {
+                    isoCode: code
+                },
+                englishDefinition: {
+                    contains: word,
+                    mode: 'insensitive'
+                },
+                status: 'VERIFIED'
+            }
+        })
+    }
 
     return translations
 }
@@ -90,11 +121,13 @@ async function addTranslationToSet(vocabSetId, translationId, userId){
     }
     
     const translation = await prisma.translation.findUnique({
-        where: { id: translationId, status: 'PUBLISHED' }
+        where: { 
+            id: translationId 
+        }
     });
 
     if (!translation) {
-        throw new Error(`Translation ID ${translationId} not found or is not published.`);
+        throw new Error(`Translation ID ${translationId} not found`);
     }
 
     const existingEntry = await prisma.setWord.findUnique({

@@ -27,6 +27,8 @@ async function contributeTranslation(userId, wordText, ipa, englishDefinition, e
 }
 
 async function getUserContributions(userId){
+    if (!userId) throw new Error('Must be logged in to view contributions');
+    
     const contributions = await prisma.translation.findMany({
         where: {
             authorId: userId

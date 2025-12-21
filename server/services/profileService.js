@@ -2,10 +2,6 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient();
 
 async function searchUsers(username){
-    if (!username){
-        throw new Error("Must search by username");
-    }
-
     const users = await prisma.user.findMany({
         where: {
             username: {
@@ -19,6 +15,8 @@ async function searchUsers(username){
 }
 
 async function getMyProfile(userId){
+    if (!userId) throw new Error("Must be logged in to view your profile");
+
     const myProfile = await prisma.user.findUnique({
         where: {
             id: userId

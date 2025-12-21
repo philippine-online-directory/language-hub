@@ -2,6 +2,8 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient();
 
 async function getUserSets(userId){
+    if (!userId) throw new Error("Must be logged in to view sets");
+
     const user = await prisma.user.findMany({
         where: {
             id: userId
@@ -15,6 +17,20 @@ async function getUserSets(userId){
 }
 
 async function createSet(name, description, userId){
+    if (!userId) throw new Error("Must be logged in to create a set");
+
+    const existingSet = await prisma.vocabSet.findUnique({
+        where: {
+            ownerId: userId,
+            name
+        },
+        select: {
+            id: true
+        }
+    })
+
+    if (existingSet) throw new Error("User has created a set with this name already")
+
     const createdSet = await prisma.vocabSet.create({
         data: {
             name,
@@ -27,6 +43,17 @@ async function createSet(name, description, userId){
 }
 
 async function getSetWords(setId){
+    const existingSet = await prisma.vocabSet.findUnique({
+        where: {
+            id: setId
+        },
+        select: {
+            id: true
+        }
+    })
+
+    if (!existingSet) throw new Error("Set does not exist");
+    
     const words = await prisma.translation.findMany({
         where: {
             setWords: {
@@ -41,6 +68,17 @@ async function getSetWords(setId){
 }
 
 async function publishSet(setId){
+    const existingSet = await prisma.vocabSet.findUnique({
+        where: {
+            id: setId
+        },
+        select: {
+            id: true
+        }
+    })
+
+    if (!existingSet) throw new Error("Set does not exist");
+
     const updatedSet = await prisma.vocabSet.update({
         where: {
             id: setId
@@ -54,6 +92,19 @@ async function publishSet(setId){
 }
 
 async function deleteSet(setId, userId){
+    if (!userId) throw new Error("Must be logged in to delete a set");
+
+    const existingSet = await prisma.vocabSet.findUnique({
+        where: {
+            id: setId
+        },
+        select: {
+            id: true
+        }
+    })
+
+    if (!existingSet) throw new Error("Set does not exist");
+
     const deletedSet = await prisma.vocabSet.delete({
         where: {
             id: setId,

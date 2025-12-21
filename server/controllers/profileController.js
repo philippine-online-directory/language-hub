@@ -1,6 +1,6 @@
 const auth = require('../middleware/auth')
 const profileService = require('../services/profileService')
-const errorHandler = require('../middleware/errorHandler')
+const handleError = require('../middleware/errorHandler')
 
 const getMyProfile = [
     auth,

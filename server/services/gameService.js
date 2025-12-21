@@ -2,6 +2,8 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function viewGameSessions(userId, setId, gameType){
+    if (!userId) throw new Error("Must be logged in to view game sessions");
+    
     const gameSessions = await prisma.gameSession.findMany({
         where: {
             userId,

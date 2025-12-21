@@ -1,6 +1,6 @@
 const auth = require('../middleware/auth')
 const contributeService = require('../services/contributeService')
-const errorHandler = require('../middleware/errorHandler')
+const handleError = require('../middleware/errorHandler')
 
 const contributeTranslation = [
     auth,
