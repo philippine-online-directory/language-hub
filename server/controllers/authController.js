@@ -2,6 +2,7 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const handleError = require('../middleware/errorHandler')
 require('dotenv').config();
 
 
@@ -32,8 +33,7 @@ async function registerUser(req, res, next){
         res.status(201).json({ user, token })
     }
     catch (err) {
-        console.error(err)
-        next(err);
+        handleError(err, req, res, next)
     }
 }
 
@@ -57,8 +57,7 @@ async function loginUser(req, res, next){
         res.status(200).json({ user, token })
     }
     catch (err) {
-        console.error(err)
-        next(err)
+        handleError(err, req, res, next)
     }
 }
 

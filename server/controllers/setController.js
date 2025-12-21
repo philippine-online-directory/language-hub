@@ -1,4 +1,5 @@
 const setService = require('../services/setService')
+const errorHandler = require('../middleware/errorHandler')
 
 const getUserSets = [
     auth,
@@ -11,8 +12,7 @@ const getUserSets = [
             res.status(200).json(sets)
         }
         catch (err) {
-            console.error(err);
-            next(err);
+            handleError(err, req, res, next)
         }
     }
 ]
@@ -29,8 +29,7 @@ const createSet = [
             res.status(201).json(newSet);
         }
         catch (err) {
-            console.error(err);
-            next(err);
+            handleError(err, req, res, next)
         }
     }
 ]
@@ -46,8 +45,7 @@ const getSetWords = [
             res.status(200).json(translations);
         }
         catch (err) {
-            console.error(err);
-            next(err);
+            handleError(err, req, res, next)
         }
     }
 ]
@@ -63,8 +61,7 @@ const publishSet = [
             res.status(200).json(publishedSet);
         }
         catch (err) {
-            console.error(err);
-            next(err);
+            handleError(err, req, res, next)
         }
     }
 ]
@@ -81,8 +78,7 @@ const deleteSet = [
             res.status(200).json(deletedSet);
         }
         catch (err) {
-            console.error(err);
-            next(err);
+            handleError(err, req, res, next)
         }
     }
 ]

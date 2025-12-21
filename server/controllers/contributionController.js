@@ -1,5 +1,6 @@
 const auth = require('../middleware/auth')
 const contributeService = require('../services/contributeService')
+const errorHandler = require('../middleware/errorHandler')
 
 const contributeTranslation = [
     auth,
@@ -24,8 +25,7 @@ const contributeTranslation = [
             res.status(201).json(contributedTranslation)
         }
         catch (err) {
-            console.error(err)
-            next(err)
+            handleError(err, req, res, next)
         }
     }
 ]
@@ -41,8 +41,7 @@ const getUserContributions = [
             res.status(200).json(contributions)
         }
         catch (err) {
-            console.error(err)
-            next(err)
+            handleError(err, req, res, next)
         }
     }
 ]

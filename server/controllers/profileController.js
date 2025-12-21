@@ -1,5 +1,6 @@
 const auth = require('../middleware/auth')
 const profileService = require('../services/profileService')
+const errorHandler = require('../middleware/errorHandler')
 
 const getMyProfile = [
     auth,
@@ -12,8 +13,7 @@ const getMyProfile = [
             res.status(200).json(profile)
         }
         catch (err) {
-            console.error(err)
-            next(err)
+            handleError(err, req, res, next)
         }
     }
 ]
@@ -29,8 +29,7 @@ const getPublicProfile = [
             res.status(200).json(profile)
         }
         catch (err) {
-            console.error(err)
-            next(err)
+            handleError(err, req, res, next)
         }
     }
 ]
@@ -46,8 +45,7 @@ const searchUsers = [
             res.status(200).json(users)
         }
         catch (err) {
-            console.error(err)
-            next(err)
+            handleError(err, req, res, next)
         }
     }
 ]

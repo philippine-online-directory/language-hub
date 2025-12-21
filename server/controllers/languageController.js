@@ -1,6 +1,7 @@
 const auth = require('../middleware/auth')
 const languageService = require('../services/languageService')
 const translationService = require('../services/translationService')
+const errorHandler = require('../middleware/errorHandler')
 
 const getLanguages = [
     auth,
@@ -15,7 +16,7 @@ const getLanguages = [
             res.status(200).json(languages);
         } 
         catch (err) {
-            next(err);
+            handleError(err, req, res, next)
         }
     }
 ];
@@ -32,8 +33,7 @@ const getLanguageByCode = [
             return res.status(200).json(language)
         }
         catch (err) {
-            console.error(err)
-            next(err)
+            handleError(err, req, res, next)
         }
     }
 ]
@@ -68,7 +68,7 @@ const getPublishedTranslations = [
             res.status(200).json(translations);
         }
         catch (err) {
-            next(err);
+            handleError(err, req, res, next)
         }
     }
 ];

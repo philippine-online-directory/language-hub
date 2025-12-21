@@ -1,5 +1,6 @@
 const auth = require('../middleware/auth')
 const translationService = require('../services/translationService')
+const errorHandler = require('../middleware/errorHandler')
 
 const getTranslationInfo = [
     auth,
@@ -16,8 +17,7 @@ const getTranslationInfo = [
             res.status(200).json(translation)
         }
         catch (err) {
-            console.error(err)
-            next(err)
+            handleError(err, req, res, next)
         }
     }
 ]
@@ -45,7 +45,7 @@ const addTranslationToSet = [
             res.status(201).json(setWord);
         } 
         catch (err) {
-            console.error(err); 
+            handleError(err, req, res, next)
         }
     }
 ]

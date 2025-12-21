@@ -1,5 +1,6 @@
 const auth = require('../middleware/auth')
 const gameService = require('../services/gameService')
+const errorHandler = require('../middleware/errorHandler')
 
 const viewGameSessions = [
     auth,
@@ -14,8 +15,7 @@ const viewGameSessions = [
             res.status(200).json(sessions);
         }
         catch (err) {
-            console.error(err)
-            next(err)
+            handleError(err, req, res, next)
         }
     }
 ]
@@ -35,8 +35,7 @@ const uploadGameSession = [
             res.status(201).json(createdSession)
         }
         catch (err) {
-            console.error(err)
-            next(err)
+            handleError(err, req, res, next)
         }
     }
 ]
