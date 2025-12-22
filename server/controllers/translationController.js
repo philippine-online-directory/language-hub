@@ -40,6 +40,7 @@ const addTranslationToSet = [
     }
 ]
 
+//admin function
 const updateTranslationStatus = [
     auth,
     isAdmin,

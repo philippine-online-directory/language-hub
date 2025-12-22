@@ -86,6 +86,7 @@ const getPublishedTranslations = [
     }
 ];
 
+//admin functions
 const addLanguage = [
     auth,
     isAdmin,
@@ -115,6 +116,7 @@ const updateLanguage = [
     validateLanguage,
     validationErrorCheck,
     async (req, res, next) => {
+        const { languageId } = req.params
         const { name,
             speakerCount,
             isoCode,
@@ -122,7 +124,7 @@ const updateLanguage = [
         } = matchedData(req)
 
         try {
-            const updatedLanguage = languageService.updateLanguage(name, speakerCount, isoCode, preservationNote)
+            const updatedLanguage = languageService.updateLanguage(languageId, name, speakerCount, isoCode, preservationNote)
 
             res.status(200).json(updatedLanguage)
         }
