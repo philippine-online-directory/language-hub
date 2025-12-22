@@ -15,27 +15,52 @@ async function addLanguage(name, speakerCount, isoCode, preservationNote){
 }
 
 async function updateLanguage(id, name, speakerCount, isoCode, preservationNote){
-    const updatedLanguage = await prisma.language.update({
-        where: {
-            id
-        },
-        data: {
-            name,
-            speakerCount,
-            isoCode,
-            preservationNote
-        }
-    })
+    if (!id) throw new Error('Id missing: Must have id to identify which language to update');
 
-    return updatedLanguage
+    try {
+        const updatedLanguage = await prisma.language.update({
+            where: {
+                id
+            },
+            data: {
+                name,
+                speakerCount,
+                isoCode,
+                preservationNote
+            }
+        })
+
+        return updatedLanguage
+    }
+    catch (err) {
+        if (err.code === 'P2025') {
+            throw new Error('Language does not exist')
+        }
+        throw err
+    }
+
+    
+
+    
 }
 
 async function deleteLanguage(id){
-    await prisma.language.delete({
-        where: {
-            id
+    if (!id) throw new Error('Id missing: Must have id to identify which language to delete ');
+
+    try {
+        await prisma.language.delete({
+            where: {
+                id
+            }
+        })
+    }
+    catch (err) {
+        if (err.code === 'P2025') {
+            throw new Error('Language does not exist')
         }
-    })
+        throw err
+    }
+    
 }
 
 async function findLanguages(){

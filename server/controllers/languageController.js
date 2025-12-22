@@ -100,7 +100,7 @@ const addLanguage = [
         } = matchedData(req)
 
         try {
-            const addedLanguage = languageService.addLanguage(name, speakerCount, isoCode, preservationNote)
+            const addedLanguage = await languageService.addLanguage(name, speakerCount, isoCode, preservationNote)
 
             res.status(201).json(addedLanguage)
         }
@@ -124,7 +124,7 @@ const updateLanguage = [
         } = matchedData(req)
 
         try {
-            const updatedLanguage = languageService.updateLanguage(languageId, name, speakerCount, isoCode, preservationNote)
+            const updatedLanguage = await languageService.updateLanguage(languageId, name, speakerCount, isoCode, preservationNote)
 
             res.status(200).json(updatedLanguage)
         }
