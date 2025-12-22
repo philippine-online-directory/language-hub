@@ -2,7 +2,6 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const handleError = require('../middleware/errorHandler')
 const validationErrorCheck = require('../middleware/expressValidate')
 require('dotenv').config();
 const { body, matchedData } = require("express-validator");
@@ -14,7 +13,11 @@ const validateRegister = [
         .trim()
         .isLength({ min: 4, max: 255 }).withMessage('Email must contain between 4 and 255 characters')
         .isEmail().withMessage('Email must be a valid address')
-        .normalizeEmail(),
+        .normalizeEmail()
+        .custom(async email => {
+            const user = await prisma.user.findUnique({ where: { email } });
+            if (user) throw new Error('Email already in use');
+        }),
     body('password').exists()
         .notEmpty().withMessage('Password must not be empty')
         .trim()
@@ -43,14 +46,6 @@ const registerUser = [
         const { email, password, username } = matchedData(req)
 
         try {
-            const existing = await prisma.user.findUnique({
-                where: {
-                    email
-                }
-            })
-
-            if (existing) return res.status(400).json({ error: "Email already in use" });
-
             const hashed = await bcrypt.hash(password, 10)
 
             const user = await prisma.user.create({

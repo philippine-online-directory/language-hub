@@ -1,5 +1,4 @@
 const setService = require('../services/setService')
-const handleError = require('../middleware/errorHandler')
 
 const getUserSets = [
     auth,

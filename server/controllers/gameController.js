@@ -1,6 +1,5 @@
 const auth = require('../middleware/auth')
 const gameService = require('../services/gameService')
-const handleError = require('../middleware/errorHandler')
 
 const viewGameSessions = [
     auth,

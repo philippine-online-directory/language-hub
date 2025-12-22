@@ -1,6 +1,5 @@
 const auth = require('../middleware/auth')
 const translationService = require('../services/translationService')
-const handleError = require('../middleware/errorHandler')
 
 const getTranslationInfo = [
     auth,
