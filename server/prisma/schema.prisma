@@ -101,7 +101,6 @@ model GameSession {
 
 enum Role {
   LEARNER
-  CONTRIBUTOR
   ADMIN
 }
 
