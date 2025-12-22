@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const rateLimit = require("express-rate-limit");
 
 const app = express()
 
@@ -13,7 +14,15 @@ const handleError = require('./middleware/errorHandler')
 
 const origin = process.env.FRONTEND_URL || 'http://localhost:5173'
 
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 100,
+
+})
+
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use(limiter)
 app.use(cors({
     origin,
     optionsSuccessStatus: 200
