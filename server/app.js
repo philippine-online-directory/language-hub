@@ -8,6 +8,8 @@ const contributionRouter = require('./routes/contributionRouter')
 const languageRouter = require('./routes/languageRouter')
 const setRouter = require('./routes/setRouter');
 const authRouter = require('./routes/authRouter');
+const profileRouter = require('./routes/profileRouter')
+const handleError = require('./middleware/errorHandler')
 
 const origin = process.env.FRONTEND_URL || 'http://localhost:5173'
 
@@ -21,6 +23,8 @@ app.use('/', authRouter)
 app.use('/contributions', contributionRouter)
 app.use('/languages', languageRouter)
 app.use('/sets', setRouter)
+app.use('/profile', profileRouter)
+app.use(handleError)
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

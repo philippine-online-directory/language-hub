@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const setRouter = Router();
+const gameRouter = require('./gameRouter')
 
 const setController = require('../controllers/setController');
 const gameController = require('../controllers/gameController')
@@ -15,6 +16,8 @@ setRouter.post('/:setId/translations', addTranslationToSet);
 
 setRouter.get('/:setId/games', gameController.viewGameSessions);
 setRouter.post('/:setId/games', gameController.uploadGameSession)
+
+setRouter.use('/:setId/games', gameRouter)
 
 
 module.exports = setRouter;
