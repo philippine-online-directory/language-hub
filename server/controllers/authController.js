@@ -3,26 +3,18 @@ const prisma = new PrismaClient();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const handleError = require('../middleware/errorHandler')
+const validationErrorCheck = require('../middleware/expressValidate')
 require('dotenv').config();
-const { body, validationResult, matchedData } = require("express-validator");
+const { body, matchedData } = require("express-validator");
+
 
 const validateRegister = [
     body("email").exists()
         .notEmpty().withMessage('Email must not be empty')
         .trim()
-        .isAlphanumeric().withMessage('Email must contain only alphanumeric characters')
         .isLength({ min: 4, max: 255 }).withMessage('Email must contain between 4 and 255 characters')
         .isEmail().withMessage('Email must be a valid address')
-        .normalizeEmail()
-        .custom(async email => {
-            const user = await prisma.user.findUnique({
-                where: {
-                    email
-                }
-            })
-
-            if (user) throw new Error('Email already in use')
-        }),
+        .normalizeEmail(),
     body('password').exists()
         .notEmpty().withMessage('Password must not be empty')
         .trim()
@@ -36,7 +28,6 @@ const validateRegister = [
 
 const validateLogin = [
     body('email').exists()
-        .isAlphanumeric().withMessage('Email must contain only alphanumeric characters')
         .isEmail().withMessage('Email must be a valid address')
         .normalizeEmail(),
     body('password').exists()
@@ -47,8 +38,9 @@ const validateLogin = [
 
 const registerUser = [
     validateRegister,
+    validationErrorCheck,
     async (req, res, next) => {
-        const { email, password, username } = req.body
+        const { email, password, username } = matchedData(req)
 
         try {
             const existing = await prisma.user.findUnique({
@@ -81,8 +73,9 @@ const registerUser = [
 
 const loginUser = [
     validateLogin,
+    validationErrorCheck,
     async (req, res, next) => {
-        const { email, password } = req.body
+        const { email, password } = matchedData(req)
 
         try {
             const user = await prisma.user.findUnique({
