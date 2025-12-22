@@ -7,7 +7,7 @@ const isContributor = [
             next();
         }
         else {
-            return res.status(401).json({ error: 'Not a contributor' });
+            return res.status(403).json({ error: 'Not a contributor' });
         }
     }
 ]
@@ -19,7 +19,7 @@ const isAdmin = [
             next();
         }
         else {
-            return res.status(401).json({ error: 'Not an contributor' }); 
+            return res.status(403).json({ error: 'Not an admin' }); 
         }
     }
 ]

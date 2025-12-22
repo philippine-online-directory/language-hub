@@ -1,6 +1,19 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient();
 
+async function addLanguage(name, speakerCount, isoCode, preservationNote){
+    const addedLanguage = await prisma.language.create({
+        data: {
+            name,
+            speakerCount,
+            isoCode,
+            preservationNote
+        }
+    })
+
+    return addedLanguage
+}
+
 async function findLanguages(){
     const languages = await prisma.language.findAll();
 

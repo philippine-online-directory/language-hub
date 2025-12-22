@@ -1,4 +1,5 @@
 const auth = require('../middleware/auth')
+const { isAdmin } = require('../middleware/roleAuth')
 const languageService = require('../services/languageService')
 const translationService = require('../services/translationService')
 
@@ -72,6 +73,27 @@ const getPublishedTranslations = [
         }
     }
 ];
+
+const addLanguage = [
+    auth,
+    isAdmin,
+    async (req, res, next) => {
+        const { name,
+            speakerCount,
+            isoCode,
+            preservationNote
+        } = req.body
+
+        try {
+            const addedLanguage = languageService.addLanguage(name, speakerCount, isoCode, preservationNote)
+
+            res.status(201).json(addedLanguage)
+        }
+        catch (err) {
+            next(err)
+        }
+    }
+]
 
 module.exports = {
     getLanguages,
