@@ -1,4 +1,5 @@
 const auth = require('../middleware/auth')
+const { isAdmin } = require('../middleware/roleAuth')
 const translationService = require('../services/translationService')
 
 const getTranslationInfo = [
@@ -8,10 +9,6 @@ const getTranslationInfo = [
 
         try {
             const translation = await translationService.findTranslationInfo(translationId)
-
-            if (!translation) {
-                return res.status(404).json({ message: "Translation not found" })
-            }
 
             res.status(200).json(translation)
         }
@@ -28,12 +25,6 @@ const addTranslationToSet = [
         const { translationId } = req.body;
         const userId = req.user.id;
 
-        if (!translationId) {
-            return res.status(400).json({
-                message: "translationId is required"
-            });
-        }
-
         try {
             const setWord = await translationService.addTranslationToSet(
                 vocabSetId,
@@ -49,8 +40,27 @@ const addTranslationToSet = [
     }
 ]
 
+const updateTranslationStatus = [
+    auth,
+    isAdmin,
+    async (req, res, next) => {
+        const { translationId } = req.params
+        const { status } = req.body
+
+        try {
+            const updatedTranslation = await translationService.updateTranslationStatus(translationId, status)
+
+            res.status(200).json(updatedTranslation)
+        }
+        catch (err) {
+            next(err)
+        }
+    }
+]
+
 module.exports = {
     getTranslationInfo,
-    addTranslationToSet
+    addTranslationToSet,
+    updateTranslationStatus
 }
 

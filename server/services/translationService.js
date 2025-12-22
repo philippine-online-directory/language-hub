@@ -8,6 +8,8 @@ async function findTranslationInfo(id){
         }
     })
 
+    if (!translation) throw new Error('Translation does not exist');
+
     return translation
 }
 
@@ -161,9 +163,29 @@ async function addTranslationToSet(vocabSetId, translationId, userId){
     return newSetWord;
 }
 
+async function updateTranslationStatus(id, status){
+    if (status !== 'VERIFIED' && status !== 'UNVERIFIED') throw new Error('Status must be "VERIFIED" or "UNVERIFIED"')
+
+    try {
+        const updatedTranslation = await prisma.translation.update({
+            where: { id },
+            data: { status }
+        })
+
+        return updatedTranslation
+    } 
+    catch (err) {
+        if (err.code === 'P2025') {
+            throw new Error('Translation does not exist')
+        }
+        throw err
+    }
+}
+
 module.exports = {
     findTranslationInfo,
     searchTranslationByWordText,
     searchTranslationByWordDefinition,
-    addTranslationToSet
+    addTranslationToSet,
+    updateTranslationStatus
 }
