@@ -2,6 +2,7 @@ const auth = require('../middleware/auth')
 const languageService = require('../services/languageService')
 const translationService = require('../services/translationService')
 
+
 const getLanguages = [
     auth,
     async (req, res, next) => {
