@@ -30,6 +30,14 @@ async function updateLanguage(id, name, speakerCount, isoCode, preservationNote)
     return updatedLanguage
 }
 
+async function deleteLanguage(id){
+    await prisma.language.delete({
+        where: {
+            id
+        }
+    })
+}
+
 async function findLanguages(){
     const languages = await prisma.language.findAll();
 
@@ -112,5 +120,6 @@ module.exports = {
     getDictionary,
     findLanguageByName,
     addLanguage,
-    updateLanguage
+    updateLanguage,
+    deleteLanguage
 }

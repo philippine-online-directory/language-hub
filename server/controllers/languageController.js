@@ -124,7 +124,24 @@ const updateLanguage = [
         try {
             const updatedLanguage = languageService.updateLanguage(name, speakerCount, isoCode, preservationNote)
 
-            res.status(200).json(updateLanguage)
+            res.status(200).json(updatedLanguage)
+        }
+        catch (err) {
+            next(err)
+        }
+    }
+]
+
+const deleteLanguage = [
+    auth,
+    isAdmin,
+    async (req, res, next) => {
+        const { languageId } = req.params
+
+        try {
+            await languageService.deleteLanguage(languageId)
+
+            res.sendStatus(204)
         }
         catch (err) {
             next(err)
@@ -135,5 +152,8 @@ const updateLanguage = [
 module.exports = {
     getLanguages,
     getLanguageByCode,
-    getPublishedTranslations
+    getPublishedTranslations,
+    addLanguage,
+    updateLanguage,
+    deleteLanguage
 }
