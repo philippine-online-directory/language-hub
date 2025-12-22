@@ -17,7 +17,7 @@ const getTranslationInfo = [
             res.status(200).json(translation)
         }
         catch (err) {
-            handleError(err, req, res, next)
+            next(err)
         }
     }
 ]
@@ -45,7 +45,7 @@ const addTranslationToSet = [
             res.status(201).json(setWord);
         } 
         catch (err) {
-            handleError(err, req, res, next)
+            next(err)
         }
     }
 ]

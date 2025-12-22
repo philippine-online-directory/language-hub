@@ -16,7 +16,7 @@ const getLanguages = [
             res.status(200).json(languages);
         } 
         catch (err) {
-            handleError(err, req, res, next)
+            next(err)
         }
     }
 ];
@@ -33,7 +33,7 @@ const getLanguageByCode = [
             return res.status(200).json(language)
         }
         catch (err) {
-            handleError(err, req, res, next)
+            next(err)
         }
     }
 ]
@@ -68,7 +68,7 @@ const getPublishedTranslations = [
             res.status(200).json(translations);
         }
         catch (err) {
-            handleError(err, req, res, next)
+            next(err)
         }
     }
 ];

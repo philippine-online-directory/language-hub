@@ -15,7 +15,7 @@ const viewGameSessions = [
             res.status(200).json(sessions);
         }
         catch (err) {
-            handleError(err, req, res, next)
+            next(err)
         }
     }
 ]
@@ -35,7 +35,7 @@ const uploadGameSession = [
             res.status(201).json(createdSession)
         }
         catch (err) {
-            handleError(err, req, res, next)
+            next(err)
         }
     }
 ]

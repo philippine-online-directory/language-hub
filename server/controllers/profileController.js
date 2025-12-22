@@ -13,7 +13,7 @@ const getMyProfile = [
             res.status(200).json(profile)
         }
         catch (err) {
-            handleError(err, req, res, next)
+            next(err)
         }
     }
 ]
@@ -29,7 +29,7 @@ const getPublicProfile = [
             res.status(200).json(profile)
         }
         catch (err) {
-            handleError(err, req, res, next)
+            next(err)
         }
     }
 ]
@@ -45,7 +45,7 @@ const searchUsers = [
             res.status(200).json(users)
         }
         catch (err) {
-            handleError(err, req, res, next)
+            next(err)
         }
     }
 ]

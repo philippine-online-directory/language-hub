@@ -66,7 +66,7 @@ const registerUser = [
             res.status(201).json({ user, token })
         }
         catch (err) {
-            handleError(err, req, res, next)
+            next(err)
         }
     }
 ]
@@ -94,7 +94,7 @@ const loginUser = [
             res.status(200).json({ user, token })
         }
         catch (err) {
-            handleError(err, req, res, next)
+            next(err)
         }
     }
 

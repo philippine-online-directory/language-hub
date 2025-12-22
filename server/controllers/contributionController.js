@@ -25,7 +25,7 @@ const contributeTranslation = [
             res.status(201).json(contributedTranslation)
         }
         catch (err) {
-            handleError(err, req, res, next)
+            next(err)
         }
     }
 ]
@@ -41,7 +41,7 @@ const getUserContributions = [
             res.status(200).json(contributions)
         }
         catch (err) {
-            handleError(err, req, res, next)
+            next(err)
         }
     }
 ]
