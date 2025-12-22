@@ -2,7 +2,19 @@ const auth = require('../middleware/auth')
 const { isAdmin } = require('../middleware/roleAuth')
 const languageService = require('../services/languageService')
 const translationService = require('../services/translationService')
+const { body, matchedData } = require('express-validator')
+const validationErrorCheck = require('../middleware/expressValidate')
 
+const validateLanguage = [
+    body('name').notEmpty()
+        .trim(),
+    body('speakerCount').optional()
+        .isInt()
+        .trim(),
+    body('isoCode').notEmpty()
+        .trim(),
+    body('preservationNote').trim()
+]
 
 const getLanguages = [
     auth,
@@ -77,17 +89,42 @@ const getPublishedTranslations = [
 const addLanguage = [
     auth,
     isAdmin,
+    validateLanguage,
+    validationErrorCheck,
     async (req, res, next) => {
         const { name,
             speakerCount,
             isoCode,
             preservationNote
-        } = req.body
+        } = matchedData(req)
 
         try {
             const addedLanguage = languageService.addLanguage(name, speakerCount, isoCode, preservationNote)
 
             res.status(201).json(addedLanguage)
+        }
+        catch (err) {
+            next(err)
+        }
+    }
+]
+
+const updateLanguage = [
+    auth,
+    isAdmin,
+    validateLanguage,
+    validationErrorCheck,
+    async (req, res, next) => {
+        const { name,
+            speakerCount,
+            isoCode,
+            preservationNote
+        } = matchedData(req)
+
+        try {
+            const updatedLanguage = languageService.updateLanguage(name, speakerCount, isoCode, preservationNote)
+
+            res.status(200).json(updateLanguage)
         }
         catch (err) {
             next(err)

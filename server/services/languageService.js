@@ -14,6 +14,22 @@ async function addLanguage(name, speakerCount, isoCode, preservationNote){
     return addedLanguage
 }
 
+async function updateLanguage(id, name, speakerCount, isoCode, preservationNote){
+    const updatedLanguage = await prisma.language.update({
+        where: {
+            id
+        },
+        data: {
+            name,
+            speakerCount,
+            isoCode,
+            preservationNote
+        }
+    })
+
+    return updatedLanguage
+}
+
 async function findLanguages(){
     const languages = await prisma.language.findAll();
 
@@ -94,5 +110,7 @@ module.exports = {
     findLanguages,
     findLanguageByIsoCode,
     getDictionary,
-    findLanguageByName
+    findLanguageByName,
+    addLanguage,
+    updateLanguage
 }
