@@ -1,0 +1,21 @@
+.card {
+  background-color: var(--color-parchment-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-card);
+  padding: var(--space-5);
+  transition: all var(--transition-hover);
+}
+
+.clickable {
+  cursor: pointer;
+  border: none;
+  text-align: left;
+  width: 100%;
+  font-family: inherit;
+}
+
+.hoverable:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  border-bottom: 3px solid var(--color-copper-500);
+}
