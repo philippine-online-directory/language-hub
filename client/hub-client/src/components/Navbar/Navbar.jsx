@@ -45,10 +45,10 @@ export default function Navbar({ user }){
                 ) : (
                 <>
                     <Link to="/login">
-                    <Button variant="secondary">Login</Button>
+                        <Button variant="secondary">Login</Button>
                     </Link>
                     <Link to="/register">
-                    <Button variant="primary">Register</Button>
+                        <Button variant="primary">Register</Button>
                     </Link>
                 </>
                 )}
