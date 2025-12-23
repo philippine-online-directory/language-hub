@@ -1,0 +1,35 @@
+import api from './axiosConfig';
+
+export const setService = {
+    getUserSets: async () => {
+        const response = await api.get('/sets');
+        return response.data;
+    },
+
+    createSet: async (setData) => {
+        const response = await api.post('/sets', setData);
+        return response.data;
+    },
+
+    getSetWords: async (setId) => {
+        const response = await api.get(`/sets/${setId}`);
+        return response.data;
+    },
+
+    publishSet: async (setId, setData) => {
+        const response = await api.put(`/sets/${setId}`, setData);
+        return response.data;
+    },
+
+    deleteSet: async (setId) => {
+        const response = await api.delete(`/sets/${setId}`);
+        return response.data;
+    },
+
+    addTranslationToSet: async (setId, translationId) => {
+        const response = await api.post(`/sets/${setId}/translations`, {
+            translationId,
+        });
+        return response.data;
+    },
+};
