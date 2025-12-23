@@ -1,0 +1,38 @@
+.languageCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.languageName {
+  font-family: var(--font-accent);
+  font-size: var(--text-h3);
+  line-height: var(--lh-h3);
+  font-weight: 500;
+  color: var(--color-indigo-900);
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-meta);
+  line-height: var(--lh-meta);
+  color: var(--color-gray-500);
+}
+
+.isoCode {
+  font-weight: 500;
+  color: var(--color-indigo-900);
+}
+
+.speakerCount {
+  color: var(--color-gray-500);
+}
+
+.preservationNote {
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  color: var(--color-gray-500);
+  margin-top: var(--space-2);
+}
