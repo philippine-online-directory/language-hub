@@ -1,0 +1,96 @@
+:root {
+  /* Colors */
+  --color-indigo-900: #1F2937;
+  --color-parchment-50: #F6F4EF;
+  --color-copper-500: #C0763A;
+  --color-gray-500: #6B7280;
+  --color-gray-200: #E5E7EB;
+
+  /* Typography Scale */
+  --text-display: 40px;
+  --text-h1: 32px;
+  --text-h2: 24px;
+  --text-h3: 20px;
+  --text-body-lg: 18px;
+  --text-body: 16px;
+  --text-meta: 14px;
+  --text-caption: 12px;
+
+  /* Line Heights */
+  --lh-display: 48px;
+  --lh-h1: 40px;
+  --lh-h2: 32px;
+  --lh-h3: 28px;
+  --lh-body-lg: 28px;
+  --lh-body: 24px;
+  --lh-meta: 20px;
+  --lh-caption: 16px;
+
+  /* Spacing (8-point system) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Grid */
+  --gutter-desktop: 24px;
+  --gutter-tablet: 20px;
+  --gutter-mobile: 16px;
+  --max-width: 1200px;
+
+  /* Component Tokens */
+  --radius-card: 14px;
+  --radius-button: 999px;
+  --button-height: 44px;
+
+  /* Transitions */
+  --transition-hover: 150ms ease-out;
+  --transition-page: 250ms ease-in-out;
+  --transition-modal: 300ms ease-out;
+
+  --font-primary: 'IBM Plex Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-accent: 'Fraunces', serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-primary);
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  color: var(--color-indigo-900);
+  background-color: var(--color-parchment-50);
+  font-weight: 400;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-primary);
+  font-weight: 600;
+}
+
+button {
+  font-family: var(--font-primary);
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+input, textarea, select {
+  font-family: var(--font-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
