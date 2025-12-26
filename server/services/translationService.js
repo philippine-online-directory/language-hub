@@ -119,7 +119,7 @@ async function addTranslationToSet(vocabSetId, translationId, userId){
     }
 
     if (vocabSet.ownerId !== userId) {
-        throw new Error("Permission denied: You can only add translations to sets you own.");
+        throw new Error("Permission denied: You can only add translations to sets you've created.");
     }
     
     const translation = await prisma.translation.findUnique({
@@ -163,6 +163,36 @@ async function addTranslationToSet(vocabSetId, translationId, userId){
     return newSetWord;
 }
 
+async function removeTranslationFromSet(vocabSetId, translationId, userId){
+    const vocabSet = await prisma.vocabSet.findUnique({
+        where: { id: vocabSetId }
+    });
+
+    if (!vocabSet) {
+        throw new Error(`Vocab set ID ${vocabSetId} not found.`);
+    }
+
+    if (vocabSet.ownerId !== userId) {
+        throw new Error("Permission denied: You can only remove translations to sets you've created.");
+    }
+
+    await prisma.setWord.delete({
+        where: {
+            vocabSetId,
+            translationId
+        },
+        include: {
+            translation: {
+                select: {
+                    wordText: true,
+                    englishDefinition: true
+                }
+            }
+        }
+    });
+
+}
+
 async function updateTranslationStatus(id, status){
     if (status !== 'VERIFIED' && status !== 'UNVERIFIED') throw new Error('Status must be "VERIFIED" or "UNVERIFIED"')
 
@@ -187,5 +217,6 @@ module.exports = {
     searchTranslationByWordText,
     searchTranslationByWordDefinition,
     addTranslationToSet,
-    updateTranslationStatus
+    updateTranslationStatus,
+    removeTranslationFromSet
 }

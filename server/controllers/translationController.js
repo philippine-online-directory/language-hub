@@ -40,6 +40,24 @@ const addTranslationToSet = [
     }
 ]
 
+const removeTranslationFromSet = [
+    auth,
+    async (req, res, next) => {
+        const { vocabSetId } = req.params;
+        const { translationId } = req.body;
+        const { id } = req.user
+
+        try {
+            await translationService.removeTranslationFromSet(vocabSetId, translationId, id);
+
+            res.sendStatus(204);
+        }
+        catch (err) {
+            next(err)
+        }
+    }
+]
+
 //admin function
 const updateTranslationStatus = [
     auth,
@@ -62,6 +80,7 @@ const updateTranslationStatus = [
 module.exports = {
     getTranslationInfo,
     addTranslationToSet,
-    updateTranslationStatus
+    updateTranslationStatus,
+    removeTranslationFromSet
 }
 
