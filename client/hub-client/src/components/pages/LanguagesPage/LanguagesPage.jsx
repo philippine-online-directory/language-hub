@@ -10,6 +10,7 @@ export default function LanguagesPage(){
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [searchMode, setSearchMode] = useState('name');
 
     const debouncedSearch = useDebounce(searchQuery, 500);
 
@@ -18,12 +19,25 @@ export default function LanguagesPage(){
             setLoading(true);
             setError(null);
             try {
-                const data = await languageService.getLanguages(debouncedSearch);
+                let data;
+                if (searchMode === 'isoCode' && debouncedSearch) {
+                    // Search by ISO code
+                    data = [await languageService.getLanguageByCode(debouncedSearch)];
+                } 
+                else {
+                    // Search by name
+                    data = await languageService.getLanguages(debouncedSearch);
+                }
                 setLanguages(data);
             } 
             catch (err) {
-                setError('Failed to load languages. Please try again.');
-                console.error('Error fetching languages:', err);
+                if (searchMode === 'isoCode' && err.response?.status === 404) {
+                    setLanguages([]);
+                } 
+                else {
+                    setError('Failed to load languages. Please try again.');
+                    console.error('Error fetching languages:', err);
+                }
             } 
             finally {
                 setLoading(false);
@@ -31,10 +45,15 @@ export default function LanguagesPage(){
         };
 
         fetchLanguages();
-    }, [debouncedSearch]);
+    }, [debouncedSearch, searchMode]);
 
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
+    };
+
+    const handleModeChange = (e) => {
+        setSearchMode(e.target.value);
+        setSearchQuery('');
     };
 
     return (
@@ -43,14 +62,43 @@ export default function LanguagesPage(){
                 <header className={styles.header}>
                     <h1 className={styles.title}>Explore Languages</h1>
                     <p className={styles.subtitle}>
-                        Discover and learn from endangered languages in the Philippines
+                        Discover and learn from endangered and minority languages around the world
                     </p>
                 </header>
 
                 <div className={styles.searchSection}>
+                    <div className={styles.searchModes}>
+                        <label className={styles.radioLabel}>
+                            <input
+                                type="radio"
+                                name="searchMode"
+                                value="name"
+                                checked={searchMode === 'name'}
+                                onChange={handleModeChange}
+                                className={styles.radio}
+                            />
+                            <span>Search by Name</span>
+                        </label>
+                        <label className={styles.radioLabel}>
+                            <input
+                                type="radio"
+                                name="searchMode"
+                                value="isoCode"
+                                checked={searchMode === 'isoCode'}
+                                onChange={handleModeChange}
+                                className={styles.radio}
+                            />
+                            <span>Search by ISO Code</span>
+                        </label>
+                    </div>
+
                     <Input
                         type="text"
-                        placeholder="Search languages..."
+                        placeholder={
+                        searchMode === 'name'
+                            ? 'Search languages...'
+                            : 'Enter ISO code (e.g., en, fr, es)...'
+                        }
                         value={searchQuery}
                         onChange={handleSearchChange}
                         className={styles.searchInput}

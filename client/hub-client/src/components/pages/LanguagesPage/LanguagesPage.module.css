@@ -32,6 +32,28 @@
   max-width: 600px;
 }
 
+.searchModes {
+  display: flex;
+  gap: var(--space-5);
+  margin-bottom: var(--space-4);
+}
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-body);
+  color: var(--color-indigo-900);
+  cursor: pointer;
+}
+
+.radio {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: var(--color-copper-500);
+}
+
 .searchInput {
   width: 100%;
 }
@@ -73,5 +95,10 @@
 
   .languagesPage {
     padding: var(--space-5) 0;
+  }
+
+  .searchModes {
+    flex-direction: column;
+    gap: var(--space-3);
   }
 }
