@@ -32,4 +32,16 @@ export const setService = {
         });
         return response.data;
     },
+
+    searchPublicSets: async (query = '') => {
+        const response = await api.get('/sets/public', {
+            params: query ? { q: query } : {},
+        });
+        return response.data;
+    },
+
+    removeTranslationFromSet: async (setId, translationId) => {
+        const response = await api.delete(`/sets/${setId}/translations/${translationId}`);
+        return response.data;
+    },
 };
