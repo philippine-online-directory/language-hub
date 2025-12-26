@@ -112,5 +112,5 @@ enum Status {
 enum GameType {
   FLASHCARD
   MATCHING
-  QUIZ
+  WRITING
 }
