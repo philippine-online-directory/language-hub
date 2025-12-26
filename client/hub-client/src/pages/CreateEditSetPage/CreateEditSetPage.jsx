@@ -8,19 +8,20 @@ import Card from '../../components/Card/Card';
 import styles from './CreateEditSetPage.module.css';
 
 export default function CreateEditSetPage(){
-        const navigate = useNavigate();
+    const navigate = useNavigate();
     const { setId } = useParams();
     const isEditing = !!setId;
-
     const [languages, setLanguages] = useState([]);
     const [formData, setFormData] = useState({
         name: '',
         description: '',
         languageId: '',
+        isPublic: false,
     });
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [loadingSet, setLoadingSet] = useState(isEditing);
+
 
     useEffect(() => {
         const fetchLanguages = async () => {
@@ -35,6 +36,7 @@ export default function CreateEditSetPage(){
         fetchLanguages();
     }, []);
 
+
     useEffect(() => {
         if (isEditing) {
             const fetchSet = async () => {
@@ -44,6 +46,7 @@ export default function CreateEditSetPage(){
                         name: data.name,
                         description: data.description,
                         languageId: data.languageId,
+                        isPublic: data.isPublic || false,
                     });
                 } 
                 catch (err) {
@@ -60,9 +63,10 @@ export default function CreateEditSetPage(){
     }, [isEditing, setId, navigate]);
 
     const handleChange = (e) => {
+        const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value,
+            [e.target.name]: value,
         });
 
         if (errors[e.target.name]) {
@@ -150,14 +154,14 @@ export default function CreateEditSetPage(){
 
                     <form onSubmit={handleSubmit} className={styles.form}>
                         <Input
-                        label="Set Name"
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        error={errors.name}
-                        required
-                        placeholder="e.g., Essential Phrases"
+                            label="Set Name"
+                            type="text"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            error={errors.name}
+                            required
+                            placeholder="e.g., Essential Phrases"
                         />
 
                         <div className={styles.formGroup}>
@@ -194,9 +198,9 @@ export default function CreateEditSetPage(){
                             >
                                 <option value="">Select a language</option>
                                 {languages.map((lang) => (
-                                <option key={lang.id} value={lang.id}>
-                                    {lang.name} ({lang.isoCode.toUpperCase()})
-                                </option>
+                                    <option key={lang.id} value={lang.id}>
+                                        {lang.name} ({lang.isoCode.toUpperCase()})
+                                    </option>
                                 ))}
                             </select>
                             {errors.languageId && (
@@ -204,10 +208,31 @@ export default function CreateEditSetPage(){
                             )}
                             {isEditing && (
                                 <span className={styles.helperText}>
-                                Language cannot be changed after creation
+                                    Language cannot be changed after creation
                                 </span>
                             )}
                         </div>
+
+                        {isEditing && (
+                            <div className={styles.formGroup}>
+                                <div className={styles.checkboxWrapper}>
+                                    <input
+                                        type="checkbox"
+                                        id="isPublic"
+                                        name="isPublic"
+                                        checked={formData.isPublic}
+                                        onChange={handleChange}
+                                        className={styles.checkbox}
+                                    />
+                                    <label htmlFor="isPublic" className={styles.checkboxLabel}>
+                                        <span className={styles.checkboxLabelText}>Make this set public</span>
+                                        <span className={styles.checkboxHelper}>
+                                            Public sets can be discovered and used by other users
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                        )}
 
                         <div className={styles.actions}>
                             <Button type="submit" fullWidth disabled={loading}>
