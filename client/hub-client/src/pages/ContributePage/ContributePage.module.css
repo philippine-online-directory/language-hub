@@ -1,0 +1,125 @@
+.contributePage {
+  min-height: calc(100vh - 80px);
+  padding: var(--space-7) 0;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 var(--gutter-desktop);
+}
+
+.header {
+  margin-bottom: var(--space-6);
+}
+
+.title {
+  font-size: var(--text-h1);
+  line-height: var(--lh-h1);
+  font-weight: 600;
+  color: var(--color-indigo-900);
+  margin-bottom: var(--space-3);
+}
+
+.subtitle {
+  font-size: var(--text-body-lg);
+  line-height: var(--lh-body-lg);
+  color: var(--color-gray-500);
+}
+
+.formCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.success {
+  padding: var(--space-3) var(--space-4);
+  background-color: rgba(192, 118, 58, 0.1);
+  border: 1px solid var(--color-copper-500);
+  border-radius: var(--space-2);
+  color: var(--color-copper-500);
+  font-size: var(--text-body);
+}
+
+.error {
+  padding: var(--space-3) var(--space-4);
+  background-color: rgba(192, 118, 58, 0.1);
+  border: 1px solid var(--color-copper-500);
+  border-radius: var(--space-2);
+  color: var(--color-copper-500);
+  font-size: var(--text-body);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.label {
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--color-indigo-900);
+}
+
+.required {
+  color: var(--color-copper-500);
+}
+
+.select,
+.textarea {
+  font-family: var(--font-primary);
+  font-size: var(--text-body);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--space-2);
+  background-color: var(--color-parchment-50);
+  color: var(--color-indigo-900);
+  transition: border-color var(--transition-hover);
+}
+
+.select:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--color-copper-500);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.errorText {
+  font-size: var(--text-meta);
+  color: var(--color-copper-500);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 var(--gutter-tablet);
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 var(--gutter-mobile);
+  }
+
+  .contributePage {
+    padding: var(--space-5) 0;
+  }
+}
