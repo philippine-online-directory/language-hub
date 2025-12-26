@@ -1,0 +1,67 @@
+.registerPage {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+}
+
+.container {
+  width: 100%;
+  max-width: 480px;
+}
+
+.registerCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.title {
+  font-size: var(--text-h1);
+  line-height: var(--lh-h1);
+  font-weight: 600;
+  color: var(--color-indigo-900);
+  text-align: center;
+}
+
+.subtitle {
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  color: var(--color-gray-500);
+  text-align: center;
+  margin-top: calc(var(--space-2) * -1);
+}
+
+.error {
+  padding: var(--space-3) var(--space-4);
+  background-color: rgba(192, 118, 58, 0.1);
+  border: 1px solid var(--color-copper-500);
+  border-radius: var(--space-2);
+  color: var(--color-copper-500);
+  font-size: var(--text-body);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+}
+
+.loginLink {
+  text-align: center;
+  font-size: var(--text-body);
+  color: var(--color-gray-500);
+}
+
+.link {
+  color: var(--color-copper-500);
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity var(--transition-hover);
+}
+
+.link:hover {
+  opacity: 0.8;
+}

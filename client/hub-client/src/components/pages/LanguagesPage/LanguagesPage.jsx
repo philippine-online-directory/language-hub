@@ -43,7 +43,7 @@ export default function LanguagesPage(){
                 <header className={styles.header}>
                     <h1 className={styles.title}>Explore Languages</h1>
                     <p className={styles.subtitle}>
-                        Discover and learn from endangered and minority languages around the world
+                        Discover and learn from endangered languages in the Philippines
                     </p>
                 </header>
 
