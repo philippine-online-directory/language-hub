@@ -1,0 +1,117 @@
+.contributionsPage {
+  min-height: calc(100vh - 80px);
+  padding: var(--space-7) 0;
+}
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--gutter-desktop);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.title {
+  font-size: var(--text-h1);
+  line-height: var(--lh-h1);
+  font-weight: 600;
+  color: var(--color-indigo-900);
+  margin-bottom: var(--space-2);
+}
+
+.subtitle {
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  color: var(--color-gray-500);
+}
+
+.contributionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: var(--gutter-desktop);
+}
+
+.contributionItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.contributionMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-parchment-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--space-2);
+  font-size: var(--text-meta);
+}
+
+.status {
+  color: var(--color-indigo-900);
+  font-weight: 500;
+}
+
+.date {
+  color: var(--color-gray-500);
+}
+
+.empty {
+  text-align: center;
+  padding: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.empty p {
+  font-size: var(--text-body-lg);
+  color: var(--color-gray-500);
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: var(--space-7);
+  font-size: var(--text-body-lg);
+  color: var(--color-gray-500);
+}
+
+.error {
+  color: var(--color-copper-500);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 var(--gutter-tablet);
+  }
+
+  .header {
+    flex-direction: column;
+  }
+
+  .contributionsGrid {
+    grid-template-columns: 1fr;
+    gap: var(--gutter-tablet);
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 var(--gutter-mobile);
+  }
+
+  .contributionsPage {
+    padding: var(--space-5) 0;
+  }
+}
