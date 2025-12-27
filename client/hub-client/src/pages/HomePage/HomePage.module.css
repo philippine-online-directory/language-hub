@@ -1,0 +1,138 @@
+.homePage {
+  min-height: calc(100vh - 80px);
+  background: #F6F4EF;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 64px 24px;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 96px;
+}
+
+.heroTitle {
+  font-family: 'Fraunces', serif;
+  font-size: 40px;
+  line-height: 48px;
+  font-weight: 500;
+  color: #1F2937;
+  margin-bottom: 24px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.heroSubtitle {
+  font-size: 18px;
+  line-height: 28px;
+  color: #6B7280;
+  margin-bottom: 32px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.heroActions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 48px;
+  margin-bottom: 96px;
+}
+
+.feature {
+  text-align: center;
+}
+
+.featureTitle {
+  font-family: 'Fraunces', serif;
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 500;
+  color: #1F2937;
+  margin-bottom: 16px;
+}
+
+.featureDescription {
+  font-size: 16px;
+  line-height: 24px;
+  color: #6B7280;
+}
+
+.callToAction {
+  text-align: center;
+  padding: 48px;
+  background: white;
+  border-radius: 14px;
+  border: 1px solid #E5E7EB;
+}
+
+.ctaTitle {
+  font-family: 'Fraunces', serif;
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 500;
+  color: #1F2937;
+  margin-bottom: 16px;
+}
+
+.ctaDescription {
+  font-size: 18px;
+  line-height: 28px;
+  color: #6B7280;
+  margin-bottom: 32px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 48px 16px;
+  }
+
+  .hero {
+    margin-bottom: 64px;
+  }
+
+  .heroTitle {
+    font-size: 32px;
+    line-height: 40px;
+  }
+
+  .heroSubtitle {
+    font-size: 16px;
+  }
+
+  .features {
+    gap: 32px;
+    margin-bottom: 64px;
+  }
+
+  .featureTitle {
+    font-size: 20px;
+  }
+
+  .callToAction {
+    padding: 32px 24px;
+  }
+
+  .ctaTitle {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  .ctaDescription {
+    font-size: 16px;
+  }
+}
