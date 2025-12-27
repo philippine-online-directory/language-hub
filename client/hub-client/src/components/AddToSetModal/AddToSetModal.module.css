@@ -1,0 +1,108 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(31, 41, 55, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.title {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 600;
+  color: #1F2937;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 16px;
+  line-height: 24px;
+  color: #6B7280;
+  margin-bottom: 24px;
+}
+
+.error {
+  background: #FEE;
+  color: #C00;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.loading, .empty {
+  text-align: center;
+  padding: 32px;
+  color: #6B7280;
+  font-size: 16px;
+}
+
+.hint {
+  font-size: 14px;
+  color: #6B7280;
+  margin-top: 8px;
+}
+
+.setList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.setOption {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 150ms ease-out;
+}
+
+.setOption:hover {
+  border-color: #C0763A;
+}
+
+.radio {
+  width: 18px;
+  height: 18px;
+  accent-color: #C0763A;
+  cursor: pointer;
+}
+
+.setInfo {
+  flex: 1;
+}
+
+.setName {
+  font-weight: 500;
+  color: #1F2937;
+  display: block;
+  margin-bottom: 4px;
+  font-size: 16px;
+}
+
+.setMeta {
+  font-size: 14px;
+  color: #6B7280;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
