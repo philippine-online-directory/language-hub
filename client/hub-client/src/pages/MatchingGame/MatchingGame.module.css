@@ -1,0 +1,136 @@
+.matchingGame {
+  min-height: calc(100vh - 80px);
+  background: #F6F4EF;
+  padding: 48px 24px;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 48px;
+}
+
+.title {
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 600;
+  color: #1F2937;
+}
+
+.stats {
+  display: flex;
+  gap: 24px;
+  font-size: 16px;
+  color: #6B7280;
+}
+
+.loading {
+  text-align: center;
+  padding: 48px;
+  color: #6B7280;
+  font-size: 16px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.matchCard {
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 150ms ease-out;
+  padding: 16px;
+}
+
+.matchCard:hover:not(.matched):not(.selected) {
+  transform: translateY(-2px);
+}
+
+.cardContent {
+  text-align: center;
+  font-size: 16px;
+  line-height: 24px;
+  color: #1F2937;
+  word-wrap: break-word;
+}
+
+.wordCard .cardContent {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.selected {
+  border-color: #C0763A;
+  border-width: 2px;
+}
+
+.matched {
+  background: rgba(192, 118, 58, 0.1);
+  border-color: #C0763A;
+  cursor: default;
+  opacity: 0.6;
+}
+
+.exitButton {
+  display: block;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .matchingGame {
+    padding: 32px 16px;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .title {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  .stats {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .matchCard {
+    min-height: 100px;
+    padding: 12px;
+  }
+
+  .cardContent {
+    font-size: 14px;
+  }
+
+  .wordCard .cardContent {
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
