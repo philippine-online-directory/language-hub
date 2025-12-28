@@ -1,9 +1,7 @@
 const auth = require('../middleware/auth')
-const { isAdmin } = require('../middleware/roleAuth')
 const contributeService = require('../services/contributeService')
 const { body, matchedData } = require('express-validator')
-const { PrismaClient } = require('@prisma/client')
-const prisma = new PrismaClient();
+const prisma = require('../prisma')
 const validationErrorCheck = require('../middleware/expressValidate')
 
 const validateContribution = [

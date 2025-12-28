@@ -1,4 +1,5 @@
 const setService = require('../services/setService')
+const auth = require('../middleware/auth')
 
 const getUserSets = [
     auth,
@@ -82,10 +83,27 @@ const deleteSet = [
     }
 ]
 
+const getPublicSets = [
+    auth,
+    async (req, res, next) => {
+        const { name } = req.query;
+
+        try {
+            const sets = await setService.getPublicSets(name);
+
+            res.status(200).json(sets);
+        }
+        catch (err){
+            next(err)
+        }
+    }
+]
+
 module.exports = {
     getUserSets,
     createSet,
     getSetWords,
     publishSet,
-    deleteSet
+    deleteSet,
+    getPublicSets
 }

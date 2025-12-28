@@ -1,5 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../prisma')
 
 async function viewGameSessions(userId, setId, gameType){
     if (!userId) throw new Error("Must be logged in to view game sessions");

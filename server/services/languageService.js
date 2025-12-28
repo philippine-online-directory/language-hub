@@ -1,5 +1,4 @@
-const { PrismaClient } = require('@prisma/client')
-const prisma = new PrismaClient();
+const prisma = require('../prisma')
 
 async function addLanguage(name, speakerCount, isoCode, preservationNote){
     const addedLanguage = await prisma.language.create({

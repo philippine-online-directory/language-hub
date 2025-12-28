@@ -1,5 +1,4 @@
-const { PrismaClient } = require('@prisma/client')
-const prisma = new PrismaClient();
+const prisma = require('../prisma')
 
 async function getUserSets(userId){
     if (!userId) throw new Error("Must be logged in to view sets");
@@ -14,6 +13,17 @@ async function getUserSets(userId){
     })
 
     return user.createdSets;
+}
+
+async function getPublicSets(setName){
+    const sets = await prisma.vocabSet.findMany({
+        where: {
+            name: {
+                startsWith: setName,
+                mode: 'insensitive'
+            }
+        }
+    })
 }
 
 async function createSet(name, description, userId){
@@ -120,5 +130,6 @@ module.exports = {
     createSet,
     getSetWords,
     publishSet,
-    deleteSet
+    deleteSet,
+    getPublicSets
 }

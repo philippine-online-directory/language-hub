@@ -8,6 +8,7 @@ const { addTranslationToSet, removeTranslationFromSet } = require('../controller
 setRouter.get('/public', setController.getPublicSets);
 
 setRouter.get('/', setController.getUserSets);
+setRouter.get('/public', setController.getPublicSets);
 setRouter.post('/', setController.createSet);
 setRouter.get('/:setId', setController.getSetWords);
 setRouter.put('/:setId', setController.publishSet);
