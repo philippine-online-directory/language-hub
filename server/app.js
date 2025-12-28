@@ -14,19 +14,23 @@ const handleError = require('./middleware/errorHandler')
 
 const origin = process.env.FRONTEND_URL || 'http://localhost:5173'
 
-const limiter = rateLimit({
+app.use(cors({
+    origin,
+    credentials: true,
+    optionsSuccessStatus: 200
+}))
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(rateLimit({
     windowMs: 15 * 60 * 1000,
     limit: 100,
-
-})
+  }));
+}
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(limiter)
-app.use(cors({
-    origin,
-    optionsSuccessStatus: 200
-}))
+
+
 
 app.use('/', authRouter)
 app.use('/contributions', contributionRouter)
