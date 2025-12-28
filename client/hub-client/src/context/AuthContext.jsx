@@ -2,6 +2,8 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import { authService } from '../api/authService';
 import { profileService } from '../api/profileService';
 
+const AuthContext = createContext(null);
+
 export function useAuth(){
     const context = useContext(AuthContext);
     if (!context) {
