@@ -78,13 +78,13 @@ export default function UserContributionsPage(){
                         {contributions.map((contribution) => (
                         <div key={contribution.id} className={styles.contributionItem}>
                             <WordDisplay translation={contribution} showAddToSet={false} />
-                                <div className={styles.contributionMeta}>
-                                <span className={styles.status}>
-                                    Status: {contribution.status === 'VERIFIED' ? 'Verified' : 'Pending Review'}
-                                </span>
-                                <span className={styles.date}>
-                                    {new Date(contribution.createdAt).toLocaleDateString()}
-                                </span>
+                            <div className={styles.contributionMeta}>
+                            <span className={styles.status}>
+                                Status: {contribution.status === 'VERIFIED' ? 'Verified' : 'Pending Review'}
+                            </span>
+                            <span className={styles.date}>
+                                {new Date(contribution.createdAt).toLocaleDateString()}
+                            </span>
                             </div>
                         </div>
                         ))}

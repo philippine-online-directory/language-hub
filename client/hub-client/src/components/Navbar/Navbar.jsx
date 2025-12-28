@@ -20,23 +20,25 @@ export default function Navbar(){
                 </Link>
 
                 <div className={styles.navLinks}>
-                    <Link to="/languages" className={styles.navLink}>
-                        Languages
-                    </Link>
-                    
                     {user ? (
                         <>
+                            <Link to="/languages" className={styles.navLink}>
+                                Languages
+                            </Link>
                             <Link to="/sets" className={styles.navLink}>
                                 Sets
                             </Link>
                             <Link to="/contribute" className={styles.navLink}>
                                 Contribute
                             </Link>
+                            <Link to="/contributions" className={styles.navLink}>
+                                My Contributions
+                            </Link>
                             <Link to="/users" className={styles.navLink}>
                                 Users
                             </Link>
                             <Link to="/profile/me" className={styles.navLink}>
-                                My Profile
+                                Profile
                             </Link>
                             {user.role === 'ADMIN' && (
                                 <Link to="/admin" className={styles.navLink}>
@@ -45,9 +47,11 @@ export default function Navbar(){
                             )}
                         </>
                     ) : (
-                        <Link to="/sets/public" className={styles.navLink}>
-                            Public Sets
-                        </Link>
+                        <>
+                            <Link to="/languages" className={styles.navLink}>
+                                Languages
+                            </Link>
+                        </>
                     )}
                 </div>
 
