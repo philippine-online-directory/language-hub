@@ -17,6 +17,7 @@ import HomePage from './pages/HomePage/HomePage';
 import FlashcardGame from './pages/FlashcardGame/FlashcardGame';
 import MatchingGame from './pages/MatchingGame/MatchingGame';
 import WritingGame from './pages/WritingGame/WritingGame';
+import GameSessionsPage from './pages/GameSessionsPage/GameSessionsPage';
 import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
 import AdminLanguagesPage from './pages/AdminLanguagesPage/AdminLanguagesPage';
 import AdminTranslationsPage from './pages/AdminTranslationsPage/AdminTranslationsPage';
@@ -154,6 +155,15 @@ function AppContent(){
                     element={
                         <ProtectedRoute>
                             <WritingGame />
+                        </ProtectedRoute>
+                    }
+                />
+                
+                <Route
+                    path="/sets/:setId/sessions"
+                    element={
+                        <ProtectedRoute>
+                            <GameSessionsPage />
                         </ProtectedRoute>
                     }
                 />
