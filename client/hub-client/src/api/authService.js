@@ -17,7 +17,7 @@ async function logout(){
     localStorage.removeItem('authToken');
 }
 
-async function getToken(){
+function getToken(){
     return localStorage.getItem('authToken');
 }
 

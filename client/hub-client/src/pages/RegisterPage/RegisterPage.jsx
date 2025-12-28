@@ -43,15 +43,15 @@ export default function RegisterPage(){
         if (!formData.username) {
             newErrors.username = 'Username is required';
         } 
-        else if (formData.username.length < 3) {
-            newErrors.username = 'Username must be at least 3 characters';
+        else if (formData.username.length < 4) {
+            newErrors.username = 'Username must be at least 4 characters';
         }
         
         if (!formData.password) {
             newErrors.password = 'Password is required';
         } 
-        else if (formData.password.length < 6) {
-            newErrors.password = 'Password must be at least 6 characters';
+        else if (formData.password.length < 8) {
+            newErrors.password = 'Password must be at least 8 characters';
         }
         
         if (formData.password !== formData.confirmPassword) {
@@ -133,7 +133,7 @@ export default function RegisterPage(){
                             onChange={handleChange}
                             error={errors.password}
                             required
-                            placeholder="At least 6 characters"
+                            placeholder="At least 8 characters"
                         />
 
                         <Input

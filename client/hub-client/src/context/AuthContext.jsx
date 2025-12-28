@@ -4,7 +4,7 @@ import { profileService } from '../api/profileService';
 
 const AuthContext = createContext(null);
 
-export function useAuth(){
+export function useAuth() {
     const context = useContext(AuthContext);
     if (!context) {
         throw new Error('useAuth must be used within AuthProvider');
@@ -12,26 +12,32 @@ export function useAuth(){
     return context;
 }
 
-export function AuthProvider({ children }){
+export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const loadUser = async () => {
-            if (authService.isAuthenticated()) {
-                try {
-                    const userData = await profileService.getMyProfile();
-                    setUser(userData);
-                } 
-                catch (error) {
-                    console.error('Failed to load user:', error);
-                    authService.logout();
-                }
-            }
-            setLoading(false);
-        }
+        const bootstrapAuth = async () => {
+            const token = authService.getToken();
 
-        loadUser();
+            if (!token) {
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const userData = await profileService.getMyProfile();
+                setUser(userData);
+            } catch (err) {
+                console.error('Auth bootstrap failed:', err);
+                authService.logout();
+                setUser(null);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        bootstrapAuth();
     }, []);
 
     const login = async (credentials) => {
@@ -42,8 +48,7 @@ export function AuthProvider({ children }){
     };
 
     const register = async (userData) => {
-        const response = await authService.register(userData);
-        return response;
+        return authService.register(userData);
     };
 
     const logout = () => {
@@ -60,5 +65,9 @@ export function AuthProvider({ children }){
         isAuthenticated: !!user,
     };
 
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+    return (
+        <AuthContext.Provider value={value}>
+            {children}
+        </AuthContext.Provider>
+    );
 }
