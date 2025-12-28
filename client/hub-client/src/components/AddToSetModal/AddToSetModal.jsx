@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { setService } from '../api/setService';
-import Button from './Button/Button';
-import Card from './Card/Card';
+import { setService } from '../../api/setService';
+import Button from '../Button/Button';
+import Card from '../Card/Card';
 import styles from './AddToSetModal.module.css';
 
 export default function AddToSetModal({ translation, onClose }){

@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { languageService } from '../api/languageService';
-import { translationService } from '../api/translationService';
-import Button from '../components/Button/Button';
-import WordDisplay from '../components/WordDisplay/WordDisplay';
+import { useAuth } from '../../context/AuthContext';
+import { languageService } from '../../api/languageService';
+import Button from '../../components/Button/Button';
+import WordDisplay from '../../components/WordDisplay/WordDisplay';
 import styles from './AdminTranslationsPage.module.css';
 
 export default function AdminTranslationsPage(){
@@ -54,7 +53,7 @@ export default function AdminTranslationsPage(){
 
     const handleVerify = async (translationId) => {
         try {
-            await translationService.updateTranslationStatus(
+            await languageService.updateTranslationStatus(
                 selectedLanguage,
                 translationId,
                 'VERIFIED'
@@ -68,7 +67,7 @@ export default function AdminTranslationsPage(){
 
     const handleUnverify = async (translationId) => {
         try {
-            await translationService.updateTranslationStatus(
+            await languageService.updateTranslationStatus(
                 selectedLanguage,
                 translationId,
                 'UNVERIFIED'

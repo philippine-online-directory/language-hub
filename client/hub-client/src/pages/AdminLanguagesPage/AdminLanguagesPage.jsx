@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { languageService } from '../api/languageService';
-import Button from '../components/Button/Button';
-import Card from '../components/Card/Card';
-import Input from '../components/Input/Input';
+import { useAuth } from '../../context/AuthContext';
+import { languageService } from '../../api/languageService';
+import Button from '../../components/Button/Button';
+import Card from '../../components/Card/Card';
+import Input from '../../components/Input/Input';
 import styles from './AdminLanguagesPage.module.css';
 
 export default function AdminLanguagesPage(){
