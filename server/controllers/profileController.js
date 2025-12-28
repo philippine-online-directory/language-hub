@@ -4,7 +4,7 @@ const profileService = require('../services/profileService')
 const getMyProfile = [
     auth,
     async (req, res, next) => {
-        const { id } = req.user.id
+        const { id } = req.user
 
         try {
             const profile = await profileService.getMyProfile(id)
