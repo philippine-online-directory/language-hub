@@ -3,7 +3,7 @@ module.exports = function handleError(err, req, res, next) {
 
     if (err.statusCode) {
         return res.status(err.statusCode).json({
-            message: err.message
+            errors: err.errors
         });
     }
 

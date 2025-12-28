@@ -25,7 +25,6 @@ const validateRegister = [
         .notEmpty()
         .trim()
         .isLength({ min: 4, max: 25 }).withMessage('Username must be between 4 and 25 characters')
-        .isAlphanumeric().withMessage('Username must contain only alphanumeric characters')
 ]
 
 const validateLogin = [
