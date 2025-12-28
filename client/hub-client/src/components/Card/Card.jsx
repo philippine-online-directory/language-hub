@@ -8,7 +8,7 @@ export default function Card({ children, onClick, hoverable = false, className =
         className
     ].filter(Boolean).join(' ')
 
-    const Component = onClick ? button : div;
+    const Component = onClick ? 'button' : 'div';
 
     return (
         <Component className={classes} onClick={onClick}>
