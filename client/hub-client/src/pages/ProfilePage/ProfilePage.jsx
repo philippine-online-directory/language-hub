@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { profileService } from '../../api/profileService';
 import Card from '../../components/Card/Card';
 import WordDisplay from '../../components/WordDisplay/WordDisplay';
-import styles from './PublicProfilePage.module.css';
+import styles from './ProfilePage.module.css';
 
-export default function PublicProfilePage() {
-  const { userId } = useParams();
+export default function ProfilePage() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -17,7 +16,7 @@ export default function PublicProfilePage() {
       setLoading(true);
       setError(null);
       try {
-        const data = await profileService.getPublicProfile(userId);
+        const data = await profileService.getMyProfile();
         setProfile(data);
       } catch (err) {
         setError('Failed to load profile. Please try again.');
@@ -28,11 +27,11 @@ export default function PublicProfilePage() {
     };
 
     fetchProfile();
-  }, [userId]);
+  }, []);
 
   if (loading) {
     return (
-      <div className={styles.publicProfilePage}>
+      <div className={styles.profilePage}>
         <div className={styles.container}>
           <div className={styles.loading}>Loading profile...</div>
         </div>
@@ -42,7 +41,7 @@ export default function PublicProfilePage() {
 
   if (error || !profile) {
     return (
-      <div className={styles.publicProfilePage}>
+      <div className={styles.profilePage}>
         <div className={styles.container}>
           <div className={styles.error}>{error || 'Profile not found'}</div>
         </div>
@@ -51,7 +50,7 @@ export default function PublicProfilePage() {
   }
 
   return (
-    <div className={styles.publicProfilePage}>
+    <div className={styles.profilePage}>
       <div className={styles.container}>
         <Card className={styles.profileCard}>
           <div className={styles.profileHeader}>
@@ -97,14 +96,24 @@ export default function PublicProfilePage() {
             className={`${styles.tab} ${activeTab === 'sets' ? styles.activeTab : ''}`}
             onClick={() => setActiveTab('sets')}
           >
-            Public Sets ({profile.createdSets?.filter(s => s.isPublic).length || 0})
+            My Sets ({profile.createdSets?.length || 0})
           </button>
         </div>
 
         {activeTab === 'contributions' && (
           <div className={styles.contentSection}>
             {profile.contributions?.length === 0 ? (
-              <div className={styles.empty}>No contributions yet</div>
+              <div className={styles.empty}>
+                <p>You haven't contributed any words yet.</p>
+                <Link to="/contribute">
+                  <Card hoverable className={styles.actionCard}>
+                    <h3 className={styles.actionTitle}>Start Contributing</h3>
+                    <p className={styles.actionDescription}>
+                      Share words to help preserve languages
+                    </p>
+                  </Card>
+                </Link>
+              </div>
             ) : (
               <div className={styles.contributionsGrid}>
                 {profile.contributions?.map((contribution) => (
@@ -121,16 +130,26 @@ export default function PublicProfilePage() {
 
         {activeTab === 'sets' && (
           <div className={styles.contentSection}>
-            {profile.createdSets?.filter(s => s.isPublic).length === 0 ? (
-              <div className={styles.empty}>No public sets</div>
+            {profile.createdSets?.length === 0 ? (
+              <div className={styles.empty}>
+                <p>You haven't created any sets yet.</p>
+                <Link to="/sets/create">
+                  <Card hoverable className={styles.actionCard}>
+                    <h3 className={styles.actionTitle}>Create Your First Set</h3>
+                    <p className={styles.actionDescription}>
+                      Build vocabulary collections for learning
+                    </p>
+                  </Card>
+                </Link>
+              </div>
             ) : (
               <div className={styles.setsGrid}>
-                {profile.createdSets?.filter(s => s.isPublic).map((set) => (
+                {profile.createdSets?.map((set) => (
                   <Link key={set.id} to={`/sets/${set.id}`} className={styles.setLink}>
                     <Card hoverable className={styles.setCard}>
                       <div className={styles.setHeader}>
                         <h3 className={styles.setName}>{set.name}</h3>
-                        <span className={styles.publicBadge}>Public</span>
+                        {set.isPublic && <span className={styles.publicBadge}>Public</span>}
                       </div>
                       <p className={styles.setDescription}>{set.description}</p>
                       <div className={styles.setMeta}>
