@@ -1,78 +1,184 @@
 .wordDisplay {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
+  position: relative;
+  overflow: visible;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wordDisplay::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  background: linear-gradient(
+    135deg,
+    rgba(192, 118, 58, 0.1),
+    rgba(31, 41, 55, 0.05)
+  );
+  border-radius: 20px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+}
+
+.wordDisplay:hover::before {
+  opacity: 1;
 }
 
 .wordHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
+  margin-bottom: 12px;
 }
 
 .word {
-  font-family: var(--font-accent);
-  font-size: var(--text-h2);
-  line-height: var(--lh-h2);
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  line-height: 36px;
   font-weight: 500;
-  color: var(--color-indigo-900);
+  background: linear-gradient(135deg, #1F2937 0%, #C0763A 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+  display: inline-block;
+  position: relative;
 }
 
-.playButton {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background-color: transparent;
-  border: 1px solid var(--color-gray-200);
-  color: var(--color-indigo-900);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all var(--transition-hover);
-  flex-shrink: 0;
+.word::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #C0763A, transparent);
+  transition: width 0.4s ease;
 }
 
-.playButton:hover {
-  border-color: var(--color-copper-500);
-}
-
-.playButton.playing {
-  box-shadow: 0 0 0 4px rgba(192, 118, 58, 0.2);
+.wordDisplay:hover .word::after {
+  width: 100%;
 }
 
 .ipa {
-  font-size: var(--text-meta);
-  line-height: var(--lh-meta);
-  color: var(--color-gray-500);
+  font-size: 14px;
+  line-height: 20px;
+  color: #6B7280;
   font-style: italic;
+  margin-bottom: 16px;
+  padding: 6px 12px;
+  background: rgba(192, 118, 58, 0.05);
+  border-radius: 6px;
+  display: inline-block;
+  border-left: 3px solid #C0763A;
 }
 
 .divider {
   height: 1px;
-  background-color: var(--color-gray-200);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(229, 231, 235, 0.8),
+    transparent
+  );
+  margin: 16px 0;
 }
 
 .definition {
-  font-size: var(--text-body-lg);
-  line-height: var(--lh-body-lg);
-  color: var(--color-indigo-900);
+  font-size: 16px;
+  line-height: 24px;
+  color: #1F2937;
+  margin-bottom: 16px;
 }
 
 .example {
-  font-size: var(--text-body);
-  line-height: var(--lh-body);
-  color: var(--color-gray-500);
+  font-size: 15px;
+  line-height: 22px;
+  color: #6B7280;
+  font-style: italic;
+  padding: 12px 16px;
+  background: rgba(107, 114, 128, 0.05);
+  border-radius: 8px;
+  border-left: 3px solid #6B7280;
+  position: relative;
+}
+
+.example::before {
+  content: '"';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 24px;
+  color: rgba(192, 118, 58, 0.3);
+  font-family: 'Fraunces', serif;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(229, 231, 235, 0.6);
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .verifiedBadge {
-  margin-top: var(--space-3);
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--color-gray-200);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
+  color: #059669;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  animation: pulse 2s ease-in-out infinite;
 }
 
-.verifiedBadge span {
-  font-size: var(--text-meta);
-  color: var(--color-gray-500);
+.verifiedBadge::before {
+  content: '✓';
+  font-size: 14px;
+  font-weight: 700;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.addButton {
+  position: relative;
+  overflow: hidden;
+}
+
+.addButton::before {
+  content: '+';
+  position: absolute;
+  left: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  transition: transform 0.3s ease;
+}
+
+.addButton:hover::before {
+  transform: rotate(90deg);
+}
+
+/* Stagger animation for multiple word displays */
+.wordDisplay {
+  animation: wordFadeIn 0.5s ease-out backwards;
+}
+
+@keyframes wordFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }

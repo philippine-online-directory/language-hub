@@ -1,50 +1,152 @@
-.inputWrapper {
+.inputGroup {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  width: 100%;
+  gap: 8px;
+  position: relative;
 }
 
 .label {
-  font-size: var(--text-body);
+  font-size: 14px;
   font-weight: 500;
-  color: var(--color-indigo-900);
+  color: #1F2937;
+  transition: color 0.3s ease;
 }
 
-.required {
-  color: var(--color-copper-500);
+.inputWrapper {
+  position: relative;
 }
 
 .input {
-  font-family: var(--font-primary);
-  font-size: var(--text-body);
-  padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--space-2);
-  background-color: var(--color-parchment-50);
-  color: var(--color-indigo-900);
-  transition: border-color var(--transition-hover);
-}
-
-.input:focus {
-  outline: none;
-  border-color: var(--color-copper-500);
-}
-
-.input:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #E5E7EB;
+  border-radius: 12px;
+  font-size: 16px;
+  color: #1F2937;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
 .input::placeholder {
-  color: var(--color-gray-500);
+  color: #9CA3AF;
+  transition: opacity 0.3s ease;
 }
 
-.error {
-  border-color: var(--color-copper-500);
+/* Focus state with glow */
+.input:focus {
+  outline: none;
+  border-color: #C0763A;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(192, 118, 58, 0.1),
+              0 4px 12px rgba(192, 118, 58, 0.15);
+  transform: translateY(-1px);
+}
+
+.input:focus::placeholder {
+  opacity: 0.5;
+}
+
+.input:focus ~ .label {
+  color: #C0763A;
+}
+
+/* Animated border on focus */
+.inputWrapper::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #C0763A, transparent);
+  transition: width 0.4s ease, left 0.4s ease;
+}
+
+.input:focus + ::after {
+  width: 100%;
+  left: 0;
+}
+
+/* Error state */
+.input.error {
+  border-color: #EF4444;
+  background: rgba(254, 226, 226, 0.3);
+}
+
+.input.error:focus {
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1),
+              0 4px 12px rgba(239, 68, 68, 0.15);
 }
 
 .errorText {
-  font-size: var(--text-meta);
-  color: var(--color-copper-500);
+  color: #EF4444;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+
+.errorText::before {
+  content: '⚠';
+  font-size: 14px;
+}
+
+/* Disabled state */
+.input:disabled {
+  background: #F3F4F6;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Success state (optional) */
+.input.success {
+  border-color: #10B981;
+  background: rgba(209, 250, 229, 0.3);
+}
+
+.input.success:focus {
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+/* Textarea styles */
+textarea.input {
+  resize: vertical;
+  min-height: 100px;
+  padding: 12px 16px;
+}
+
+/* Floating label effect */
+.floatingLabel {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6B7280;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: white;
+  padding: 0 4px;
+}
+
+.input:focus ~ .floatingLabel,
+.input:not(:placeholder-shown) ~ .floatingLabel {
+  top: 0;
+  font-size: 12px;
+  color: #C0763A;
 }

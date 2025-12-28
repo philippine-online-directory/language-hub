@@ -1,29 +1,102 @@
 .homePage {
   min-height: calc(100vh - 80px);
   background: #F6F4EF;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated decorative elements */
+.homePage::before {
+  content: '';
+  position: absolute;
+  top: -10%;
+  right: -5%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(192, 118, 58, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: floatSlow 20s ease-in-out infinite;
+}
+
+.homePage::after {
+  content: '';
+  position: absolute;
+  bottom: -10%;
+  left: -5%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(31, 41, 55, 0.04) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: floatSlow 25s ease-in-out infinite reverse;
+}
+
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
 }
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 64px 24px;
+  position: relative;
+  z-index: 1;
 }
 
 .hero {
   text-align: center;
   margin-bottom: 96px;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .heroTitle {
   font-family: 'Fraunces', serif;
-  font-size: 40px;
-  line-height: 48px;
-  font-weight: 500;
-  color: #1F2937;
+  font-size: 48px;
+  line-height: 56px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #1F2937 0%, #C0763A 50%, #1F2937 100%);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   margin-bottom: 24px;
-  max-width: 800px;
+  max-width: 900px;
   margin-left: auto;
   margin-right: auto;
+  animation: gradientFlow 8s ease infinite, titleFloat 3s ease-in-out infinite;
+}
+
+@keyframes gradientFlow {
+  0%, 100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+}
+
+@keyframes titleFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
 }
 
 .heroSubtitle {
@@ -41,17 +114,54 @@
   gap: 16px;
   justify-content: center;
   flex-wrap: wrap;
+  animation: fadeInUp 1s ease-out 0.3s backwards;
 }
 
 .features {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 48px;
   margin-bottom: 96px;
+  perspective: 1000px;
 }
 
 .feature {
   text-align: center;
+  padding: 40px 32px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(229, 231, 235, 0.6);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fadeInUp 0.8s ease-out backwards;
+  position: relative;
+  overflow: hidden;
+}
+
+.feature:nth-child(1) { animation-delay: 0.2s; }
+.feature:nth-child(2) { animation-delay: 0.4s; }
+.feature:nth-child(3) { animation-delay: 0.6s; }
+
+.feature::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(192, 118, 58, 0.05) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.feature:hover {
+  transform: translateY(-12px) rotateX(5deg);
+  box-shadow: 0 20px 60px rgba(192, 118, 58, 0.15);
+  border-color: rgba(192, 118, 58, 0.3);
+}
+
+.feature:hover::before {
+  opacity: 1;
 }
 
 .featureTitle {
@@ -71,10 +181,41 @@
 
 .callToAction {
   text-align: center;
-  padding: 48px;
-  background: white;
-  border-radius: 14px;
-  border: 1px solid #E5E7EB;
+  padding: 64px 48px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(192, 118, 58, 0.05) 100%);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  border: 1px solid rgba(192, 118, 58, 0.2);
+  box-shadow: 0 20px 60px rgba(192, 118, 58, 0.1);
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 1s ease-out backwards;
+  animation-delay: 0.8s;
+}
+
+.callToAction::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(192, 118, 58, 0.05) 50%,
+    transparent 70%
+  );
+  animation: rotateGlow 10s linear infinite;
+}
+
+@keyframes rotateGlow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .ctaTitle {

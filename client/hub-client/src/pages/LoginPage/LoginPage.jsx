@@ -51,7 +51,7 @@ export default function LoginPage(){
 
                     {error && <div className={styles.error}>{error}</div>}
 
-                    <form onSubmit={handleSubmit} className={styles.form}>
+                    <form noValidate onSubmit={handleSubmit} className={styles.form}>
                         <Input
                         label="Email"
                         type="email"
