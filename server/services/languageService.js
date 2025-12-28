@@ -63,7 +63,7 @@ async function deleteLanguage(id){
 }
 
 async function findLanguages(){
-    const languages = await prisma.language.findAll();
+    const languages = await prisma.language.findMany();
 
     return languages
 }
