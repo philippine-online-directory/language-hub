@@ -1,0 +1,170 @@
+/* GameSessionsPage.module.css */
+.gameSessionsPage {
+  min-height: calc(100vh - 80px);
+  padding: var(--space-7) 0;
+}
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--gutter-desktop);
+}
+
+.header {
+  margin-bottom: var(--space-6);
+}
+
+.backLink {
+  display: inline-block;
+  font-size: var(--text-body);
+  color: var(--color-copper-500);
+  text-decoration: none;
+  font-weight: 500;
+  margin-bottom: var(--space-3);
+  transition: opacity var(--transition-hover);
+}
+
+.backLink:hover {
+  opacity: 0.8;
+}
+
+.title {
+  font-size: var(--text-h1);
+  line-height: var(--lh-h1);
+  font-weight: 600;
+  color: var(--color-indigo-900);
+  margin-bottom: var(--space-2);
+}
+
+.subtitle {
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  color: var(--color-gray-500);
+}
+
+.filters {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+  padding: var(--space-4);
+  background-color: var(--color-parchment-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-card);
+  flex-wrap: wrap;
+}
+
+.filterButton {
+  padding: var(--space-3) var(--space-4);
+  background-color: transparent;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--space-2);
+  color: var(--color-indigo-900);
+  font-size: var(--text-body);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-hover);
+}
+
+.filterButton:hover {
+  border-color: var(--color-copper-500);
+}
+
+.filterButton.active {
+  background-color: var(--color-copper-500);
+  border-color: var(--color-copper-500);
+  color: var(--color-indigo-900);
+}
+
+.sessionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--gutter-desktop);
+}
+
+.sessionCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.sessionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.gameType {
+  font-size: var(--text-h3);
+  line-height: var(--lh-h3);
+  font-weight: 600;
+  color: var(--color-indigo-900);
+}
+
+.date {
+  font-size: var(--text-meta);
+  color: var(--color-gray-500);
+}
+
+.sessionStats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.statLabel {
+  font-size: var(--text-meta);
+  color: var(--color-gray-500);
+}
+
+.statValue {
+  font-size: var(--text-h3);
+  line-height: var(--lh-h3);
+  font-weight: 600;
+  color: var(--color-copper-500);
+}
+
+.loading,
+.empty,
+.error {
+  text-align: center;
+  padding: var(--space-7);
+  font-size: var(--text-body-lg);
+  color: var(--color-gray-500);
+}
+
+.error {
+  color: var(--color-copper-500);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 var(--gutter-tablet);
+  }
+
+  .filters {
+    flex-direction: column;
+  }
+
+  .sessionsGrid {
+    grid-template-columns: 1fr;
+    gap: var(--gutter-tablet);
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 var(--gutter-mobile);
+  }
+
+  .gameSessionsPage {
+    padding: var(--space-5) 0;
+  }
+}
