@@ -27,7 +27,7 @@ model User {
 }
 
 model Language {
-  id               String  @id @default(cuid())
+  id               String  @id @default(uuid())
   name             String  @unique
   speakerCount     Int?    @default(0)
   isoCode          String  @unique
@@ -38,7 +38,7 @@ model Language {
 }
 
 model Translation {
-  id                String    @id @default(cuid())
+  id                String    @id @default(uuid())
   wordText          String
   ipa               String?
   englishDefinition String
@@ -58,7 +58,7 @@ model Translation {
 }
 
 model VocabSet {
-  id          String  @id @default(cuid())
+  id          String  @id @default(uuid())
   name        String  @unique
   description String
   isPublic    Boolean @default(false)
@@ -87,7 +87,7 @@ model SetWord {
 }
 
 model GameSession {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   gameType  GameType
   score     Int
   duration  Float
