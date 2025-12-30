@@ -1,12 +1,48 @@
 .setsPage {
   min-height: calc(100vh - 80px);
-  background: #F6F4EF;
+  background: linear-gradient(135deg, #F6F4EF 0%, rgba(192, 118, 58, 0.03) 100%);
   padding: 48px 24px;
+  position: relative;
+}
+
+.setsPage::before {
+  content: '';
+  position: absolute;
+  bottom: -5%;
+  left: -10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(31, 41, 55, 0.03) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: floatSlow 25s ease-in-out infinite;
+}
+
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(20px, -20px);
+  }
 }
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .header {
@@ -18,10 +54,13 @@
 }
 
 .title {
-  font-size: 32px;
-  line-height: 40px;
+  font-size: 40px;
+  line-height: 48px;
   font-weight: 600;
-  color: #1F2937;
+  background: linear-gradient(135deg, #1F2937 0%, #C0763A 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   margin-bottom: 8px;
 }
 
@@ -41,10 +80,12 @@
 .tabs {
   display: flex;
   gap: 8px;
-  background: white;
-  padding: 4px;
-  border-radius: 8px;
-  border: 1px solid #E5E7EB;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid rgba(229, 231, 235, 0.8);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .tab {
@@ -54,24 +95,42 @@
   font-size: 16px;
   font-weight: 500;
   color: #6B7280;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 150ms ease-out;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: 'IBM Plex Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  position: relative;
+}
+
+.tab::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(192, 118, 58, 0.05);
+  border-radius: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .tab:hover {
   color: #1F2937;
-  background: rgba(192, 118, 58, 0.05);
+}
+
+.tab:hover::before {
+  opacity: 1;
 }
 
 .activeTab {
-  background: #C0763A;
+  background: linear-gradient(135deg, #C0763A 0%, #D68A4F 100%);
   color: white;
+  box-shadow: 0 4px 12px rgba(192, 118, 58, 0.3);
+}
+
+.activeTab::before {
+  display: none;
 }
 
 .activeTab:hover {
-  background: #C0763A;
   color: white;
 }
 
@@ -133,17 +192,36 @@
   font-size: 20px;
   line-height: 28px;
   font-weight: 500;
-  color: #1F2937;
+  background: linear-gradient(135deg, #1F2937 0%, #C0763A 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: all 0.3s ease;
+}
+
+.setCard:hover .setName {
+  transform: translateX(4px);
 }
 
 .publicBadge {
-  background: rgba(192, 118, 58, 0.1);
+  background: linear-gradient(135deg, rgba(192, 118, 58, 0.15) 0%, rgba(192, 118, 58, 0.08) 100%);
   color: #C0763A;
   padding: 4px 12px;
   border-radius: 12px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   flex-shrink: 0;
+  border: 1px solid rgba(192, 118, 58, 0.2);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
 }
 
 .setDescription {

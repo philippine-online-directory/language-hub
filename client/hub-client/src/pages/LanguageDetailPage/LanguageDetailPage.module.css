@@ -1,22 +1,53 @@
 .languageDetailPage {
   min-height: calc(100vh - 80px);
-  padding: var(--space-7) 0;
+  padding: 48px 0;
+  background: #F6F4EF;
+  position: relative;
 }
 
 .container {
-  max-width: var(--max-width);
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 var(--gutter-desktop);
+  padding: 0 24px;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: var(--space-5);
-  margin-bottom: var(--space-7);
-  padding-bottom: var(--space-6);
-  border-bottom: 1px solid var(--color-gray-200);
+  gap: 24px;
+  margin-bottom: 48px;
+  padding-bottom: 32px;
+  border-bottom: 2px solid transparent;
+  background: linear-gradient(90deg, #E5E7EB 0%, transparent 100%) bottom/100% 2px no-repeat;
+  position: relative;
+}
+
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #C0763A, transparent);
+  transition: width 0.8s ease;
+}
+
+.header:hover::after {
+  width: 50%;
 }
 
 .headerContent {
@@ -24,90 +55,128 @@
 }
 
 .languageName {
-  font-family: var(--font-accent);
-  font-size: var(--text-display);
-  line-height: var(--lh-display);
-  font-weight: 500;
-  color: var(--color-indigo-900);
-  margin-bottom: var(--space-3);
+  font-family: 'Fraunces', serif;
+  font-size: 48px;
+  line-height: 56px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #1F2937 0%, #C0763A 50%, #1F2937 100%);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 12px;
+  animation: gradientShift 6s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
 }
 
 .meta {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
-  font-size: var(--text-body);
-  margin-bottom: var(--space-4);
+  gap: 16px;
+  font-size: 16px;
+  margin-bottom: 16px;
+  animation: fadeInUp 0.8s ease-out 0.2s backwards;
 }
 
 .isoCode {
   font-weight: 600;
-  color: var(--color-indigo-900);
+  color: white;
+  background: linear-gradient(135deg, #C0763A 0%, #D68A4F 100%);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(192, 118, 58, 0.3);
 }
 
 .speakerCount {
-  color: var(--color-gray-500);
+  color: #6B7280;
+  padding: 6px 12px;
+  background: rgba(107, 114, 128, 0.1);
+  border-radius: 8px;
+  font-size: 14px;
 }
 
 .preservationNote {
-  font-size: var(--text-body-lg);
-  line-height: var(--lh-body-lg);
-  color: var(--color-gray-500);
+  font-size: 18px;
+  line-height: 28px;
+  color: #6B7280;
+  padding: 16px;
+  background: rgba(192, 118, 58, 0.05);
+  border-left: 4px solid #C0763A;
+  border-radius: 8px;
+  animation: fadeInUp 1s ease-out 0.4s backwards;
 }
 
 .sectionTitle {
-  font-size: var(--text-h2);
-  line-height: var(--lh-h2);
+  font-size: 32px;
+  line-height: 40px;
   font-weight: 600;
-  color: var(--color-indigo-900);
-  margin-bottom: var(--space-5);
+  background: linear-gradient(135deg, #1F2937 0%, #C0763A 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 24px;
 }
 
 .translationsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: var(--gutter-desktop);
+  gap: 24px;
 }
 
 .loading,
 .empty,
 .error {
   text-align: center;
-  padding: var(--space-7);
-  font-size: var(--text-body-lg);
-  color: var(--color-gray-500);
+  padding: 64px;
+  font-size: 18px;
+  color: #6B7280;
 }
 
 .error {
-  color: var(--color-copper-500);
+  color: #EF4444;
 }
 
 @media (max-width: 768px) {
   .container {
-    padding: 0 var(--gutter-tablet);
+    padding: 0 20px;
   }
 
   .header {
     flex-direction: column;
   }
 
+  .languageName {
+    font-size: 36px;
+    line-height: 44px;
+  }
+
   .translationsGrid {
     grid-template-columns: 1fr;
-    gap: var(--gutter-tablet);
+    gap: 20px;
   }
 }
 
 @media (max-width: 480px) {
   .container {
-    padding: 0 var(--gutter-mobile);
+    padding: 0 16px;
   }
 
   .languageDetailPage {
-    padding: var(--space-5) 0;
+    padding: 32px 0;
   }
 
   .languageName {
-    font-size: var(--text-h1);
-    line-height: var(--lh-h1);
+    font-size: 32px;
+    line-height: 40px;
   }
 }

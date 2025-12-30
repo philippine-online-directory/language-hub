@@ -1,38 +1,75 @@
 .languageCard {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.languageCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #C0763A, transparent);
+  transition: left 0.5s ease;
+}
+
+.languageCard:hover::before {
+  left: 100%;
 }
 
 .languageName {
-  font-family: var(--font-accent);
-  font-size: var(--text-h3);
-  line-height: var(--lh-h3);
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  line-height: 28px;
   font-weight: 500;
-  color: var(--color-indigo-900);
+  background: linear-gradient(135deg, #1F2937 0%, #C0763A 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: all 0.3s ease;
+}
+
+.languageCard:hover .languageName {
+  transform: translateX(4px);
 }
 
 .meta {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  font-size: var(--text-meta);
-  line-height: var(--lh-meta);
-  color: var(--color-gray-500);
+  gap: 12px;
+  font-size: 14px;
+  line-height: 20px;
+  color: #6B7280;
 }
 
 .isoCode {
-  font-weight: 500;
-  color: var(--color-indigo-900);
+  font-weight: 600;
+  color: #1F2937;
+  padding: 4px 10px;
+  background: rgba(192, 118, 58, 0.1);
+  border-radius: 6px;
+  font-size: 12px;
+  letter-spacing: 0.5px;
 }
 
 .speakerCount {
-  color: var(--color-gray-500);
+  color: #6B7280;
 }
 
 .preservationNote {
-  font-size: var(--text-body);
-  line-height: var(--lh-body);
-  color: var(--color-gray-500);
-  margin-top: var(--space-2);
+  font-size: 14px;
+  line-height: 20px;
+  color: #6B7280;
+  margin-top: 8px;
+  padding-left: 12px;
+  border-left: 3px solid rgba(192, 118, 58, 0.3);
+  transition: border-color 0.3s ease;
+}
+
+.languageCard:hover .preservationNote {
+  border-color: #C0763A;
 }
