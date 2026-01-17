@@ -22,5 +22,8 @@ export default function LanguageCard({ language }){
         {language.preservationNote && (
             <p className={styles.preservationNote}>{language.preservationNote}</p>
         )}
+        {language.culturalBackground && (
+            <p classNam={styles.culturalBackground}>{language.culturalBackground}</p>
+        )}
     </Card>
 }

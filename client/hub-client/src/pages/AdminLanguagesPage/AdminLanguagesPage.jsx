@@ -17,6 +17,7 @@ export default function AdminLanguagesPage(){
         isoCode: '',
         speakerCount: '',
         preservationNote: '',
+        culturalBackground: ''
     });
     const [errors, setErrors] = useState({});
 
@@ -42,6 +43,7 @@ export default function AdminLanguagesPage(){
             isoCode: language.isoCode,
             speakerCount: language.speakerCount?.toString() || '',
             preservationNote: language.preservationNote || '',
+            culturalBackground: language.culturalBackground || ''
         });
         setShowForm(true);
     };
@@ -78,7 +80,7 @@ export default function AdminLanguagesPage(){
             
             setShowForm(false);
             setEditingId(null);
-            setFormData({ name: '', isoCode: '', speakerCount: '', preservationNote: '' });
+            setFormData({ name: '', isoCode: '', speakerCount: '', preservationNote: '', culturalBackground: '' });
             await fetchLanguages();
         } catch (err) {
             setErrors({ submit: err.response?.data?.message || 'Failed to save language' });
@@ -88,7 +90,7 @@ export default function AdminLanguagesPage(){
     const handleCancel = () => {
         setShowForm(false);
         setEditingId(null);
-        setFormData({ name: '', isoCode: '', speakerCount: '', preservationNote: '' });
+        setFormData({ name: '', isoCode: '', speakerCount: '', preservationNote: '', culturalBackground: '' });
         setErrors({});
     };
 
@@ -160,6 +162,18 @@ export default function AdminLanguagesPage(){
                                     placeholder="Optional context about preservation efforts"
                                 />
                             </div>
+                            
+                            <div className={styles.formGroup}>
+                                <label className={styles.label}>Cultural Background</label>
+                                <textarea
+                                    value={formData.culturalBackground}
+                                    onChange={(e) => setFormData({ ...formData, culturalBackground: e.target.value })}
+                                    className={styles.textarea}
+                                    rows="3"
+                                    placeholder="Optional evidence about the origins and culture of the language"
+                                />
+                            </div>
+            
 
                             <div className={styles.actions}>
                                 <Button type="submit" variant="primary">
