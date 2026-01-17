@@ -1,6 +1,6 @@
 const prisma = require('../prisma')
 
-async function addLanguage(name, speakerCount, isoCode, preservationNote, culturalBackground){
+async function addLanguage({ name, speakerCount, isoCode, preservationNote, culturalBackground }){
     const addedLanguage = await prisma.language.create({
         data: {
             name,
@@ -14,35 +14,22 @@ async function addLanguage(name, speakerCount, isoCode, preservationNote, cultur
     return addedLanguage
 }
 
-async function updateLanguage(id, name, speakerCount, isoCode, preservationNote, culturalBackground){
+async function updateLanguage(id, { name, speakerCount, isoCode, preservationNote, culturalBackground }) {
     if (!id) throw new Error('Id missing: Must have id to identify which language to update');
 
-    try {
-        const updatedLanguage = await prisma.language.update({
-            where: {
-                id
-            },
-            data: {
-                name,
-                speakerCount,
-                isoCode,
-                preservationNote,
-                culturalBackground
-            }
-        })
-
-        return updatedLanguage
-    }
-    catch (err) {
-        if (err.code === 'P2025') {
-            throw new Error('Language does not exist')
+    const updatedLanguage = await prisma.language.update({
+        where: { 
+            id 
+        },
+        data: { 
+            name, 
+            speakerCount, 
+            isoCode,
+            preservationNote, 
+            culturalBackground 
         }
-        throw err
-    }
-
-    
-
-    
+    });
+    return updatedLanguage
 }
 
 async function deleteLanguage(id){

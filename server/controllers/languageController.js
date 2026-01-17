@@ -9,8 +9,9 @@ const validateLanguage = [
     body('name').notEmpty()
         .trim(),
     body('speakerCount').optional()
-        .isInt()
-        .trim(),
+        .optional({ nullable: true, checkFalsy: true })
+        .isInt().withMessage('Speaker count must be an integer')
+        .toInt(),
     body('isoCode').notEmpty()
         .trim(),
     body('preservationNote').trim(),
@@ -94,20 +95,14 @@ const addLanguage = [
     validateLanguage,
     validationErrorCheck,
     async (req, res, next) => {
-        const { name,
-            speakerCount,
-            isoCode,
-            preservationNote,
-            culturalBackground
-        } = matchedData(req)
+        const languageData = matchedData(req);
 
         try {
-            const addedLanguage = await languageService.addLanguage(name, speakerCount, isoCode, preservationNote, culturalBackground)
-
-            res.status(201).json(addedLanguage)
+            const addedLanguage = await languageService.addLanguage(languageData); 
+            res.status(201).json(addedLanguage);
         }
         catch (err) {
-            next(err)
+            next(err);
         }
     }
 ]
@@ -118,21 +113,14 @@ const updateLanguage = [
     validateLanguage,
     validationErrorCheck,
     async (req, res, next) => {
-        const { languageId } = req.params
-        const { name,
-            speakerCount,
-            isoCode,
-            preservationNote,
-            culturalBackground
-        } = matchedData(req)
+        const { languageId } = req.params;
+        const languageData = matchedData(req);
 
         try {
-            const updatedLanguage = await languageService.updateLanguage(languageId, name, speakerCount, isoCode, preservationNote, culturalBackground)
-
-            res.status(200).json(updatedLanguage)
-        }
-        catch (err) {
-            next(err)
+            const updatedLanguage = await languageService.updateLanguage(languageId, languageData);
+            res.status(200).json(updatedLanguage);
+        } catch (err) {
+            next(err);
         }
     }
 ]
