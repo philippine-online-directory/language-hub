@@ -129,7 +129,7 @@ export default function AdminLanguagesPage(){
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 required
-                                placeholder="e.g., Navajo"
+                                placeholder="e.g., Ibanag"
                             />
 
                             <Input

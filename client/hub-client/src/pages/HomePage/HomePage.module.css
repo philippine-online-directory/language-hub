@@ -1,157 +1,99 @@
 .homePage {
-  min-height: calc(100vh - 80px);
   background: #F6F4EF;
-  position: relative;
-  overflow: hidden;
 }
 
-/* Animated decorative elements */
-.homePage::before {
-  content: '';
-  position: absolute;
-  top: -10%;
-  right: -5%;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(192, 118, 58, 0.08) 0%, transparent 70%);
-  border-radius: 50%;
-  animation: floatSlow 20s ease-in-out infinite;
-}
-
-.homePage::after {
-  content: '';
-  position: absolute;
-  bottom: -10%;
-  left: -5%;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(31, 41, 55, 0.04) 0%, transparent 70%);
-  border-radius: 50%;
-  animation: floatSlow 25s ease-in-out infinite reverse;
-}
-
-@keyframes floatSlow {
-  0%, 100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(30px, -30px) scale(1.1);
-  }
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 64px 24px;
-  position: relative;
-  z-index: 1;
-}
+/* ============================================
+   HERO SECTION - Editorial Layout
+   ============================================ */
 
 .hero {
-  margin-bottom: 96px;
-}
-
-.heroContent {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 64px;
-  align-items: center;
-}
-
-.heroTextWrapper {
-  animation: slideInFromLeft 0.8s ease-out;
-}
-
-.heroMapWrapper {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
   display: flex;
-  justify-content: center;
   align-items: center;
-  animation: slideInFromRight 0.8s ease-out 0.2s backwards;
+  justify-content: center;
+  background: #F6F4EF;
+}
+
+/* Philippines SVG - Large decorative element */
+.heroMapWrapper {
+  position: absolute;
+  top: 50%;
+  right: -15%;
+  transform: translateY(-50%);
+  width: 140vh;
+  height: 140vh;
+  z-index: 1;
+  pointer-events: none;
+  animation: slideInMapFromRight 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.3s backwards;
 }
 
 .heroMap {
   width: 100%;
-  max-width: 400px;
-  height: auto;
+  height: 100%;
+  object-fit: contain;
   filter: brightness(0) saturate(100%);
-  opacity: 0.85;
-  transition: opacity 0.3s ease;
+  opacity: 0.12;
 }
 
-.heroMap:hover {
-  opacity: 1;
-}
-
-@keyframes slideInFromLeft {
+@keyframes slideInMapFromRight {
   from {
     opacity: 0;
-    transform: translateX(-60px);
+    transform: translateY(-50%) translateX(40%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+/* Hero content - Text wrapper */
+.heroContent {
+  position: relative;
+  z-index: 2;
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 48px;
+  margin: 0 auto;
+}
+
+.heroTextWrapper {
+  max-width: 640px;
+  animation: slideInTextFromRight 1.2s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@keyframes slideInTextFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(100px);
   }
   to {
     opacity: 1;
     transform: translateX(0);
-  }
-}
-
-@keyframes slideInFromRight {
-  from {
-    opacity: 0;
-    transform: translateX(60px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
 
 .heroTitle {
   font-family: 'Fraunces', serif;
-  font-size: 48px;
-  line-height: 56px;
+  font-size: 56px;
+  line-height: 64px;
   font-weight: 600;
-  background: linear-gradient(135deg, #1F2937 0%, #C0763A 50%, #1F2937 100%);
-  background-size: 200% auto;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #1F2937;
   margin-bottom: 24px;
-  animation: gradientFlow 8s ease infinite, titleFloat 3s ease-in-out infinite;
-}
-
-@keyframes gradientFlow {
-  0%, 100% {
-    background-position: 0% center;
-  }
-  50% {
-    background-position: 100% center;
-  }
-}
-
-@keyframes titleFloat {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
+  letter-spacing: -0.02em;
 }
 
 .heroSubtitle {
-  font-size: 18px;
-  line-height: 28px;
+  font-size: 20px;
+  line-height: 32px;
   color: #6B7280;
-  margin-bottom: 32px;
+  margin-bottom: 40px;
+}
+
+.heroSubtitle strong {
+  color: #C0763A;
+  font-weight: 600;
 }
 
 .heroActions {
@@ -159,6 +101,22 @@
   gap: 16px;
   flex-wrap: wrap;
 }
+
+/* ============================================
+   CONTAINER - Below hero
+   ============================================ */
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 96px 24px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================
+   FEATURES SECTION - Scroll animations
+   ============================================ */
 
 .features {
   display: grid;
@@ -175,15 +133,24 @@
   backdrop-filter: blur(10px);
   border-radius: 20px;
   border: 1px solid rgba(229, 231, 235, 0.6);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: fadeInUp 0.8s ease-out backwards;
   position: relative;
   overflow: hidden;
+  opacity: 0;
+  transform: translateY(60px) scale(0.95);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.feature:nth-child(1) { animation-delay: 0.2s; }
-.feature:nth-child(2) { animation-delay: 0.4s; }
-.feature:nth-child(3) { animation-delay: 0.6s; }
+.feature:nth-child(1) { transition-delay: 0s; }
+.feature:nth-child(2) { transition-delay: 0.1s; }
+.feature:nth-child(3) { transition-delay: 0.2s; }
+
+.feature.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
 
 .feature::before {
   content: '';
@@ -222,6 +189,10 @@
   color: #6B7280;
 }
 
+/* ============================================
+   CALL TO ACTION - Scroll animations
+   ============================================ */
+
 .callToAction {
   text-align: center;
   padding: 64px 48px;
@@ -232,8 +203,15 @@
   box-shadow: 0 20px 60px rgba(192, 118, 58, 0.1);
   position: relative;
   overflow: hidden;
-  animation: fadeInUp 1s ease-out backwards;
-  animation-delay: 0.8s;
+  opacity: 0;
+  transform: translateY(60px) rotateX(-5deg);
+  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.callToAction.visible {
+  opacity: 1;
+  transform: translateY(0) rotateX(0deg);
 }
 
 .callToAction::before {
@@ -280,25 +258,33 @@
   margin-right: auto;
 }
 
-/* Reduced motion preferences */
-@media (prefers-reduced-motion: reduce) {
-  .homePage::before,
-  .homePage::after {
-    animation: none;
-  }
+/* ============================================
+   REDUCED MOTION
+   ============================================ */
 
-  .heroTextWrapper,
+@media (prefers-reduced-motion: reduce) {
   .heroMapWrapper,
-  .heroTitle,
-  .feature,
-  .callToAction {
+  .heroTextWrapper {
     animation: none;
     opacity: 1;
+    transform: translateY(-50%);
+  }
+
+  .heroTextWrapper {
     transform: none;
   }
 
-  .heroMap {
+  .feature,
+  .callToAction {
+    opacity: 1;
+    transform: none;
     transition: none;
+  }
+
+  .feature.visible,
+  .callToAction.visible {
+    opacity: 1;
+    transform: none;
   }
 
   .callToAction::before {
@@ -306,43 +292,79 @@
   }
 }
 
-@media (max-width: 768px) {
-  .container {
-    padding: 48px 16px;
+/* ============================================
+   MOBILE RESPONSIVE
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .heroMapWrapper {
+    width: 120vh;
+    height: 120vh;
+    right: -25%;
   }
 
+  .heroTitle {
+    font-size: 48px;
+    line-height: 56px;
+  }
+}
+
+@media (max-width: 768px) {
   .hero {
-    margin-bottom: 64px;
+    min-height: 100vh;
+    padding: 80px 0 60px;
+  }
+
+  .heroMapWrapper {
+    width: 160vw;
+    height: 160vw;
+    top: auto;
+    bottom: -20%;
+    right: -30%;
+    transform: none;
+    animation: slideInMapFromBottom 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.3s backwards;
+  }
+
+  @keyframes slideInMapFromBottom {
+    from {
+      opacity: 0;
+      transform: translateY(40%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .heroMap {
+    opacity: 0.08;
   }
 
   .heroContent {
-    grid-template-columns: 1fr;
-    gap: 48px;
+    padding: 0 24px;
   }
 
   .heroTextWrapper {
+    max-width: 100%;
     text-align: center;
+  }
+
+  .heroTitle {
+    font-size: 36px;
+    line-height: 44px;
+  }
+
+  .heroSubtitle {
+    font-size: 18px;
+    line-height: 28px;
   }
 
   .heroActions {
     justify-content: center;
   }
 
-  .heroMapWrapper {
-    order: 2;
-  }
-
-  .heroMap {
-    max-width: 280px;
-  }
-
-  .heroTitle {
-    font-size: 32px;
-    line-height: 40px;
-  }
-
-  .heroSubtitle {
-    font-size: 16px;
+  .container {
+    padding: 64px 16px;
   }
 
   .features {
@@ -365,5 +387,24 @@
 
   .ctaDescription {
     font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroTitle {
+    font-size: 32px;
+    line-height: 40px;
+  }
+
+  .heroSubtitle {
+    font-size: 16px;
+    line-height: 26px;
+  }
+
+  .heroMapWrapper {
+    width: 180vw;
+    height: 180vw;
+    bottom: -30%;
+    right: -40%;
   }
 }

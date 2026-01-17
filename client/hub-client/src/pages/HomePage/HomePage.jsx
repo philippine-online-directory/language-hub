@@ -1,60 +1,111 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useEffect, useRef } from 'react';
 import Button from '../../components/Button/Button';
 import styles from './HomePage.module.css';
 
 export default function HomePage(){
     const navigate = useNavigate();
     const { isAuthenticated } = useAuth();
+    const featuresRef = useRef(null);
+    const ctaRef = useRef(null);
+
+    useEffect(() => {
+        // Check for reduced motion preference
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReducedMotion) return;
+
+        const observerOptions = {
+            threshold: 0.15,
+            rootMargin: '0px'
+        };
+
+        const observerCallback = (entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add(styles.visible);
+                } else {
+                    entry.target.classList.remove(styles.visible);
+                }
+            });
+        };
+
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+        // Observe features
+        if (featuresRef.current) {
+            const featureElements = featuresRef.current.querySelectorAll(`.${styles.feature}`);
+            featureElements.forEach(el => observer.observe(el));
+        }
+
+        // Observe CTA
+        if (ctaRef.current) {
+            observer.observe(ctaRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, []);
 
     return (
         <div className={styles.homePage}>
-            <div className={styles.container}>
-                <section className={styles.hero}>
-                    <h1 className={styles.heroTitle}>
-                        Preserve endangered languages through shared learning
-                    </h1>
-                    <p className={styles.heroSubtitle}>
-                        Explore words and phrases from languages around the world. 
-                        Contribute translations, build vocabulary sets, and help keep 
-                        linguistic diversity alive.
-                    </p>
-                    <div className={styles.heroActions}>
-                        {isAuthenticated ? (
-                            <>
-                                <Button 
-                                    variant="primary" 
-                                    onClick={() => navigate('/languages')}
-                                >
-                                    Explore Languages
-                                </Button>
-                                <Button 
-                                    variant="secondary" 
-                                    onClick={() => navigate('/contribute')}
-                                >
-                                    Contribute
-                                </Button>
-                            </>
-                        ) : (
-                            <>
-                                <Button 
-                                    variant="primary" 
-                                    onClick={() => navigate('/register')}
-                                >
-                                    Get Started
-                                </Button>
-                                <Button 
-                                    variant="secondary" 
-                                    onClick={() => navigate('/languages')}
-                                >
-                                    Browse Languages
-                                </Button>
-                            </>
-                        )}
+            <section className={styles.hero}>
+                <div className={styles.heroMapWrapper}>
+                    <img 
+                        src="/philippines.svg" 
+                        alt="" 
+                        aria-hidden="true"
+                        className={styles.heroMap}
+                    />
+                </div>
+                <div className={styles.heroContent}>
+                    <div className={styles.heroTextWrapper}>
+                        <h1 className={styles.heroTitle}>
+                            Preserve endangered languages through shared learning
+                        </h1>
+                        <p className={styles.heroSubtitle}>
+                            Explore words and phrases from languages around the <strong>Philippines</strong>. 
+                            Contribute translations, build vocabulary sets, and help keep 
+                            linguistic diversity alive.
+                        </p>
+                        <div className={styles.heroActions}>
+                            {isAuthenticated ? (
+                                <>
+                                    <Button 
+                                        variant="primary" 
+                                        onClick={() => navigate('/languages')}
+                                    >
+                                        Explore Languages
+                                    </Button>
+                                    <Button 
+                                        variant="secondary" 
+                                        onClick={() => navigate('/contribute')}
+                                    >
+                                        Contribute
+                                    </Button>
+                                </>
+                            ) : (
+                                <>
+                                    <Button 
+                                        variant="primary" 
+                                        onClick={() => navigate('/register')}
+                                    >
+                                        Get Started
+                                    </Button>
+                                    <Button 
+                                        variant="secondary" 
+                                        onClick={() => navigate('/languages')}
+                                    >
+                                        Browse Languages
+                                    </Button>
+                                </>
+                            )}
+                        </div>
                     </div>
-                </section>
+                </div>
+            </section>
 
-                <section className={styles.features}>
+            <div className={styles.container}>
+                <section className={styles.features} ref={featuresRef}>
                     <div className={styles.feature}>
                         <h2 className={styles.featureTitle}>Explore</h2>
                         <p className={styles.featureDescription}>
@@ -80,12 +131,12 @@ export default function HomePage(){
                     </div>
                 </section>
 
-                <section className={styles.callToAction}>
+                <section className={styles.callToAction} ref={ctaRef}>
                     <h2 className={styles.ctaTitle}>
                         You're helping keep languages alive
                     </h2>
                     <p className={styles.ctaDescription}>
-                        Join a community dedicated to preserving the world's linguistic diversity. 
+                        Join a community dedicated to preserving the Philippines' linguistic diversity. 
                         Every word shared is a step toward cultural preservation.
                     </p>
                     {!isAuthenticated && (
