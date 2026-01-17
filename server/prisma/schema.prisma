@@ -27,11 +27,12 @@ model User {
 }
 
 model Language {
-  id               String  @id @default(cuid())
-  name             String  @unique
-  speakerCount     Int?    @default(0)
-  isoCode          String  @unique
-  preservationNote String?
+  id                 String  @id @default(cuid())
+  name               String  @unique
+  speakerCount       Int?    @default(0)
+  isoCode            String  @unique
+  preservationNote   String?
+  culturalBackground String?
 
   translations Translation[]
   vocabSets    VocabSet[]

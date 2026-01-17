@@ -13,7 +13,8 @@ const validateLanguage = [
         .trim(),
     body('isoCode').notEmpty()
         .trim(),
-    body('preservationNote').trim()
+    body('preservationNote').trim(),
+    body('culturalBackground').trim()
 ]
 
 const getLanguages = [
@@ -96,11 +97,12 @@ const addLanguage = [
         const { name,
             speakerCount,
             isoCode,
-            preservationNote
+            preservationNote,
+            culturalBackground
         } = matchedData(req)
 
         try {
-            const addedLanguage = await languageService.addLanguage(name, speakerCount, isoCode, preservationNote)
+            const addedLanguage = await languageService.addLanguage(name, speakerCount, isoCode, preservationNote, culturalBackground)
 
             res.status(201).json(addedLanguage)
         }
@@ -120,11 +122,12 @@ const updateLanguage = [
         const { name,
             speakerCount,
             isoCode,
-            preservationNote
+            preservationNote,
+            culturalBackground
         } = matchedData(req)
 
         try {
-            const updatedLanguage = await languageService.updateLanguage(languageId, name, speakerCount, isoCode, preservationNote)
+            const updatedLanguage = await languageService.updateLanguage(languageId, name, speakerCount, isoCode, preservationNote, culturalBackground)
 
             res.status(200).json(updatedLanguage)
         }

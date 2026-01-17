@@ -1,19 +1,20 @@
 const prisma = require('../prisma')
 
-async function addLanguage(name, speakerCount, isoCode, preservationNote){
+async function addLanguage(name, speakerCount, isoCode, preservationNote, culturalBackground){
     const addedLanguage = await prisma.language.create({
         data: {
             name,
             speakerCount,
             isoCode,
-            preservationNote
+            preservationNote,
+            culturalBackground
         }
     })
 
     return addedLanguage
 }
 
-async function updateLanguage(id, name, speakerCount, isoCode, preservationNote){
+async function updateLanguage(id, name, speakerCount, isoCode, preservationNote, culturalBackground){
     if (!id) throw new Error('Id missing: Must have id to identify which language to update');
 
     try {
@@ -25,7 +26,8 @@ async function updateLanguage(id, name, speakerCount, isoCode, preservationNote)
                 name,
                 speakerCount,
                 isoCode,
-                preservationNote
+                preservationNote,
+                culturalBackground
             }
         })
 
