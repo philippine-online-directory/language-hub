@@ -48,9 +48,60 @@
 }
 
 .hero {
-  text-align: center;
   margin-bottom: 96px;
-  animation: fadeInUp 0.8s ease-out;
+}
+
+.heroContent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+
+.heroTextWrapper {
+  animation: slideInFromLeft 0.8s ease-out;
+}
+
+.heroMapWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: slideInFromRight 0.8s ease-out 0.2s backwards;
+}
+
+.heroMap {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  filter: brightness(0) saturate(100%);
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
+}
+
+.heroMap:hover {
+  opacity: 1;
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes fadeInUp {
@@ -75,9 +126,6 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 24px;
-  max-width: 900px;
-  margin-left: auto;
-  margin-right: auto;
   animation: gradientFlow 8s ease infinite, titleFloat 3s ease-in-out infinite;
 }
 
@@ -104,17 +152,12 @@
   line-height: 28px;
   color: #6B7280;
   margin-bottom: 32px;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .heroActions {
   display: flex;
   gap: 16px;
-  justify-content: center;
   flex-wrap: wrap;
-  animation: fadeInUp 1s ease-out 0.3s backwards;
 }
 
 .features {
@@ -237,6 +280,32 @@
   margin-right: auto;
 }
 
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .homePage::before,
+  .homePage::after {
+    animation: none;
+  }
+
+  .heroTextWrapper,
+  .heroMapWrapper,
+  .heroTitle,
+  .feature,
+  .callToAction {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .heroMap {
+    transition: none;
+  }
+
+  .callToAction::before {
+    animation: none;
+  }
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 48px 16px;
@@ -244,6 +313,27 @@
 
   .hero {
     margin-bottom: 64px;
+  }
+
+  .heroContent {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .heroTextWrapper {
+    text-align: center;
+  }
+
+  .heroActions {
+    justify-content: center;
+  }
+
+  .heroMapWrapper {
+    order: 2;
+  }
+
+  .heroMap {
+    max-width: 280px;
   }
 
   .heroTitle {
