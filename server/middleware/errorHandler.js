@@ -1,4 +1,4 @@
-module.exports = function handleError(err, req, res, next) {
+export default function handleError(err, req, res, next) {
     console.error(err);
 
     if (err.statusCode) {

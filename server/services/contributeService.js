@@ -1,4 +1,4 @@
-const prisma = require('../prisma')
+import prisma from '../prisma.js'
 
 async function contributeTranslation(userId, wordText, ipa, englishDefinition, exampleSentence, languageName){
     const language = await prisma.language.findUnique({
@@ -37,7 +37,9 @@ async function getUserContributions(userId){
     return contributions
 }
 
-module.exports = {
+const contributeService = {
     contributeTranslation,
     getUserContributions
 }
+
+export default contributeService

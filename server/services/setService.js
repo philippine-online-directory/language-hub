@@ -1,4 +1,4 @@
-const prisma = require('../prisma')
+import prisma from '../prisma.js'
 
 async function getUserSets(userId){
     if (!userId) throw new Error("Must be logged in to view sets");
@@ -125,7 +125,7 @@ async function deleteSet(setId, userId){
     return deletedSet;
 }
 
-module.exports = {
+const setService = {
     getUserSets,
     createSet,
     getSetWords,
@@ -133,3 +133,6 @@ module.exports = {
     deleteSet,
     getPublicSets
 }
+
+export default setService
+

@@ -1,4 +1,4 @@
-const prisma = require('../prisma')
+import prisma from '../prisma.js'
 
 async function findTranslationInfo(id){
     const translation = await prisma.translation.findUnique({
@@ -211,7 +211,7 @@ async function updateTranslationStatus(id, status){
     }
 }
 
-module.exports = {
+const translationService = {
     findTranslationInfo,
     searchTranslationByWordText,
     searchTranslationByWordDefinition,
@@ -219,3 +219,5 @@ module.exports = {
     updateTranslationStatus,
     removeTranslationFromSet
 }
+
+export default translationService

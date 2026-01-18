@@ -1,4 +1,4 @@
-const prisma = require('../prisma')
+import prisma from '../prisma.js'
 
 async function viewGameSessions(userId, setId, gameType){
     if (!userId) throw new Error("Must be logged in to view game sessions");
@@ -28,7 +28,9 @@ async function uploadGameSession(userId, setId, gameType, score, duration){
     return createdSession
 }
 
-module.exports = {
+const gameService = {
     viewGameSessions,
     uploadGameSession
 }
+
+export default gameService

@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken');
-const prisma = require('../prisma')
+import jwt from 'jsonwebtoken'
+import prisma from '../prisma.js'
 
 async function auth(req, res, next){
     const header = req.headers.authorization;
@@ -27,4 +27,4 @@ async function auth(req, res, next){
     }
 }
 
-module.exports = auth
+export default auth

@@ -1,9 +1,11 @@
-const { Router } = require('express');
-const setRouter = Router();
-const gameRouter = require('./gameRouter')
+import { Router } from 'express'
+import gameRouter from './gameRouter.js' 
+import setController from '../controllers/setController.js'
+import translationController from '../controllers/translationController.js'
 
-const setController = require('../controllers/setController');
-const { addTranslationToSet, removeTranslationFromSet } = require('../controllers/translationController')
+const { addTranslationToSet, removeTranslationFromSet } = translationController
+
+const setRouter = Router()
 
 setRouter.get('/public', setController.getPublicSets);
 
@@ -20,5 +22,5 @@ setRouter.delete('/:setId/translations/:translationId', removeTranslationFromSet
 setRouter.use('/:setId/games', gameRouter)
 
 
-module.exports = setRouter;
+export default setRouter;
 

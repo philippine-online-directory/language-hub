@@ -1,5 +1,5 @@
-const auth = require('../middleware/auth')
-const gameService = require('../services/gameService')
+import auth from '../middleware/auth.js'
+import gameService from '../services/gameService.js'
 
 const viewGameSessions = [
     auth,
@@ -39,9 +39,10 @@ const uploadGameSession = [
     }
 ]
 
-module.exports = {
+const gameController = {
     viewGameSessions,
     uploadGameSession
 }
 
+export default gameController
 

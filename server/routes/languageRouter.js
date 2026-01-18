@@ -1,8 +1,8 @@
-const { Router } = require('express')
+import { Router } from 'express'
+import languageController from '../controllers/languageController.js'
+import translationController from '../controllers/translationController.js'
 const languageRouter = Router();
 
-const languageController = require('../controllers/languageController')
-const translationController = require('../controllers/translationController');
 
 languageRouter.get('/', languageController.getLanguages) //handles sesarch by name
 languageRouter.get('/:isoCode', languageController.getLanguageByCode);
@@ -17,4 +17,4 @@ languageRouter.get('/:isoCode/translations', languageController.getPublishedTran
 languageRouter.get('/:isoCode/translations/:translationId', translationController.getTranslationInfo);
 languageRouter.patch('/:isoCode/translations/:translationId', translationController.updateTranslationStatus); //admin protected
 
-module.exports = languageRouter
+export default languageRouter

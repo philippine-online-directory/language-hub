@@ -1,5 +1,5 @@
-const setService = require('../services/setService')
-const auth = require('../middleware/auth')
+import setService from '../services/setService.js'
+import auth from '../middleware/auth.js'
 
 const getUserSets = [
     auth,
@@ -99,7 +99,7 @@ const getPublicSets = [
     }
 ]
 
-module.exports = {
+const setController = {
     getUserSets,
     createSet,
     getSetWords,
@@ -107,3 +107,5 @@ module.exports = {
     deleteSet,
     getPublicSets
 }
+
+export default setController

@@ -1,4 +1,4 @@
-const prisma = require('../prisma')
+import prisma from '../prisma.js'
 
 async function searchUsers(username){
     const users = await prisma.user.findMany({
@@ -59,9 +59,12 @@ async function getPublicProfile(userId){
     return user;
 }
 
-module.exports = {
+const profileService = {
     getMyProfile,
     getPublicProfile,
     searchUsers
 }
+
+export default profileService
+
 

@@ -1,9 +1,9 @@
-const auth = require('../middleware/auth')
-const { isAdmin } = require('../middleware/roleAuth')
-const languageService = require('../services/languageService')
-const translationService = require('../services/translationService')
-const { body, matchedData } = require('express-validator')
-const validationErrorCheck = require('../middleware/expressValidate')
+import auth from '../middleware/auth.js'
+import { isAdmin } from '../middleware/roleAuth.js'
+import languageService from '../services/languageService.js'
+import translationService from '../services/translationService.js'
+import { body, matchedData } from 'express-validator'
+import validationErrorCheck from '../middleware/expressValidate.js'
 
 const validateLanguage = [
     body('name').notEmpty()
@@ -142,7 +142,7 @@ const deleteLanguage = [
     }
 ]
 
-module.exports = {
+const languageController = {
     getLanguages,
     getLanguageByCode,
     getPublishedTranslations,
@@ -150,3 +150,5 @@ module.exports = {
     updateLanguage,
     deleteLanguage
 }
+
+export default languageController

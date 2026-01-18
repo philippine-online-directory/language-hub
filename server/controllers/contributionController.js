@@ -1,8 +1,8 @@
-const auth = require('../middleware/auth')
-const contributeService = require('../services/contributeService')
-const { body, matchedData } = require('express-validator')
-const prisma = require('../prisma')
-const validationErrorCheck = require('../middleware/expressValidate')
+import auth from '../middleware/auth.js'
+import contributeService from '../services/contributeService.js'
+import { body, matchedData } from 'express-validator' 
+import prisma from '../prisma.js'
+import validationErrorCheck from '../middleware/expressValidate.js'
 
 const validateContribution = [
     body('wordText').notEmpty()
@@ -76,8 +76,9 @@ const getUserContributions = [
 ]
 
 
-
-module.exports = {
+const contributionController = {
     contributeTranslation,
     getUserContributions
 }
+
+export default contributionController

@@ -1,4 +1,4 @@
-const prisma = require('../prisma')
+import prisma from '../prisma.js'
 
 async function addLanguage({ name, speakerCount, isoCode, preservationNote, culturalBackground }){
     const addedLanguage = await prisma.language.create({
@@ -126,8 +126,7 @@ async function getDictionary(code, mode){
 }
 
 
-
-module.exports = {
+const languageService = {
     findLanguages,
     findLanguageByIsoCode,
     getDictionary,
@@ -136,3 +135,7 @@ module.exports = {
     updateLanguage,
     deleteLanguage
 }
+
+export default languageService
+
+

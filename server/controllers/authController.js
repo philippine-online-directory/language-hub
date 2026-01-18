@@ -1,9 +1,9 @@
-const prisma = require('../prisma')
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const validationErrorCheck = require('../middleware/expressValidate')
-require('dotenv').config();
-const { body, matchedData } = require("express-validator");
+import prisma from '../prisma.js'
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken'
+import validationErrorCheck from '../middleware/expressValidate.js';
+import "dotenv/config";
+import { body, matchedData } from 'express-validator'
 
 
 const validateRegister = [
@@ -94,7 +94,9 @@ const loginUser = [
 ]
 
 
-module.exports = {
+const authController = {
     registerUser,
     loginUser
 }
+
+export default authController

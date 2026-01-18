@@ -1,4 +1,4 @@
-const auth = require('./auth')
+import auth from './auth.js'
 
 const isAdmin = [
     auth,
@@ -12,6 +12,6 @@ const isAdmin = [
     }
 ]
 
-module.exports = {
+export {
     isAdmin
 }

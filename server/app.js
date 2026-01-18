@@ -1,16 +1,17 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const rateLimit = require("express-rate-limit");
+import "dotenv/config";
+import express from 'express'
+import cors from 'cors'
+import rateLimit from "express-rate-limit";
 
 const app = express()
 
-const contributionRouter = require('./routes/contributionRouter')
-const languageRouter = require('./routes/languageRouter')
-const setRouter = require('./routes/setRouter');
-const authRouter = require('./routes/authRouter');
-const profileRouter = require('./routes/profileRouter')
-const handleError = require('./middleware/errorHandler')
+import contributionRouter from "./routes/contributionRouter.js";
+import languageRouter from "./routes/languageRouter.js";
+import setRouter from "./routes/setRouter.js";
+import authRouter from "./routes/authRouter.js";
+import profileRouter from "./routes/profileRouter.js";
+import handleError from "./middleware/errorHandler.js";
+
 
 const origin = process.env.FRONTEND_URL || 'http://localhost:5173'
 

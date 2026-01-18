@@ -1,9 +1,9 @@
-const { Router } = require('express')
+import { Router } from 'express'
+import contributionController from '../controllers/contributionController.js'
 const contributionRouter = Router();
 
-const contributionController = require('../controllers/contributionController')
 
 contributionRouter.get('/', contributionController.getUserContributions)
 contributionRouter.post('/', contributionController.contributeTranslation)
 
-module.exports = contributionRouter
+export default contributionRouter

@@ -1,5 +1,5 @@
-const auth = require('../middleware/auth')
-const profileService = require('../services/profileService')
+import auth from '../middleware/auth.js'
+import profileService from '../services/profileService.js'
 
 const getMyProfile = [
     auth,
@@ -51,8 +51,10 @@ const searchUsers = [
 
 
 
-module.exports = {
+const profileController = {
     getMyProfile,
     getPublicProfile,
     searchUsers
 }
+
+export default profileController

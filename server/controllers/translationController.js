@@ -1,6 +1,6 @@
-const auth = require('../middleware/auth')
-const { isAdmin } = require('../middleware/roleAuth')
-const translationService = require('../services/translationService')
+import auth from '../middleware/auth.js'
+import { isAdmin } from '../middleware/roleAuth.js'
+import translationService from '../services/translationService.js'
 
 const getTranslationInfo = [
     auth,
@@ -77,10 +77,12 @@ const updateTranslationStatus = [
     }
 ]
 
-module.exports = {
+const translationController = {
     getTranslationInfo,
     addTranslationToSet,
     updateTranslationStatus,
     removeTranslationFromSet
 }
+
+export default translationController
 
