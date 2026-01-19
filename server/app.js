@@ -45,4 +45,4 @@ app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
 
-//still need a seed script
+//Run with node --loader ts-node/esm app.js
