@@ -140,7 +140,7 @@ export default function AdminLanguagesPage(){
                                 value={formData.isoCode}
                                 onChange={(e) => setFormData({ ...formData, isoCode: e.target.value })}
                                 required
-                                placeholder="e.g., nav"
+                                placeholder="e.g., ibg"
                                 disabled={!!editingId}
                             />
 
@@ -170,7 +170,7 @@ export default function AdminLanguagesPage(){
                                     onChange={(e) => setFormData({ ...formData, culturalBackground: e.target.value })}
                                     className={styles.textarea}
                                     rows="3"
-                                    placeholder="Optional evidence about the origins and culture of the language"
+                                    placeholder="Optional information about the origins and culture of the language"
                                 />
                             </div>
             

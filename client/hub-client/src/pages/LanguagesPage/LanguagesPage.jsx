@@ -18,23 +18,28 @@ export default function LanguagesPage(){
         const fetchLanguages = async () => {
             setLoading(true);
             setError(null);
+
             try {
                 let data;
-                if (searchMode === 'isoCode' && debouncedSearch) {
-                    // Search by ISO code
-                    data = [await languageService.getLanguageByCode(debouncedSearch)];
+                if (searchMode === 'isoCode') {
+                    if (!debouncedSearch) {
+                        setLanguages([]);
+                        setLoading(false);
+                        return;
+                    }
+                    const result = await languageService.getLanguageByCode(debouncedSearch);
+                    data = result ? [result] : [];
                 } 
                 else {
-                    // Search by name
                     data = await languageService.getLanguages(debouncedSearch);
                 }
+
                 setLanguages(data);
             } 
             catch (err) {
                 if (searchMode === 'isoCode' && err.response?.status === 404) {
                     setLanguages([]);
-                } 
-                else {
+                } else {
                     setError('Failed to load languages. Please try again.');
                     console.error('Error fetching languages:', err);
                 }

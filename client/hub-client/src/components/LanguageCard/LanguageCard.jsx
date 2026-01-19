@@ -9,21 +9,23 @@ export default function LanguageCard({ language }){
         navigate(`/languages/${language.isoCode}`);
     };
 
-    <Card onClick={handleClick} hoverable={true} className={styles.LanguageCard}>
-        <h3 className={styles.languageName}>{language.name}</h3>
-        <div className={styles.meta}>
-            <span className={styles.isoCode}>{language.isoCode.toUpperCase()}</span>
-            {language.speakerCount !== null && (
-                <span className={styles.speakerCount}>
-                    {language.speakerCount.toLocaleString()} speakers
-                </span>
+    return (
+        <Card onClick={handleClick} hoverable={true} className={styles.LanguageCard}>
+            <h3 className={styles.languageName}>{language.name}</h3>
+            <div className={styles.meta}>
+                <span className={styles.isoCode}>{language.isoCode.toUpperCase()}</span>
+                {language.speakerCount !== null && (
+                    <span className={styles.speakerCount}>
+                        {language.speakerCount.toLocaleString()} speakers
+                    </span>
+                )}
+            </div>
+            {language.preservationNote && (
+                <p className={styles.preservationNote}>{language.preservationNote}</p>
             )}
-        </div>
-        {language.preservationNote && (
-            <p className={styles.preservationNote}>{language.preservationNote}</p>
-        )}
-        {language.culturalBackground && (
-            <p classNam={styles.culturalBackground}>{language.culturalBackground}</p>
-        )}
-    </Card>
+            {language.culturalBackground && (
+                <p classNam={styles.culturalBackground}>{language.culturalBackground}</p>
+            )}
+        </Card>
+    ) 
 }
