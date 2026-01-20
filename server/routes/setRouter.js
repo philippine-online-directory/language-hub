@@ -8,19 +8,14 @@ const { addTranslationToSet, removeTranslationFromSet } = translationController
 const setRouter = Router()
 
 setRouter.get('/public', setController.getPublicSets);
-
 setRouter.get('/', setController.getUserSets);
-setRouter.get('/public', setController.getPublicSets);
 setRouter.post('/', setController.createSet);
-setRouter.get('/:setId', setController.getSetWords);
-setRouter.put('/:setId', setController.publishSet);
+setRouter.get('/:setId', setController.getSetById);
+setRouter.put('/:setId', setController.updateSet);
 setRouter.delete('/:setId', setController.deleteSet);
-
+setRouter.get('/:setId/words', setController.getSetWords);
 setRouter.post('/:setId/translations', addTranslationToSet);
 setRouter.delete('/:setId/translations/:translationId', removeTranslationFromSet)
-
 setRouter.use('/:setId/games', gameRouter)
 
-
 export default setRouter;
-
