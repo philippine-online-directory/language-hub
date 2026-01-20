@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { profileService } from '../../api/profileService';
 import Card from '../../components/Card/Card';
@@ -10,6 +10,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('contributions');
+  const contentRef = useRef(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -29,11 +30,40 @@ export default function ProfilePage() {
     fetchProfile();
   }, []);
 
+  // Scroll animation observer for grid items
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion || !contentRef.current) return;
+
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observerCallback = (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add(styles.visible);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    const items = contentRef.current.querySelectorAll(`.${styles.animateItem}`);
+    items.forEach(item => observer.observe(item));
+
+    return () => observer.disconnect();
+  }, [activeTab, profile]);
+
   if (loading) {
     return (
       <div className={styles.profilePage}>
         <div className={styles.container}>
-          <div className={styles.loading}>Loading profile...</div>
+          <div className={styles.loadingState}>
+            <div className={styles.loadingSpinner}></div>
+            <p>Loading profile...</p>
+          </div>
         </div>
       </div>
     );
@@ -43,7 +73,9 @@ export default function ProfilePage() {
     return (
       <div className={styles.profilePage}>
         <div className={styles.container}>
-          <div className={styles.error}>{error || 'Profile not found'}</div>
+          <div className={styles.errorState}>
+            <p>{error || 'Profile not found'}</p>
+          </div>
         </div>
       </div>
     );
@@ -52,8 +84,9 @@ export default function ProfilePage() {
   return (
     <div className={styles.profilePage}>
       <div className={styles.container}>
-        <Card className={styles.profileCard}>
-          <div className={styles.profileHeader}>
+        {/* Profile Header */}
+        <div className={styles.profileHeader}>
+          <div className={styles.headerContent}>
             <div className={styles.profileInfo}>
               <h1 className={styles.username}>{profile.username}</h1>
               <p className={styles.email}>{profile.email}</p>
@@ -62,29 +95,31 @@ export default function ProfilePage() {
               )}
             </div>
           </div>
+        </div>
 
-          <div className={styles.statsGrid}>
-            <div className={styles.statCard}>
-              <span className={styles.statValue}>
-                {profile._count?.contributions || 0}
-              </span>
-              <span className={styles.statLabel}>Contributions</span>
-            </div>
-            <div className={styles.statCard}>
-              <span className={styles.statValue}>
-                {profile._count?.createdSets || 0}
-              </span>
-              <span className={styles.statLabel}>Sets Created</span>
-            </div>
-            <div className={styles.statCard}>
-              <span className={styles.statValue}>
-                {profile._count?.gameScores || 0}
-              </span>
-              <span className={styles.statLabel}>Games Played</span>
-            </div>
+        {/* Stats Grid */}
+        <div className={styles.statsGrid}>
+          <div className={styles.statCard}>
+            <span className={styles.statValue}>
+              {profile._count?.contributions || 0}
+            </span>
+            <span className={styles.statLabel}>Contributions</span>
           </div>
-        </Card>
+          <div className={styles.statCard}>
+            <span className={styles.statValue}>
+              {profile._count?.createdSets || 0}
+            </span>
+            <span className={styles.statLabel}>Sets Created</span>
+          </div>
+          <div className={styles.statCard}>
+            <span className={styles.statValue}>
+              {profile._count?.gameScores || 0}
+            </span>
+            <span className={styles.statLabel}>Games Played</span>
+          </div>
+        </div>
 
+        {/* Tabs */}
         <div className={styles.tabs}>
           <button
             className={`${styles.tab} ${activeTab === 'contributions' ? styles.activeTab : ''}`}
@@ -100,75 +135,90 @@ export default function ProfilePage() {
           </button>
         </div>
 
-        {activeTab === 'contributions' && (
-          <div className={styles.contentSection}>
-            {profile.contributions?.length === 0 ? (
-              <div className={styles.empty}>
-                <p>You haven't contributed any words yet.</p>
-                <Link to="/contribute">
-                  <Card hoverable className={styles.actionCard}>
-                    <h3 className={styles.actionTitle}>Start Contributing</h3>
-                    <p className={styles.actionDescription}>
-                      Share words to help preserve languages
-                    </p>
-                  </Card>
-                </Link>
-              </div>
-            ) : (
-              <div className={styles.contributionsGrid}>
-                {profile.contributions?.map((contribution) => (
-                  <WordDisplay 
-                    key={contribution.id} 
-                    translation={contribution}
-                    showAddToSet={false}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {activeTab === 'sets' && (
-          <div className={styles.contentSection}>
-            {profile.createdSets?.length === 0 ? (
-              <div className={styles.empty}>
-                <p>You haven't created any sets yet.</p>
-                <Link to="/sets/create">
-                  <Card hoverable className={styles.actionCard}>
-                    <h3 className={styles.actionTitle}>Create Your First Set</h3>
-                    <p className={styles.actionDescription}>
-                      Build vocabulary collections for learning
-                    </p>
-                  </Card>
-                </Link>
-              </div>
-            ) : (
-              <div className={styles.setsGrid}>
-                {profile.createdSets?.map((set) => (
-                  <Link key={set.id} to={`/sets/${set.id}`} className={styles.setLink}>
-                    <Card hoverable className={styles.setCard}>
-                      <div className={styles.setHeader}>
-                        <h3 className={styles.setName}>{set.name}</h3>
-                        {set.isPublic && <span className={styles.publicBadge}>Public</span>}
-                      </div>
-                      <p className={styles.setDescription}>{set.description}</p>
-                      <div className={styles.setMeta}>
-                        <span className={styles.metaItem}>
-                          {set._count?.setWords || 0} words
-                        </span>
-                        {set.language && (
-                          <span className={styles.metaItem}>
-                            {set.language.name}
-                          </span>
-                        )}
-                      </div>
+        {/* Content Sections */}
+        <div className={styles.contentSection} ref={contentRef}>
+          {activeTab === 'contributions' && (
+            <>
+              {profile.contributions?.length === 0 ? (
+                <div className={styles.empty}>
+                  <p>You haven't contributed any words yet.</p>
+                  <Link to="/contribute" className={styles.emptyActionLink}>
+                    <Card hoverable className={styles.actionCard}>
+                      <h3 className={styles.actionTitle}>Start Contributing</h3>
+                      <p className={styles.actionDescription}>
+                        Share words to help preserve languages
+                      </p>
                     </Card>
                   </Link>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+                </div>
+              ) : (
+                <div className={styles.contributionsGrid}>
+                  {profile.contributions?.map((contribution, index) => (
+                    <div 
+                      key={contribution.id} 
+                      className={styles.animateItem}
+                      style={{ '--item-index': index }}
+                    >
+                      <WordDisplay 
+                        translation={contribution}
+                        showAddToSet={false}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+
+          {activeTab === 'sets' && (
+            <>
+              {profile.createdSets?.length === 0 ? (
+                <div className={styles.empty}>
+                  <p>You haven't created any sets yet.</p>
+                  <Link to="/sets/create" className={styles.emptyActionLink}>
+                    <Card hoverable className={styles.actionCard}>
+                      <h3 className={styles.actionTitle}>Create Your First Set</h3>
+                      <p className={styles.actionDescription}>
+                        Build vocabulary collections for learning
+                      </p>
+                    </Card>
+                  </Link>
+                </div>
+              ) : (
+                <div className={styles.setsGrid}>
+                  {profile.createdSets?.map((set, index) => (
+                    <Link 
+                      key={set.id} 
+                      to={`/sets/${set.id}`} 
+                      className={`${styles.setLink} ${styles.animateItem}`}
+                      style={{ '--item-index': index }}
+                    >
+                      <Card hoverable className={styles.setCard}>
+                        <div className={styles.setHeader}>
+                          <h3 className={styles.setName}>{set.name}</h3>
+                          {set.isPublic && <span className={styles.publicBadge}>Public</span>}
+                        </div>
+                        {set.description && (
+                          <p className={styles.setDescription}>{set.description}</p>
+                        )}
+                        <div className={styles.setMeta}>
+                          <span className={styles.metaItem}>
+                            {set._count?.setWords || 0} words
+                          </span>
+                          {set.language && (
+                            <span className={styles.metaItem}>
+                              {set.language.name}
+                            </span>
+                          )}
+                        </div>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
