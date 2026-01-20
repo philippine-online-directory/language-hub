@@ -4,10 +4,27 @@ async function searchUsers(username){
     const users = await prisma.user.findMany({
         where: {
             username: {
-                startsWith: `${username}`,
+                contains: username || '',
                 mode: 'insensitive'
             }
-        }
+        },
+        select: {
+            id: true,
+            username: true,
+            email: true,
+            role: true,
+            createdAt: true,
+            _count: {
+                select: {
+                    contributions: true,
+                    createdSets: true
+                }
+            }
+        },
+        orderBy: {
+            createdAt: 'desc'
+        },
+        take: 50
     })
 
     return users
