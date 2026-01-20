@@ -17,16 +17,66 @@ const getUserSets = [
     }
 ]
 
+const getPublicSets = [
+    auth,
+    async (req, res, next) => {
+        const { name } = req.query;
+
+        try {
+            const sets = await setService.getPublicSets(name);
+
+            res.status(200).json(sets);
+        }
+        catch (err){
+            next(err)
+        }
+    }
+]
+
+const getSetById = [
+    auth,
+    async (req, res, next) => {
+        const { setId } = req.params;
+
+        try {
+            const set = await setService.getSetById(setId);
+
+            res.status(200).json(set);
+        }
+        catch (err) {
+            next(err)
+        }
+    }
+]
+
 const createSet = [
     auth,
     async (req, res, next) => {
         const { id } = req.user;
-        const { name, description } = req.body;
+        const { name, description, languageId } = req.body;
 
         try {
-            const newSet = await setService.createSet(name, description, id);
+            const newSet = await setService.createSet(name, description, languageId, id);
 
             res.status(201).json(newSet);
+        }
+        catch (err) {
+            next(err)
+        }
+    }
+]
+
+const updateSet = [
+    auth,
+    async (req, res, next) => {
+        const { setId } = req.params;
+        const { id } = req.user;
+        const { name, description, isPublic } = req.body;
+
+        try {
+            const updatedSet = await setService.updateSet(setId, { name, description, isPublic }, id);
+
+            res.status(200).json(updatedSet);
         }
         catch (err) {
             next(err)
@@ -43,22 +93,6 @@ const getSetWords = [
             const translations = await setService.getSetWords(setId);
 
             res.status(200).json(translations);
-        }
-        catch (err) {
-            next(err)
-        }
-    }
-]
-
-const publishSet = [
-    auth,
-    async (req, res, next) => {
-        const { setId } = req.params;
-
-        try {
-            const publishedSet = await setService.publishSet(setId);
-
-            res.status(200).json(publishedSet);
         }
         catch (err) {
             next(err)
@@ -83,29 +117,14 @@ const deleteSet = [
     }
 ]
 
-const getPublicSets = [
-    auth,
-    async (req, res, next) => {
-        const { name } = req.query;
-
-        try {
-            const sets = await setService.getPublicSets(name);
-
-            res.status(200).json(sets);
-        }
-        catch (err){
-            next(err)
-        }
-    }
-]
-
 const setController = {
     getUserSets,
+    getPublicSets,
+    getSetById,
     createSet,
+    updateSet,
     getSetWords,
-    publishSet,
-    deleteSet,
-    getPublicSets
+    deleteSet
 }
 
 export default setController
