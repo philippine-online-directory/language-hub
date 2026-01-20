@@ -31,6 +31,31 @@ async function getMyProfile(userId){
                     createdSets: true,
                     gameScores: true
                 }
+            },
+            contributions: {
+                include: {
+                    word: {
+                        include: {
+                            language: true
+                        }
+                    }
+                },
+                orderBy: {
+                    createdAt: 'desc'
+                }
+            },
+            createdSets: {
+                include: {
+                    language: true,
+                    _count: {
+                        select: {
+                            setWords: true
+                        }
+                    }
+                },
+                orderBy: {
+                    createdAt: 'desc'
+                }
             }
         }
     })
@@ -52,6 +77,39 @@ async function getPublicProfile(userId){
                     contributions: true,
                     createdSets: true
                 }
+            },
+            contributions: {
+                where: {
+                    word: {
+                        isPublic: true
+                    }
+                },
+                include: {
+                    word: {
+                        include: {
+                            language: true
+                        }
+                    }
+                },
+                orderBy: {
+                    createdAt: 'desc'
+                }
+            },
+            createdSets: {
+                where: {
+                    isPublic: true
+                },
+                include: {
+                    language: true,
+                    _count: {
+                        select: {
+                            setWords: true
+                        }
+                    }
+                },
+                orderBy: {
+                    createdAt: 'desc'
+                }
             }
         }
     });
@@ -66,5 +124,3 @@ const profileService = {
 }
 
 export default profileService
-
-
