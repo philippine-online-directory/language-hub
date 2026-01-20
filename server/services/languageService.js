@@ -80,49 +80,38 @@ async function findLanguageByName(phrase){
     return language
 }
 
-async function getDictionary(code, mode){
-    let language;
-    if (mode === "Verified Only"){
-        language = await prisma.language.findUnique({
-            where: { 
-                isoCode: code 
-            },
-            include: {
-                translations: {
-                    where: {
-                        status: "VERIFIED"
-                    }
-                }
-            }
-        });
-    }
-    else if (mode === "All"){
-        language = await prisma.language.findUnique({
-            where: { 
-                isoCode: code 
-            },
-            include: {
-                translations
-            }
-        });
-    }
-    else {
-        language = await prisma.language.findUnique({
-            where: { 
-                isoCode: code 
-            },
-            include: {
-                translations: {
-                    where: {
-                        status: "VERIFIED"
-                    }
-                }
-            }
-        });
-    }
-    
 
-    return language?.translations
+async function getDictionary(isoCode, status) {
+  let normalizedStatus = 'VERIFIED';
+
+  if (status === 'ALL') {
+    normalizedStatus = 'ALL';
+  } else if (status === 'UNVERIFIED') {
+    normalizedStatus = 'UNVERIFIED';
+  } else if (status === 'VERIFIED') {
+    normalizedStatus = 'VERIFIED';
+  }
+
+  let translationsInclude;
+
+  if (normalizedStatus === 'ALL') {
+    translationsInclude = true;
+  } else {
+    translationsInclude = {
+      where: {
+        status: normalizedStatus
+      }
+    };
+  }
+
+  const language = await prisma.language.findUnique({
+    where: { isoCode },
+    include: {
+      translations: translationsInclude
+    }
+  });
+
+  return language ? language.translations : [];
 }
 
 

@@ -13,7 +13,7 @@ languageRouter.put('/:languageId', languageController.updateLanguage)
 languageRouter.delete('/:languageId', languageController.deleteLanguage)
 
 //Translation nested routes
-languageRouter.get('/:isoCode/translations', languageController.getPublishedTranslations);
+languageRouter.get('/:isoCode/translations', languageController.getTranslations);
 languageRouter.get('/:isoCode/translations/:translationId', translationController.getTranslationInfo);
 languageRouter.patch('/:isoCode/translations/:translationId', translationController.updateTranslationStatus); //admin protected
 

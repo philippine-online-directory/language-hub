@@ -53,39 +53,36 @@ const getLanguageByCode = [
     }
 ]
 
-const getPublishedTranslations = [
-    auth,
-    async (req, res, next) => {
-        const { isoCode } = req.params;
-        const { text, definition, mode } = req.query;
+const getTranslations = [
+  auth,
+  async (req, res, next) => {
+    const { isoCode } = req.params;
+    const { text, definition, status } = req.query;
 
-        try {
-            let translations;
+    try {
+      let translations;
 
-            if (text) {
-                translations = await translationService.searchTranslationByWordText(
-                    isoCode,
-                    text,
-                    mode
-                );
-            } 
-            else if (definition) {
-                translations = await translationService.searchTranslationByWordDefinition(
-                    isoCode,
-                    definition,
-                    mode
-                );
-            } 
-            else {
-                translations = await languageService.getDictionary(isoCode, mode);
-            }
+      if (text) {
+        translations = await translationService.searchTranslationByWordText(
+          isoCode,
+          text,
+          status
+        );
+      } else if (definition) {
+        translations = await translationService.searchTranslationByWordDefinition(
+          isoCode,
+          definition,
+          status
+        );
+      } else {
+        translations = await languageService.getDictionary(isoCode, status);
+      }
 
-            res.status(200).json(translations);
-        }
-        catch (err) {
-            next(err)
-        }
+      res.status(200).json(translations);
+    } catch (err) {
+      next(err);
     }
+  }
 ];
 
 //admin functions
@@ -145,7 +142,7 @@ const deleteLanguage = [
 const languageController = {
     getLanguages,
     getLanguageByCode,
-    getPublishedTranslations,
+    getTranslations,
     addLanguage,
     updateLanguage,
     deleteLanguage
