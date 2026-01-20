@@ -39,11 +39,11 @@ export default function AdminTranslationsPage(){
     const fetchTranslations = async () => {
         setLoading(true);
         try {
-            const data = await languageService.getTranslations(selectedLanguage);
-            const filtered = data.filter(t => 
-                filter === 'ALL' || t.status === filter
+            const data = await languageService.getTranslations(
+                selectedLanguage,
+                { status: filter }
             );
-            setTranslations(filtered);
+            setTranslations(data);
         } catch (err) {
             console.error('Error fetching translations:', err);
         } finally {

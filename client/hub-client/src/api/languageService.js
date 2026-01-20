@@ -13,8 +13,12 @@ export const languageService = {
         return response.data;
     },
 
-    getTranslations: async (isoCode) => {
-        const response = await api.get(`/languages/${isoCode}/translations`);
+    async getTranslations(isoCode, options = {}) {
+        const response = await api.get(
+            `/languages/${isoCode}/translations`,
+            { params: options }
+        );
+
         return response.data;
     },
 
