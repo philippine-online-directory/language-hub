@@ -34,11 +34,7 @@ async function getMyProfile(userId){
             },
             contributions: {
                 include: {
-                    word: {
-                        include: {
-                            language: true
-                        }
-                    }
+                    language: true
                 },
                 orderBy: {
                     createdAt: 'desc'
@@ -80,16 +76,10 @@ async function getPublicProfile(userId){
             },
             contributions: {
                 where: {
-                    word: {
-                        isPublic: true
-                    }
+                    status: 'VERIFIED'
                 },
                 include: {
-                    word: {
-                        include: {
-                            language: true
-                        }
-                    }
+                    language: true
                 },
                 orderBy: {
                     createdAt: 'desc'
