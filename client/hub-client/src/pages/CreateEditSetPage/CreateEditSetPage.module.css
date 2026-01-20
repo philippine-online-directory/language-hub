@@ -1,128 +1,205 @@
-/* CreateEditSetPage.module.css */
 .createEditSetPage {
   min-height: calc(100vh - 80px);
-  padding: var(--space-7) 0;
+  padding: 80px 0;
+  background: #F6F4EF;
 }
 
 .container {
   max-width: 800px;
   margin: 0 auto;
-  padding: 0 var(--gutter-desktop);
+  padding: 0 48px;
 }
 
+/* ============================================
+   HEADER
+   ============================================ */
+
 .header {
-  margin-bottom: var(--space-6);
+  margin-bottom: 48px;
+  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
 .title {
-  font-size: var(--text-h1);
-  line-height: var(--lh-h1);
+  font-family: 'Fraunces', serif;
+  font-size: 48px;
+  line-height: 56px;
   font-weight: 600;
-  color: var(--color-indigo-900);
-  margin-bottom: var(--space-3);
+  color: #1F2937;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
 }
 
 .subtitle {
-  font-size: var(--text-body-lg);
-  line-height: var(--lh-body-lg);
-  color: var(--color-gray-500);
+  font-size: 18px;
+  line-height: 28px;
+  color: #6B7280;
 }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   FORM CARD
+   ============================================ */
 
 .formCard {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: 32px;
+  padding: 40px;
+  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.1s backwards;
 }
 
-.error {
-  padding: var(--space-3) var(--space-4);
-  background-color: rgba(192, 118, 58, 0.1);
-  border: 1px solid var(--color-copper-500);
-  border-radius: var(--space-2);
-  color: var(--color-copper-500);
-  font-size: var(--text-body);
+.errorBanner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: rgba(192, 118, 58, 0.08);
+  border: 1px solid rgba(192, 118, 58, 0.3);
+  border-radius: 12px;
+  color: #C0763A;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 24px;
 }
+
+.errorIcon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   FORM
+   ============================================ */
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: 28px;
 }
 
 .formGroup {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: 10px;
 }
 
 .label {
-  font-size: var(--text-body);
-  font-weight: 500;
-  color: var(--color-indigo-900);
+  font-size: 15px;
+  font-weight: 600;
+  color: #1F2937;
+  letter-spacing: 0.01em;
 }
 
 .required {
-  color: var(--color-copper-500);
+  color: #C0763A;
 }
 
 .select,
 .textarea {
-  font-family: var(--font-primary);
-  font-size: var(--text-body);
-  padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--space-2);
-  background-color: var(--color-parchment-50);
-  color: var(--color-indigo-900);
-  transition: border-color var(--transition-hover);
+  font-family: 'IBM Plex Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 15px;
+  padding: 14px 16px;
+  border: 1px solid rgba(229, 231, 235, 0.8);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  color: #1F2937;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .select:focus,
 .textarea:focus {
   outline: none;
-  border-color: var(--color-copper-500);
+  border-color: rgba(192, 118, 58, 0.4);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 12px rgba(192, 118, 58, 0.08);
 }
 
 .select:disabled {
-  opacity: 0.5;
+  opacity: 0.6;
   cursor: not-allowed;
+  background: rgba(229, 231, 235, 0.3);
 }
 
 .textarea {
   resize: vertical;
-  min-height: 100px;
+  min-height: 120px;
+  line-height: 1.6;
+}
+
+.inputError {
+  border-color: rgba(192, 118, 58, 0.5);
+  background: rgba(192, 118, 58, 0.03);
 }
 
 .errorText {
-  font-size: var(--text-meta);
-  color: var(--color-copper-500);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #C0763A;
+  font-weight: 500;
+}
+
+.errorText::before {
+  content: '⚠';
+  font-size: 14px;
 }
 
 .helperText {
-  font-size: var(--text-meta);
-  color: var(--color-gray-500);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #6B7280;
+  font-weight: 500;
 }
+
+.helperIcon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   CHECKBOX
+   ============================================ */
 
 .checkboxWrapper {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--space-2);
-  background-color: var(--color-parchment-50);
-  transition: border-color var(--transition-hover);
+  gap: 14px;
+  padding: 18px 20px;
+  border: 1px solid rgba(229, 231, 235, 0.8);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
 }
 
 .checkboxWrapper:hover {
-  border-color: var(--color-copper-500);
+  border-color: rgba(192, 118, 58, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 8px rgba(192, 118, 58, 0.06);
 }
 
 .checkbox {
   width: 20px;
   height: 20px;
   cursor: pointer;
-  accent-color: var(--color-copper-500);
+  accent-color: #C0763A;
   flex-shrink: 0;
   margin-top: 2px;
 }
@@ -130,48 +207,176 @@
 .checkboxLabel {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: 6px;
   cursor: pointer;
   flex: 1;
 }
 
 .checkboxLabelText {
-  font-size: var(--text-body);
-  font-weight: 500;
-  color: var(--color-indigo-900);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1F2937;
+  letter-spacing: 0.01em;
+}
+
+.checkboxIcon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: #C0763A;
 }
 
 .checkboxHelper {
-  font-size: var(--text-meta);
-  color: var(--color-gray-500);
+  font-size: 13px;
+  color: #6B7280;
+  font-weight: 400;
+  line-height: 1.5;
 }
+
+/* ============================================
+   ACTIONS
+   ============================================ */
 
 .actions {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-  margin-top: var(--space-3);
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(229, 231, 235, 0.6);
 }
 
-.loading {
-  text-align: center;
-  padding: var(--space-7);
-  font-size: var(--text-body-lg);
-  color: var(--color-gray-500);
+.buttonSpinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+  margin-right: 8px;
 }
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   LOADING STATE
+   ============================================ */
+
+.loadingState {
+  text-align: center;
+  padding: 120px 32px;
+  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.loadingState p {
+  font-size: 18px;
+  line-height: 28px;
+  color: #6B7280;
+  margin-top: 24px;
+}
+
+.loadingSpinner {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto;
+  border: 4px solid rgba(192, 118, 58, 0.1);
+  border-top-color: #C0763A;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* ============================================
+   REDUCED MOTION
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .header,
+  .formCard,
+  .loadingState {
+    animation: none;
+  }
+
+  .loadingSpinner,
+  .buttonSpinner {
+    animation: none;
+    border-top-color: transparent;
+    border-right-color: #C0763A;
+  }
+
+  .buttonSpinner {
+    border-right-color: white;
+  }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
 
 @media (max-width: 768px) {
   .container {
-    padding: 0 var(--gutter-tablet);
+    padding: 0 24px;
+  }
+
+  .createEditSetPage {
+    padding: 48px 0;
+  }
+
+  .title {
+    font-size: 36px;
+    line-height: 44px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+  }
+
+  .formCard {
+    padding: 32px 24px;
   }
 }
 
 @media (max-width: 480px) {
   .container {
-    padding: 0 var(--gutter-mobile);
+    padding: 0 16px;
   }
 
   .createEditSetPage {
-    padding: var(--space-5) 0;
+    padding: 32px 0;
+  }
+
+  .title {
+    font-size: 28px;
+    line-height: 36px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+
+  .formCard {
+    padding: 24px 20px;
+  }
+
+  .select,
+  .textarea {
+    font-size: 14px;
+    padding: 12px 14px;
+  }
+
+  .checkboxWrapper {
+    padding: 16px;
+  }
+
+  .errorBanner {
+    padding: 14px 16px;
+    font-size: 14px;
   }
 }
