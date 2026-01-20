@@ -159,7 +159,7 @@ export default function CreateEditSetPage(){
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit} className={styles.form}>
+                    <form noValidate onSubmit={handleSubmit} className={styles.form}>
                         <Input
                             label="Set Name"
                             type="text"

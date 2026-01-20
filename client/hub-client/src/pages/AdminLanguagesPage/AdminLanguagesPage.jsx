@@ -124,7 +124,7 @@ export default function AdminLanguagesPage(){
                         
                         {errors.submit && <div className={styles.error}>{errors.submit}</div>}
 
-                        <form onSubmit={handleSubmit} className={styles.form}>
+                        <form noValidate onSubmit={handleSubmit} className={styles.form}>
                             <Input
                                 label="Language Name"
                                 type="text"

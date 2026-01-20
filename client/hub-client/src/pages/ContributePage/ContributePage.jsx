@@ -109,7 +109,7 @@ export default function ContributePage(){
 
                     {errors.submit && <div className={styles.error}>{errors.submit}</div>}
 
-                    <form onSubmit={handleSubmit} className={styles.form}>
+                    <form noValidate onSubmit={handleSubmit} className={styles.form}>
                         <div className={styles.formGroup}>
                             <label htmlFor="languageId" className={styles.label}>
                                 Language <span className={styles.required}>*</span>
