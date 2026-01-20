@@ -71,6 +71,10 @@
   transition: border-color 0.3s ease;
 }
 
+.culturalBackground {
+  color:#1F2937;
+}
+
 .languageCard:hover .preservationNote {
   border-color: #C0763A;
 }
