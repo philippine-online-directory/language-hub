@@ -1,8 +1,8 @@
 import prisma from '../prisma.js'
 
-async function contributeTranslation(userId, wordText, ipa, englishDefinition, exampleSentence, languageName){
+async function contributeTranslation(userId, { languageId, wordText, ipa, englishDefinition, exampleSentence }){
     const language = await prisma.language.findUnique({
-        where: { name: languageName },
+        where: { id: languageId },
         select: { id: true }
     });
 
@@ -13,7 +13,7 @@ async function contributeTranslation(userId, wordText, ipa, englishDefinition, e
     const contributedTranslation = await prisma.translation.create({
         data: {
             authorId: userId,
-            languageId: language.id,
+            languageId,
             wordText, 
             ipa,
             englishDefinition,

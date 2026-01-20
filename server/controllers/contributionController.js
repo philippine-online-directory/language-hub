@@ -6,23 +6,18 @@ import validationErrorCheck from '../middleware/expressValidate.js'
 
 const validateContribution = [
     body('wordText').notEmpty()
-        .isAlpha()
         .trim(),
-    body('ipa').notEmpty()
-        .isAlpha()
+    body('ipa')
+        .optional({ checkFalsy: true })
         .trim(),
     body('englishDefinition').notEmpty()
-        .isAlpha()
         .trim(),
     body('exampleSentence').notEmpty()
-        .isAlpha()
         .trim(),
-    body('languageName').notEmpty()
-        .isAlpha()
-        .trim()
-        .custom(async name => {
+    body('languageId').notEmpty()
+        .custom(async id => {
             const language = await prisma.language.findUnique({
-                where: { name }
+                where: { id }
             })
             
             if (!language) throw new Error('Language does not exist')
@@ -35,21 +30,10 @@ const contributeTranslation = [
     validationErrorCheck,
     async (req, res, next) => {
         const { id } = req.user
-        const { wordText, 
-            ipa,
-            englishDefinition,
-            exampleSentence,
-            languageName
-        } = matchedData(req);
+        const translationData = matchedData(req);
 
         try {
-            const contributedTranslation = await contributeService.contributeTranslation(id, 
-                wordText,
-                ipa,
-                englishDefinition,
-                exampleSentence,
-                languageName
-            )
+            const contributedTranslation = await contributeService.contributeTranslation(id, translationData)
 
             res.status(201).json(contributedTranslation)
         }
