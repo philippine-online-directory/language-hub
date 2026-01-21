@@ -20,8 +20,15 @@ export default function SetDetailPage() {
       setLoading(true);
       setError(null);
       try {
-        const data = await setService.getSetWords(setId);
-        setSet(data);
+        const [setInfo, translations] = await Promise.all([
+          setService.getSetById(setId),
+          setService.getSetWords(setId)
+        ]);
+        const combinedData = {
+          ...setInfo,
+          setWords: translations.map(translation => ({ translation }))
+        };
+        setSet(combinedData);
       } catch (err) {
         setError('Failed to load set. Please try again.');
         console.error('Error fetching set:', err);
@@ -53,7 +60,8 @@ export default function SetDetailPage() {
   const handlePublishToggle = async () => {
     try {
       const updatedSet = await setService.publishSet(setId, {
-        ...set,
+        name: set.name,
+        description: set.description,
         isPublic: !set.isPublic,
       });
       setSet({ ...set, isPublic: updatedSet.isPublic });
@@ -95,7 +103,7 @@ export default function SetDetailPage() {
               <h1 className={styles.setName}>{set.name}</h1>
               {set.isPublic && <span className={styles.publicBadge}>Public</span>}
             </div>
-            <p className={styles.setDescription}>{set.description}</p>
+            {set.description && <p className={styles.setDescription}>{set.description}</p>}
             <div className={styles.meta}>
               <span className={styles.metaItem}>
                 {set.setWords?.length || 0} words

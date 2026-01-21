@@ -28,6 +28,11 @@ export const setService = {
         return response.data;
     },
 
+    publishSet: async (setId, setData) => {
+        const response = await api.put(`/sets/${setId}`, setData);
+        return response.data;
+    },
+
     getSetWords: async (setId) => {
         const response = await api.get(`/sets/${setId}/words`);
         return response.data;
