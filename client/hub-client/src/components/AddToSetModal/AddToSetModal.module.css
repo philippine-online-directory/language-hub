@@ -4,14 +4,15 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(31, 41, 55, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(31, 41, 55, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  animation: fadeIn 0.3s ease-out;
+  animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 20px;
 }
 
 @keyframes fadeIn {
@@ -25,11 +26,12 @@
 
 .modal {
   max-width: 500px;
-  width: 90%;
-  max-height: 80vh;
+  width: 100%;
+  max-height: 85vh;
   overflow-y: auto;
-  animation: modalSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+  animation: modalSlideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+  padding: 32px;
 }
 
 @keyframes modalSlideUp {
@@ -44,13 +46,11 @@
 }
 
 .title {
-  font-size: 24px;
-  line-height: 32px;
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  line-height: 36px;
   font-weight: 600;
-  background: linear-gradient(135deg, #1F2937 0%, #C0763A 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #1F2937;
   margin-bottom: 8px;
 }
 
@@ -58,48 +58,143 @@
   font-size: 16px;
   line-height: 24px;
   color: #6B7280;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
+
+.subtitle strong {
+  color: #1F2937;
+  font-weight: 600;
+}
+
+/* ============================================
+   ERROR STATE
+   ============================================ */
 
 .error {
-  background: #FEE;
-  color: #C00;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(192, 118, 58, 0.08);
+  border: 1px solid rgba(192, 118, 58, 0.3);
+  color: #C0763A;
+  padding: 14px 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
   font-size: 14px;
+  font-weight: 500;
 }
 
-.loading, .empty {
+.errorIcon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   LOADING STATE
+   ============================================ */
+
+.loadingState {
   text-align: center;
-  padding: 32px;
-  color: #6B7280;
+  padding: 48px 32px;
+}
+
+.loadingState p {
   font-size: 16px;
+  line-height: 24px;
+  color: #6B7280;
+  margin-top: 16px;
+}
+
+.loadingSpinner {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto;
+  border: 3px solid rgba(192, 118, 58, 0.1);
+  border-top-color: #C0763A;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+
+.empty {
+  text-align: center;
+  padding: 40px 24px;
+  color: #6B7280;
+}
+
+.emptyIcon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  color: #D1D5DB;
+}
+
+.empty p {
+  font-size: 16px;
+  line-height: 24px;
+  margin-bottom: 8px;
 }
 
 .hint {
   font-size: 14px;
-  color: #6B7280;
-  margin-top: 8px;
+  color: #9CA3AF;
+  margin-top: 4px;
 }
+
+/* ============================================
+   SET LIST
+   ============================================ */
 
 .setList {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* Custom scrollbar */
+.setList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.setList::-webkit-scrollbar-track {
+  background: rgba(229, 231, 235, 0.3);
+  border-radius: 3px;
+}
+
+.setList::-webkit-scrollbar-thumb {
+  background: rgba(192, 118, 58, 0.3);
+  border-radius: 3px;
+}
+
+.setList::-webkit-scrollbar-thumb:hover {
+  background: rgba(192, 118, 58, 0.5);
 }
 
 .setOption {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px;
-  border: 2px solid #E5E7EB;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 2px solid rgba(229, 231, 235, 0.6);
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
   position: relative;
   overflow: hidden;
 }
@@ -108,47 +203,153 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(192, 118, 58, 0.05) 0%, transparent 100%);
+  background: linear-gradient(135deg, rgba(192, 118, 58, 0.04) 0%, transparent 100%);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
 .setOption:hover {
-  border-color: #C0763A;
+  border-color: rgba(192, 118, 58, 0.4);
   transform: translateX(4px);
-  box-shadow: 0 4px 12px rgba(192, 118, 58, 0.15);
+  box-shadow: 0 4px 16px rgba(192, 118, 58, 0.12);
 }
 
 .setOption:hover::before {
   opacity: 1;
 }
 
+.setOption.selected {
+  border-color: #C0763A;
+  background: rgba(192, 118, 58, 0.06);
+  box-shadow: 0 4px 12px rgba(192, 118, 58, 0.15);
+}
+
+.setOption.selected::before {
+  opacity: 1;
+}
+
 .radio {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   accent-color: #C0763A;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .setInfo {
   flex: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .setName {
-  font-weight: 500;
+  font-weight: 600;
   color: #1F2937;
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   font-size: 16px;
+  line-height: 22px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .setMeta {
-  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
   color: #6B7280;
+  font-weight: 500;
 }
+
+.metaIcon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: #C0763A;
+}
+
+/* ============================================
+   ACTIONS
+   ============================================ */
 
 .actions {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.buttonSpinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* ============================================
+   REDUCED MOTION
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .modalOverlay,
+  .modal {
+    animation: none;
+  }
+
+  .loadingSpinner,
+  .buttonSpinner {
+    animation: none;
+    border-top-color: transparent;
+    border-right-color: #C0763A;
+  }
+
+  .buttonSpinner {
+    border-right-color: white;
+  }
+
+  .setOption {
+    transition: none;
+  }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 480px) {
+  .modalOverlay {
+    padding: 16px;
+  }
+
+  .modal {
+    padding: 24px 20px;
+  }
+
+  .title {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  .subtitle {
+    font-size: 15px;
+  }
+
+  .setOption {
+    padding: 14px 16px;
+  }
+
+  .setName {
+    font-size: 15px;
+  }
+
+  .setMeta {
+    font-size: 12px;
+  }
 }
