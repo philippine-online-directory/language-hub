@@ -21,7 +21,7 @@ const getTranslationInfo = [
 const addTranslationToSet = [
     auth,
     async (req, res, next) => {
-        const { vocabSetId } = req.params;
+        const vocabSetId = req.params.setId
         const { translationId } = req.body;
         const userId = req.user.id;
 
@@ -43,7 +43,7 @@ const addTranslationToSet = [
 const removeTranslationFromSet = [
     auth,
     async (req, res, next) => {
-        const { vocabSetId } = req.params;
+        const vocabSetId = req.params.setId
         const { translationId } = req.body;
         const { id } = req.user
 
@@ -58,7 +58,7 @@ const removeTranslationFromSet = [
     }
 ]
 
-//admin function
+// Admin function
 const updateTranslationStatus = [
     auth,
     isAdmin,
@@ -80,9 +80,8 @@ const updateTranslationStatus = [
 const translationController = {
     getTranslationInfo,
     addTranslationToSet,
-    updateTranslationStatus,
-    removeTranslationFromSet
+    removeTranslationFromSet,
+    updateTranslationStatus
 }
 
 export default translationController
-
