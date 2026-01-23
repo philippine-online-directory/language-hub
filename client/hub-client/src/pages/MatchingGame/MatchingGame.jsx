@@ -15,17 +15,33 @@ export default function MatchingGame(){
     const [loading, setLoading] = useState(true);
     const [startTime] = useState(Date.now());
     const [moves, setMoves] = useState(0);
+    const [isChecking, setIsChecking] = useState(false);
+    const [mounted, setMounted] = useState(false);
+    const [gameComplete, setGameComplete] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     useEffect(() => {
         const fetchWords = async () => {
             try {
-                const data = await setService.getSetWords(setId);
-                const words = data.setWords?.map(sw => sw.translation) || [];
+                // Fetch the translations array directly
+                const translations = await setService.getSetWords(setId);
                 
-                const shuffled = words.slice(0, 8);
+                console.log('Fetched translations:', translations);
                 
+                // Backend returns array of translations directly
+                if (!Array.isArray(translations) || translations.length === 0) {
+                    throw new Error('No words found in set');
+                }
+                
+                // Take up to 8 words for the game
+                const words = translations.slice(0, 8);
+                
+                // Create pairs of cards
                 const gameCards = [];
-                shuffled.forEach((word, idx) => {
+                words.forEach((word, idx) => {
                     gameCards.push({
                         id: `word-${idx}`,
                         pairId: idx,
@@ -42,6 +58,7 @@ export default function MatchingGame(){
                     });
                 });
                 
+                // Shuffle the cards
                 const shuffledCards = gameCards.sort(() => Math.random() - 0.5);
                 setCards(shuffledCards);
             } catch (err) {
@@ -56,37 +73,52 @@ export default function MatchingGame(){
     }, [setId, navigate]);
 
     const handleCardClick = (card) => {
-        if (selectedCards.length >= 2) return;
+        // Prevent clicking if checking, already selected, already matched, or two cards selected
+        if (isChecking) return;
         if (selectedCards.find(c => c.id === card.id)) return;
         if (matchedPairs.includes(card.pairId)) return;
+        if (selectedCards.length >= 2) return;
 
         const newSelected = [...selectedCards, card];
         setSelectedCards(newSelected);
 
         if (newSelected.length === 2) {
+            setIsChecking(true);
             setMoves(prev => prev + 1);
             
+            // Check if cards match
             if (newSelected[0].pairId === newSelected[1].pairId) {
-                setMatchedPairs([...matchedPairs, card.pairId]);
-                setTimeout(() => setSelectedCards([]), 500);
-                
-                if (matchedPairs.length + 1 === cards.length / 2) {
-                    setTimeout(() => handleFinish(), 1000);
-                }
+                // Match found!
+                setTimeout(() => {
+                    const newMatchedPairs = [...matchedPairs, card.pairId];
+                    setMatchedPairs(newMatchedPairs);
+                    setSelectedCards([]);
+                    setIsChecking(false);
+                    
+                    // Check if game is complete
+                    if (newMatchedPairs.length === cards.length / 2) {
+                        setGameComplete(true);
+                        setTimeout(() => handleFinish(), 1500);
+                    }
+                }, 600);
             } else {
-                setTimeout(() => setSelectedCards([]), 1000);
+                // No match
+                setTimeout(() => {
+                    setSelectedCards([]);
+                    setIsChecking(false);
+                }, 1200);
             }
         }
     };
 
     const handleFinish = async () => {
-        const duration = (Date.now() - startTime) / 1000;
-        const score = Math.max(0, 100 - moves * 2);
+        const duration = Math.floor((Date.now() - startTime) / 1000);
+        const score = Math.max(0, 100 - (moves - cards.length / 2) * 3);
         
         try {
             await gameService.uploadGameSession(setId, {
                 gameType: 'MATCHING',
-                score,
+                score: Math.round(score),
                 duration,
             });
         } catch (err) {
@@ -100,54 +132,114 @@ export default function MatchingGame(){
         return (
             <div className={styles.matchingGame}>
                 <div className={styles.container}>
-                    <div className={styles.loading}>Loading game...</div>
+                    <div className={styles.loading}>
+                        <div className={styles.spinner}></div>
+                        <p>Loading game...</p>
+                    </div>
                 </div>
             </div>
         );
     }
 
+    const accuracy = moves > 0 ? Math.round((matchedPairs.length / moves) * 100) : 0;
+
     return (
-        <div className={styles.matchingGame}>
+        <div className={`${styles.matchingGame} ${mounted ? styles.mounted : ''}`}>
+            <div className={styles.backgroundPattern}></div>
+            
             <div className={styles.container}>
                 <header className={styles.header}>
-                    <h1 className={styles.title}>Matching Game</h1>
-                    <div className={styles.stats}>
-                        <span>Matches: {matchedPairs.length} / {cards.length / 2}</span>
-                        <span>Moves: {moves}</span>
+                    <div className={styles.headerLeft}>
+                        <h1 className={styles.title}>Matching Game</h1>
+                        <p className={styles.subtitle}>Match words with their definitions</p>
+                    </div>
+                    <div className={styles.statsContainer}>
+                        <div className={styles.statBox}>
+                            <span className={styles.statLabel}>Matches</span>
+                            <span className={styles.statValue}>
+                                {matchedPairs.length} / {cards.length / 2}
+                            </span>
+                        </div>
+                        <div className={styles.statBox}>
+                            <span className={styles.statLabel}>Moves</span>
+                            <span className={styles.statValue}>{moves}</span>
+                        </div>
+                        {moves > 0 && (
+                            <div className={styles.statBox}>
+                                <span className={styles.statLabel}>Accuracy</span>
+                                <span className={styles.statValue}>{accuracy}%</span>
+                            </div>
+                        )}
                     </div>
                 </header>
 
+                {gameComplete && (
+                    <div className={styles.completeMessage}>
+                        <svg className={styles.completeIcon} viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <h2>Perfect Match!</h2>
+                        <p>You completed the game in {moves} moves</p>
+                    </div>
+                )}
+
                 <div className={styles.grid}>
-                    {cards.map((card) => {
+                    {cards.map((card, index) => {
                         const isSelected = selectedCards.find(c => c.id === card.id);
                         const isMatched = matchedPairs.includes(card.pairId);
                         
                         return (
-                            <Card
+                            <div
                                 key={card.id}
-                                onClick={() => handleCardClick(card)}
-                                hoverable={!isMatched && !isSelected}
-                                className={`${styles.matchCard} ${
-                                    isSelected ? styles.selected : ''
-                                } ${isMatched ? styles.matched : ''} ${
-                                    card.type === 'word' ? styles.wordCard : styles.defCard
-                                }`}
+                                className={styles.cardWrapper}
+                                style={{ '--card-index': index }}
                             >
-                                <div className={styles.cardContent}>
-                                    {card.content}
-                                </div>
-                            </Card>
+                                <Card
+                                    onClick={() => handleCardClick(card)}
+                                    hoverable={!isMatched && !isSelected && !isChecking}
+                                    className={`${styles.matchCard} ${
+                                        isSelected ? styles.selected : ''
+                                    } ${isMatched ? styles.matched : ''} ${
+                                        card.type === 'word' ? styles.wordCard : styles.defCard
+                                    }`}
+                                >
+                                    <div className={styles.cardInner}>
+                                        <div className={styles.cardLabel}>
+                                            {card.type === 'word' ? 'Word' : 'Definition'}
+                                        </div>
+                                        <div className={styles.cardContent}>
+                                            {card.content}
+                                        </div>
+                                        {isMatched && (
+                                            <div className={styles.matchBadge}>
+                                                <svg viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                                </svg>
+                                            </div>
+                                        )}
+                                    </div>
+                                </Card>
+                            </div>
                         );
                     })}
                 </div>
 
-                <Button
-                    variant="secondary"
-                    onClick={() => navigate(`/sets/${setId}`)}
-                    className={styles.exitButton}
-                >
-                    Exit Game
-                </Button>
+                <div className={styles.footer}>
+                    <Button
+                        variant="secondary"
+                        onClick={() => navigate(`/sets/${setId}`)}
+                        className={styles.exitButton}
+                    >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Exit Game
+                    </Button>
+                    <div className={styles.instructions}>
+                        Click on cards to reveal and match pairs
+                    </div>
+                </div>
             </div>
         </div>
     );
