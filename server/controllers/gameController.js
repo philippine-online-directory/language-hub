@@ -6,10 +6,10 @@ const viewGameSessions = [
     async (req, res, next) => {
         const { id } = req.user
         const { setId } = req.params
-        const { game } = req.query
+        const { gameType } = req.query
 
         try {
-            const sessions = await gameService.viewGameSessions(id, setId, game)
+            const sessions = await gameService.viewGameSessions(id, setId, gameType)
 
             res.status(200).json(sessions);
         }
@@ -24,12 +24,12 @@ const uploadGameSession = [
     async (req, res, next) => {
         const { id } = req.user
         const { setId } = req.params
-        const { game } = req.query
         
-        const { score, duration } = req.body
+        // Get gameType from request body, not query
+        const { gameType, score, duration } = req.body
 
         try {
-            const createdSession = await gameService.uploadGameSession(id, setId, game, score, duration)
+            const createdSession = await gameService.uploadGameSession(id, setId, gameType, score, duration)
 
             res.status(201).json(createdSession)
         }
@@ -45,4 +45,3 @@ const gameController = {
 }
 
 export default gameController
-
