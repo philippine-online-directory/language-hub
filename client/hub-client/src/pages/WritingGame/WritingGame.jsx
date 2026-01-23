@@ -18,14 +18,28 @@ export default function WritingGame(){
     const [startTime] = useState(Date.now());
     const [correctCount, setCorrectCount] = useState(0);
     const [showHint, setShowHint] = useState(false);
+    const [mounted, setMounted] = useState(false);
+    const [attempts, setAttempts] = useState(0);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     useEffect(() => {
         const fetchWords = async () => {
             try {
-                const data = await setService.getSetWords(setId);
-                const translationsList = data.setWords?.map(sw => sw.translation) || [];
+                // Fetch the translations array directly
+                const translations = await setService.getSetWords(setId);
                 
-                const shuffled = [...translationsList].sort(() => Math.random() - 0.5);
+                console.log('Fetched translations:', translations);
+                
+                // Backend returns array of translations directly
+                if (!Array.isArray(translations) || translations.length === 0) {
+                    throw new Error('No words found in set');
+                }
+                
+                // Shuffle the words
+                const shuffled = [...translations].sort(() => Math.random() - 0.5);
                 setWords(shuffled);
             } 
             catch (err) {
@@ -42,13 +56,17 @@ export default function WritingGame(){
 
     const checkAnswer = () => {
         const currentWord = words[currentIndex];
-        const correct = userAnswer.trim().toLowerCase() === 
-                       currentWord.wordText.trim().toLowerCase();
+        const userAnswerNormalized = userAnswer.trim().toLowerCase();
+        const correctAnswerNormalized = currentWord.wordText.trim().toLowerCase();
+        const correct = userAnswerNormalized === correctAnswerNormalized;
         
         setFeedback({
             correct,
             correctAnswer: currentWord.wordText,
+            userAnswer: userAnswer.trim(),
         });
+
+        setAttempts(prev => prev + 1);
 
         if (correct) {
             setCorrectCount(prev => prev + 1);
@@ -67,8 +85,13 @@ export default function WritingGame(){
         }
     };
 
+    const handleSkip = () => {
+        setAttempts(prev => prev + 1);
+        handleNext();
+    };
+
     const handleFinish = async () => {
-        const duration = (Date.now() - startTime) / 1000;
+        const duration = Math.floor((Date.now() - startTime) / 1000);
         const score = Math.round((correctCount / words.length) * 100);
         
         try {
@@ -84,11 +107,20 @@ export default function WritingGame(){
         navigate(`/sets/${setId}`);
     };
 
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter' && !feedback && userAnswer.trim()) {
+            checkAnswer();
+        }
+    };
+
     if (loading) {
         return (
             <div className={styles.writingGame}>
                 <div className={styles.container}>
-                    <div className={styles.loading}>Loading game...</div>
+                    <div className={styles.loading}>
+                        <div className={styles.spinner}></div>
+                        <p>Loading game...</p>
+                    </div>
                 </div>
             </div>
         );
@@ -98,52 +130,99 @@ export default function WritingGame(){
         return (
             <div className={styles.writingGame}>
                 <div className={styles.container}>
-                    <div className={styles.empty}>No words available</div>
+                    <div className={styles.empty}>
+                        <p>No words available in this set</p>
+                        <Button onClick={() => navigate(`/sets/${setId}`)}>
+                            Back to Set
+                        </Button>
+                    </div>
                 </div>
             </div>
         );
     }
 
     const currentWord = words[currentIndex];
+    const progressPercent = ((currentIndex + (feedback ? 1 : 0)) / words.length) * 100;
+    const accuracy = attempts > 0 ? Math.round((correctCount / attempts) * 100) : 0;
 
     return (
-        <div className={styles.writingGame}>
+        <div className={`${styles.writingGame} ${mounted ? styles.mounted : ''}`}>
+            <div className={styles.backgroundPattern}></div>
+            
             <div className={styles.container}>
                 <header className={styles.header}>
-                    <h1 className={styles.title}>Writing Practice</h1>
-                    <div className={styles.progress}>
-                        <span>Question {currentIndex + 1} / {words.length}</span>
-                        <span>Score: {correctCount} / {currentIndex + (feedback ? 1 : 0)}</span>
+                    <div className={styles.headerLeft}>
+                        <h1 className={styles.title}>Writing Practice</h1>
+                        <p className={styles.subtitle}>Type the correct word for each definition</p>
+                    </div>
+                    <div className={styles.statsContainer}>
+                        <div className={styles.statBox}>
+                            <span className={styles.statLabel}>Question</span>
+                            <span className={styles.statValue}>
+                                {currentIndex + 1}/{words.length}
+                            </span>
+                        </div>
+                        <div className={styles.statBox}>
+                            <span className={styles.statLabel}>Correct</span>
+                            <span className={styles.statValue}>{correctCount}</span>
+                        </div>
+                        {attempts > 0 && (
+                            <div className={styles.statBox}>
+                                <span className={styles.statLabel}>Accuracy</span>
+                                <span className={styles.statValue}>{accuracy}%</span>
+                            </div>
+                        )}
                     </div>
                 </header>
 
+                <div className={styles.progressBar}>
+                    <div 
+                        className={styles.progressFill} 
+                        style={{ width: `${progressPercent}%` }}
+                    ></div>
+                </div>
+
                 <Card className={styles.questionCard}>
+                    <div className={styles.questionHeader}>
+                        <div className={styles.questionNumber}>
+                            Question {currentIndex + 1}
+                        </div>
+                        {currentWord.language && (
+                            <div className={styles.languageBadge}>
+                                {currentWord.language.name}
+                            </div>
+                        )}
+                    </div>
+
                     <div className={styles.question}>
                         <h2 className={styles.questionTitle}>Write the word for:</h2>
                         <p className={styles.definition}>{currentWord.englishDefinition}</p>
                     </div>
 
-                    {!feedback && (
+                    {!feedback ? (
                         <>
-                            <Input
-                                type="text"
-                                value={userAnswer}
-                                onChange={(e) => setUserAnswer(e.target.value)}
-                                placeholder="Type your answer..."
-                                className={styles.answerInput}
-                                onKeyPress={(e) => {
-                                    if (e.key === 'Enter' && userAnswer.trim()) {
-                                        checkAnswer();
-                                    }
-                                }}
-                                autoFocus
-                            />
+                            <div className={styles.inputWrapper}>
+                                <Input
+                                    type="text"
+                                    value={userAnswer}
+                                    onChange={(e) => setUserAnswer(e.target.value)}
+                                    placeholder="Type your answer here..."
+                                    className={styles.answerInput}
+                                    onKeyPress={handleKeyPress}
+                                    autoFocus
+                                    disabled={feedback !== null}
+                                />
+                                <div className={styles.inputHint}>
+                                    Press Enter to submit
+                                </div>
+                            </div>
 
                             <div className={styles.actions}>
                                 <Button
                                     variant="primary"
                                     onClick={checkAnswer}
                                     disabled={!userAnswer.trim()}
+                                    className={styles.checkButton}
                                 >
                                     Check Answer
                                 </Button>
@@ -151,58 +230,122 @@ export default function WritingGame(){
                                 <Button
                                     variant="secondary"
                                     onClick={() => setShowHint(!showHint)}
+                                    className={styles.hintButton}
                                 >
-                                    {showHint ? 'Hide Hint' : 'Show Hint'}
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                    </svg>
+                                    {showHint ? 'Hide Hint' : 'Need a Hint?'}
+                                </Button>
+
+                                <Button
+                                    variant="secondary"
+                                    onClick={handleSkip}
+                                    className={styles.skipButton}
+                                >
+                                    Skip
                                 </Button>
                             </div>
 
                             {showHint && (
                                 <Card className={styles.hintCard}>
+                                    <div className={styles.hintHeader}>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                                        </svg>
+                                        <span>Hints</span>
+                                    </div>
                                     {currentWord.ipa && (
-                                        <p className={styles.hint}>
-                                            Pronunciation: {currentWord.ipa}
-                                        </p>
+                                        <div className={styles.hintItem}>
+                                            <span className={styles.hintLabel}>Pronunciation:</span>
+                                            <span className={styles.hintValue}>{currentWord.ipa}</span>
+                                        </div>
                                     )}
                                     {currentWord.exampleSentence && (
-                                        <p className={styles.hint}>
-                                            Used in: {currentWord.exampleSentence}
-                                        </p>
+                                        <div className={styles.hintItem}>
+                                            <span className={styles.hintLabel}>Example:</span>
+                                            <span className={styles.hintValue}>{currentWord.exampleSentence}</span>
+                                        </div>
+                                    )}
+                                    {!currentWord.ipa && !currentWord.exampleSentence && (
+                                        <p className={styles.noHints}>No hints available for this word</p>
                                     )}
                                 </Card>
                             )}
                         </>
-                    )}
-
-                    {feedback && (
+                    ) : (
                         <div className={`${styles.feedback} ${
                             feedback.correct ? styles.correct : styles.incorrect
                         }`}>
+                            <div className={styles.feedbackIcon}>
+                                {feedback.correct ? (
+                                    <svg viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                    </svg>
+                                ) : (
+                                    <svg viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                    </svg>
+                                )}
+                            </div>
                             <h3 className={styles.feedbackTitle}>
-                                {feedback.correct ? 'Correct!' : 'Not quite'}
+                                {feedback.correct ? 'Correct!' : 'Not Quite Right'}
                             </h3>
                             {!feedback.correct && (
-                                <p className={styles.correctAnswer}>
-                                    The correct answer is: <strong>{feedback.correctAnswer}</strong>
-                                </p>
+                                <div className={styles.answerComparison}>
+                                    <div className={styles.comparisonItem}>
+                                        <span className={styles.comparisonLabel}>Your answer:</span>
+                                        <span className={styles.wrongAnswer}>{feedback.userAnswer || '(empty)'}</span>
+                                    </div>
+                                    <div className={styles.comparisonItem}>
+                                        <span className={styles.comparisonLabel}>Correct answer:</span>
+                                        <span className={styles.correctAnswerText}>{feedback.correctAnswer}</span>
+                                    </div>
+                                </div>
+                            )}
+                            {feedback.correct && (
+                                <p className={styles.encouragement}>Great job! Keep it up!</p>
                             )}
                             <Button
                                 variant="primary"
                                 onClick={handleNext}
                                 className={styles.nextButton}
                             >
-                                {currentIndex === words.length - 1 ? 'Finish' : 'Next Question'}
+                                {currentIndex === words.length - 1 ? (
+                                    <>
+                                        <span>Finish Game</span>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span>Next Question</span>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <polyline points="9 18 15 12 9 6"></polyline>
+                                        </svg>
+                                    </>
+                                )}
                             </Button>
                         </div>
                     )}
                 </Card>
 
-                <Button
-                    variant="secondary"
-                    onClick={handleFinish}
-                    className={styles.exitButton}
-                >
-                    Exit Game
-                </Button>
+                <div className={styles.footer}>
+                    <Button
+                        variant="secondary"
+                        onClick={handleFinish}
+                        className={styles.exitButton}
+                    >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Exit Practice
+                    </Button>
+                </div>
             </div>
         </div>
     );
