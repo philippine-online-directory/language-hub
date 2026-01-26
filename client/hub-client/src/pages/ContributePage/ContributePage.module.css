@@ -1,9 +1,44 @@
+/* ContributePage - Site Design System */
+
 .contributePage {
-  min-height: calc(100vh - 80px);
-  padding: 48px 0;
-  background: linear-gradient(135deg, #F6F4EF 0%, rgba(192, 118, 58, 0.04) 100%);
+  min-height: 100vh;
+  padding: 80px 24px 40px;
+  background: #F6F4EF;
   position: relative;
   overflow: hidden;
+  opacity: 0;
+  transform: translateY(40px);
+  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.contributePage.mounted {
+  animation: none;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.backgroundPattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.02;
+  background-image: 
+    repeating-linear-gradient(45deg, #C0763A 0px, #C0763A 1px, transparent 1px, transparent 20px),
+    repeating-linear-gradient(-45deg, #C0763A 0px, #C0763A 1px, transparent 1px, transparent 20px);
+  pointer-events: none;
 }
 
 .contributePage::before {
@@ -30,29 +65,18 @@
 .container {
   max-width: 800px;
   margin: 0 auto;
-  padding: 0 24px;
   position: relative;
   z-index: 1;
-  animation: fadeInUp 0.6s ease-out;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .header {
   margin-bottom: 32px;
   text-align: center;
+  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.1s backwards;
 }
 
 .title {
+  font-family: 'Fraunces', serif;
   font-size: 40px;
   line-height: 48px;
   font-weight: 600;
@@ -77,6 +101,7 @@
   backdrop-filter: blur(20px);
   position: relative;
   overflow: hidden;
+  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s backwards;
 }
 
 .formCard::before {
@@ -212,6 +237,15 @@
   min-height: 80px;
 }
 
+.loadingSelect {
+  padding: 14px 16px;
+  border: 2px solid #E5E7EB;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #6B7280;
+  font-size: 16px;
+}
+
 .errorText {
   font-size: 13px;
   color: #DC2626;
@@ -231,9 +265,33 @@
   margin-top: 12px;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .contributePage,
+  .header,
+  .formCard {
+    animation: none;
+  }
+
+  .formCard::before {
+    animation: none;
+  }
+
+  .success::before {
+    animation: none;
+  }
+
+  .error {
+    animation: none;
+  }
+
+  .contributePage::before {
+    animation: none;
+  }
+}
+
 @media (max-width: 768px) {
-  .container {
-    padding: 0 20px;
+  .contributePage {
+    padding: 48px 20px 24px;
   }
 
   .title {
@@ -243,11 +301,16 @@
 }
 
 @media (max-width: 480px) {
-  .container {
-    padding: 0 16px;
+  .contributePage {
+    padding: 32px 16px 24px;
   }
 
-  .contributePage {
-    padding: 32px 0;
+  .title {
+    font-size: 28px;
+    line-height: 36px;
+  }
+
+  .subtitle {
+    font-size: 16px;
   }
 }

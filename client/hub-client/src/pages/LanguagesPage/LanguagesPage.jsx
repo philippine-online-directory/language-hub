@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { languageService } from '../../api/languageService';
 import useDebounce from '../../hooks/useDebounce';
 import LanguageCard from '../../components/LanguageCard/LanguageCard';
+import Pagination from '../../components/Pagination/Pagination';
 import Input from '../../components/Input/Input';
 import styles from './LanguagesPage.module.css';
 
@@ -11,8 +12,22 @@ export default function LanguagesPage(){
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchMode, setSearchMode] = useState('name');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pagination, setPagination] = useState(null);
+    const [mounted, setMounted] = useState(false);
+    const gridRef = useRef(null);
 
     const debouncedSearch = useDebounce(searchQuery, 500);
+    const LANGUAGES_PER_PAGE = 20;
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    // Reset to page 1 when search changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [debouncedSearch, searchMode]);
 
     useEffect(() => {
         const fetchLanguages = async () => {
@@ -20,25 +35,35 @@ export default function LanguagesPage(){
             setError(null);
 
             try {
-                let data;
+                let result;
                 if (searchMode === 'isoCode') {
                     if (!debouncedSearch) {
                         setLanguages([]);
+                        setPagination(null);
                         setLoading(false);
                         return;
                     }
-                    const result = await languageService.getLanguageByCode(debouncedSearch);
-                    data = result ? [result] : [];
+                    const language = await languageService.getLanguageByCode(debouncedSearch);
+                    result = { 
+                        languages: language ? [language] : [], 
+                        pagination: { page: 1, limit: 1, total: language ? 1 : 0, totalPages: 1 }
+                    };
                 } 
                 else {
-                    data = await languageService.getLanguages(debouncedSearch);
+                    result = await languageService.getLanguages(currentPage, LANGUAGES_PER_PAGE, debouncedSearch);
                 }
 
-                setLanguages(data);
+                setLanguages(result.languages);
+                setPagination(result.pagination);
+
+                if (currentPage > 1) {
+                    window.scrollTo({ top: 200, behavior: 'smooth' });
+                }
             } 
             catch (err) {
                 if (searchMode === 'isoCode' && err.response?.status === 404) {
                     setLanguages([]);
+                    setPagination(null);
                 } else {
                     setError('Failed to load languages. Please try again.');
                     console.error('Error fetching languages:', err);
@@ -50,19 +75,38 @@ export default function LanguagesPage(){
         };
 
         fetchLanguages();
-    }, [debouncedSearch, searchMode]);
+    }, [debouncedSearch, searchMode, currentPage]);
 
-    const handleSearchChange = (e) => {
-        setSearchQuery(e.target.value);
-    };
+    // Scroll animation observer
+    useEffect(() => {
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReducedMotion || !gridRef.current) return;
 
-    const handleModeChange = (e) => {
-        setSearchMode(e.target.value);
-        setSearchQuery('');
-    };
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observerCallback = (entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add(styles.visible);
+                }
+            });
+        };
+
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+        const items = gridRef.current.querySelectorAll(`.${styles.animateItem}`);
+        items.forEach(item => observer.observe(item));
+
+        return () => observer.disconnect();
+    }, [languages]);
 
     return (
-        <div className={styles.languagesPage}>
+        <div className={`${styles.languagesPage} ${mounted ? styles.mounted : ''}`}>
+            <div className={styles.backgroundPattern}></div>
+            
             <div className={styles.container}>
                 <header className={styles.header}>
                     <h1 className={styles.title}>Explore Languages</h1>
@@ -79,7 +123,10 @@ export default function LanguagesPage(){
                                 name="searchMode"
                                 value="name"
                                 checked={searchMode === 'name'}
-                                onChange={handleModeChange}
+                                onChange={(e) => {
+                                    setSearchMode(e.target.value);
+                                    setSearchQuery('');
+                                }}
                                 className={styles.radio}
                             />
                             <span>Search by Name</span>
@@ -90,7 +137,10 @@ export default function LanguagesPage(){
                                 name="searchMode"
                                 value="isoCode"
                                 checked={searchMode === 'isoCode'}
-                                onChange={handleModeChange}
+                                onChange={(e) => {
+                                    setSearchMode(e.target.value);
+                                    setSearchQuery('');
+                                }}
                                 className={styles.radio}
                             />
                             <span>Search by ISO Code</span>
@@ -100,12 +150,12 @@ export default function LanguagesPage(){
                     <Input
                         type="text"
                         placeholder={
-                        searchMode === 'name'
-                            ? 'Search languages...'
-                            : 'Enter ISO code (e.g., en, fr, es)...'
+                            searchMode === 'name'
+                                ? 'Search languages...'
+                                : 'Enter ISO code (e.g., en, fr, es)...'
                         }
                         value={searchQuery}
-                        onChange={handleSearchChange}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                         className={styles.searchInput}
                     />
                 </div>
@@ -113,19 +163,45 @@ export default function LanguagesPage(){
                 {error && <div className={styles.error}>{error}</div>}
 
                 {loading ? (
-                    <div className={styles.loading}>Loading languages...</div>
+                    <div className={styles.loadingState}>
+                        <div className={styles.loadingSpinner}></div>
+                        <p>Loading languages...</p>
+                    </div>
                 ) : languages.length === 0 ? (
                     <div className={styles.empty}>
-                        {searchQuery
-                        ? 'No languages found matching your search.'
-                        : 'No languages available yet.'}
+                        <svg className={styles.emptyIcon} viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                        </svg>
+                        <p>
+                            {searchQuery
+                                ? 'No languages found matching your search.'
+                                : 'No languages available yet.'}
+                        </p>
                     </div>
                 ) : (
-                    <div className={styles.languagesGrid}>
-                        {languages.map((language) => (
-                        <LanguageCard key={language.id} language={language} />
-                        ))}
-                    </div>
+                    <>
+                        <div className={styles.languagesGrid} ref={gridRef}>
+                            {languages.map((language, index) => (
+                                <div
+                                    key={language.id}
+                                    className={styles.animateItem}
+                                    style={{ '--item-index': index }}
+                                >
+                                    <LanguageCard language={language} />
+                                </div>
+                            ))}
+                        </div>
+
+                        {pagination && pagination.totalPages > 1 && searchMode !== 'isoCode' && (
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={pagination.totalPages}
+                                onPageChange={setCurrentPage}
+                                totalItems={pagination.total}
+                                itemsPerPage={pagination.limit}
+                            />
+                        )}
+                    </>
                 )}
             </div>
         </div>

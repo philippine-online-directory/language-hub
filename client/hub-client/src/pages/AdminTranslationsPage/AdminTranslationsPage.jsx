@@ -11,20 +11,29 @@ export default function AdminTranslationsPage(){
     const [selectedLanguage, setSelectedLanguage] = useState('');
     const [translations, setTranslations] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [languagesLoading, setLanguagesLoading] = useState(true);
     const [filter, setFilter] = useState('UNVERIFIED');
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     useEffect(() => {
         const fetchLanguages = async () => {
+            setLanguagesLoading(true);
             try {
-                const data = await languageService.getLanguages();
-                setLanguages(data);
-                if (data.length > 0) {
-                    setSelectedLanguage(data[0].isoCode);
+                // Fetch all languages for admin
+                const result = await languageService.getLanguages(1, 1000);
+                const languagesList = result.languages || [];
+                setLanguages(languagesList);
+                if (languagesList.length > 0) {
+                    setSelectedLanguage(languagesList[0].isoCode);
                 }
             } catch (err) {
                 console.error('Error fetching languages:', err);
             } finally {
-                setLoading(false);
+                setLanguagesLoading(false);
             }
         };
         fetchLanguages();
@@ -39,13 +48,15 @@ export default function AdminTranslationsPage(){
     const fetchTranslations = async () => {
         setLoading(true);
         try {
-            const data = await languageService.getTranslations(
+            // Fetch all translations for admin (large limit)
+            const result = await languageService.getTranslations(
                 selectedLanguage,
-                { status: filter }
+                { status: filter, page: 1, limit: 1000 }
             );
-            setTranslations(data);
+            setTranslations(result.translations || []);
         } catch (err) {
             console.error('Error fetching translations:', err);
+            setTranslations([]);
         } finally {
             setLoading(false);
         }
@@ -81,16 +92,24 @@ export default function AdminTranslationsPage(){
 
     if (user?.role !== 'ADMIN') {
         return (
-            <div className={styles.adminTranslationsPage}>
+            <div className={`${styles.adminTranslationsPage} ${mounted ? styles.mounted : ''}`}>
+                <div className={styles.backgroundPattern}></div>
                 <div className={styles.container}>
-                    <div className={styles.unauthorized}>Unauthorized access</div>
+                    <div className={styles.unauthorized}>
+                        <svg className={styles.unauthorizedIcon} viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                        <p>Unauthorized access</p>
+                    </div>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className={styles.adminTranslationsPage}>
+        <div className={`${styles.adminTranslationsPage} ${mounted ? styles.mounted : ''}`}>
+            <div className={styles.backgroundPattern}></div>
+            
             <div className={styles.container}>
                 <header className={styles.header}>
                     <h1 className={styles.title}>Verify Translations</h1>
@@ -99,17 +118,21 @@ export default function AdminTranslationsPage(){
                 <div className={styles.controls}>
                     <div className={styles.controlGroup}>
                         <label className={styles.label}>Language</label>
-                        <select
-                            value={selectedLanguage}
-                            onChange={(e) => setSelectedLanguage(e.target.value)}
-                            className={styles.select}
-                        >
-                            {languages.map((lang) => (
-                                <option key={lang.isoCode} value={lang.isoCode}>
-                                    {lang.name} ({lang.isoCode.toUpperCase()})
-                                </option>
-                            ))}
-                        </select>
+                        {languagesLoading ? (
+                            <div className={styles.loadingSelect}>Loading languages...</div>
+                        ) : (
+                            <select
+                                value={selectedLanguage}
+                                onChange={(e) => setSelectedLanguage(e.target.value)}
+                                className={styles.select}
+                            >
+                                {languages.map((lang) => (
+                                    <option key={lang.isoCode} value={lang.isoCode}>
+                                        {lang.name} ({lang.isoCode.toUpperCase()})
+                                    </option>
+                                ))}
+                            </select>
+                        )}
                     </div>
 
                     <div className={styles.filterGroup}>
@@ -147,10 +170,16 @@ export default function AdminTranslationsPage(){
                 </div>
 
                 {loading ? (
-                    <div className={styles.loading}>Loading translations...</div>
+                    <div className={styles.loadingState}>
+                        <div className={styles.loadingSpinner}></div>
+                        <p>Loading translations...</p>
+                    </div>
                 ) : translations.length === 0 ? (
                     <div className={styles.empty}>
-                        No {filter.toLowerCase()} translations found for this language.
+                        <svg className={styles.emptyIcon} viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
+                        </svg>
+                        <p>No {filter.toLowerCase()} translations found for this language.</p>
                     </div>
                 ) : (
                     <div className={styles.translationsGrid}>
@@ -159,6 +188,7 @@ export default function AdminTranslationsPage(){
                                 <WordDisplay 
                                     translation={translation} 
                                     showAddToSet={false}
+                                    defaultExpanded={false}
                                 />
                                 <div className={styles.adminActions}>
                                     {translation.status === 'UNVERIFIED' ? (

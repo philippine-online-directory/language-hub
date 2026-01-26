@@ -1,47 +1,14 @@
+/* SetsPage - Site Design System */
+
 .setsPage {
-  min-height: calc(100vh - 80px);
-  padding: 80px 0;
+  min-height: 100vh;
+  padding: 80px 24px 40px;
   background: #F6F4EF;
   position: relative;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 48px;
-}
-
-/* ============================================
-   HEADER
-   ============================================ */
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 32px;
-  margin-bottom: 48px;
-  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-}
-
-.headerContent {
-  flex: 1;
-}
-
-.title {
-  font-family: 'Fraunces', serif;
-  font-size: 48px;
-  line-height: 56px;
-  font-weight: 600;
-  color: #1F2937;
-  letter-spacing: -0.02em;
-  margin-bottom: 12px;
-}
-
-.subtitle {
-  font-size: 18px;
-  line-height: 28px;
-  color: #6B7280;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(40px);
+  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @keyframes fadeInUp {
@@ -55,30 +22,85 @@
   }
 }
 
-/* ============================================
-   CONTROLS
-   ============================================ */
+.setsPage.mounted {
+  animation: none;
+  opacity: 1;
+  transform: translateY(0);
+}
 
-.controls {
+.backgroundPattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.02;
+  background-image: 
+    repeating-linear-gradient(45deg, #C0763A 0px, #C0763A 1px, transparent 1px, transparent 20px),
+    repeating-linear-gradient(-45deg, #C0763A 0px, #C0763A 1px, transparent 1px, transparent 20px);
+  pointer-events: none;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.header {
   display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   gap: 24px;
-  align-items: center;
   margin-bottom: 48px;
   animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.1s backwards;
+}
+
+.headerContent {
+  flex: 1;
+}
+
+.title {
+  font-family: 'Fraunces', serif;
+  font-size: 48px;
+  line-height: 56px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #1F2937 0%, #C0763A 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 18px;
+  line-height: 28px;
+  color: #6B7280;
+}
+
+.controls {
+  margin-bottom: 48px;
+  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s backwards;
 }
 
 .tabs {
   display: flex;
   gap: 8px;
+  margin-bottom: 24px;
   border-bottom: 2px solid rgba(229, 231, 235, 0.6);
 }
 
 .tab {
-  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 28px;
   background: none;
   border: none;
   border-bottom: 3px solid transparent;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: #6B7280;
   cursor: pointer;
@@ -101,35 +123,31 @@
   border-radius: 12px 12px 0 0;
 }
 
+.tabIcon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.activeTab .tabIcon {
+  color: #C0763A;
+  transform: scale(1.1);
+}
+
 .searchWrapper {
-  flex: 1;
-  max-width: 400px;
+  max-width: 600px;
 }
 
 .searchInput {
   width: 100%;
-  font-size: 16px;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(229, 231, 235, 0.6);
-  border-radius: 16px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
-.searchInput:focus {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(192, 118, 58, 0.3);
-  box-shadow: 0 8px 24px rgba(192, 118, 58, 0.1);
-}
-
-/* ============================================
-   SETS GRID
-   ============================================ */
 
 .setsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 32px;
+  gap: 24px;
+  margin-bottom: 48px;
 }
 
 .animateItem {
@@ -152,10 +170,10 @@
 }
 
 .setCard {
-  height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 28px;
+  gap: 16px;
+  height: 100%;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -182,28 +200,23 @@
   opacity: 1;
 }
 
-/* ============================================
-   SET CARD CONTENT
-   ============================================ */
-
 .setHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 12px;
-  margin-bottom: 16px;
   position: relative;
   z-index: 1;
 }
 
 .setName {
   font-family: 'Fraunces', serif;
-  font-size: 24px;
-  line-height: 32px;
+  font-size: 22px;
+  line-height: 30px;
   font-weight: 600;
   color: #1F2937;
   flex: 1;
-  word-break: break-word;
+  margin: 0;
 }
 
 .publicBadge {
@@ -217,7 +230,6 @@
   font-size: 12px;
   color: #C0763A;
   font-weight: 600;
-  letter-spacing: 0.02em;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -225,26 +237,25 @@
 .badgeIcon {
   width: 14px;
   height: 14px;
-  flex-shrink: 0;
 }
 
 .setDescription {
   font-size: 15px;
   line-height: 24px;
   color: #6B7280;
-  margin-bottom: 20px;
   flex: 1;
   position: relative;
   z-index: 1;
+  margin: 0;
 }
 
 .setMeta {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   padding-top: 16px;
   border-top: 1px solid rgba(229, 231, 235, 0.6);
-  margin-bottom: 16px;
+  font-size: 14px;
   position: relative;
   z-index: 1;
 }
@@ -253,7 +264,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
   color: #6B7280;
   font-weight: 500;
 }
@@ -267,29 +277,53 @@
 
 .setActions {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   padding-top: 16px;
   border-top: 1px solid rgba(229, 231, 235, 0.6);
   position: relative;
   z-index: 1;
 }
 
-.setActions button {
-  flex: 1;
-}
-
-/* ============================================
-   EMPTY STATE
-   ============================================ */
-
-.empty {
+.loadingState,
+.empty,
+.error {
   text-align: center;
   padding: 80px 32px;
-  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s backwards;
+  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 24px;
+}
+
+.loadingState p,
+.empty p {
+  font-size: 18px;
+  line-height: 28px;
+  color: #6B7280;
+  margin: 0;
+}
+
+.error {
+  background: rgba(192, 118, 58, 0.05);
+  border: 1px solid rgba(192, 118, 58, 0.2);
+  border-radius: 16px;
+  padding: 40px 32px;
+  color: #C0763A;
+  font-size: 16px;
+}
+
+.loadingSpinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(192, 118, 58, 0.1);
+  border-top-color: #C0763A;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .emptyIcon {
@@ -299,74 +333,23 @@
   margin-bottom: 8px;
 }
 
-.empty p {
-  font-size: 18px;
-  line-height: 28px;
-  color: #6B7280;
-}
-
-/* ============================================
-   LOADING & ERROR STATES
-   ============================================ */
-
-.loadingState,
-.errorState {
-  text-align: center;
-  padding: 80px 32px;
-  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.loadingState p,
-.errorState p {
-  font-size: 18px;
-  line-height: 28px;
-  color: #6B7280;
-  margin-top: 24px;
-}
-
-.errorState {
-  background: rgba(192, 118, 58, 0.05);
-  border: 1px solid rgba(192, 118, 58, 0.2);
-  border-radius: 16px;
-  padding: 40px 32px;
-}
-
-.errorState p {
-  color: #C0763A;
-}
-
-.loadingSpinner {
-  width: 48px;
-  height: 48px;
-  margin: 0 auto;
-  border: 4px solid rgba(192, 118, 58, 0.1);
-  border-top-color: #C0763A;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* ============================================
-   REDUCED MOTION
-   ============================================ */
-
 @media (prefers-reduced-motion: reduce) {
+  .setsPage,
   .header,
   .controls,
-  .empty,
   .loadingState,
-  .errorState {
+  .empty,
+  .error {
     animation: none;
   }
 
   .animateItem {
     opacity: 1;
     transform: none;
+    transition: none;
+  }
+
+  .setCard {
     transition: none;
   }
 
@@ -377,10 +360,6 @@
   }
 }
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-
 @media (max-width: 1024px) {
   .setsGrid {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -388,17 +367,12 @@
 }
 
 @media (max-width: 768px) {
-  .container {
-    padding: 0 24px;
-  }
-
   .setsPage {
-    padding: 48px 0;
+    padding: 48px 20px 24px;
   }
 
   .header {
     flex-direction: column;
-    align-items: flex-start;
   }
 
   .title {
@@ -408,11 +382,6 @@
 
   .subtitle {
     font-size: 16px;
-  }
-
-  .controls {
-    flex-direction: column;
-    align-items: stretch;
   }
 
   .tabs {
@@ -429,27 +398,15 @@
     padding: 16px 24px;
   }
 
-  .searchWrapper {
-    max-width: 100%;
-  }
-
   .setsGrid {
     grid-template-columns: 1fr;
-    gap: 24px;
-  }
-
-  .setActions {
-    flex-direction: column;
+    gap: 20px;
   }
 }
 
 @media (max-width: 480px) {
-  .container {
-    padding: 0 16px;
-  }
-
   .setsPage {
-    padding: 32px 0;
+    padding: 32px 16px 24px;
   }
 
   .title {
@@ -473,6 +430,7 @@
     border-radius: 0;
     text-align: left;
     padding: 16px 20px;
+    justify-content: flex-start;
   }
 
   .tab:hover {
@@ -485,16 +443,7 @@
     border-radius: 0;
   }
 
-  .setCard {
-    padding: 24px 20px;
-  }
-
-  .setName {
-    font-size: 20px;
-    line-height: 28px;
-  }
-
-  .setDescription {
-    font-size: 14px;
+  .setActions {
+    flex-direction: column;
   }
 }

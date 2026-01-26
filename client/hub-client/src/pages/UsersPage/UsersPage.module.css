@@ -1,43 +1,14 @@
+/* UsersPage - Site Design System */
+
 .usersPage {
-  min-height: calc(100vh - 80px);
-  padding: 80px 0;
+  min-height: 100vh;
+  padding: 80px 24px 40px;
   background: #F6F4EF;
   position: relative;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 48px;
-}
-
-/* ============================================
-   HEADER
-   ============================================ */
-
-.header {
-  margin-bottom: 48px;
-  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-}
-
-.headerContent {
-  max-width: 800px;
-}
-
-.title {
-  font-family: 'Fraunces', serif;
-  font-size: 48px;
-  line-height: 56px;
-  font-weight: 600;
-  color: #1F2937;
-  letter-spacing: -0.02em;
-  margin-bottom: 12px;
-}
-
-.subtitle {
-  font-size: 18px;
-  line-height: 28px;
-  color: #6B7280;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(40px);
+  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @keyframes fadeInUp {
@@ -51,44 +22,71 @@
   }
 }
 
-/* ============================================
-   SEARCH SECTION
-   ============================================ */
+.usersPage.mounted {
+  animation: none;
+  opacity: 1;
+  transform: translateY(0);
+}
 
-.searchSection {
-  margin-bottom: 64px;
+.backgroundPattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.02;
+  background-image: 
+    repeating-linear-gradient(45deg, #C0763A 0px, #C0763A 1px, transparent 1px, transparent 20px),
+    repeating-linear-gradient(-45deg, #C0763A 0px, #C0763A 1px, transparent 1px, transparent 20px);
+  pointer-events: none;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.header {
+  margin-bottom: 48px;
   animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.1s backwards;
 }
 
-.searchWrapper {
-  position: relative;
+.title {
+  font-family: 'Fraunces', serif;
+  font-size: 48px;
+  line-height: 56px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #1F2937 0%, #C0763A 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 18px;
+  line-height: 28px;
+  color: #6B7280;
+}
+
+.searchSection {
+  margin-bottom: 48px;
   max-width: 600px;
+  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s backwards;
 }
 
 .searchInput {
   width: 100%;
-  font-size: 16px;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(229, 231, 235, 0.6);
-  border-radius: 16px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
-.searchInput:focus {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(192, 118, 58, 0.3);
-  box-shadow: 0 8px 24px rgba(192, 118, 58, 0.1);
-}
-
-/* ============================================
-   USERS GRID
-   ============================================ */
 
 .usersGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 32px;
+  gap: 24px;
+  margin-bottom: 48px;
 }
 
 .animateItem {
@@ -96,7 +94,7 @@
   transform: translateY(40px) scale(0.96);
   transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
               transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-  transition-delay: calc(var(--item-index, 0) * 0.04s);
+  transition-delay: calc(var(--item-index, 0) * 0.05s);
 }
 
 .animateItem.visible {
@@ -104,12 +102,16 @@
   transform: translateY(0) scale(1);
 }
 
+.userLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
 .userCard {
-  cursor: pointer;
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding: 28px;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -128,7 +130,7 @@
 }
 
 .userCard:hover {
-  transform: translateY(-8px) rotateX(2deg);
+  transform: translateY(-8px);
   box-shadow: 0 20px 60px rgba(192, 118, 58, 0.15);
 }
 
@@ -136,24 +138,60 @@
   opacity: 1;
 }
 
-/* ============================================
-   USER INFO
-   ============================================ */
-
-.userInfo {
+.userHeader {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  gap: 16px;
   position: relative;
   z-index: 1;
 }
 
-.userHeader {
+.avatar {
+  width: 64px;
+  height: 64px;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 4px;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #C0763A 0%, #A86330 100%);
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 8px 24px rgba(192, 118, 58, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar::before {
+  content: '';
+  position: absolute;
+  inset: -50%;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.2) 50%, transparent 70%);
+  transform: rotate(45deg);
+  animation: shine 3s linear infinite;
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+.avatarText {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: #FFFFFF;
+  position: relative;
+  z-index: 1;
+}
+
+.userInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .username {
@@ -162,26 +200,11 @@
   line-height: 32px;
   font-weight: 600;
   color: #1F2937;
-  flex: 1;
-  word-break: break-word;
-}
-
-.email {
-  font-size: 14px;
-  line-height: 20px;
-  color: #6B7280;
-  word-break: break-all;
-}
-
-.joinDate {
-  font-size: 13px;
-  line-height: 18px;
-  color: #9CA3AF;
-  font-weight: 500;
+  margin: 0;
 }
 
 .adminBadge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
@@ -192,8 +215,7 @@
   color: #C0763A;
   font-weight: 600;
   letter-spacing: 0.02em;
-  white-space: nowrap;
-  flex-shrink: 0;
+  width: fit-content;
 }
 
 .badgeIcon {
@@ -202,56 +224,88 @@
   flex-shrink: 0;
 }
 
-/* ============================================
-   USER STATS
-   ============================================ */
-
 .userStats {
-  display: flex;
-  gap: 24px;
-  padding-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding-top: 20px;
   border-top: 1px solid rgba(229, 231, 235, 0.6);
   position: relative;
   z-index: 1;
 }
 
-.stat {
+.statItem {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  flex: 1;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: rgba(192, 118, 58, 0.04);
+  border-radius: 12px;
+}
+
+.statIcon {
+  width: 24px;
+  height: 24px;
+  color: #C0763A;
+  flex-shrink: 0;
 }
 
 .statValue {
   font-family: 'Fraunces', serif;
-  font-size: 28px;
-  line-height: 36px;
+  font-size: 24px;
+  line-height: 1;
   font-weight: 600;
-  background: linear-gradient(135deg, #C0763A 0%, #1F2937 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #C0763A;
 }
 
 .statLabel {
   font-size: 12px;
   color: #6B7280;
+  text-align: center;
   font-weight: 500;
-  letter-spacing: 0.02em;
 }
 
-/* ============================================
-   EMPTY STATE
-   ============================================ */
-
-.empty {
+.loadingState,
+.empty,
+.error {
   text-align: center;
   padding: 80px 32px;
-  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s backwards;
+  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 24px;
+}
+
+.loadingState p,
+.empty p {
+  font-size: 18px;
+  line-height: 28px;
+  color: #6B7280;
+  margin: 0;
+}
+
+.error {
+  background: rgba(192, 118, 58, 0.05);
+  border: 1px solid rgba(192, 118, 58, 0.2);
+  border-radius: 16px;
+  padding: 40px 32px;
+  color: #C0763A;
+  font-size: 16px;
+}
+
+.loadingSpinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(192, 118, 58, 0.1);
+  border-top-color: #C0763A;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .emptyIcon {
@@ -261,87 +315,13 @@
   margin-bottom: 8px;
 }
 
-.empty p {
-  font-size: 18px;
-  line-height: 28px;
-  color: #6B7280;
-}
-
-.clearSearchButton {
-  padding: 12px 24px;
-  background: rgba(192, 118, 58, 0.1);
-  border: 1px solid rgba(192, 118, 58, 0.3);
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #C0763A;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.clearSearchButton:hover {
-  background: rgba(192, 118, 58, 0.15);
-  border-color: #C0763A;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(192, 118, 58, 0.2);
-}
-
-/* ============================================
-   LOADING & ERROR STATES
-   ============================================ */
-
-.loadingState,
-.errorState {
-  text-align: center;
-  padding: 80px 32px;
-  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.loadingState p,
-.errorState p {
-  font-size: 18px;
-  line-height: 28px;
-  color: #6B7280;
-  margin-top: 24px;
-}
-
-.errorState {
-  background: rgba(192, 118, 58, 0.05);
-  border: 1px solid rgba(192, 118, 58, 0.2);
-  border-radius: 16px;
-  padding: 40px 32px;
-}
-
-.errorState p {
-  color: #C0763A;
-}
-
-.loadingSpinner {
-  width: 48px;
-  height: 48px;
-  margin: 0 auto;
-  border: 4px solid rgba(192, 118, 58, 0.1);
-  border-top-color: #C0763A;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* ============================================
-   REDUCED MOTION
-   ============================================ */
-
 @media (prefers-reduced-motion: reduce) {
+  .usersPage,
   .header,
   .searchSection,
-  .empty,
   .loadingState,
-  .errorState {
+  .empty,
+  .error {
     animation: none;
   }
 
@@ -351,6 +331,14 @@
     transition: none;
   }
 
+  .userCard {
+    transition: none;
+  }
+
+  .avatar::before {
+    animation: none;
+  }
+
   .loadingSpinner {
     animation: none;
     border-top-color: transparent;
@@ -358,23 +346,9 @@
   }
 }
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-
-@media (max-width: 1024px) {
-  .usersGrid {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  }
-}
-
 @media (max-width: 768px) {
-  .container {
-    padding: 0 24px;
-  }
-
   .usersPage {
-    padding: 48px 0;
+    padding: 48px 20px 24px;
   }
 
   .title {
@@ -386,27 +360,15 @@
     font-size: 16px;
   }
 
-  .searchWrapper {
-    max-width: 100%;
-  }
-
   .usersGrid {
     grid-template-columns: 1fr;
-    gap: 24px;
-  }
-
-  .userStats {
-    gap: 16px;
+    gap: 20px;
   }
 }
 
 @media (max-width: 480px) {
-  .container {
-    padding: 0 16px;
-  }
-
   .usersPage {
-    padding: 32px 0;
+    padding: 32px 16px 24px;
   }
 
   .title {
@@ -418,12 +380,13 @@
     font-size: 14px;
   }
 
-  .searchInput {
-    font-size: 14px;
+  .avatar {
+    width: 56px;
+    height: 56px;
   }
 
-  .userCard {
-    padding: 24px 20px;
+  .avatarText {
+    font-size: 24px;
   }
 
   .username {
@@ -431,35 +394,11 @@
     line-height: 28px;
   }
 
-  .email {
-    font-size: 13px;
-  }
-
-  .joinDate {
-    font-size: 12px;
-  }
-
-  .userStats {
-    flex-direction: column;
-    gap: 12px;
-  }
-
   .statValue {
-    font-size: 24px;
-    line-height: 32px;
+    font-size: 20px;
   }
 
   .statLabel {
     font-size: 11px;
-  }
-
-  .adminBadge {
-    padding: 4px 10px;
-    font-size: 11px;
-  }
-
-  .badgeIcon {
-    width: 12px;
-    height: 12px;
   }
 }

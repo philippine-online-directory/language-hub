@@ -19,16 +19,28 @@ export default function ContributePage(){
     });
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
+    const [languagesLoading, setLanguagesLoading] = useState(true);
     const [success, setSuccess] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     useEffect(() => {
         const fetchLanguages = async () => {
+            setLanguagesLoading(true);
             try {
-                const data = await languageService.getLanguages();
-                setLanguages(data);
+                // Fetch first page with many languages
+                const result = await languageService.getLanguages(1, 100);
+                setLanguages(result.languages || []);
             } 
             catch (err) {
                 console.error('Error fetching languages:', err);
+                setErrors({ submit: 'Failed to load languages. Please refresh the page.' });
+            }
+            finally {
+                setLanguagesLoading(false);
             }
         };
 
@@ -91,7 +103,9 @@ export default function ContributePage(){
     };
 
     return (
-        <div className={styles.contributePage}>
+        <div className={`${styles.contributePage} ${mounted ? styles.mounted : ''}`}>
+            <div className={styles.backgroundPattern}></div>
+            
             <div className={styles.container}>
                 <header className={styles.header}>
                     <h1 className={styles.title}>Contribute a Word</h1>
@@ -103,7 +117,7 @@ export default function ContributePage(){
                 <Card className={styles.formCard}>
                     {success && (
                         <div className={styles.success}>
-                        This word has been preserved. Thank you for your contribution!
+                            This word has been preserved. Thank you for your contribution!
                         </div>
                     )}
 
@@ -114,21 +128,25 @@ export default function ContributePage(){
                             <label htmlFor="languageId" className={styles.label}>
                                 Language <span className={styles.required}>*</span>
                             </label>
-                            <select
-                                id="languageId"
-                                name="languageId"
-                                value={formData.languageId}
-                                onChange={handleChange}
-                                className={styles.select}
-                                required
-                            >
-                                <option value="">Select a language</option>
-                                {languages.map((lang) => (
-                                <option key={lang.id} value={lang.id}>
-                                    {lang.name} ({lang.isoCode.toUpperCase()})
-                                </option>
-                                ))}
-                            </select>
+                            {languagesLoading ? (
+                                <div className={styles.loadingSelect}>Loading languages...</div>
+                            ) : (
+                                <select
+                                    id="languageId"
+                                    name="languageId"
+                                    value={formData.languageId}
+                                    onChange={handleChange}
+                                    className={styles.select}
+                                    required
+                                >
+                                    <option value="">Select a language</option>
+                                    {languages.map((lang) => (
+                                        <option key={lang.id} value={lang.id}>
+                                            {lang.name} ({lang.isoCode.toUpperCase()})
+                                        </option>
+                                    ))}
+                                </select>
+                            )}
                             {errors.languageId && (
                                 <span className={styles.errorText}>{errors.languageId}</span>
                             )}
@@ -193,7 +211,7 @@ export default function ContributePage(){
                         </div>
 
                         <div className={styles.actions}>
-                            <Button type="submit" fullWidth disabled={loading}>
+                            <Button type="submit" fullWidth disabled={loading || languagesLoading}>
                                 {loading ? 'Submitting...' : 'Submit Contribution'}
                             </Button>
                             <Button

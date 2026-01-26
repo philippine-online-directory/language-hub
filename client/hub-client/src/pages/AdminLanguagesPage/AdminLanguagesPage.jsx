@@ -12,6 +12,7 @@ export default function AdminLanguagesPage(){
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [editingId, setEditingId] = useState(null);
+    const [mounted, setMounted] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         isoCode: '',
@@ -22,13 +23,19 @@ export default function AdminLanguagesPage(){
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    useEffect(() => {
         fetchLanguages();
     }, []);
 
     const fetchLanguages = async () => {
+        setLoading(true);
         try {
-            const data = await languageService.getLanguages();
-            setLanguages(data);
+            // Fetch all languages for admin (large limit)
+            const result = await languageService.getLanguages(1, 1000);
+            setLanguages(result.languages || []);
         } catch (err) {
             console.error('Error fetching languages:', err);
         } finally {
@@ -96,16 +103,24 @@ export default function AdminLanguagesPage(){
 
     if (user?.role !== 'ADMIN') {
         return (
-            <div className={styles.adminLanguagesPage}>
+            <div className={`${styles.adminLanguagesPage} ${mounted ? styles.mounted : ''}`}>
+                <div className={styles.backgroundPattern}></div>
                 <div className={styles.container}>
-                    <div className={styles.unauthorized}>Unauthorized access</div>
+                    <div className={styles.unauthorized}>
+                        <svg className={styles.unauthorizedIcon} viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                        <p>Unauthorized access</p>
+                    </div>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className={styles.adminLanguagesPage}>
+        <div className={`${styles.adminLanguagesPage} ${mounted ? styles.mounted : ''}`}>
+            <div className={styles.backgroundPattern}></div>
+            
             <div className={styles.container}>
                 <header className={styles.header}>
                     <h1 className={styles.title}>Manage Languages</h1>
@@ -173,7 +188,6 @@ export default function AdminLanguagesPage(){
                                     placeholder="Optional information about the origins and culture of the language"
                                 />
                             </div>
-            
 
                             <div className={styles.actions}>
                                 <Button type="submit" variant="primary">
@@ -188,7 +202,10 @@ export default function AdminLanguagesPage(){
                 )}
 
                 {loading ? (
-                    <div className={styles.loading}>Loading languages...</div>
+                    <div className={styles.loadingState}>
+                        <div className={styles.loadingSpinner}></div>
+                        <p>Loading languages...</p>
+                    </div>
                 ) : (
                     <div className={styles.languagesList}>
                         {languages.map((language) => (

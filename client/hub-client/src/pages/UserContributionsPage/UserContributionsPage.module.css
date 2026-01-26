@@ -1,51 +1,14 @@
+/* UserContributionsPage - Site Design System */
+
 .contributionsPage {
-  min-height: calc(100vh - 80px);
-  padding: 80px 0;
+  min-height: 100vh;
+  padding: 80px 24px 40px;
   background: #F6F4EF;
   position: relative;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 48px;
-}
-
-/* ============================================
-   HEADER
-   ============================================ */
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 32px;
-  margin-bottom: 48px;
-  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-}
-
-.headerContent {
-  flex: 1;
-}
-
-.headerActionLink {
-  text-decoration: none;
-}
-
-.title {
-  font-family: 'Fraunces', serif;
-  font-size: 48px;
-  line-height: 56px;
-  font-weight: 600;
-  color: #1F2937;
-  letter-spacing: -0.02em;
-  margin-bottom: 12px;
-}
-
-.subtitle {
-  font-size: 18px;
-  line-height: 28px;
-  color: #6B7280;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(40px);
+  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @keyframes fadeInUp {
@@ -59,59 +22,87 @@
   }
 }
 
-/* ============================================
-   STATS GRID
-   ============================================ */
+.contributionsPage.mounted {
+  animation: none;
+  opacity: 1;
+  transform: translateY(0);
+}
 
-.statsGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 32px;
+.backgroundPattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.02;
+  background-image: 
+    repeating-linear-gradient(45deg, #C0763A 0px, #C0763A 1px, transparent 1px, transparent 20px),
+    repeating-linear-gradient(-45deg, #C0763A 0px, #C0763A 1px, transparent 1px, transparent 20px);
+  pointer-events: none;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.header {
   margin-bottom: 48px;
   animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.1s backwards;
 }
 
-.statCard {
+.title {
+  font-family: 'Fraunces', serif;
+  font-size: 48px;
+  line-height: 56px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #1F2937 0%, #C0763A 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 18px;
+  line-height: 28px;
+  color: #6B7280;
+}
+
+.statsBar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 48px;
+  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s backwards;
+}
+
+.statItem {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  padding: 32px 24px;
+  padding: 24px;
   background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(10px);
-  border-radius: 20px;
+  border-radius: 16px;
   border: 1px solid rgba(229, 231, 235, 0.6);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
 }
 
-.statCard::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(192, 118, 58, 0.05) 0%, transparent 70%);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.statCard:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 60px rgba(192, 118, 58, 0.12);
+.statItem:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(192, 118, 58, 0.12);
   border-color: rgba(192, 118, 58, 0.3);
-}
-
-.statCard:hover::before {
-  opacity: 1;
 }
 
 .statValue {
   font-family: 'Fraunces', serif;
-  font-size: 48px;
-  line-height: 56px;
+  font-size: 42px;
+  line-height: 1;
   font-weight: 600;
   background: linear-gradient(135deg, #C0763A 0%, #1F2937 100%);
   background-clip: text;
@@ -120,65 +111,18 @@
 }
 
 .statLabel {
-  font-size: 16px;
+  font-size: 14px;
   color: #6B7280;
   text-align: center;
   font-weight: 500;
+  letter-spacing: 0.02em;
 }
-
-/* ============================================
-   FILTERS
-   ============================================ */
-
-.filters {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 48px;
-  border-bottom: 2px solid rgba(229, 231, 235, 0.6);
-  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s backwards;
-}
-
-.filterTab {
-  padding: 16px 32px;
-  background: none;
-  border: none;
-  border-bottom: 3px solid transparent;
-  font-size: 16px;
-  font-weight: 600;
-  color: #6B7280;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  margin-bottom: -2px;
-}
-
-.filterTab:hover {
-  color: #1F2937;
-  background: rgba(192, 118, 58, 0.04);
-  border-radius: 12px 12px 0 0;
-}
-
-.activeFilter {
-  color: #1F2937;
-  border-bottom-color: #C0763A;
-  background: rgba(192, 118, 58, 0.06);
-  border-radius: 12px 12px 0 0;
-}
-
-/* ============================================
-   CONTRIBUTIONS GRID
-   ============================================ */
 
 .contributionsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: 32px;
-}
-
-.contributionItem {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  gap: 24px;
+  margin-bottom: 48px;
 }
 
 .animateItem {
@@ -194,133 +138,43 @@
   transform: translateY(0) scale(1);
 }
 
-/* ============================================
-   CONTRIBUTION META
-   ============================================ */
-
-.contributionMeta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(229, 231, 235, 0.6);
-  border-radius: 12px;
-  font-size: 14px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.contributionMeta:hover {
-  background: rgba(255, 255, 255, 0.8);
-  border-color: rgba(192, 118, 58, 0.2);
-}
-
-.status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-}
-
-.statusIcon {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-}
-
-.status.verified {
-  color: #059669;
-}
-
-.status.unverified {
-  color: #C0763A;
-}
-
-.date {
-  color: #6B7280;
-  font-weight: 500;
-}
-
-/* ============================================
-   EMPTY STATE
-   ============================================ */
-
-.empty {
+.loadingState,
+.empty,
+.error {
   text-align: center;
   padding: 80px 32px;
-  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s backwards;
-}
-
-.empty p {
-  font-size: 20px;
-  line-height: 32px;
-  color: #6B7280;
-  margin-bottom: 32px;
-}
-
-.emptyActionLink {
-  text-decoration: none;
-  color: inherit;
-  display: inline-block;
-}
-
-.actionCard {
-  max-width: 400px;
-  margin: 0 auto;
-  text-align: center;
-  padding: 40px 32px;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.actionCard:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 20px 60px rgba(192, 118, 58, 0.15);
-}
-
-.actionTitle {
-  font-family: 'Fraunces', serif;
-  font-size: 24px;
-  line-height: 32px;
-  font-weight: 600;
-  color: #1F2937;
-  margin-bottom: 12px;
-}
-
-.actionDescription {
-  font-size: 16px;
-  line-height: 24px;
-  color: #6B7280;
-}
-
-/* ============================================
-   LOADING & ERROR STATES
-   ============================================ */
-
-.loadingState,
-.errorState {
-  text-align: center;
-  padding: 120px 32px;
   animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
 }
 
 .loadingState p,
-.errorState p {
+.empty p {
   font-size: 18px;
   line-height: 28px;
   color: #6B7280;
-  margin-top: 24px;
+  margin: 0;
 }
 
-.errorState p {
+.emptySubtext {
+  font-size: 15px !important;
+  color: #9CA3AF !important;
+}
+
+.error {
+  background: rgba(192, 118, 58, 0.05);
+  border: 1px solid rgba(192, 118, 58, 0.2);
+  border-radius: 16px;
+  padding: 40px 32px;
   color: #C0763A;
+  font-size: 16px;
 }
 
 .loadingSpinner {
   width: 48px;
   height: 48px;
-  margin: 0 auto;
   border: 4px solid rgba(192, 118, 58, 0.1);
   border-top-color: #C0763A;
   border-radius: 50%;
@@ -328,28 +182,33 @@
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
-/* ============================================
-   REDUCED MOTION
-   ============================================ */
+.emptyIcon {
+  width: 64px;
+  height: 64px;
+  color: #D1D5DB;
+  margin-bottom: 8px;
+}
 
 @media (prefers-reduced-motion: reduce) {
+  .contributionsPage,
   .header,
-  .statsGrid,
-  .filters,
-  .empty,
+  .statsBar,
   .loadingState,
-  .errorState {
+  .empty,
+  .error {
     animation: none;
   }
 
   .animateItem {
     opacity: 1;
     transform: none;
+    transition: none;
+  }
+
+  .statItem {
     transition: none;
   }
 
@@ -360,10 +219,6 @@
   }
 }
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-
 @media (max-width: 1024px) {
   .contributionsGrid {
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -371,114 +226,49 @@
 }
 
 @media (max-width: 768px) {
-  .container {
-    padding: 0 24px;
-  }
-
   .contributionsPage {
-    padding: 48px 0;
-  }
-
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 24px;
-  }
-
-  .statsGrid {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-
-  .contributionsGrid {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-
-  .filters {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-
-  .filters::-webkit-scrollbar {
-    display: none;
-  }
-
-  .filterTab {
-    white-space: nowrap;
-    padding: 16px 24px;
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
-    padding: 0 16px;
-  }
-
-  .contributionsPage {
-    padding: 32px 0;
+    padding: 48px 20px 24px;
   }
 
   .title {
-    font-size: 32px;
-    line-height: 40px;
+    font-size: 36px;
+    line-height: 44px;
   }
 
   .subtitle {
     font-size: 16px;
   }
 
-  .statsGrid {
+  .statsBar {
+    grid-template-columns: 1fr;
     gap: 16px;
   }
 
-  .statValue {
-    font-size: 36px;
-    line-height: 44px;
+  .contributionsGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contributionsPage {
+    padding: 32px 16px 24px;
   }
 
-  .statLabel {
+  .title {
+    font-size: 28px;
+    line-height: 36px;
+  }
+
+  .subtitle {
     font-size: 14px;
   }
 
-  .filters {
-    flex-direction: column;
-    gap: 0;
-    border-bottom: none;
+  .statValue {
+    font-size: 32px;
   }
 
-  .filterTab {
-    border-bottom: 1px solid rgba(229, 231, 235, 0.6);
-    border-left: 3px solid transparent;
-    border-radius: 0;
-    text-align: left;
-    padding: 16px 20px;
-  }
-
-  .filterTab:hover {
-    border-radius: 0;
-  }
-
-  .activeFilter {
-    border-bottom-color: rgba(229, 231, 235, 0.6);
-    border-left-color: #C0763A;
-    border-radius: 0;
-  }
-
-  .contributionMeta {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 14px 16px;
-  }
-
-  .actionCard {
-    padding: 32px 24px;
-  }
-
-  .actionTitle {
-    font-size: 20px;
-    line-height: 28px;
+  .statLabel {
+    font-size: 12px;
   }
 }
