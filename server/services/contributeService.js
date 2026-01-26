@@ -18,23 +18,48 @@ async function contributeTranslation(userId, { languageId, wordText, ipa, englis
             ipa,
             englishDefinition,
             exampleSentence,
+        },
+        include: {
+            language: true
         }
-
     })
 
     return contributedTranslation
 }
 
-async function getUserContributions(userId){
+async function getUserContributions(userId, page = 1, limit = 20){
     if (!userId) throw new Error('Must be logged in to view contributions');
     
-    const contributions = await prisma.translation.findMany({
-        where: {
-            authorId: userId
-        }
-    })
+    const skip = (page - 1) * limit;
+    
+    const where = {
+        authorId: userId
+    };
 
-    return contributions
+    const [contributions, total] = await Promise.all([
+        prisma.translation.findMany({
+            where,
+            include: {
+                language: true
+            },
+            skip,
+            take: limit,
+            orderBy: {
+                createdAt: 'desc'
+            }
+        }),
+        prisma.translation.count({ where })
+    ]);
+
+    return {
+        contributions,
+        pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit)
+        }
+    };
 }
 
 const contributeService = {
