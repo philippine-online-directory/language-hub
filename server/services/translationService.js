@@ -12,100 +12,98 @@ async function findTranslationInfo(id){
     return translation
 }
 
-async function searchTranslationByWordText(code, word, mode){
-    let translations
-
-    if (mode === "Verified Only"){
-        translations = await prisma.translation.findMany({
-            where: {
-                language: {
-                    isoCode: code
-                },
-                wordText: {
-                    contains: word,
-                    mode: 'insensitive'
-                },
-                status: 'VERIFIED'
-            }
-        })
-    }
-    else if (mode === "All"){
-        translations = await prisma.translation.findMany({
-            where: {
-                language: {
-                    isoCode: code
-                },
-                wordText: {
-                    contains: word,
-                    mode: 'insensitive'
-                }
-            }
-        })
-    }
-    else {
-        translations = await prisma.translation.findMany({
-            where: {
-                language: {
-                    isoCode: code
-                },
-                wordText: {
-                    contains: word,
-                    mode: 'insensitive'
-                },
-                status: 'VERIFIED'
-            }
-        })
-    }
+async function searchTranslationByWordText(code, word, mode, page = 1, limit = 20){
+    const skip = (page - 1) * limit;
     
-    return translations
+    let whereClause = {
+        language: {
+            isoCode: code
+        },
+        wordText: {
+            contains: word,
+            mode: 'insensitive'
+        }
+    };
+
+    // Add status filter based on mode
+    if (mode === "Verified Only" || (!mode || mode === "VERIFIED")) {
+        whereClause.status = 'VERIFIED';
+    } else if (mode !== "All" && mode !== "ALL") {
+        whereClause.status = 'VERIFIED'; // Default to verified
+    }
+    // If mode is "All" or "ALL", don't add status filter
+
+    const [translations, total] = await Promise.all([
+        prisma.translation.findMany({
+            where: whereClause,
+            include: {
+                language: true
+            },
+            skip,
+            take: limit,
+            orderBy: {
+                createdAt: 'desc'
+            }
+        }),
+        prisma.translation.count({ where: whereClause })
+    ]);
+    
+    return {
+        translations,
+        pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit)
+        }
+    };
 }
 
-async function searchTranslationByWordDefinition(code, word, mode){
-    let translations;
+async function searchTranslationByWordDefinition(code, word, mode, page = 1, limit = 20){
+    const skip = (page - 1) * limit;
+    
+    let whereClause = {
+        language: {
+            isoCode: code
+        },
+        englishDefinition: {
+            contains: word,
+            mode: 'insensitive'
+        }
+    };
 
-    if (mode === "Verified Only"){
-        translations = await prisma.translation.findMany({
-            where: {
-                language: {
-                    isoCode: code
-                },
-                englishDefinition: {
-                    contains: word,
-                    mode: 'insensitive'
-                },
-                status: 'VERIFIED'
-            }
-        })
+    // Add status filter based on mode
+    if (mode === "Verified Only" || (!mode || mode === "VERIFIED")) {
+        whereClause.status = 'VERIFIED';
+    } else if (mode !== "All" && mode !== "ALL") {
+        whereClause.status = 'VERIFIED'; // Default to verified
     }
-    else if (mode === "All"){
-        translations = await prisma.translation.findMany({
-            where: {
-                language: {
-                    isoCode: code
-                },
-                englishDefinition: {
-                    contains: word,
-                    mode: 'insensitive'
-                }
-            }
-        })
-    }
-    else {
-        translations = await prisma.translation.findMany({
-            where: {
-                language: {
-                    isoCode: code
-                },
-                englishDefinition: {
-                    contains: word,
-                    mode: 'insensitive'
-                },
-                status: 'VERIFIED'
-            }
-        })
-    }
+    // If mode is "All" or "ALL", don't add status filter
 
-    return translations
+    const [translations, total] = await Promise.all([
+        prisma.translation.findMany({
+            where: whereClause,
+            include: {
+                language: true
+            },
+            skip,
+            take: limit,
+            orderBy: {
+                createdAt: 'desc'
+            }
+        }),
+        prisma.translation.count({ where: whereClause })
+    ]);
+
+    return {
+        translations,
+        pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit)
+        }
+    };
 }
 
 async function addTranslationToSet(vocabSetId, translationId, userId){
@@ -177,19 +175,12 @@ async function removeTranslationFromSet(vocabSetId, translationId, userId){
 
     await prisma.setWord.delete({
         where: {
-            vocabSetId,
-            translationId
-        },
-        include: {
-            translation: {
-                select: {
-                    wordText: true,
-                    englishDefinition: true
-                }
+            translationId_vocabSetId: {
+                translationId,
+                vocabSetId
             }
         }
     });
-
 }
 
 async function updateTranslationStatus(id, status){

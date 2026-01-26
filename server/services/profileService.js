@@ -1,33 +1,49 @@
 import prisma from '../prisma.js'
 
-async function searchUsers(username){
-    const users = await prisma.user.findMany({
-        where: {
-            username: {
-                contains: username || '',
-                mode: 'insensitive'
-            }
-        },
-        select: {
-            id: true,
-            username: true,
-            email: true,
-            role: true,
-            createdAt: true,
-            _count: {
-                select: {
-                    contributions: true,
-                    createdSets: true
-                }
-            }
-        },
-        orderBy: {
-            createdAt: 'desc'
-        },
-        take: 50
-    })
+async function searchUsers(username, page = 1, limit = 20){
+    const skip = (page - 1) * limit;
+    
+    const where = {
+        username: {
+            contains: username || '',
+            mode: 'insensitive'
+        }
+    };
 
-    return users
+    const [users, total] = await Promise.all([
+        prisma.user.findMany({
+            where,
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                role: true,
+                createdAt: true,
+                _count: {
+                    select: {
+                        contributions: true,
+                        createdSets: true
+                    }
+                }
+            },
+            skip,
+            take: limit,
+            orderBy: {
+                createdAt: 'desc'
+            }
+        }),
+        prisma.user.count({ where })
+    ]);
+
+    return {
+        users,
+        pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit)
+        }
+    };
 }
 
 async function getMyProfile(userId){

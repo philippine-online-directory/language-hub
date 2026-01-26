@@ -51,10 +51,29 @@ async function deleteLanguage(id){
     
 }
 
-async function findLanguages(){
-    const languages = await prisma.language.findMany();
+async function findLanguages(page = 1, limit = 20){
+    const skip = (page - 1) * limit;
+    
+    const [languages, total] = await Promise.all([
+        prisma.language.findMany({
+            skip,
+            take: limit,
+            orderBy: {
+                name: 'asc'
+            }
+        }),
+        prisma.language.count()
+    ]);
 
-    return languages
+    return {
+        languages,
+        pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit)
+        }
+    };
 }
 
 async function findLanguageByIsoCode(code){
@@ -67,21 +86,43 @@ async function findLanguageByIsoCode(code){
     return language
 }
 
-async function findLanguageByName(phrase){
-    const language = await prisma.language.findMany({
-        where: {
-            name: {
-                startsWith: `${phrase}`,
-                mode: 'insensitive'
-            }
+async function findLanguageByName(phrase, page = 1, limit = 20){
+    const skip = (page - 1) * limit;
+    
+    const where = {
+        name: {
+            startsWith: `${phrase}`,
+            mode: 'insensitive'
         }
-    })
+    };
 
-    return language
+    const [languages, total] = await Promise.all([
+        prisma.language.findMany({
+            where,
+            skip,
+            take: limit,
+            orderBy: {
+                name: 'asc'
+            }
+        }),
+        prisma.language.count({ where })
+    ]);
+
+    return {
+        languages,
+        pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit)
+        }
+    };
 }
 
 
-async function getDictionary(isoCode, status) {
+async function getDictionary(isoCode, status, page = 1, limit = 20, textSearch, definitionSearch) {
+  const skip = (page - 1) * limit;
+  
   let normalizedStatus = 'VERIFIED';
 
   if (status === 'ALL') {
@@ -92,26 +133,54 @@ async function getDictionary(isoCode, status) {
     normalizedStatus = 'VERIFIED';
   }
 
-  let translationsInclude;
+  let whereClause = {
+    language: {
+      isoCode
+    }
+  };
 
-  if (normalizedStatus === 'ALL') {
-    translationsInclude = true;
-  } else {
-    translationsInclude = {
-      where: {
-        status: normalizedStatus
-      }
+  if (normalizedStatus !== 'ALL') {
+    whereClause.status = normalizedStatus;
+  }
+
+  if (textSearch) {
+    whereClause.wordText = {
+      contains: textSearch,
+      mode: 'insensitive'
     };
   }
 
-  const language = await prisma.language.findUnique({
-    where: { isoCode },
-    include: {
-      translations: translationsInclude
-    }
-  });
+  if (definitionSearch) {
+    whereClause.englishDefinition = {
+      contains: definitionSearch,
+      mode: 'insensitive'
+    };
+  }
 
-  return language ? language.translations : [];
+  const [translations, total] = await Promise.all([
+    prisma.translation.findMany({
+      where: whereClause,
+      include: {
+        language: true
+      },
+      skip,
+      take: limit,
+      orderBy: {
+        createdAt: 'desc'
+      }
+    }),
+    prisma.translation.count({ where: whereClause })
+  ]);
+
+  return {
+    translations,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit)
+    }
+  };
 }
 
 
@@ -126,5 +195,3 @@ const languageService = {
 }
 
 export default languageService
-
-

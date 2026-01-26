@@ -1,58 +1,91 @@
 import prisma from '../prisma.js'
 
-async function getUserSets(userId){
+async function getUserSets(userId, page = 1, limit = 12){
     if (!userId) throw new Error("Must be logged in to view sets");
 
-    const sets = await prisma.vocabSet.findMany({
-        where: {
-            ownerId: userId
-        },
-        include: {
-            language: true,
-            _count: {
-                select: {
-                    setWords: true
-                }
-            }
-        },
-        orderBy: {
-            createdAt: 'desc'
-        }
-    })
+    const skip = (page - 1) * limit;
+    
+    const where = {
+        ownerId: userId
+    };
 
-    return sets;
-}
-
-async function getPublicSets(setName){
-    const sets = await prisma.vocabSet.findMany({
-        where: {
-            isPublic: true,
-            name: {
-                contains: setName || '',
-                mode: 'insensitive'
-            }
-        },
-        include: {
-            language: true,
-            owner: {
-                select: {
-                    id: true,
-                    username: true
+    const [sets, total] = await Promise.all([
+        prisma.vocabSet.findMany({
+            where,
+            include: {
+                language: true,
+                _count: {
+                    select: {
+                        setWords: true
+                    }
                 }
             },
-            _count: {
-                select: {
-                    setWords: true
-                }
+            skip,
+            take: limit,
+            orderBy: {
+                createdAt: 'desc'
             }
-        },
-        orderBy: {
-            createdAt: 'desc'
-        },
-        take: 50
-    })
+        }),
+        prisma.vocabSet.count({ where })
+    ]);
 
-    return sets;
+    return {
+        sets,
+        pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit)
+        }
+    };
+}
+
+async function getPublicSets(setName, page = 1, limit = 12){
+    const skip = (page - 1) * limit;
+    
+    const where = {
+        isPublic: true,
+        name: {
+            contains: setName || '',
+            mode: 'insensitive'
+        }
+    };
+
+    const [sets, total] = await Promise.all([
+        prisma.vocabSet.findMany({
+            where,
+            include: {
+                language: true,
+                owner: {
+                    select: {
+                        id: true,
+                        username: true
+                    }
+                },
+                _count: {
+                    select: {
+                        setWords: true
+                    }
+                }
+            },
+            skip,
+            take: limit,
+            orderBy: {
+                createdAt: 'desc'
+            }
+        }),
+        prisma.vocabSet.count({ where })
+    ]);
+
+    return {
+        sets,
+        pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit)
+        }
+    };
 }
 
 async function getSetById(setId){
