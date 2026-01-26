@@ -11,10 +11,12 @@ export const profileService = {
         return response.data;
     },
 
-    searchUsers: async (query) => {
-        const response = await api.get('/profile', {
-        params: { q: query },
-        });
+    searchUsers: async (page = 1, limit = 20, query = '') => {
+        const params = { page, limit };
+        if (query) {
+            params.q = query;
+        }
+        const response = await api.get('/profile', { params });
         return response.data;
     },
 };

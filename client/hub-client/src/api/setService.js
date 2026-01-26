@@ -1,15 +1,19 @@
 import api from './axiosConfig';
 
 export const setService = {
-    getUserSets: async () => {
-        const response = await api.get('/sets');
+    getUserSets: async (page = 1, limit = 12) => {
+        const response = await api.get('/sets', {
+            params: { page, limit }
+        });
         return response.data;
     },
 
-    searchPublicSets: async (query = '') => {
-        const response = await api.get('/sets/public', {
-            params: query ? { name: query } : {},
-        });
+    searchPublicSets: async (page = 1, limit = 12, query = '') => {
+        const params = { page, limit };
+        if (query) {
+            params.name = query;
+        }
+        const response = await api.get('/sets/public', { params });
         return response.data;
     },
 

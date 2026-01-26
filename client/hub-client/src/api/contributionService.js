@@ -1,8 +1,10 @@
 import api from './axiosConfig';
 
 export const contributionService = {
-    getUserContributions: async () => {
-        const response = await api.get('/contributions');
+    getUserContributions: async (page = 1, limit = 20) => {
+        const response = await api.get('/contributions', {
+            params: { page, limit }
+        });
         return response.data;
     },
 

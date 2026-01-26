@@ -1,10 +1,12 @@
 import api from './axiosConfig';
 
 export const languageService = {
-    getLanguages: async (searchQuery = '') => {
-        const response = await api.get('/languages', {
-        params: searchQuery ? { name: searchQuery } : {},
-        });
+    getLanguages: async (page = 1, limit = 20, searchQuery = '') => {
+        const params = { page, limit };
+        if (searchQuery) {
+            params.name = searchQuery;
+        }
+        const response = await api.get('/languages', { params });
         return response.data;
     },
 
@@ -44,8 +46,8 @@ export const languageService = {
 
     updateTranslationStatus: async (isoCode, translationId, status) => {
         const response = await api.patch(
-        `/languages/${isoCode}/translations/${translationId}`,
-        { status }
+            `/languages/${isoCode}/translations/${translationId}`,
+            { status }
         );
         return response.data;
     },
