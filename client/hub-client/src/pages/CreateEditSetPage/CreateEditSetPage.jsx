@@ -21,15 +21,27 @@ export default function CreateEditSetPage(){
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [loadingSet, setLoadingSet] = useState(isEditing);
+    const [languagesLoading, setLanguagesLoading] = useState(true);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     useEffect(() => {
         const fetchLanguages = async () => {
+            setLanguagesLoading(true);
             try {
-                const data = await languageService.getLanguages();
-                setLanguages(data);
+                // Fetch all languages for dropdown (large limit)
+                const result = await languageService.getLanguages(1, 1000);
+                setLanguages(result.languages || []);
             } 
             catch (err) {
                 console.error('Error fetching languages:', err);
+                setErrors({ submit: 'Failed to load languages. Please refresh the page.' });
+            }
+            finally {
+                setLanguagesLoading(false);
             }
         };
         fetchLanguages();
@@ -38,6 +50,7 @@ export default function CreateEditSetPage(){
     useEffect(() => {
         if (isEditing) {
             const fetchSet = async () => {
+                setLoadingSet(true);
                 try {
                     const data = await setService.getSetById(setId);
                     setFormData({
@@ -124,13 +137,14 @@ export default function CreateEditSetPage(){
         }
     };
 
-    if (loadingSet) {
+    if (loadingSet || languagesLoading) {
         return (
-            <div className={styles.createEditSetPage}>
+            <div className={`${styles.createEditSetPage} ${mounted ? styles.mounted : ''}`}>
+                <div className={styles.backgroundPattern}></div>
                 <div className={styles.container}>
                     <div className={styles.loadingState}>
                         <div className={styles.loadingSpinner}></div>
-                        <p>Loading set...</p>
+                        <p>{loadingSet ? 'Loading set...' : 'Loading languages...'}</p>
                     </div>
                 </div>
             </div>
@@ -138,7 +152,9 @@ export default function CreateEditSetPage(){
     }
 
     return (
-        <div className={styles.createEditSetPage}>
+        <div className={`${styles.createEditSetPage} ${mounted ? styles.mounted : ''}`}>
+            <div className={styles.backgroundPattern}></div>
+            
             <div className={styles.container}>
                 <header className={styles.header}>
                     <h1 className={styles.title}>
