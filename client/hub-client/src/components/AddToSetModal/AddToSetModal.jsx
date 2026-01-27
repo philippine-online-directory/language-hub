@@ -13,9 +13,14 @@ export default function AddToSetModal({ translation, onClose }){
 
     useEffect(() => {
         const fetchSets = async () => {
+            setLoading(true);
             try {
-                const data = await setService.getUserSets();
-                const compatibleSets = data.filter(
+                // Fetch all user sets (large limit for modal)
+                const result = await setService.getUserSets(1, 100);
+                const allSets = result.sets || [];
+                
+                // Filter sets compatible with this translation's language
+                const compatibleSets = allSets.filter(
                     set => set.languageId === translation.languageId
                 );
                 setSets(compatibleSets);
@@ -53,7 +58,7 @@ export default function AddToSetModal({ translation, onClose }){
             <Card className={styles.modal} onClick={(e) => e.stopPropagation()} asDiv>
                 <h2 className={styles.title}>Add to Set</h2>
                 <p className={styles.subtitle}>
-                    Add "{translation.wordText}" to one of your vocabulary sets
+                    Add "<strong>{translation.wordText}</strong>" to one of your vocabulary sets
                 </p>
 
                 {error && (
