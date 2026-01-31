@@ -47,6 +47,8 @@ model Translation {
   status            Status    @default(UNVERIFIED)
   createdAt         DateTime  @default(now())
   publishedAt       DateTime?
+  audioUrl          String?
+  partOfSpeech      String?
 
   // Relations
   languageId String
