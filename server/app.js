@@ -10,6 +10,7 @@ import languageRouter from "./routes/languageRouter.js";
 import setRouter from "./routes/setRouter.js";
 import authRouter from "./routes/authRouter.js";
 import profileRouter from "./routes/profileRouter.js";
+import audioRouter from "./routes/audioRouter.js";
 import handleError from "./middleware/errorHandler.js";
 
 
@@ -38,6 +39,7 @@ app.use('/contributions', contributionRouter)
 app.use('/languages', languageRouter)
 app.use('/sets', setRouter)
 app.use('/profile', profileRouter)
+app.use('/audio', audioRouter)
 app.use(handleError)
 
 const PORT = process.env.PORT || 3000;
