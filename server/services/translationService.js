@@ -1,4 +1,5 @@
 import prisma from '../prisma.js'
+import s3Service from './s3Service.js'
 
 async function findTranslationInfo(id){
     const translation = await prisma.translation.findUnique({
@@ -8,6 +9,10 @@ async function findTranslationInfo(id){
     })
 
     if (!translation) throw new Error('Translation does not exist');
+
+    if (translation.audioUrl) {
+        translation.audioUrl = await s3Service.generateDownloadUrl(translation.audioUrl);
+    }
 
     return translation
 }
@@ -25,13 +30,11 @@ async function searchTranslationByWordText(code, word, mode, page = 1, limit = 2
         }
     };
 
-    // Add status filter based on mode
     if (mode === "Verified Only" || (!mode || mode === "VERIFIED")) {
         whereClause.status = 'VERIFIED';
     } else if (mode !== "All" && mode !== "ALL") {
-        whereClause.status = 'VERIFIED'; // Default to verified
+        whereClause.status = 'VERIFIED'; 
     }
-    // If mode is "All" or "ALL", don't add status filter
 
     const [translations, total] = await Promise.all([
         prisma.translation.findMany({
@@ -48,8 +51,21 @@ async function searchTranslationByWordText(code, word, mode, page = 1, limit = 2
         prisma.translation.count({ where: whereClause })
     ]);
     
+    const translationsWithSignedUrls = await Promise.all(
+        translations.map(async (translation) => {
+            if (translation.audioUrl) {
+                const signedUrl = await s3Service.generateDownloadUrl(translation.audioUrl);
+                return {
+                    ...translation,
+                    audioUrl: signedUrl,
+                };
+            }
+            return translation;
+        })
+    );
+
     return {
-        translations,
+        translations: translationsWithSignedUrls,
         pagination: {
             page,
             limit,
@@ -72,13 +88,11 @@ async function searchTranslationByWordDefinition(code, word, mode, page = 1, lim
         }
     };
 
-    // Add status filter based on mode
     if (mode === "Verified Only" || (!mode || mode === "VERIFIED")) {
         whereClause.status = 'VERIFIED';
     } else if (mode !== "All" && mode !== "ALL") {
-        whereClause.status = 'VERIFIED'; // Default to verified
+        whereClause.status = 'VERIFIED'; 
     }
-    // If mode is "All" or "ALL", don't add status filter
 
     const [translations, total] = await Promise.all([
         prisma.translation.findMany({
@@ -95,8 +109,21 @@ async function searchTranslationByWordDefinition(code, word, mode, page = 1, lim
         prisma.translation.count({ where: whereClause })
     ]);
 
+    const translationsWithSignedUrls = await Promise.all(
+        translations.map(async (translation) => {
+            if (translation.audioUrl) {
+                const signedUrl = await s3Service.generateDownloadUrl(translation.audioUrl);
+                return {
+                    ...translation,
+                    audioUrl: signedUrl,
+                };
+            }
+            return translation;
+        })
+    );
+
     return {
-        translations,
+        translations: translationsWithSignedUrls,
         pagination: {
             page,
             limit,
