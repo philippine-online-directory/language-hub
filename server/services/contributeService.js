@@ -1,6 +1,7 @@
 import prisma from '../prisma.js'
+import s3Service from './s3Service.js'
 
-async function contributeTranslation(userId, { languageId, wordText, ipa, englishDefinition, exampleSentence }){
+async function contributeTranslation(userId, { languageId, wordText, ipa, englishDefinition, exampleSentence, audioS3Key }){
     const language = await prisma.language.findUnique({
         where: { id: languageId },
         select: { id: true }
@@ -18,11 +19,16 @@ async function contributeTranslation(userId, { languageId, wordText, ipa, englis
             ipa,
             englishDefinition,
             exampleSentence,
+            audioUrl: audioS3Key || null, 
         },
         include: {
             language: true
         }
     })
+
+    if (contributedTranslation.audioUrl) {
+        contributedTranslation.audioUrl = await s3Service.generateDownloadUrl(contributedTranslation.audioUrl);
+    }
 
     return contributedTranslation
 }
@@ -51,8 +57,21 @@ async function getUserContributions(userId, page = 1, limit = 20){
         prisma.translation.count({ where })
     ]);
 
+    const contributionsWithSignedUrls = await Promise.all(
+        contributions.map(async (contribution) => {
+            if (contribution.audioUrl) {
+                const signedUrl = await s3Service.generateDownloadUrl(contribution.audioUrl);
+                return {
+                    ...contribution,
+                    audioUrl: signedUrl,
+                };
+            }
+            return contribution;
+        })
+    );
+
     return {
-        contributions,
+        contributions: contributionsWithSignedUrls,
         pagination: {
             page,
             limit,
