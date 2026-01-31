@@ -72,7 +72,7 @@ async function deleteAudioFile(fileName) {
   await s3Client.send(command)
 }
 
-s3Service = {
+const s3Service = {
   generateUploadUrl,
   generateDownloadUrl,
   generateDownloadUrls,

@@ -1,4 +1,5 @@
 import prisma from '../prisma.js'
+import s3Service from './s3Service.js'
 
 async function addLanguage({ name, speakerCount, isoCode, preservationNote, culturalBackground }){
     const addedLanguage = await prisma.language.create({
@@ -161,7 +162,13 @@ async function getDictionary(isoCode, status, page = 1, limit = 20, textSearch, 
     prisma.translation.findMany({
       where: whereClause,
       include: {
-        language: true
+        language: true,
+        author: {
+          select: {
+            id: true,
+            username: true
+          }
+        }
       },
       skip,
       take: limit,
@@ -172,8 +179,22 @@ async function getDictionary(isoCode, status, page = 1, limit = 20, textSearch, 
     prisma.translation.count({ where: whereClause })
   ]);
 
+  // Generate presigned URLs for all translations with audio
+  const translationsWithSignedUrls = await Promise.all(
+    translations.map(async (translation) => {
+      if (translation.audioUrl) {
+        const signedUrl = await s3Service.generateDownloadUrl(translation.audioUrl);
+        return {
+          ...translation,
+          audioUrl: signedUrl,
+        };
+      }
+      return translation;
+    })
+  );
+
   return {
-    translations,
+    translations: translationsWithSignedUrls,
     pagination: {
       page,
       limit,

@@ -5,6 +5,14 @@ async function findTranslationInfo(id){
     const translation = await prisma.translation.findUnique({
         where: {
             id
+        },
+        include: {
+            author: {
+                select: {
+                    id: true,
+                    username: true
+                }
+            }
         }
     })
 
@@ -40,7 +48,13 @@ async function searchTranslationByWordText(code, word, mode, page = 1, limit = 2
         prisma.translation.findMany({
             where: whereClause,
             include: {
-                language: true
+                language: true,
+                author: {
+                    select: {
+                        id: true,
+                        username: true
+                    }
+                }
             },
             skip,
             take: limit,
@@ -98,7 +112,13 @@ async function searchTranslationByWordDefinition(code, word, mode, page = 1, lim
         prisma.translation.findMany({
             where: whereClause,
             include: {
-                language: true
+                language: true,
+                author: {
+                    select: {
+                        id: true,
+                        username: true
+                    }
+                }
             },
             skip,
             take: limit,
