@@ -50,12 +50,11 @@ model Translation {
   audioUrl          String?
   partOfSpeech      String?
 
-  // Relations
   languageId String
   language   Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
 
   authorId String
-  author   User   @relation(fields: [authorId], references: [id])
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   setWords SetWord[]
 }
