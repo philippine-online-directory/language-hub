@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Card from '../Card/Card';
 import Button from '../Button/Button';
 import AddToSetModal from '../AddToSetModal/AddToSetModal';
@@ -74,6 +75,18 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
 
                             <p className={styles.definition}>{translation.englishDefinition}</p>
 
+                            {translation.audioUrl && (
+                                <>
+                                    <div className={styles.divider} />
+                                    <div className={styles.audioPlayer}>
+                                        <label className={styles.audioLabel}>Audio Pronunciation:</label>
+                                        <audio controls src={translation.audioUrl} className={styles.audio}>
+                                            Your browser does not support the audio element.
+                                        </audio>
+                                    </div>
+                                </>
+                            )}
+
                             {translation.exampleSentence && (
                                 <>
                                     <div className={styles.divider} />
@@ -82,11 +95,26 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                             )}
 
                             <div className={styles.footer}>
-                                {translation.status === 'VERIFIED' && (
-                                    <div className={styles.verifiedBadge}>
-                                        <span>Verified Translation</span>
-                                    </div>
-                                )}
+                                <div className={styles.footerLeft}>
+                                    {translation.status === 'VERIFIED' && (
+                                        <div className={styles.verifiedBadge}>
+                                            <span>Verified Translation</span>
+                                        </div>
+                                    )}
+                                    
+                                    {translation.author && (
+                                        <div className={styles.attribution}>
+                                            <span className={styles.attributionText}>Contributed by</span>
+                                            <Link 
+                                                to={`/profile/${translation.author.id}`}
+                                                className={styles.authorLink}
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                @{translation.author.username}
+                                            </Link>
+                                        </div>
+                                    )}
+                                </div>
                                 
                                 {showAddToSet && (
                                     <Button 

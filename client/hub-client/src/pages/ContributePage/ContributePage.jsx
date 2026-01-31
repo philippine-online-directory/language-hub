@@ -262,7 +262,6 @@ export default function ContributePage(){
         try {
             let audioS3Key = null;
 
-            // Step 1: Upload audio to S3 if file is selected or recorded
             const audioToUpload = audioFile || (audioBlob ? new File([audioBlob], 'recording.webm', { type: 'audio/webm' }) : null);
             
             if (audioToUpload) {
@@ -297,10 +296,9 @@ export default function ContributePage(){
                 setUploadingAudio(false);
             }
 
-            // Step 2: Create translation with the S3 key
             await contributionService.contributeTranslation({
                 ...formData,
-                audioS3Key, // Include S3 key in submission
+                audioS3Key,
             });
 
             setSuccess(true);

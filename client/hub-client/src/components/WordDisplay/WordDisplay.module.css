@@ -356,6 +356,36 @@
   animation: fadeInUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.55s backwards;
 }
 
+.audioPlayer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(192, 118, 58, 0.05);
+  border-radius: 8px;
+  border-left: 3px solid #C0763A;
+  animation: fadeInUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s backwards;
+}
+
+.audioLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.audio {
+  width: 100%;
+  height: 40px;
+  border-radius: 6px;
+  outline: none;
+}
+
+.audio:focus {
+  box-shadow: 0 0 0 3px rgba(192, 118, 58, 0.1);
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -412,6 +442,68 @@
   flex-wrap: wrap;
   gap: 12px;
   animation: fadeInUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.75s backwards;
+}
+
+.footerLeft {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  flex: 1;
+}
+
+.attribution {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(243, 244, 246, 0.8);
+  border-radius: 16px;
+  font-size: 13px;
+  animation: fadeInSlide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.85s backwards;
+}
+
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.attributionText {
+  color: #9CA3AF;
+  font-weight: 400;
+}
+
+.authorLink {
+  color: #C0763A;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.authorLink::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #C0763A;
+  transition: width 0.3s ease;
+}
+
+.authorLink:hover {
+  color: #D68A4F;
+}
+
+.authorLink:hover::after {
+  width: 100%;
 }
 
 .verifiedBadge {
@@ -606,6 +698,11 @@
   .footer {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .footerLeft {
+    width: 100%;
+    justify-content: flex-start;
   }
 
   .footer button {
