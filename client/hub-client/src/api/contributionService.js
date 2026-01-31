@@ -19,7 +19,7 @@ export const contributionService = {
             fileName,
             contentType
         });
-        return response.data;
+        return response.data; 
     },
 
     uploadAudioToS3: async (presignedUrl, audioFile) => {
