@@ -58,4 +58,8 @@ export const setService = {
         const response = await api.delete(`/sets/${setId}/translations/${translationId}`);
         return response.data;
     },
+    getSetsContainingTranslation: async (translationId) => {
+        const response = await api.get(`/sets/translations/${translationId}/sets`);
+        return response.data;
+    }
 };

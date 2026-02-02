@@ -1,14 +1,38 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Card from '../Card/Card';
 import Button from '../Button/Button';
 import AddToSetModal from '../AddToSetModal/AddToSetModal';
+import { setService } from '../../api/setService';
 import styles from './WordDisplay.module.css';
 
 export default function WordDisplay({ translation, showAddToSet = true, defaultExpanded = false }){
     const [showModal, setShowModal] = useState(false);
+    const [modalMode, setModalMode] = useState('add'); // 'add' or 'remove'
     const [isExpanded, setIsExpanded] = useState(defaultExpanded);
     const [isHovered, setIsHovered] = useState(false);
+    const [setsContainingTranslation, setSetsContainingTranslation] = useState([]);
+    const [loadingSets, setLoadingSets] = useState(false);
+
+    // Check which sets contain this translation
+    useEffect(() => {
+        const checkSets = async () => {
+            if (!translation?.id) return;
+            
+            setLoadingSets(true);
+            try {
+                const sets = await setService.getSetsContainingTranslation(translation.id);
+                setSetsContainingTranslation(sets || []);
+            } catch (error) {
+                console.error('Error checking sets:', error);
+                setSetsContainingTranslation([]);
+            } finally {
+                setLoadingSets(false);
+            }
+        };
+
+        checkSets();
+    }, [translation?.id]);
 
     const handleCardClick = () => {
         if (!isExpanded) {
@@ -121,11 +145,14 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                                         variant="secondary" 
                                         onClick={(e) => {
                                             e.stopPropagation();
+                                            setModalMode(setsContainingTranslation.length > 0 ? 'remove' : 'add');
                                             setShowModal(true);
                                         }}
                                         className={styles.addButton}
+                                        disabled={loadingSets}
                                     >
-                                        Add to Set
+                                        {loadingSets ? 'Loading...' : 
+                                         setsContainingTranslation.length > 0 ? 'Remove from Set' : 'Add to Set'}
                                     </Button>
                                 )}
                             </div>
@@ -137,7 +164,16 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
             {showModal && (
                 <AddToSetModal 
                     translation={translation}
-                    onClose={() => setShowModal(false)}
+                    mode={modalMode}
+                    setsContainingTranslation={setsContainingTranslation}
+                    onClose={(refreshNeeded) => {
+                        setShowModal(false);
+                        if (refreshNeeded) {
+                            setService.getSetsContainingTranslation(translation.id)
+                                .then(sets => setSetsContainingTranslation(sets || []))
+                                .catch(err => console.error('Error refreshing sets:', err));
+                        }
+                    }}
                 />
             )}
         </>

@@ -4,26 +4,39 @@ import Button from '../Button/Button';
 import Card from '../Card/Card';
 import styles from './AddToSetModal.module.css';
 
-export default function AddToSetModal({ translation, onClose }){
+export default function AddToSetModal({ translation, mode = 'add', setsContainingTranslation = [], onClose }){
     const [sets, setSets] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedSetId, setSelectedSetId] = useState('');
     const [error, setError] = useState(null);
-    const [adding, setAdding] = useState(false);
+    const [processing, setProcessing] = useState(false);
+
+    const isRemoveMode = mode === 'remove';
 
     useEffect(() => {
         const fetchSets = async () => {
             setLoading(true);
             try {
-                // Fetch all user sets (large limit for modal)
-                const result = await setService.getUserSets(1, 100);
-                const allSets = result.sets || [];
-                
-                // Filter sets compatible with this translation's language
-                const compatibleSets = allSets.filter(
-                    set => set.languageId === translation.languageId
-                );
-                setSets(compatibleSets);
+                if (isRemoveMode) {
+                    // In remove mode, show only sets that contain this translation
+                    setSets(setsContainingTranslation);
+                } else {
+                    // In add mode, fetch all user sets and filter by language
+                    const result = await setService.getUserSets(1, 100);
+                    const allSets = result.sets || [];
+                    
+                    // Filter sets compatible with this translation's language
+                    const compatibleSets = allSets.filter(
+                        set => set.languageId === translation.languageId
+                    );
+                    
+                    // Filter out sets that already contain this translation
+                    const setsWithoutTranslation = compatibleSets.filter(
+                        set => !setsContainingTranslation.some(s => s.id === set.id)
+                    );
+                    
+                    setSets(setsWithoutTranslation);
+                }
             } catch (err) {
                 setError('Failed to load your sets');
                 console.error('Error fetching sets:', err);
@@ -32,33 +45,37 @@ export default function AddToSetModal({ translation, onClose }){
             }
         };
         fetchSets();
-    }, [translation.languageId]);
+    }, [translation.languageId, isRemoveMode, setsContainingTranslation]);
 
-    const handleAdd = async () => {
+    const handleAction = async () => {
         if (!selectedSetId) {
             setError('Please select a set');
             return;
         }
 
-        setAdding(true);
+        setProcessing(true);
         setError(null);
 
         try {
-            await setService.addTranslationToSet(selectedSetId, translation.id);
-            onClose(true); 
+            if (isRemoveMode) {
+                await setService.removeTranslationFromSet(selectedSetId, translation.id);
+            } else {
+                await setService.addTranslationToSet(selectedSetId, translation.id);
+            }
+            onClose(true); // Pass true to indicate refresh needed
         } catch (err) {
-            setError(err.response?.data?.message || 'Failed to add word to set');
+            setError(err.response?.data?.message || `Failed to ${isRemoveMode ? 'remove word from' : 'add word to'} set`);
         } finally {
-            setAdding(false);
+            setProcessing(false);
         }
     };
 
     return (
         <div className={styles.modalOverlay} onClick={onClose}>
             <Card className={styles.modal} onClick={(e) => e.stopPropagation()} asDiv>
-                <h2 className={styles.title}>Add to Set</h2>
+                <h2 className={styles.title}>{isRemoveMode ? 'Remove from Set' : 'Add to Set'}</h2>
                 <p className={styles.subtitle}>
-                    Add "<strong>{translation.wordText}</strong>" to one of your vocabulary sets
+                    {isRemoveMode ? 'Remove' : 'Add'} "<strong>{translation.wordText}</strong>" {isRemoveMode ? 'from one of your vocabulary sets' : 'to one of your vocabulary sets'}
                 </p>
 
                 {error && (
@@ -80,8 +97,15 @@ export default function AddToSetModal({ translation, onClose }){
                         <svg className={styles.emptyIcon} viewBox="0 0 20 20" fill="currentColor">
                             <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
                         </svg>
-                        <p>You don't have any sets for {translation.language?.name || 'this language'} yet.</p>
-                        <p className={styles.hint}>Create a set first to add words to it.</p>
+                        <p>
+                            {isRemoveMode 
+                                ? `"${translation.wordText}" is not in any of your sets.`
+                                : `You don't have any ${translation.language?.name || 'compatible'} sets available to add this word to.`
+                            }
+                        </p>
+                        {!isRemoveMode && (
+                            <p className={styles.hint}>Create a set first or this word may already be in all your sets.</p>
+                        )}
                     </div>
                 ) : (
                     <div className={styles.setList}>
@@ -115,17 +139,17 @@ export default function AddToSetModal({ translation, onClose }){
                 <div className={styles.actions}>
                     <Button
                         variant="primary"
-                        onClick={handleAdd}
-                        disabled={!selectedSetId || adding || sets.length === 0}
+                        onClick={handleAction}
+                        disabled={!selectedSetId || processing || sets.length === 0}
                         fullWidth
                     >
-                        {adding ? (
+                        {processing ? (
                             <>
                                 <div className={styles.buttonSpinner}></div>
-                                Adding...
+                                {isRemoveMode ? 'Removing...' : 'Adding...'}
                             </>
                         ) : (
-                            'Add to Set'
+                            isRemoveMode ? 'Remove from Set' : 'Add to Set'
                         )}
                     </Button>
                     <Button variant="secondary" onClick={onClose} fullWidth>
