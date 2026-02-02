@@ -117,6 +117,22 @@ const deleteSet = [
     }
 ]
 
+const getSetsContainingTranslation = [
+    auth,
+    async (req, res, next) => {
+        const { translationId } = req.params;
+        const { id } = req.user;
+
+        try {
+            const sets = await setService.getSetsContainingTranslation(translationId, id);
+            res.status(200).json(sets);
+        }
+        catch (err) {
+            next(err)
+        }
+    }
+]
+
 const setController = {
     getUserSets,
     getPublicSets,
@@ -124,7 +140,8 @@ const setController = {
     createSet,
     updateSet,
     getSetWords,
-    deleteSet
+    deleteSet,
+    getSetsContainingTranslation
 }
 
 export default setController

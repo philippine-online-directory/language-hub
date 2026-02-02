@@ -10,6 +10,7 @@ const setRouter = Router()
 setRouter.get('/public', setController.getPublicSets);
 setRouter.get('/', setController.getUserSets);
 setRouter.post('/', setController.createSet);
+setRouter.get('/translations/:translationId/sets', setController.getSetsContainingTranslation);
 setRouter.get('/:setId', setController.getSetById);
 setRouter.put('/:setId', setController.updateSet);
 setRouter.delete('/:setId', setController.deleteSet);
