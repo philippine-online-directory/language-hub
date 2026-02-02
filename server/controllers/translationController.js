@@ -44,7 +44,7 @@ const removeTranslationFromSet = [
     auth,
     async (req, res, next) => {
         const vocabSetId = req.params.setId
-        const { translationId } = req.body;
+        const { translationId } = req.params;
         const { id } = req.user
 
         try {
