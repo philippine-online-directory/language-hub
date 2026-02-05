@@ -11,7 +11,7 @@ const REGION = process.env.AWS_REGION || 'ap-southeast-1'
 const URL_EXPIRATION = 3600
 
 const s3Client = new S3Client({
-  region: REGION
+  region: REGION,
 })
 
 async function generateUploadUrl(fileName, contentType) {
