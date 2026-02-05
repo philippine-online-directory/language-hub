@@ -21,12 +21,12 @@ const validateLanguage = [
 const getLanguages = [
     auth,
     async (req, res, next) => {
-        const { name } = req.query;
+        const { name, page, limit } = req.query;
 
         try {
             const languages = name
-            ? await languageService.findLanguageByName(name)
-            : await languageService.findLanguages();
+            ? await languageService.findLanguageByName(name, parseInt(page) || 1, parseInt(limit) || 20)
+            : await languageService.findLanguages(parseInt(page) || 1, parseInt(limit) || 20);
 
             res.status(200).json(languages);
         } 
@@ -57,7 +57,10 @@ const getTranslations = [
   auth,
   async (req, res, next) => {
     const { isoCode } = req.params;
-    const { text, definition, status } = req.query;
+    const { text, definition, status, page, limit } = req.query;
+
+    const pageNum = parseInt(page) || 1;
+    const limitNum = parseInt(limit) || 20;
 
     try {
       let translations;
@@ -66,16 +69,25 @@ const getTranslations = [
         translations = await translationService.searchTranslationByWordText(
           isoCode,
           text,
-          status
+          status,
+          pageNum,
+          limitNum
         );
       } else if (definition) {
         translations = await translationService.searchTranslationByWordDefinition(
           isoCode,
           definition,
-          status
+          status,
+          pageNum,
+          limitNum
         );
       } else {
-        translations = await languageService.getDictionary(isoCode, status);
+        translations = await languageService.getDictionary(
+          isoCode, 
+          status, 
+          pageNum, 
+          limitNum
+        );
       }
 
       res.status(200).json(translations);
