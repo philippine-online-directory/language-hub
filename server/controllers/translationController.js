@@ -58,7 +58,8 @@ const removeTranslationFromSet = [
     }
 ]
 
-// Admin function
+// Admin functions
+
 const updateTranslationStatus = [
     auth,
     isAdmin,
@@ -77,11 +78,29 @@ const updateTranslationStatus = [
     }
 ]
 
+const deleteTranslation = [
+    auth,
+    isAdmin,
+    async (req, res, next) => {
+        const { translationId } = req.params
+
+        try {
+            await translationService.deleteTranslation(translationId)
+
+            res.sendStatus(204)
+        }
+        catch (err) {
+            next(err)
+        }
+    }
+]
+
 const translationController = {
     getTranslationInfo,
     addTranslationToSet,
     removeTranslationFromSet,
-    updateTranslationStatus
+    updateTranslationStatus,
+    deleteTranslation
 }
 
 export default translationController

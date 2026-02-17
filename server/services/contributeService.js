@@ -1,7 +1,7 @@
 import prisma from '../prisma.js'
 import s3Service from './s3Service.js'
 
-async function contributeTranslation(userId, { languageId, wordText, ipa, englishDefinition, exampleSentence, audioS3Key }){
+async function contributeTranslation(userId, { languageId, wordText, ipa, englishDefinition, exampleSentence, audioUrl, partOfSpeech }){
     const language = await prisma.language.findUnique({
         where: { id: languageId },
         select: { id: true }
@@ -19,7 +19,8 @@ async function contributeTranslation(userId, { languageId, wordText, ipa, englis
             ipa,
             englishDefinition,
             exampleSentence,
-            audioUrl: audioS3Key || null, 
+            audioUrl: audioUrl || null,
+            partOfSpeech: partOfSpeech || null,
         },
         include: {
             language: true

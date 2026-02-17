@@ -14,6 +14,9 @@ const validateContribution = [
         .trim(),
     body('exampleSentence').notEmpty()
         .trim(),
+    body('audioUrl') 
+        .optional({ checkFalsy: true })
+        .trim(),
     body('languageId').notEmpty()
         .custom(async id => {
             const language = await prisma.language.findUnique({
@@ -21,7 +24,10 @@ const validateContribution = [
             })
             
             if (!language) throw new Error('Language does not exist')
-        })
+        }),
+    body('partOfSpeech')
+        .optional({ checkFalsy: true })
+        .trim()
 ]
 
 const contributeTranslation = [
@@ -33,6 +39,7 @@ const contributeTranslation = [
         const translationData = matchedData(req);
 
         try {
+            // translationData now includes audioUrl
             const contributedTranslation = await contributeService.contributeTranslation(id, translationData)
 
             res.status(201).json(contributedTranslation)

@@ -1,6 +1,24 @@
 import prisma from '../prisma.js'
 import s3Service from './s3Service.js'
 
+/**
+ * Helper to convert S3 keys into signed URLs for a list of translations
+ */
+async function attachSignedUrls(translations) {
+  return await Promise.all(
+    translations.map(async (translation) => {
+      if (translation.audioUrl) {
+        const signedUrl = await s3Service.generateDownloadUrl(translation.audioUrl);
+        return {
+          ...translation,
+          audioUrl: signedUrl,
+        };
+      }
+      return translation;
+    })
+  );
+}
+
 async function addLanguage({ name, speakerCount, isoCode, preservationNote, culturalBackground }){
     const addedLanguage = await prisma.language.create({
         data: {
@@ -120,24 +138,15 @@ async function findLanguageByName(phrase, page = 1, limit = 20){
     };
 }
 
-
 async function getDictionary(isoCode, status, page = 1, limit = 20, textSearch, definitionSearch) {
   const skip = (page - 1) * limit;
   
   let normalizedStatus = 'VERIFIED';
-
-  if (status === 'ALL') {
-    normalizedStatus = 'ALL';
-  } else if (status === 'UNVERIFIED') {
-    normalizedStatus = 'UNVERIFIED';
-  } else if (status === 'VERIFIED') {
-    normalizedStatus = 'VERIFIED';
-  }
+  if (status === 'ALL') normalizedStatus = 'ALL';
+  else if (status === 'UNVERIFIED') normalizedStatus = 'UNVERIFIED';
 
   let whereClause = {
-    language: {
-      isoCode
-    }
+    language: { isoCode }
   };
 
   if (normalizedStatus !== 'ALL') {
@@ -145,17 +154,11 @@ async function getDictionary(isoCode, status, page = 1, limit = 20, textSearch, 
   }
 
   if (textSearch) {
-    whereClause.wordText = {
-      contains: textSearch,
-      mode: 'insensitive'
-    };
+    whereClause.wordText = { contains: textSearch, mode: 'insensitive' };
   }
 
   if (definitionSearch) {
-    whereClause.englishDefinition = {
-      contains: definitionSearch,
-      mode: 'insensitive'
-    };
+    whereClause.englishDefinition = { contains: definitionSearch, mode: 'insensitive' };
   }
 
   const [translations, total] = await Promise.all([
@@ -164,34 +167,18 @@ async function getDictionary(isoCode, status, page = 1, limit = 20, textSearch, 
       include: {
         language: true,
         author: {
-          select: {
-            id: true,
-            username: true
-          }
+          select: { id: true, username: true }
         }
       },
       skip,
       take: limit,
-      orderBy: {
-        createdAt: 'desc'
-      }
+      orderBy: { createdAt: 'desc' }
     }),
     prisma.translation.count({ where: whereClause })
   ]);
 
-  // Generate presigned URLs for all translations with audio
-  const translationsWithSignedUrls = await Promise.all(
-    translations.map(async (translation) => {
-      if (translation.audioUrl) {
-        const signedUrl = await s3Service.generateDownloadUrl(translation.audioUrl);
-        return {
-          ...translation,
-          audioUrl: signedUrl,
-        };
-      }
-      return translation;
-    })
-  );
+  // Use the helper to sign URLs
+  const translationsWithSignedUrls = await attachSignedUrls(translations);
 
   return {
     translations: translationsWithSignedUrls,
@@ -204,7 +191,6 @@ async function getDictionary(isoCode, status, page = 1, limit = 20, textSearch, 
   };
 }
 
-
 const languageService = {
     findLanguages,
     findLanguageByIsoCode,
@@ -212,7 +198,8 @@ const languageService = {
     findLanguageByName,
     addLanguage,
     updateLanguage,
-    deleteLanguage
+    deleteLanguage,
+    attachSignedUrls // Exported so translationService can use it too
 }
 
 export default languageService

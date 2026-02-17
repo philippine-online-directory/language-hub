@@ -249,13 +249,40 @@ async function updateTranslationStatus(id, status){
     }
 }
 
+async function deleteTranslation(id) {
+    // Fetch first so we have the audioUrl (S3 key) before deleting the row
+    const translation = await prisma.translation.findUnique({
+        where: { id },
+        select: { id: true, audioUrl: true }
+    });
+
+    if (!translation) throw new Error('Translation does not exist');
+
+    // Delete the database record. SetWord rows are cascade-deleted by the schema.
+    try {
+        await prisma.translation.delete({
+            where: { id }
+        });
+    } catch (err) {
+        if (err.code === 'P2025') throw new Error('Translation does not exist');
+        throw err;
+    }
+
+    // Delete the S3 file after the DB row is confirmed deleted.
+    // audioUrl stores the raw S3 key (e.g. "audio/1234-abc.mp3"), not a signed URL.
+    if (translation.audioUrl) {
+        await s3Service.deleteAudioFile(translation.audioUrl);
+    }
+}
+
 const translationService = {
     findTranslationInfo,
     searchTranslationByWordText,
     searchTranslationByWordDefinition,
     addTranslationToSet,
     updateTranslationStatus,
-    removeTranslationFromSet
+    removeTranslationFromSet,
+    deleteTranslation
 }
 
 export default translationService
