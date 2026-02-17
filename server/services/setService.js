@@ -1,4 +1,5 @@
 import prisma from '../prisma.js'
+import languageService from './languageService.js'
 
 async function getUserSets(userId, page = 1, limit = 12){
     if (!userId) throw new Error("Must be logged in to view sets");
@@ -207,14 +208,20 @@ async function getSetWords(setId){
             }
         },
         include: {
-            language: true
+            language: true,
+            author: {
+                select: { id: true, username: true }
+            }
         },
         orderBy: {
             createdAt: 'desc'
         }
     });
 
-    return words;
+    // Convert S3 keys to signed download URLs
+    const wordsWithSignedUrls = await languageService.attachSignedUrls(words);
+
+    return wordsWithSignedUrls;
 }
 
 async function deleteSet(setId, userId){
