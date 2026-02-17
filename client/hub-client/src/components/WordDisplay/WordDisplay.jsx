@@ -78,6 +78,11 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                             <div className={styles.expandedHeader}>
                                 <div className={styles.wordHeader}>
                                     <h2 className={styles.word}>{translation.wordText}</h2>
+                                    {translation.partOfSpeech && (
+                                        <span className={styles.partOfSpeechBadge}>
+                                            {translation.partOfSpeech}
+                                        </span>
+                                    )}
                                 </div>
                                 <button 
                                     className={styles.collapseButton}

@@ -87,6 +87,38 @@
   transform: translateY(0);
 }
 
+/* Danger Button */
+.danger {
+  background: linear-gradient(135deg, #EF4444 0%, #F87171 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3),
+              0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.danger::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4),
+              0 3px 10px rgba(0, 0, 0, 0.15);
+}
+
+.danger:hover::after {
+  opacity: 1;
+}
+
+.danger:active {
+  transform: translateY(0);
+}
+
 /* Disabled State */
 .button:disabled {
   opacity: 0.5;

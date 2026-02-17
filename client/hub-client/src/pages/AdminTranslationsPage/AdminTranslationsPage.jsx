@@ -5,6 +5,36 @@ import Button from '../../components/Button/Button';
 import WordDisplay from '../../components/WordDisplay/WordDisplay';
 import styles from './AdminTranslationsPage.module.css';
 
+// Inline confirmation dialog — avoids blocking window.confirm()
+function DeleteConfirmModal({ translation, onConfirm, onCancel, isDeleting }) {
+    return (
+        <div className={styles.modalOverlay} onClick={onCancel}>
+            <div className={styles.modalCard} onClick={(e) => e.stopPropagation()}>
+                <div className={styles.modalIcon}>
+                    <svg viewBox="0 0 20 20" fill="currentColor" width="28" height="28">
+                        <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                    </svg>
+                </div>
+                <h3 className={styles.modalTitle}>Delete Translation?</h3>
+                <p className={styles.modalBody}>
+                    You are about to permanently delete{' '}
+                    <strong>"{translation.wordText}"</strong>.
+                    {translation.audioUrl && ' The associated audio file will also be removed from storage.'}
+                    {' '}This action cannot be undone.
+                </p>
+                <div className={styles.modalActions}>
+                    <Button variant="secondary" onClick={onCancel} disabled={isDeleting}>
+                        Cancel
+                    </Button>
+                    <Button variant="danger" onClick={onConfirm} disabled={isDeleting}>
+                        {isDeleting ? 'Deleting…' : 'Delete'}
+                    </Button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function AdminTranslationsPage(){
     const { user } = useAuth();
     const [languages, setLanguages] = useState([]);
@@ -15,6 +45,10 @@ export default function AdminTranslationsPage(){
     const [filter, setFilter] = useState('UNVERIFIED');
     const [mounted, setMounted] = useState(false);
 
+    // Delete state
+    const [translationToDelete, setTranslationToDelete] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+
     useEffect(() => {
         setMounted(true);
     }, []);
@@ -23,7 +57,6 @@ export default function AdminTranslationsPage(){
         const fetchLanguages = async () => {
             setLanguagesLoading(true);
             try {
-                // Fetch all languages for admin
                 const result = await languageService.getLanguages(1, 1000);
                 const languagesList = result.languages || [];
                 setLanguages(languagesList);
@@ -48,7 +81,6 @@ export default function AdminTranslationsPage(){
     const fetchTranslations = async () => {
         setLoading(true);
         try {
-            // Fetch all translations for admin (large limit)
             const result = await languageService.getTranslations(
                 selectedLanguage,
                 { status: filter, page: 1, limit: 1000 }
@@ -90,6 +122,31 @@ export default function AdminTranslationsPage(){
         }
     };
 
+    const handleDeleteClick = (translation) => {
+        setTranslationToDelete(translation);
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!translationToDelete) return;
+        setIsDeleting(true);
+        try {
+            await languageService.deleteTranslation(selectedLanguage, translationToDelete.id);
+            // Optimistically remove from local list so we don't need a full refetch
+            setTranslations((prev) => prev.filter((t) => t.id !== translationToDelete.id));
+            setTranslationToDelete(null);
+        } catch (err) {
+            alert('Failed to delete translation. Please try again.');
+            console.error('Error deleting translation:', err);
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
+    const handleDeleteCancel = () => {
+        if (isDeleting) return;
+        setTranslationToDelete(null);
+    };
+
     if (user?.role !== 'ADMIN') {
         return (
             <div className={`${styles.adminTranslationsPage} ${mounted ? styles.mounted : ''}`}>
@@ -109,6 +166,15 @@ export default function AdminTranslationsPage(){
     return (
         <div className={`${styles.adminTranslationsPage} ${mounted ? styles.mounted : ''}`}>
             <div className={styles.backgroundPattern}></div>
+
+            {translationToDelete && (
+                <DeleteConfirmModal
+                    translation={translationToDelete}
+                    onConfirm={handleDeleteConfirm}
+                    onCancel={handleDeleteCancel}
+                    isDeleting={isDeleting}
+                />
+            )}
             
             <div className={styles.container}>
                 <header className={styles.header}>
@@ -206,6 +272,12 @@ export default function AdminTranslationsPage(){
                                             Mark as Unverified
                                         </Button>
                                     )}
+                                    <Button
+                                        variant="danger"
+                                        onClick={() => handleDeleteClick(translation)}
+                                    >
+                                        Delete
+                                    </Button>
                                 </div>
                             </div>
                         ))}

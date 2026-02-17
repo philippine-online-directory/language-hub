@@ -16,6 +16,7 @@ export default function ContributePage(){
         ipa: '',
         englishDefinition: '',
         exampleSentence: '',
+        partOfSpeech: '',
     });
     const [audioFile, setAudioFile] = useState(null);
     const [audioMode, setAudioMode] = useState('upload'); // 'upload' or 'record'
@@ -298,7 +299,7 @@ export default function ContributePage(){
 
             await contributionService.contributeTranslation({
                 ...formData,
-                audioS3Key,
+                audioUrl: audioS3Key,
             });
 
             setSuccess(true);
@@ -308,6 +309,7 @@ export default function ContributePage(){
                 ipa: '',
                 englishDefinition: '',
                 exampleSentence: '',
+                partOfSpeech: '',
             });
             setAudioFile(null);
             setAudioBlob(null);
@@ -391,6 +393,32 @@ export default function ContributePage(){
                             required
                             placeholder="Enter the word in the original language"
                         />
+
+                        <div className={styles.formGroup}>
+                            <label htmlFor="partOfSpeech" className={styles.label}>
+                                Part of Speech
+                            </label>
+                            <select
+                                id="partOfSpeech"
+                                name="partOfSpeech"
+                                value={formData.partOfSpeech}
+                                onChange={handleChange}
+                                className={styles.select}
+                            >
+                                <option value="">Select part of speech</option>
+                                <option value="noun">Noun</option>
+                                <option value="verb">Verb</option>
+                                <option value="adjective">Adjective</option>
+                                <option value="adverb">Adverb</option>
+                                <option value="pronoun">Pronoun</option>
+                                <option value="preposition">Preposition</option>
+                                <option value="conjunction">Conjunction</option>
+                                <option value="interjection">Interjection</option>
+                                <option value="particle">Particle</option>
+                                <option value="phrase">Phrase</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
 
                         <Input
                             label="Pronunciation (IPA)"

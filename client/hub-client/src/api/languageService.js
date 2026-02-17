@@ -20,7 +20,6 @@ export const languageService = {
             `/languages/${isoCode}/translations`,
             { params: options }
         );
-
         return response.data;
     },
 
@@ -48,6 +47,13 @@ export const languageService = {
         const response = await api.patch(
             `/languages/${isoCode}/translations/${translationId}`,
             { status }
+        );
+        return response.data;
+    },
+
+    deleteTranslation: async (isoCode, translationId) => {
+        const response = await api.delete(
+            `/languages/${isoCode}/translations/${translationId}`
         );
         return response.data;
     },

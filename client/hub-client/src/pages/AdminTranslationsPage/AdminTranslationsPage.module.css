@@ -334,3 +334,141 @@
     line-height: 28px;
   }
 }
+
+/* ============================================================
+   APPEND THESE STYLES TO AdminTranslationsPage.module.css
+   ============================================================ */
+
+/* Admin action row — lays out verify/unverify + delete side by side */
+.adminActions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 12px 16px;
+    border-top: 1px solid rgba(229, 231, 235, 0.6);
+}
+
+/* Push delete button to the far right */
+.adminActions > *:last-child {
+    margin-left: auto;
+}
+
+/* ── Delete Confirmation Modal ── */
+
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: overlayFadeIn 0.2s ease;
+}
+
+@keyframes overlayFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.modalCard {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 32px 28px;
+    max-width: 420px;
+    width: calc(100% - 32px);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.18),
+        0 4px 16px rgba(0, 0, 0, 0.08);
+    animation: modalSlideIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(24px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modalIcon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.1);
+    color: #EF4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.modalTitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+}
+
+.modalBody {
+    font-size: 14px;
+    line-height: 22px;
+    color: #6B7280;
+    margin: 0;
+}
+
+.modalBody strong {
+    color: #1F2937;
+}
+
+.modalActions {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.modalActions > * {
+    flex: 1;
+}
+
+/* ── Danger / Delete button variant ──
+   If your Button component already has a "danger" variant, remove this block.
+   If not, add this class directly or wire it through your Button component. */
+
+.dangerButton {
+    background: #EF4444;
+    color: #FFFFFF;
+    border: 1px solid #EF4444;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.dangerButton:hover:not(:disabled) {
+    background: #DC2626;
+    border-color: #DC2626;
+}
+
+.dangerButton:active:not(:disabled) {
+    transform: scale(0.97);
+}
+
+.dangerButton:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
