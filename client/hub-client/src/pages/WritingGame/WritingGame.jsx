@@ -90,9 +90,11 @@ export default function WritingGame(){
         handleNext();
     };
 
+    // Called only when the user completes all questions
     const handleFinish = async () => {
         const duration = Math.floor((Date.now() - startTime) / 1000);
-        const score = Math.round((correctCount / words.length) * 100);
+        // Score = accuracy: correct answers out of all attempted questions (0-100%)
+        const score = attempts > 0 ? Math.round((correctCount / attempts) * 100) : 0;
         
         try {
             await gameService.uploadGameSession(setId, {
@@ -104,6 +106,11 @@ export default function WritingGame(){
             console.error('Error saving game session:', err);
         }
         
+        navigate(`/sets/${setId}`);
+    };
+
+    // Called when user exits early — navigates without saving
+    const handleExit = () => {
         navigate(`/sets/${setId}`);
     };
 
@@ -336,7 +343,7 @@ export default function WritingGame(){
                 <div className={styles.footer}>
                     <Button
                         variant="secondary"
-                        onClick={handleFinish}
+                        onClick={handleExit}
                         className={styles.exitButton}
                     >
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
