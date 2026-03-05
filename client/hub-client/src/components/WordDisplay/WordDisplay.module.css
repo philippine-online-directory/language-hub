@@ -233,6 +233,10 @@
 
 .wordHeader {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .word {
@@ -245,6 +249,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin: 0;
+  padding-bottom: 6px;
   display: inline-block;
   position: relative;
 }
@@ -276,7 +281,6 @@
 
 .partOfSpeechBadge {
   display: inline-block;
-  margin-top: 6px;
   padding: 3px 10px;
   background: rgba(192, 118, 58, 0.08);
   border: 1px solid rgba(192, 118, 58, 0.25);
