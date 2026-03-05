@@ -37,8 +37,8 @@ export default function Navbar(){
         <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ''}`}>
             <div className={styles.container}>
                 <Link to="/" className={styles.logo}>
-                    <span className={styles.logoText}>Language</span>
-                    <span className={styles.logoAccent}>Hub</span>
+                    <span className={styles.logoText}>Philippine Online</span>
+                    <span className={styles.logoAccent}>Directory</span>
                 </Link>
 
                 {/* Mobile Menu Button */}
