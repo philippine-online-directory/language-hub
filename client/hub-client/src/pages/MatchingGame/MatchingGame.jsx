@@ -113,7 +113,9 @@ export default function MatchingGame(){
 
     const handleFinish = async () => {
         const duration = Math.floor((Date.now() - startTime) / 1000);
-        const score = Math.max(0, 100 - (moves - cards.length / 2) * 3);
+        // Score = accuracy: perfect game (one move per pair) = 100%, extra moves reduce score
+        const totalPairs = cards.length / 2;
+        const score = moves > 0 ? Math.min(100, Math.round((totalPairs / moves) * 100)) : 0;
         
         try {
             await gameService.uploadGameSession(setId, {

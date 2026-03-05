@@ -195,7 +195,7 @@ export default function GameSessionsPage() {
               </div>
               <div className={styles.overviewStat}>
                 <span className={styles.overviewLabel}>Avg Score</span>
-                <span className={styles.overviewValue}>{getAverageScore()}</span>
+                <span className={styles.overviewValue}>{getAverageScore()}%</span>
               </div>
               <div className={styles.overviewStat}>
                 <span className={styles.overviewLabel}>Total Time</span>
@@ -286,7 +286,7 @@ export default function GameSessionsPage() {
                   <div className={styles.sessionStats}>
                     <div className={styles.stat}>
                       <span className={styles.statLabel}>Score</span>
-                      <span className={styles.statValue}>{session.score}</span>
+                      <span className={styles.statValue}>{session.score}%</span>
                     </div>
                     <div className={styles.stat}>
                       <span className={styles.statLabel}>Duration</span>

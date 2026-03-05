@@ -76,7 +76,8 @@ export default function FlashcardGame(){
 
     const handleFinish = async () => {
         const duration = Math.floor((Date.now() - startTime) / 1000);
-        const score = viewedCards.size;
+        // Score = percentage of cards viewed (0-100%)
+        const score = words.length > 0 ? Math.round((viewedCards.size / words.length) * 100) : 0;
         
         try {
             await gameService.uploadGameSession(setId, {
