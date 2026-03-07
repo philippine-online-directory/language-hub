@@ -1,5 +1,5 @@
 import prisma from '../prisma.js'
-import s3Service from './s3Service.js'
+import storageService from './storageService.js'
 
 async function findTranslationInfo(id){
     const translation = await prisma.translation.findUnique({
@@ -19,7 +19,7 @@ async function findTranslationInfo(id){
     if (!translation) throw new Error('Translation does not exist');
 
     if (translation.audioUrl) {
-        translation.audioUrl = await s3Service.generateDownloadUrl(translation.audioUrl);
+        translation.audioUrl = await storageService.generateDownloadUrl(translation.audioUrl);
     }
 
     return translation
@@ -68,7 +68,7 @@ async function searchTranslationByWordText(code, word, mode, page = 1, limit = 2
     const translationsWithSignedUrls = await Promise.all(
         translations.map(async (translation) => {
             if (translation.audioUrl) {
-                const signedUrl = await s3Service.generateDownloadUrl(translation.audioUrl);
+                const signedUrl = await storageService.generateDownloadUrl(translation.audioUrl);
                 return {
                     ...translation,
                     audioUrl: signedUrl,
@@ -132,7 +132,7 @@ async function searchTranslationByWordDefinition(code, word, mode, page = 1, lim
     const translationsWithSignedUrls = await Promise.all(
         translations.map(async (translation) => {
             if (translation.audioUrl) {
-                const signedUrl = await s3Service.generateDownloadUrl(translation.audioUrl);
+                const signedUrl = await storageService.generateDownloadUrl(translation.audioUrl);
                 return {
                     ...translation,
                     audioUrl: signedUrl,
@@ -250,7 +250,7 @@ async function updateTranslationStatus(id, status){
 }
 
 async function deleteTranslation(id) {
-    // Fetch first so we have the audioUrl (S3 key) before deleting the row
+    // Fetch first so we have the audioUrl (storage key) before deleting the row
     const translation = await prisma.translation.findUnique({
         where: { id },
         select: { id: true, audioUrl: true }
@@ -268,10 +268,10 @@ async function deleteTranslation(id) {
         throw err;
     }
 
-    // Delete the S3 file after the DB row is confirmed deleted.
-    // audioUrl stores the raw S3 key (e.g. "audio/1234-abc.mp3"), not a signed URL.
+    // Delete the storage file after the DB row is confirmed deleted.
+    // audioUrl stores the raw storage key (e.g. "audio/1234-abc.mp3"), not a signed URL.
     if (translation.audioUrl) {
-        await s3Service.deleteAudioFile(translation.audioUrl);
+        await storageService.deleteAudioFile(translation.audioUrl);
     }
 }
 

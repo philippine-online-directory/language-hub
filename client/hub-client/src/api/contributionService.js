@@ -22,7 +22,7 @@ export const contributionService = {
         return response.data; 
     },
 
-    uploadAudioToS3: async (presignedUrl, audioFile) => {
+    uploadAudioToStorage: async (presignedUrl, audioFile) => {
         await axios.put(presignedUrl, audioFile, {
             headers: {
                 'Content-Type': audioFile.type,
@@ -33,14 +33,14 @@ export const contributionService = {
 
     uploadAudio: async (audioFile) => {
         try {
-            const { uploadUrl, s3Key } = await contributionService.getAudioUploadUrl(
+            const { uploadUrl, storageKey } = await contributionService.getAudioUploadUrl(
                 audioFile.name,
                 audioFile.type
             );
 
-            await contributionService.uploadAudioToS3(uploadUrl, audioFile);
+            await contributionService.uploadAudioToStorage(uploadUrl, audioFile);
 
-            return s3Key;
+            return storageKey;
         } catch (error) {
             console.error('Error uploading audio:', error);
             throw new Error(error.response?.data?.message || 'Failed to upload audio file');

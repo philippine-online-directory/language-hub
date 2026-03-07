@@ -1,14 +1,14 @@
 import prisma from '../prisma.js'
-import s3Service from './s3Service.js'
+import storageService from './storageService.js'
 
 /**
- * Helper to convert S3 keys into signed URLs for a list of translations
+ * Helper to convert storage keys into signed URLs for a list of translations
  */
 async function attachSignedUrls(translations) {
   return await Promise.all(
     translations.map(async (translation) => {
       if (translation.audioUrl) {
-        const signedUrl = await s3Service.generateDownloadUrl(translation.audioUrl);
+        const signedUrl = await storageService.generateDownloadUrl(translation.audioUrl);
         return {
           ...translation,
           audioUrl: signedUrl,

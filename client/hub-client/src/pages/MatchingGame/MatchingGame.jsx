@@ -84,7 +84,8 @@ export default function MatchingGame(){
 
         if (newSelected.length === 2) {
             setIsChecking(true);
-            setMoves(prev => prev + 1);
+            const currentMoves = moves + 1;
+            setMoves(currentMoves);
             
             // Check if cards match
             if (newSelected[0].pairId === newSelected[1].pairId) {
@@ -98,7 +99,7 @@ export default function MatchingGame(){
                     // Check if game is complete
                     if (newMatchedPairs.length === cards.length / 2) {
                         setGameComplete(true);
-                        setTimeout(() => handleFinish(), 1500);
+                        setTimeout(() => handleFinish(currentMoves), 1500);
                     }
                 }, 600);
             } else {
@@ -111,11 +112,12 @@ export default function MatchingGame(){
         }
     };
 
-    const handleFinish = async () => {
+    const handleFinish = async (finalMoves) => {
         const duration = Math.floor((Date.now() - startTime) / 1000);
-        // Score = accuracy: perfect game (one move per pair) = 100%, extra moves reduce score
         const totalPairs = cards.length / 2;
-        const score = moves > 0 ? Math.min(100, Math.round((totalPairs / moves) * 100)) : 0;
+        // Use finalMoves parameter to avoid stale closure on moves state
+        const currentMoves = finalMoves ?? moves;
+        const score = currentMoves > 0 ? Math.min(100, Math.round((totalPairs / currentMoves) * 100)) : 0;
         
         try {
             await gameService.uploadGameSession(setId, {
