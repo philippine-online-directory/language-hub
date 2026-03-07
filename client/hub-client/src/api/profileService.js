@@ -14,7 +14,7 @@ export const profileService = {
     searchUsers: async (page = 1, limit = 20, query = '') => {
         const params = { page, limit };
         if (query) {
-            params.q = query;
+            params.name = query;
         }
         const response = await api.get('/profile', { params });
         return response.data;

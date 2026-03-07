@@ -1,5 +1,5 @@
 import auth from '../middleware/auth.js'
-import s3Service from '../services/s3Service.js'
+import storageService from '../services/storageService.js'
 import { body, matchedData } from 'express-validator'
 import validationErrorCheck from '../middleware/expressValidate.js'
 
@@ -21,13 +21,13 @@ const getUploadUrl = [
         try {
             const { fileName, contentType } = matchedData(req);
 
-            const s3Key = s3Service.generateS3Key(fileName);
+            const storageKey = storageService.generateStorageKey(fileName);
 
-            const uploadUrl = await s3Service.generateUploadUrl(s3Key, contentType);
+            const uploadUrl = await storageService.generateUploadUrl(storageKey, contentType);
 
             res.status(200).json({
                 uploadUrl,
-                s3Key, 
+                storageKey, 
             });
         } 
         catch (err) {

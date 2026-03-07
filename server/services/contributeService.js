@@ -1,5 +1,5 @@
 import prisma from '../prisma.js'
-import s3Service from './s3Service.js'
+import storageService from './storageService.js'
 
 async function contributeTranslation(userId, { languageId, wordText, ipa, englishDefinition, exampleSentence, audioUrl, partOfSpeech }){
     const language = await prisma.language.findUnique({
@@ -28,7 +28,7 @@ async function contributeTranslation(userId, { languageId, wordText, ipa, englis
     })
 
     if (contributedTranslation.audioUrl) {
-        contributedTranslation.audioUrl = await s3Service.generateDownloadUrl(contributedTranslation.audioUrl);
+        contributedTranslation.audioUrl = await storageService.generateDownloadUrl(contributedTranslation.audioUrl);
     }
 
     return contributedTranslation
@@ -61,7 +61,7 @@ async function getUserContributions(userId, page = 1, limit = 20){
     const contributionsWithSignedUrls = await Promise.all(
         contributions.map(async (contribution) => {
             if (contribution.audioUrl) {
-                const signedUrl = await s3Service.generateDownloadUrl(contribution.audioUrl);
+                const signedUrl = await storageService.generateDownloadUrl(contribution.audioUrl);
                 return {
                     ...contribution,
                     audioUrl: signedUrl,
