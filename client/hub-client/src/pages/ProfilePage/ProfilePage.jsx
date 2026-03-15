@@ -133,6 +133,12 @@ export default function ProfilePage() {
           >
             My Sets ({profile.createdSets?.length || 0})
           </button>
+          <button
+            className={`${styles.tab} ${activeTab === 'settings' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('settings')}
+          >
+            Settings
+          </button>
         </div>
 
         {/* Content Sections */}
@@ -217,6 +223,43 @@ export default function ProfilePage() {
                 </div>
               )}
             </>
+          )}
+
+          {activeTab === 'settings' && (
+            <div className={`${styles.settingsSection} ${styles.headerContent}`}>
+              <h2>Reminders</h2>
+              <select
+                className={styles.select}
+                value={profile.reminderType}
+                onChange={(e) =>
+                  setProfile({ ...profile, reminderType: e.target.value })
+                }
+              >
+                <option value="">No reminders</option>
+                <option value="CHECKWORD">Check Word of the Day</option>
+                <option value="WORD">Word of the Day</option>
+              </select>
+
+              {profile.reminderType === "" && (
+                <p key={profile.reminderType} className={styles.reminderExplanation}>
+                  You won’t receive any reminder emails.
+                </p>
+              )}
+
+              {profile.reminderType === "CHECKWORD" && (
+                <p key={profile.reminderType} className={styles.reminderExplanation}>
+                  If you haven’t looked at the Word of the Day yet, we’ll send you a gentle
+                  reminder email encouraging you to check it out.
+                </p>
+              )}
+
+              {profile.reminderType === "WORD" && (
+                <p key={profile.reminderType} className={styles.reminderExplanation}>
+                  You’ll get the Word of the Day delivered straight to your inbox each day,
+                  so you never miss it.
+                </p>
+              )}
+            </div>
           )}
         </div>
       </div>
