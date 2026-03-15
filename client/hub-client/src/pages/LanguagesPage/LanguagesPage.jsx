@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { languageService } from '../../api/languageService';
+import { wordOfTheDayService } from '../../api/wordOfTheDayService';
+import WordDisplay from '../../components/WordDisplay/WordDisplay';
 import useDebounce from '../../hooks/useDebounce';
 import LanguageCard from '../../components/LanguageCard/LanguageCard';
 import Pagination from '../../components/Pagination/Pagination';
 import Input from '../../components/Input/Input';
 import styles from './LanguagesPage.module.css';
 
-export default function LanguagesPage(){
+export default function LanguagesPage() {
     const [languages, setLanguages] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(true);
@@ -17,11 +19,31 @@ export default function LanguagesPage(){
     const [mounted, setMounted] = useState(false);
     const gridRef = useRef(null);
 
+    const [wordOfTheDay, setWordOfTheDay] = useState(null);
+    const [wordLoading, setWordLoading] = useState(true);
+    const [wordError, setWordError] = useState(null);
+
     const debouncedSearch = useDebounce(searchQuery, 500);
     const LANGUAGES_PER_PAGE = 20;
 
     useEffect(() => {
         setMounted(true);
+    }, []);
+
+    useEffect(() => {
+        const fetchWordOfTheDay = async () => {
+            try {
+                const word = await wordOfTheDayService.getWordOfTheDay();
+                setWordOfTheDay(word);
+            } catch (err) {
+                console.error('Error fetching word of the day:', err);
+                setWordError('Could not load word of the day.');
+            } finally {
+                setWordLoading(false);
+            }
+        };
+
+        fetchWordOfTheDay();
     }, []);
 
     // Reset to page 1 when search changes
@@ -44,11 +66,11 @@ export default function LanguagesPage(){
                         return;
                     }
                     const language = await languageService.getLanguageByCode(debouncedSearch);
-                    result = { 
-                        languages: language ? [language] : [], 
+                    result = {
+                        languages: language ? [language] : [],
                         pagination: { page: 1, limit: 1, total: language ? 1 : 0, totalPages: 1 }
                     };
-                } 
+                }
                 else {
                     result = await languageService.getLanguages(currentPage, LANGUAGES_PER_PAGE, debouncedSearch);
                 }
@@ -59,7 +81,7 @@ export default function LanguagesPage(){
                 if (currentPage > 1) {
                     window.scrollTo({ top: 200, behavior: 'smooth' });
                 }
-            } 
+            }
             catch (err) {
                 if (searchMode === 'isoCode' && err.response?.status === 404) {
                     setLanguages([]);
@@ -68,7 +90,7 @@ export default function LanguagesPage(){
                     setError('Failed to load languages. Please try again.');
                     console.error('Error fetching languages:', err);
                 }
-            } 
+            }
             finally {
                 setLoading(false);
             }
@@ -106,7 +128,7 @@ export default function LanguagesPage(){
     return (
         <div className={`${styles.languagesPage} ${mounted ? styles.mounted : ''}`}>
             <div className={styles.backgroundPattern}></div>
-            
+
             <div className={styles.container}>
                 <header className={styles.header}>
                     <h1 className={styles.title}>Explore Languages</h1>
@@ -202,6 +224,31 @@ export default function LanguagesPage(){
                             />
                         )}
                     </>
+                )}
+            </div>
+
+            {/* Word of the day */}
+            <div className={styles.container}>
+                <header className={styles.header}>
+                    <h1 className={styles.title}>Word of the Day</h1>
+                    <p className={styles.subtitle}>
+                        {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    </p>
+                </header>
+
+                {wordLoading ? (
+                    <div className={styles.loadingState}>
+                        <div className={styles.loadingSpinner}></div>
+                        <p>Loading word of the day...</p>
+                    </div>
+                ) : wordError ? (
+                    <div className={styles.error}>{wordError}</div>
+                ) : wordOfTheDay && (
+                    <WordDisplay
+                        translation={wordOfTheDay}
+                        showAddToSet={false}
+                        defaultExpanded={true}
+                    />
                 )}
             </div>
         </div>
