@@ -3,21 +3,22 @@ import wordOfTheDayService from '../services/wordOfTheDayService.js';
 const getWordOfTheDay = [
     async (req, res, next) => {
         try {
-            const translation = await wordOfTheDayService.getWordOfTheDay();
+            const wordOfTheDay = await wordOfTheDayService.getWordOfTheDay();
 
             res.status(200).json({
-                id:                translation.id,
-                wordText:          translation.wordText,
-                ipa:               translation.ipa,
-                englishDefinition: translation.englishDefinition,
-                exampleSentence:   translation.exampleSentence,
-                audioUrl:          translation.audioUrl,
-                partOfSpeech:      translation.partOfSpeech,
-                status:            translation.status,
-                author: translation.author ? {
-                    id:       translation.author.id,
-                    username: translation.author.username
-                } : null
+                id:          wordOfTheDay.id,
+                displayDate: wordOfTheDay.displayDate,
+                translation: {
+                    id:                wordOfTheDay.translation.id,
+                    wordText:          wordOfTheDay.translation.wordText,
+                    ipa:               wordOfTheDay.translation.ipa,
+                    englishDefinition: wordOfTheDay.translation.englishDefinition,
+                    exampleSentence:   wordOfTheDay.translation.exampleSentence,
+                    partOfSpeech:      wordOfTheDay.translation.partOfSpeech,
+                    audioUrl:          wordOfTheDay.translation.audioUrl,
+                    status:            wordOfTheDay.translation.status,
+                    author:            wordOfTheDay.translation.author
+                }
             });
         }
         catch (err) {

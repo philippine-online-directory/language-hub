@@ -51,6 +51,7 @@ model Translation {
   publishedAt       DateTime?
   audioUrl          String?
   partOfSpeech      String?
+  usedAsWordOfTheDay Boolean  @default(false)
 
   languageId String
   language   Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
@@ -106,8 +107,8 @@ model GameSession {
 }
 
 model WordOfTheDay {
-  id            String      @id @default(cuid())
-  displayDate   DateTime    @unique @db.Date
+  id            String      @id @default("current")  
+  displayDate   DateTime    @db.Date                 
   
   translationId String
   translation   Translation @relation(fields: [translationId], references: [id], onDelete: Cascade)

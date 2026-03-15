@@ -1,7 +1,14 @@
 import cron from 'node-cron';
 import prisma from '../prisma.js'
 import brevo from '../brevo.js';
-import { wordOfTheDayTemplate, checkWordOfTheDayTemplate } from './helpers/emailTemplate.js';
+import wordOfTheDayService from '../services/wordOfTheDayService.js';
+
+cron.schedule('0 0 * * *', async () => {
+    await wordOfTheDayService.assignWordOfTheDay();
+}, {
+    scheduled: true,
+    timezone: "Asia/Manila"
+});
 
 // Run every day at 8 AM Philippine Standard Time
 cron.schedule('0 8 * * *', async () => {
@@ -15,6 +22,8 @@ cron.schedule('0 8 * * *', async () => {
     day: "numeric" 
   };
   const formattedDate = now.toLocaleDateString("en-US", options);
+
+  const { wordTemplate, checkTemplate } = await wordOfTheDayService.getEmailTemplates(formattedDate);
 
   const users = await prisma.user.findMany({
     where: { reminderType: { not: null } },
@@ -32,9 +41,7 @@ cron.schedule('0 8 * * *', async () => {
         subject: `[POD] ${user.reminderType === "WORD" ? "Here’s today’s Word of the Day 🎉" : "Still haven’t checked today’s word? 👀"}`,
         sender: { name: "Philippine Online Directory", email: "philippineonlinedirectory.auto@gmail.com" },
         to: [{ email: user.email }],
-        htmlContent: user.reminderType === "WORD"
-          ? wordOfTheDayTemplate(formattedDate, "Ambot", "Cebuano", "I don’t know / No idea / Uncertain response", `"Ambot, basin ugma pa siya moabot." (I don’t know, maybe he’ll arrive tomorrow.)`)
-          : checkWordOfTheDayTemplate()
+        htmlContent: user.reminderType === "WORD" ? wordTemplate : checkTemplate
       });
 
       await prisma.user.update({
