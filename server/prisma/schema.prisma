@@ -20,6 +20,8 @@ model User {
   username  String
   createdAt DateTime @default(now())
   role      Role     @default(LEARNER)
+  reminderType ReminderType?
+  lastReminderSentAt DateTime?
 
   contributions Translation[]
   createdSets   VocabSet[]
@@ -109,6 +111,11 @@ model WordOfTheDay {
   
   translationId String
   translation   Translation @relation(fields: [translationId], references: [id], onDelete: Cascade)
+}
+
+enum ReminderType {
+  WORD
+  CHECKWORD
 }
 
 enum Role {
