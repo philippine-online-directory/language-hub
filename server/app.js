@@ -12,7 +12,7 @@ import authRouter from "./routes/authRouter.js";
 import profileRouter from "./routes/profileRouter.js";
 import audioRouter from "./routes/audioRouter.js";
 import handleError from "./middleware/errorHandler.js";
-
+import './jobs/emailScheduler.js'
 
 const origin = process.env.FRONTEND_URL || 'http://localhost:5173'
 
