@@ -20,6 +20,8 @@ model User {
   username  String
   createdAt DateTime @default(now())
   role      Role     @default(LEARNER)
+  reminderType ReminderType?
+  lastReminderSentAt DateTime?
 
   contributions Translation[]
   createdSets   VocabSet[]
@@ -100,6 +102,11 @@ model GameSession {
 
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   vocabSet VocabSet @relation(fields: [vocabSetId], references: [id], onDelete: Cascade)
+}
+
+enum ReminderType {
+  WORD
+  CHECKWORD
 }
 
 enum Role {
