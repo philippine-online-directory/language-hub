@@ -59,6 +59,7 @@ model Translation {
   author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   setWords SetWord[]
+  wordOfTheDays WordOfTheDay[]
 }
 
 model VocabSet {
@@ -102,6 +103,14 @@ model GameSession {
 
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   vocabSet VocabSet @relation(fields: [vocabSetId], references: [id], onDelete: Cascade)
+}
+
+model WordOfTheDay {
+  id            String      @id @default(cuid())
+  displayDate   DateTime    @unique @db.Date
+  
+  translationId String
+  translation   Translation @relation(fields: [translationId], references: [id], onDelete: Cascade)
 }
 
 enum ReminderType {

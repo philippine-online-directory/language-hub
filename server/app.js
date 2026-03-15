@@ -12,7 +12,9 @@ import authRouter from "./routes/authRouter.js";
 import profileRouter from "./routes/profileRouter.js";
 import audioRouter from "./routes/audioRouter.js";
 import handleError from "./middleware/errorHandler.js";
+import wordOfTheDayRouter from "./routes/wordOfTheDayRouter.js";
 import './jobs/emailScheduler.js'
+
 
 const origin = process.env.FRONTEND_URL || 'http://localhost:5173'
 
@@ -40,6 +42,7 @@ app.use('/languages', languageRouter)
 app.use('/sets', setRouter)
 app.use('/profile', profileRouter)
 app.use('/audio', audioRouter)
+app.use('/word-of-the-day', wordOfTheDayRouter)
 app.use(handleError)
 
 const PORT = process.env.PORT || 3000;
