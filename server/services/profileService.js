@@ -57,6 +57,7 @@ async function getMyProfile(userId){
             email: true,
             username: true,
             createdAt: true,
+            reminderType: true,
             role: true,
             _count: {
                 select: {
@@ -90,6 +91,16 @@ async function getMyProfile(userId){
     })
 
     return myProfile
+}
+
+async function setMyProfile(userId, updates) {
+  if (!userId) throw new Error("Must be logged in to update your profile");
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: updates, // { reminderType: updates.reminderType } or other fields that need to be updated
+  });
+
 }
 
 async function getPublicProfile(userId){
@@ -142,6 +153,7 @@ async function getPublicProfile(userId){
 
 const profileService = {
     getMyProfile,
+    setMyProfile,
     getPublicProfile,
     searchUsers
 }

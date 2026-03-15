@@ -6,6 +6,10 @@ export const profileService = {
         return response.data;
     },
 
+    setMyProfile: async (updates) => {
+        await api.patch('/profile/me', updates);
+    },
+
     getPublicProfile: async (userId) => {
         const response = await api.get(`/profile/${userId}`);
         return response.data;

@@ -17,6 +17,22 @@ const getMyProfile = [
     }
 ]
 
+const setMyProfile = [
+    auth,
+    async (req, res, next) => {
+        const { id } = req.user
+        const updates = req.body
+
+        try {
+            await profileService.setMyProfile(id, updates)
+            res.status(200).json({ message: "Profile updated successfully" })
+        }
+        catch (err) {
+            next(err)
+        }
+    }
+]
+
 const getPublicProfile = [
     auth,
     async (req, res, next) => {
@@ -53,6 +69,7 @@ const searchUsers = [
 
 const profileController = {
     getMyProfile,
+    setMyProfile,
     getPublicProfile,
     searchUsers
 }

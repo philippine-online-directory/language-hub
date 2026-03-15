@@ -56,6 +56,16 @@ export default function ProfilePage() {
     return () => observer.disconnect();
   }, [activeTab, profile]);
 
+  const handleReminderChange = async (newReminderType) => {
+    setProfile((prev) => ({ ...prev, reminderType: newReminderType }));
+
+    try {
+      await profileService.setMyProfile({ reminderType: newReminderType });
+    } catch (err) {
+      setError("Could not update reminder settings. Please try again.");
+    }
+  };
+
   if (loading) {
     return (
       <div className={styles.profilePage}>
@@ -230,17 +240,18 @@ export default function ProfilePage() {
               <h2>Reminders</h2>
               <select
                 className={styles.select}
-                value={profile.reminderType}
-                onChange={(e) =>
-                  setProfile({ ...profile, reminderType: e.target.value })
-                }
+                value={profile.reminderType ?? "NULL"} 
+                onChange={(e) => {
+                  const value = e.target.value === "NULL" ? null : e.target.value;
+                  handleReminderChange(value);
+                }}
               >
-                <option value="">No reminders</option>
+                <option value="NULL">No reminders</option>
                 <option value="CHECKWORD">Check Word of the Day</option>
                 <option value="WORD">Word of the Day</option>
               </select>
 
-              {profile.reminderType === "" && (
+              {profile.reminderType === null && (
                 <p key={profile.reminderType} className={styles.reminderExplanation}>
                   You won’t receive any reminder emails.
                 </p>
