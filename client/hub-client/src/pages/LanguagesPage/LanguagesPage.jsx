@@ -33,8 +33,8 @@ export default function LanguagesPage() {
     useEffect(() => {
         const fetchWordOfTheDay = async () => {
             try {
-                const word = await wordOfTheDayService.getWordOfTheDay();
-                setWordOfTheDay(word);
+                const data = await wordOfTheDayService.getWordOfTheDay();
+                setWordOfTheDay(data.translation);
             } catch (err) {
                 console.error('Error fetching word of the day:', err);
                 setWordError('Could not load word of the day.');
