@@ -3,7 +3,6 @@ import { isAdmin } from '../middleware/roleAuth.js'
 import translationService from '../services/translationService.js'
 
 const getTranslationInfo = [
-    auth,
     async (req, res, next) => {
         const { translationId } = req.params
 

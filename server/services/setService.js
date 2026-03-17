@@ -248,14 +248,12 @@ async function deleteSet(setId, userId){
     return deletedSet;
 }
 
-async function getSetsContainingTranslation(translationId, userId){
-    if (!userId) throw new Error("Must be logged in");
+async function getSetsContainingTranslation(translationId){
     if (!translationId) throw new Error("Translation ID is required");
 
     // Find all user's sets that contain this translation
     const sets = await prisma.vocabSet.findMany({
         where: {
-            ownerId: userId,
             setWords: {
                 some: {
                     translationId: translationId
