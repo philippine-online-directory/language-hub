@@ -18,7 +18,6 @@ const getUserSets = [
 ]
 
 const getPublicSets = [
-    auth,
     async (req, res, next) => {
         const { name } = req.query;
 
@@ -34,7 +33,6 @@ const getPublicSets = [
 ]
 
 const getSetById = [
-    auth,
     async (req, res, next) => {
         const setId = req.params.setId || req.params.vocabSetId;
 
@@ -85,7 +83,6 @@ const updateSet = [
 ]
 
 const getSetWords = [
-    auth,
     async (req, res, next) => {
         const setId = req.params.setId || req.params.vocabSetId;
         
@@ -118,13 +115,11 @@ const deleteSet = [
 ]
 
 const getSetsContainingTranslation = [
-    auth,
     async (req, res, next) => {
         const { translationId } = req.params;
-        const { id } = req.user;
 
         try {
-            const sets = await setService.getSetsContainingTranslation(translationId, id);
+            const sets = await setService.getSetsContainingTranslation(translationId);
             res.status(200).json(sets);
         }
         catch (err) {
