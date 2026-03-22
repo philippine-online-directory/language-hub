@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { profileService } from '../../api/profileService';
 import Card from '../../components/Card/Card';
+import Button from '../../components/Button/Button';
 import WordDisplay from '../../components/WordDisplay/WordDisplay';
 import styles from './ProfilePage.module.css';
 
 export default function ProfilePage() {
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,6 +16,13 @@ export default function ProfilePage() {
   const contentRef = useRef(null);
 
   useEffect(() => {
+    if (authLoading) return;
+
+    if (!isAuthenticated) {
+      setLoading(false);
+      return;
+    }
+
     const fetchProfile = async () => {
       setLoading(true);
       setError(null);
@@ -28,7 +38,7 @@ export default function ProfilePage() {
     };
 
     fetchProfile();
-  }, []);
+  }, [isAuthenticated, authLoading]);
 
   // Scroll animation observer for grid items
   useEffect(() => {
@@ -66,13 +76,62 @@ export default function ProfilePage() {
     }
   };
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className={styles.profilePage}>
         <div className={styles.container}>
           <div className={styles.loadingState}>
             <div className={styles.loadingSpinner}></div>
             <p>Loading profile...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className={styles.profilePage}>
+        <div className={styles.container}>
+          <div className={styles.profileHeader}>
+            <div className={styles.headerContent}>
+              <div className={styles.profileInfo}>
+                <h1 className={styles.username}>Guest Profile</h1>
+                <p className={styles.email}>You are browsing as a guest</p>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.statsGrid}>
+            <div className={styles.statCard}>
+              <span className={styles.statValue}>—</span>
+              <span className={styles.statLabel}>Contributions</span>
+            </div>
+            <div className={styles.statCard}>
+              <span className={styles.statValue}>—</span>
+              <span className={styles.statLabel}>Sets Created</span>
+            </div>
+            <div className={styles.statCard}>
+              <span className={styles.statValue}>—</span>
+              <span className={styles.statLabel}>Games Played</span>
+            </div>
+          </div>
+
+          <div className={styles.guestMessage}>
+            <Card>
+              <h2>Create Your Learning Profile</h2>
+              <p>
+                Sign in to start tracking your progress, creating vocabulary sets, and contributing to the language community.
+              </p>
+              <div style={{ marginTop: '24px', display: 'flex', gap: '12px' }}>
+                <Link to="/login">
+                  <Button variant="primary">Sign In</Button>
+                </Link>
+                <Link to="/register">
+                  <Button variant="secondary">Create Account</Button>
+                </Link>
+              </div>
+            </Card>
           </div>
         </div>
       </div>

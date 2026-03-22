@@ -75,49 +75,20 @@ function AppContent(){
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 
-                {/* Language Routes - Protected */}
-                <Route
-                    path="/languages"
-                    element={
-                        <ProtectedRoute>
-                            <LanguagesPage />
-                        </ProtectedRoute>
-                    }
-                />
+                {/* Language Routes */}
+                <Route path="/languages" element={<LanguagesPage />} />
+                <Route path="/languages/:isoCode" element={<LanguageDetailPage />} />
                 
-                <Route
-                    path="/languages/:isoCode"
-                    element={
-                        <ProtectedRoute>
-                            <LanguageDetailPage />
-                        </ProtectedRoute>
-                    }
-                />
+                {/* Set Routes */}
+                <Route path="/sets" element={<SetsPage />} />
+                <Route path="/sets/:setId" element={<SetDetailPage />} />
                 
                 {/* Set Routes - Protected */}
-                <Route
-                    path="/sets"
-                    element={
-                        <ProtectedRoute>
-                            <SetsPage />
-                        </ProtectedRoute>
-                    }
-                />
-                
                 <Route
                     path="/sets/create"
                     element={
                         <ProtectedRoute>
                             <CreateEditSetPage />
-                        </ProtectedRoute>
-                    }
-                />
-                
-                <Route
-                    path="/sets/:setId"
-                    element={
-                        <ProtectedRoute>
-                            <SetDetailPage />
                         </ProtectedRoute>
                     }
                 />
@@ -131,34 +102,10 @@ function AppContent(){
                     }
                 />
                 
-                {/* Game Routes - Protected */}
-                <Route
-                    path="/sets/:setId/games/flashcard"
-                    element={
-                        <ProtectedRoute>
-                            <FlashcardGame />
-                        </ProtectedRoute>
-                    }
-                />
-                
-                <Route
-                    path="/sets/:setId/games/matching"
-                    element={
-                        <ProtectedRoute>
-                            <MatchingGame />
-                        </ProtectedRoute>
-                    }
-                />
-                
-                <Route
-                    path="/sets/:setId/games/writing"
-                    element={
-                        <ProtectedRoute>
-                            <WritingGame />
-                        </ProtectedRoute>
-                    }
-                />
-                
+                {/* Game Routes */}
+                <Route path="/sets/:setId/games/flashcard" element={<FlashcardGame />} />
+                <Route path="/sets/:setId/games/matching" element={<MatchingGame />} />
+                <Route path="/sets/:setId/games/writing" element={<WritingGame />} />
                 <Route
                     path="/sets/:setId/sessions"
                     element={
@@ -168,32 +115,14 @@ function AppContent(){
                     }
                 />
                 
+                {/* User Routes */}
+                <Route path="/users" element={<UsersPage />} />
+                <Route path="/profile/:userId" element={<PublicProfilePage />} />
+                
                 {/* User Routes - Protected */}
                 <Route
-                    path="/users"
-                    element={
-                        <ProtectedRoute>
-                            <UsersPage />
-                        </ProtectedRoute>
-                    }
-                />
-                
-                <Route
                     path="/profile/me"
-                    element={
-                        <ProtectedRoute>
-                            <ProfilePage />
-                        </ProtectedRoute>
-                    }
-                />
-                
-                <Route
-                    path="/profile/:userId"
-                    element={
-                        <ProtectedRoute>
-                            <PublicProfilePage />
-                        </ProtectedRoute>
-                    }
+                    element={<ProfilePage />}
                 />
                 
                 {/* Contribution Routes - Protected */}
