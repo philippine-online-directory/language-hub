@@ -1,7 +1,19 @@
 import prisma from '../prisma.js'
 import storageService from './storageService.js'
+import { findCommonWordMatch } from './commonWordService.js'
 
-async function contributeTranslation(userId, { languageId, wordText, ipa, englishDefinition, exampleSentence, audioUrl, partOfSpeech }){
+async function contributeTranslation(
+    userId,
+    {
+        languageId,
+        wordText,
+        ipa,
+        englishDefinition,
+        exampleSentence,
+        audioUrl,
+        partOfSpeech
+    }
+) {
     const language = await prisma.language.findUnique({
         where: { id: languageId },
         select: { id: true }
@@ -11,27 +23,45 @@ async function contributeTranslation(userId, { languageId, wordText, ipa, englis
         throw new Error('Language not found');
     }
 
+    // Try to match to top 3000 words
+    const commonWord = await findCommonWordMatch(englishDefinition);
+
     const contributedTranslation = await prisma.translation.create({
         data: {
             authorId: userId,
             languageId,
-            wordText, 
+            wordText,
             ipa,
             englishDefinition,
             exampleSentence,
             audioUrl: audioUrl || null,
             partOfSpeech: partOfSpeech || null,
+            commonWordId: commonWord ? commonWord.id : null
         },
         include: {
             language: true
         }
-    })
+    });
 
-    if (contributedTranslation.audioUrl) {
-        contributedTranslation.audioUrl = await storageService.generateDownloadUrl(contributedTranslation.audioUrl);
+    if (commonWord) {
+        await prisma.language.update({
+            where: { id: languageId },
+            data: {
+                completionCount: {
+                    increment: 1
+                }
+            }
+        });
     }
 
-    return contributedTranslation
+    if (contributedTranslation.audioUrl) {
+        contributedTranslation.audioUrl =
+            await storageService.generateDownloadUrl(
+                contributedTranslation.audioUrl
+            );
+    }
+
+    return contributedTranslation;
 }
 
 async function getUserContributions(userId, page = 1, limit = 20){
