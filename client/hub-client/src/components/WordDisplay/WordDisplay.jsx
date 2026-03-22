@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom';
 import Card from '../Card/Card';
 import Button from '../Button/Button';
 import AddToSetModal from '../AddToSetModal/AddToSetModal';
+import { useAuth } from '../../context/AuthContext';
 import { setService } from '../../api/setService';
 import styles from './WordDisplay.module.css';
 
 export default function WordDisplay({ translation, showAddToSet = true, defaultExpanded = false }){
+    const { isAuthenticated } = useAuth();
     const [showModal, setShowModal] = useState(false);
     const [modalMode, setModalMode] = useState('add'); // 'add' or 'remove'
     const [isExpanded, setIsExpanded] = useState(defaultExpanded);
@@ -17,7 +19,7 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
     // Check which sets contain this translation
     useEffect(() => {
         const checkSets = async () => {
-            if (!translation?.id) return;
+            if (!translation?.id || !isAuthenticated) return;
             
             setLoadingSets(true);
             try {
@@ -32,7 +34,7 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
         };
 
         checkSets();
-    }, [translation?.id]);
+    }, [translation?.id, isAuthenticated]);
 
     const handleCardClick = () => {
         if (!isExpanded) {
@@ -145,7 +147,7 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                                     )}
                                 </div>
                                 
-                                {showAddToSet && (
+                                {showAddToSet && isAuthenticated && (
                                     <Button 
                                         variant="secondary" 
                                         onClick={(e) => {
@@ -157,7 +159,7 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                                         disabled={loadingSets}
                                     >
                                         {loadingSets ? 'Loading...' : 
-                                         setsContainingTranslation.length > 0 ? 'Remove from Set' : 'Add to Set'}
+                                            setsContainingTranslation.length > 0 ? 'Remove from Set' : 'Add to Set'}
                                     </Button>
                                 )}
                             </div>

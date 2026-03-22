@@ -18,7 +18,6 @@ const getUserSets = [
 ]
 
 const getPublicSets = [
-    auth,
     async (req, res, next) => {
         const { name } = req.query;
 
@@ -34,7 +33,6 @@ const getPublicSets = [
 ]
 
 const getSetById = [
-    auth,
     async (req, res, next) => {
         const setId = req.params.setId || req.params.vocabSetId;
 
@@ -85,7 +83,6 @@ const updateSet = [
 ]
 
 const getSetWords = [
-    auth,
     async (req, res, next) => {
         const setId = req.params.setId || req.params.vocabSetId;
         

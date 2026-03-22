@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { setService } from '../../api/setService';
+import { useAuth } from '../../context/AuthContext';
 import useDebounce from '../../hooks/useDebounce';
 import Card from '../../components/Card/Card';
 import Button from '../../components/Button/Button';
@@ -10,6 +11,7 @@ import styles from './SetsPage.module.css';
 
 export default function SetsPage(){
     const navigate = useNavigate();
+    const { isAuthenticated } = useAuth();
     const [sets, setSets] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(true);
@@ -125,7 +127,7 @@ export default function SetsPage(){
                             }
                         </p>
                     </div>
-                    {viewMode === 'my' && (
+                    {viewMode === 'my' && isAuthenticated && (
                         <Button variant="primary" onClick={() => navigate('/sets/create')}>
                             Create New Set
                         </Button>
@@ -192,9 +194,13 @@ export default function SetsPage(){
                                     <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
                                 </svg>
                                 <p>You haven't created any sets yet.</p>
-                                <Button variant="primary" onClick={() => navigate('/sets/create')}>
-                                    Create Your First Set
-                                </Button>
+                                {isAuthenticated ? (
+                                    <Button variant="primary" onClick={() => navigate('/sets/create')}>
+                                        Create Your First Set
+                                    </Button>
+                                ) : (
+                                    <p>Sign in to create and manage your vocabulary sets.</p>
+                                )}
                             </>
                         ) : (
                             <>

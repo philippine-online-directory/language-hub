@@ -5,18 +5,18 @@ import storageService from './storageService.js'
  * Helper to convert storage keys into signed URLs for a list of translations
  */
 async function attachSignedUrls(translations) {
-  return await Promise.all(
-    translations.map(async (translation) => {
-      if (translation.audioUrl) {
-        const signedUrl = await storageService.generateDownloadUrl(translation.audioUrl);
-        return {
-          ...translation,
-          audioUrl: signedUrl,
-        };
-      }
-      return translation;
-    })
-  );
+    return await Promise.all(
+        translations.map(async (translation) => {
+        if (translation.audioUrl) {
+            const signedUrl = await storageService.generateDownloadUrl(translation.audioUrl);
+            return {
+            ...translation,
+            audioUrl: signedUrl,
+            };
+        }
+        return translation;
+        })
+    );
 }
 
 async function addLanguage({ name, speakerCount, isoCode, preservationNote, culturalBackground }){
@@ -139,56 +139,56 @@ async function findLanguageByName(phrase, page = 1, limit = 20){
 }
 
 async function getDictionary(isoCode, status, page = 1, limit = 20, textSearch, definitionSearch) {
-  const skip = (page - 1) * limit;
-  
-  let normalizedStatus = 'VERIFIED';
-  if (status === 'ALL') normalizedStatus = 'ALL';
-  else if (status === 'UNVERIFIED') normalizedStatus = 'UNVERIFIED';
+    const skip = (page - 1) * limit;
+    
+    let normalizedStatus = 'VERIFIED';
+    if (status === 'ALL') normalizedStatus = 'ALL';
+    else if (status === 'UNVERIFIED') normalizedStatus = 'UNVERIFIED';
 
-  let whereClause = {
-    language: { isoCode }
-  };
+    let whereClause = {
+        language: { isoCode }
+    };
 
-  if (normalizedStatus !== 'ALL') {
-    whereClause.status = normalizedStatus;
-  }
-
-  if (textSearch) {
-    whereClause.wordText = { contains: textSearch, mode: 'insensitive' };
-  }
-
-  if (definitionSearch) {
-    whereClause.englishDefinition = { contains: definitionSearch, mode: 'insensitive' };
-  }
-
-  const [translations, total] = await Promise.all([
-    prisma.translation.findMany({
-      where: whereClause,
-      include: {
-        language: true,
-        author: {
-          select: { id: true, username: true }
-        }
-      },
-      skip,
-      take: limit,
-      orderBy: { createdAt: 'desc' }
-    }),
-    prisma.translation.count({ where: whereClause })
-  ]);
-
-  // Use the helper to sign URLs
-  const translationsWithSignedUrls = await attachSignedUrls(translations);
-
-  return {
-    translations: translationsWithSignedUrls,
-    pagination: {
-      page,
-      limit,
-      total,
-      totalPages: Math.ceil(total / limit)
+    if (normalizedStatus !== 'ALL') {
+        whereClause.status = normalizedStatus;
     }
-  };
+
+    if (textSearch) {
+        whereClause.wordText = { contains: textSearch, mode: 'insensitive' };
+    }
+
+    if (definitionSearch) {
+        whereClause.englishDefinition = { contains: definitionSearch, mode: 'insensitive' };
+    }
+
+    const [translations, total] = await Promise.all([
+        prisma.translation.findMany({
+        where: whereClause,
+        include: {
+            language: true,
+            author: {
+            select: { id: true, username: true }
+            }
+        },
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' }
+        }),
+        prisma.translation.count({ where: whereClause })
+    ]);
+
+    // Use the helper to sign URLs
+    const translationsWithSignedUrls = await attachSignedUrls(translations);
+
+    return {
+        translations: translationsWithSignedUrls,
+        pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
+        }
+    };
 }
 
 const languageService = {

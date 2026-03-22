@@ -19,7 +19,6 @@ const validateLanguage = [
 ]
 
 const getLanguages = [
-    auth,
     async (req, res, next) => {
         const { name, page, limit } = req.query;
 
@@ -38,7 +37,6 @@ const getLanguages = [
 
 
 const getLanguageByCode = [
-    auth,
     async (req, res, next) => {
         const { isoCode } = req.params
         
@@ -54,47 +52,46 @@ const getLanguageByCode = [
 ]
 
 const getTranslations = [
-  auth,
-  async (req, res, next) => {
-    const { isoCode } = req.params;
-    const { text, definition, status, page, limit } = req.query;
+    async (req, res, next) => {
+        const { isoCode } = req.params;
+        const { text, definition, status, page, limit } = req.query;
 
-    const pageNum = parseInt(page) || 1;
-    const limitNum = parseInt(limit) || 20;
+        const pageNum = parseInt(page) || 1;
+        const limitNum = parseInt(limit) || 20;
 
-    try {
-      let translations;
+        try {
+        let translations;
 
-      if (text) {
-        translations = await translationService.searchTranslationByWordText(
-          isoCode,
-          text,
-          status,
-          pageNum,
-          limitNum
-        );
-      } else if (definition) {
-        translations = await translationService.searchTranslationByWordDefinition(
-          isoCode,
-          definition,
-          status,
-          pageNum,
-          limitNum
-        );
-      } else {
-        translations = await languageService.getDictionary(
-          isoCode, 
-          status, 
-          pageNum, 
-          limitNum
-        );
-      }
+        if (text) {
+            translations = await translationService.searchTranslationByWordText(
+            isoCode,
+            text,
+            status,
+            pageNum,
+            limitNum
+            );
+        } else if (definition) {
+            translations = await translationService.searchTranslationByWordDefinition(
+            isoCode,
+            definition,
+            status,
+            pageNum,
+            limitNum
+            );
+        } else {
+            translations = await languageService.getDictionary(
+            isoCode, 
+            status, 
+            pageNum, 
+            limitNum
+            );
+        }
 
-      res.status(200).json(translations);
-    } catch (err) {
-      next(err);
+        res.status(200).json(translations);
+        } catch (err) {
+        next(err);
+        }
     }
-  }
 ];
 
 //admin functions

@@ -34,7 +34,6 @@ const setMyProfile = [
 ]
 
 const getPublicProfile = [
-    auth,
     async (req, res, next) => {
         const { userId } = req.params
         
@@ -50,7 +49,6 @@ const getPublicProfile = [
 ]
 
 const searchUsers = [
-    auth,
     async (req, res, next) => {
         const { name } = req.query
 
