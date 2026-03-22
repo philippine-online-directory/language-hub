@@ -14,13 +14,13 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  username  String
-  createdAt DateTime @default(now())
-  role      Role     @default(LEARNER)
-  reminderType ReminderType?
+  id                 String        @id @default(cuid())
+  email              String        @unique
+  password           String
+  username           String
+  createdAt          DateTime      @default(now())
+  role               Role          @default(LEARNER)
+  reminderType       ReminderType?
   lastReminderSentAt DateTime?
 
   contributions Translation[]
@@ -36,22 +36,24 @@ model Language {
   preservationNote   String?
   culturalBackground String?
 
+  completionCount Int @default(0)
+
   translations Translation[]
   vocabSets    VocabSet[]
 }
 
 model Translation {
-  id                String    @id @default(cuid())
-  wordText          String
-  ipa               String?
-  englishDefinition String
-  exampleSentence   String
-  status            Status    @default(UNVERIFIED)
-  createdAt         DateTime  @default(now())
-  publishedAt       DateTime?
-  audioUrl          String?
-  partOfSpeech      String?
-  usedAsWordOfTheDay Boolean  @default(false)
+  id                 String    @id @default(cuid())
+  wordText           String
+  ipa                String?
+  englishDefinition  String
+  exampleSentence    String
+  status             Status    @default(UNVERIFIED)
+  createdAt          DateTime  @default(now())
+  publishedAt        DateTime?
+  audioUrl           String?
+  partOfSpeech       String?
+  usedAsWordOfTheDay Boolean   @default(false)
 
   languageId String
   language   Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
@@ -59,8 +61,10 @@ model Translation {
   authorId String
   author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
-  setWords SetWord[]
+  setWords      SetWord[]
   wordOfTheDays WordOfTheDay[]
+  commonWord    CommonWord?    @relation(fields: [commonWordId], references: [id])
+  commonWordId  Int?
 }
 
 model VocabSet {
@@ -107,11 +111,18 @@ model GameSession {
 }
 
 model WordOfTheDay {
-  id            String      @id @default("current")  
-  displayDate   DateTime    @db.Date                 
-  
+  id          String   @id @default("current")
+  displayDate DateTime @db.Date
+
   translationId String
   translation   Translation @relation(fields: [translationId], references: [id], onDelete: Cascade)
+}
+
+model CommonWord {
+  id   Int    @id @default(autoincrement())
+  word String
+
+  translations Translation[]
 }
 
 enum ReminderType {
