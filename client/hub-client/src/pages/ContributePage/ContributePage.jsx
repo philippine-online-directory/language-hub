@@ -17,6 +17,7 @@ export default function ContributePage(){
         englishDefinition: '',
         exampleSentence: '',
         partOfSpeech: '',
+        usageComment: ''
     });
     const [audioFile, setAudioFile] = useState(null);
     const [audioMode, setAudioMode] = useState('upload'); // 'upload' or 'record'
@@ -41,7 +42,6 @@ export default function ContributePage(){
         setMounted(true);
     }, []);
 
-    // Recording timer effect
     useEffect(() => {
         let interval;
         if (isRecording) {
@@ -128,7 +128,6 @@ export default function ContributePage(){
     const handleAudioChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            // Validate file type
             const validTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/webm', 'audio/m4a'];
             if (!validTypes.includes(file.type)) {
                 setErrors({ ...errors, audio: 'Please select a valid audio file (MP3, WAV, OGG, WebM, or M4A)' });
@@ -149,7 +148,6 @@ export default function ContributePage(){
 
     const handleAudioModeChange = (mode) => {
         setAudioMode(mode);
-        // Clear both file and recording when switching modes
         setAudioFile(null);
         setAudioBlob(null);
         setRecordingTime(0);
@@ -242,7 +240,6 @@ export default function ContributePage(){
         if (!formData.languageId) newErrors.languageId = 'Please select a language';
         if (!formData.wordText) newErrors.wordText = 'Word is required';
         if (!formData.englishDefinition) newErrors.englishDefinition = 'Definition is required';
-        if (!formData.exampleSentence) newErrors.exampleSentence = 'Example sentence is required';
         
         return newErrors;
     };
@@ -310,12 +307,13 @@ export default function ContributePage(){
                 englishDefinition: '',
                 exampleSentence: '',
                 partOfSpeech: '',
+                usageComment: ''
             });
             setAudioFile(null);
             setAudioBlob(null);
             setRecordingTime(0);
             setUploadProgress(0);
-            // Reset file input
+
             const fileInput = document.getElementById('audioFile');
             if (fileInput) fileInput.value = '';
             
@@ -346,6 +344,7 @@ export default function ContributePage(){
                 </header>
 
                 <Card className={styles.formCard}>
+                    <div>Required fields are labeled with a *</div>
                     {success && (
                         <div className={styles.success}>
                             This word has been preserved. Thank you for your contribution!
@@ -450,7 +449,7 @@ export default function ContributePage(){
 
                         <div className={styles.formGroup}>
                             <label htmlFor="exampleSentence" className={styles.label}>
-                                Example Sentence <span className={styles.required}>*</span>
+                                Example Sentence 
                             </label>
                             <textarea
                                 id="exampleSentence"
@@ -460,10 +459,29 @@ export default function ContributePage(){
                                 className={styles.textarea}
                                 rows="3"
                                 required
-                                placeholder="Show how this word is used in context"
+                                placeholder="Optional: Show how this word is used in context"
                             />
                             {errors.exampleSentence && (
                                 <span className={styles.errorText}>{errors.exampleSentence}</span>
+                            )}
+                        </div>
+
+                        <div className={styles.formGroup}>
+                            <label htmlFor="usageComment" className={styles.label}>
+                                Usage Comment
+                            </label>
+                            <textarea
+                                id="usageComment"
+                                name="usageComment"
+                                value={formData.usageComment}
+                                onChange={handleChange}
+                                className={styles.textarea}
+                                rows="3"
+                                required
+                                placeholder="Optional: Give a short note on when/how to use this word"
+                            />
+                            {errors.usageComment && (
+                                <span className={styles.errorText}>{errors.usageComment}</span>
                             )}
                         </div>
 

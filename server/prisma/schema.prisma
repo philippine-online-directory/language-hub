@@ -47,13 +47,14 @@ model Translation {
   wordText           String
   ipa                String?
   englishDefinition  String
-  exampleSentence    String
+  exampleSentence    String?
   status             Status    @default(UNVERIFIED)
   createdAt          DateTime  @default(now())
   publishedAt        DateTime?
   audioUrl           String?
   partOfSpeech       String?
   usedAsWordOfTheDay Boolean   @default(false)
+  usageComment       String?
 
   languageId String
   language   Language @relation(fields: [languageId], references: [id], onDelete: Cascade)

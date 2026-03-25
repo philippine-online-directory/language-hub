@@ -12,7 +12,8 @@ const validateContribution = [
         .trim(),
     body('englishDefinition').notEmpty()
         .trim(),
-    body('exampleSentence').notEmpty()
+    body('exampleSentence')
+        .optional({ checkFalsy: true })
         .trim(),
     body('audioUrl') 
         .optional({ checkFalsy: true })
@@ -26,6 +27,9 @@ const validateContribution = [
             if (!language) throw new Error('Language does not exist')
         }),
     body('partOfSpeech')
+        .optional({ checkFalsy: true })
+        .trim(),
+    body('usageComment')
         .optional({ checkFalsy: true })
         .trim()
 ]
