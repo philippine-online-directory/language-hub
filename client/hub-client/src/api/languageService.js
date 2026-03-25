@@ -3,9 +3,7 @@ import api from './axiosConfig';
 export const languageService = {
     getLanguages: async (page = 1, limit = 20, searchQuery = '') => {
         const params = { page, limit };
-        if (searchQuery) {
-            params.name = searchQuery;
-        }
+        if (searchQuery) params.name = searchQuery;
         const response = await api.get('/languages', { params });
         return response.data;
     },
@@ -15,11 +13,12 @@ export const languageService = {
         return response.data;
     },
 
-    async getTranslations(isoCode, options = {}) {
-        const response = await api.get(
-            `/languages/${isoCode}/translations`,
-            { params: options }
-        );
+    getTranslations: async (isoCode, options = {}) => {
+        const params = { ...options };
+        if (typeof params.coreWordsOnly === 'boolean') {
+            params.coreWordsOnly = params.coreWordsOnly.toString();
+        }
+        const response = await api.get(`/languages/${isoCode}/translations`, { params });
         return response.data;
     },
 
