@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useEffect, useRef } from 'react';
 import Button from '../../components/Button/Button';
+import Translator from '../../components/Translator/Translator';
 import styles from './HomePage.module.css';
 
 export default function HomePage(){
@@ -9,9 +10,9 @@ export default function HomePage(){
     const { isAuthenticated } = useAuth();
     const featuresRef = useRef(null);
     const ctaRef = useRef(null);
+    const translatorRef = useRef(null);
 
     useEffect(() => {
-        // Check for reduced motion preference
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (prefersReducedMotion) return;
 
@@ -41,6 +42,11 @@ export default function HomePage(){
         // Observe CTA
         if (ctaRef.current) {
             observer.observe(ctaRef.current);
+        }
+
+        // Observe translator section
+        if (translatorRef.current) {
+            observer.observe(translatorRef.current);
         }
 
         return () => observer.disconnect();
@@ -128,6 +134,25 @@ export default function HomePage(){
                             Create custom vocabulary sets and practice with interactive games. 
                             Make language preservation part of your learning journey.
                         </p>
+                    </div>
+                </section>
+
+                {/* Translator Section */}
+                <section className={styles.translatorSection} ref={translatorRef}>
+                    <div className={styles.translatorSectionHeader}>
+                        <h2 className={styles.translatorTitle}>Try the Translator</h2>
+                        <p className={styles.translatorSubtitle}>
+                            Look up a single word across Philippine languages, powered entirely by community contributions.
+                        </p>
+                    </div>
+                    <Translator compact />
+                    <div className={styles.translatorFooter}>
+                        <button className={styles.translatorLink} onClick={() => navigate('/translate')}>
+                            Open full translator
+                            <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14">
+                                <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                        </button>
                     </div>
                 </section>
 

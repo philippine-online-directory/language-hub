@@ -2,10 +2,6 @@
   background: #F6F4EF;
 }
 
-/* ============================================
-   HERO SECTION - Editorial Layout
-   ============================================ */
-
 .hero {
   min-height: 100vh;
   position: relative;
@@ -16,7 +12,6 @@
   background: #F6F4EF;
 }
 
-/* Philippines SVG - Large decorative element */
 .heroMapWrapper {
   position: absolute;
   top: 50%;
@@ -48,7 +43,6 @@
   }
 }
 
-/* Hero content - Text wrapper */
 .heroContent {
   position: relative;
   z-index: 2;
@@ -102,10 +96,6 @@
   flex-wrap: wrap;
 }
 
-/* ============================================
-   CONTAINER - Below hero
-   ============================================ */
-
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -113,10 +103,6 @@
   position: relative;
   z-index: 1;
 }
-
-/* ============================================
-   FEATURES SECTION - Scroll animations
-   ============================================ */
 
 .features {
   display: grid;
@@ -189,9 +175,67 @@
   color: #6B7280;
 }
 
-/* ============================================
-   CALL TO ACTION - Scroll animations
-   ============================================ */
+.translatorSection {
+  margin-bottom: 96px;
+  opacity: 0;
+  transform: translateY(60px) scale(0.98);
+  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.translatorSection.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.translatorSectionHeader {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.translatorTitle {
+  font-family: 'Fraunces', serif;
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 500;
+  color: #1F2937;
+  margin-bottom: 10px;
+  letter-spacing: -0.01em;
+}
+
+.translatorSubtitle {
+  font-size: 16px;
+  line-height: 24px;
+  color: #6B7280;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.translatorFooter {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
+.translatorLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #C0763A;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 0;
+  transition: opacity 0.2s ease, gap 0.2s ease;
+  letter-spacing: 0.01em;
+}
+
+.translatorLink:hover {
+  opacity: 0.75;
+  gap: 10px;
+}
 
 .callToAction {
   text-align: center;
@@ -258,10 +302,6 @@
   margin-right: auto;
 }
 
-/* ============================================
-   REDUCED MOTION
-   ============================================ */
-
 @media (prefers-reduced-motion: reduce) {
   .heroMapWrapper,
   .heroTextWrapper {
@@ -275,14 +315,16 @@
   }
 
   .feature,
-  .callToAction {
+  .callToAction,
+  .translatorSection {
     opacity: 1;
     transform: none;
     transition: none;
   }
 
   .feature.visible,
-  .callToAction.visible {
+  .callToAction.visible,
+  .translatorSection.visible {
     opacity: 1;
     transform: none;
   }
@@ -291,10 +333,6 @@
     animation: none;
   }
 }
-
-/* ============================================
-   MOBILE RESPONSIVE
-   ============================================ */
 
 @media (max-width: 1024px) {
   .heroMapWrapper {
@@ -388,6 +426,15 @@
   .ctaDescription {
     font-size: 16px;
   }
+
+  .translatorSection {
+    margin-bottom: 64px;
+  }
+
+  .translatorTitle {
+    font-size: 26px;
+    line-height: 34px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -406,5 +453,13 @@
     height: 180vw;
     bottom: -30%;
     right: -40%;
+  }
+
+  .translatorTitle {
+    font-size: 22px;
+  }
+
+  .translatorSubtitle {
+    font-size: 14px;
   }
 }
