@@ -1,20 +1,15 @@
 import prisma from '../prisma.js'
 import storageService from './storageService.js'
 
-async function findTranslationInfo(id){
+async function findTranslationInfo(id) {
     const translation = await prisma.translation.findUnique({
-        where: {
-            id
-        },
+        where: { id },
         include: {
             author: {
-                select: {
-                    id: true,
-                    username: true
-                }
+                select: { id: true, username: true }
             }
         }
-    })
+    });
 
     if (!translation) throw new Error('Translation does not exist');
 
@@ -22,184 +17,39 @@ async function findTranslationInfo(id){
         translation.audioUrl = await storageService.generateDownloadUrl(translation.audioUrl);
     }
 
-    return translation
+    return translation;
 }
 
-async function searchTranslationByWordText(code, word, mode, page = 1, limit = 20){
-    const skip = (page - 1) * limit;
-    
-    let whereClause = {
-        language: {
-            isoCode: code
-        },
-        wordText: {
-            contains: word,
-            mode: 'insensitive'
-        }
-    };
-
-    if (mode === "Verified Only" || (!mode || mode === "VERIFIED")) {
-        whereClause.status = 'VERIFIED';
-    } else if (mode !== "All" && mode !== "ALL") {
-        whereClause.status = 'VERIFIED'; 
-    }
-
-    const [translations, total] = await Promise.all([
-        prisma.translation.findMany({
-            where: whereClause,
-            include: {
-                language: true,
-                author: {
-                    select: {
-                        id: true,
-                        username: true
-                    }
-                }
-            },
-            skip,
-            take: limit,
-            orderBy: {
-                createdAt: 'desc'
-            }
-        }),
-        prisma.translation.count({ where: whereClause })
-    ]);
-    
-    const translationsWithSignedUrls = await Promise.all(
-        translations.map(async (translation) => {
-            if (translation.audioUrl) {
-                const signedUrl = await storageService.generateDownloadUrl(translation.audioUrl);
-                return {
-                    ...translation,
-                    audioUrl: signedUrl,
-                };
-            }
-            return translation;
-        })
-    );
-
-    return {
-        translations: translationsWithSignedUrls,
-        pagination: {
-            page,
-            limit,
-            total,
-            totalPages: Math.ceil(total / limit)
-        }
-    };
-}
-
-async function searchTranslationByWordDefinition(code, word, mode, page = 1, limit = 20){
-    const skip = (page - 1) * limit;
-    
-    let whereClause = {
-        language: {
-            isoCode: code
-        },
-        englishDefinition: {
-            contains: word,
-            mode: 'insensitive'
-        }
-    };
-
-    if (mode === "Verified Only" || (!mode || mode === "VERIFIED")) {
-        whereClause.status = 'VERIFIED';
-    } else if (mode !== "All" && mode !== "ALL") {
-        whereClause.status = 'VERIFIED'; 
-    }
-
-    const [translations, total] = await Promise.all([
-        prisma.translation.findMany({
-            where: whereClause,
-            include: {
-                language: true,
-                author: {
-                    select: {
-                        id: true,
-                        username: true
-                    }
-                }
-            },
-            skip,
-            take: limit,
-            orderBy: {
-                createdAt: 'desc'
-            }
-        }),
-        prisma.translation.count({ where: whereClause })
-    ]);
-
-    const translationsWithSignedUrls = await Promise.all(
-        translations.map(async (translation) => {
-            if (translation.audioUrl) {
-                const signedUrl = await storageService.generateDownloadUrl(translation.audioUrl);
-                return {
-                    ...translation,
-                    audioUrl: signedUrl,
-                };
-            }
-            return translation;
-        })
-    );
-
-    return {
-        translations: translationsWithSignedUrls,
-        pagination: {
-            page,
-            limit,
-            total,
-            totalPages: Math.ceil(total / limit)
-        }
-    };
-}
-
-async function addTranslationToSet(vocabSetId, translationId, userId){
+async function addTranslationToSet(vocabSetId, translationId, userId) {
     const vocabSet = await prisma.vocabSet.findUnique({
         where: { id: vocabSetId }
     });
 
-    if (!vocabSet) {
-        throw new Error(`Vocab set ID ${vocabSetId} not found.`);
-    }
+    if (!vocabSet) throw new Error(`Vocab set ID ${vocabSetId} not found.`);
 
     if (vocabSet.ownerId !== userId) {
         throw new Error("Permission denied: You can only add translations to sets you've created.");
     }
-    
+
     const translation = await prisma.translation.findUnique({
-        where: { 
-            id: translationId 
-        }
+        where: { id: translationId }
     });
 
-    if (!translation) {
-        throw new Error(`Translation ID ${translationId} not found`);
-    }
+    if (!translation) throw new Error(`Translation ID ${translationId} not found`);
 
     const existingEntry = await prisma.setWord.findUnique({
         where: {
-            translationId_vocabSetId: {
-                translationId,
-                vocabSetId,
-            }
+            translationId_vocabSetId: { translationId, vocabSetId }
         }
     });
 
-    if (existingEntry) {
-        throw new Error("This translation is already in the vocabulary set.");
-    }
+    if (existingEntry) throw new Error('This translation is already in the vocabulary set.');
 
     const newSetWord = await prisma.setWord.create({
-        data: {
-            vocabSetId: vocabSetId,
-            translationId: translationId
-        },
+        data: { vocabSetId, translationId },
         include: {
             translation: {
-                select: {
-                    wordText: true,
-                    englishDefinition: true
-                }
+                select: { wordText: true, englishDefinition: true }
             }
         }
     });
@@ -207,50 +57,42 @@ async function addTranslationToSet(vocabSetId, translationId, userId){
     return newSetWord;
 }
 
-async function removeTranslationFromSet(vocabSetId, translationId, userId){
+async function removeTranslationFromSet(vocabSetId, translationId, userId) {
     const vocabSet = await prisma.vocabSet.findUnique({
         where: { id: vocabSetId }
     });
 
-    if (!vocabSet) {
-        throw new Error(`Vocab set ID ${vocabSetId} not found.`);
-    }
+    if (!vocabSet) throw new Error(`Vocab set ID ${vocabSetId} not found.`);
 
     if (vocabSet.ownerId !== userId) {
-        throw new Error("Permission denied: You can only remove translations to sets you've created.");
+        throw new Error("Permission denied: You can only remove translations from sets you've created.");
     }
 
     await prisma.setWord.delete({
         where: {
-            translationId_vocabSetId: {
-                translationId,
-                vocabSetId
-            }
+            translationId_vocabSetId: { translationId, vocabSetId }
         }
     });
 }
 
-async function updateTranslationStatus(id, status){
-    if (status !== 'VERIFIED' && status !== 'UNVERIFIED') throw new Error('Status must be "VERIFIED" or "UNVERIFIED"')
+async function updateTranslationStatus(id, status) {
+    if (status !== 'VERIFIED' && status !== 'UNVERIFIED') {
+        throw new Error('Status must be "VERIFIED" or "UNVERIFIED"');
+    }
 
     try {
         const updatedTranslation = await prisma.translation.update({
             where: { id },
             data: { status }
-        })
-
-        return updatedTranslation
-    } 
-    catch (err) {
-        if (err.code === 'P2025') {
-            throw new Error('Translation does not exist')
-        }
-        throw err
+        });
+        return updatedTranslation;
+    } catch (err) {
+        if (err.code === 'P2025') throw new Error('Translation does not exist');
+        throw err;
     }
 }
 
 async function deleteTranslation(id) {
-    // Fetch first so we have the audioUrl (storage key) before deleting the row
     const translation = await prisma.translation.findUnique({
         where: { id },
         select: { id: true, audioUrl: true }
@@ -258,18 +100,13 @@ async function deleteTranslation(id) {
 
     if (!translation) throw new Error('Translation does not exist');
 
-    // Delete the database record. SetWord rows are cascade-deleted by the schema.
     try {
-        await prisma.translation.delete({
-            where: { id }
-        });
+        await prisma.translation.delete({ where: { id } });
     } catch (err) {
         if (err.code === 'P2025') throw new Error('Translation does not exist');
         throw err;
     }
 
-    // Delete the storage file after the DB row is confirmed deleted.
-    // audioUrl stores the raw storage key (e.g. "audio/1234-abc.mp3"), not a signed URL.
     if (translation.audioUrl) {
         await storageService.deleteAudioFile(translation.audioUrl);
     }
@@ -277,12 +114,10 @@ async function deleteTranslation(id) {
 
 const translationService = {
     findTranslationInfo,
-    searchTranslationByWordText,
-    searchTranslationByWordDefinition,
     addTranslationToSet,
-    updateTranslationStatus,
     removeTranslationFromSet,
+    updateTranslationStatus,
     deleteTranslation
-}
+};
 
-export default translationService
+export default translationService;

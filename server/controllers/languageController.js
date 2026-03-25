@@ -1,22 +1,19 @@
 import auth from '../middleware/auth.js'
 import { isAdmin } from '../middleware/roleAuth.js'
 import languageService from '../services/languageService.js'
-import translationService from '../services/translationService.js'
 import { body, matchedData } from 'express-validator'
 import validationErrorCheck from '../middleware/expressValidate.js'
 
 const validateLanguage = [
-    body('name').notEmpty()
-        .trim(),
-    body('speakerCount').optional()
+    body('name').notEmpty().trim(),
+    body('speakerCount')
         .optional({ nullable: true, checkFalsy: true })
         .isInt().withMessage('Speaker count must be an integer')
         .toInt(),
-    body('isoCode').notEmpty()
-        .trim(),
+    body('isoCode').notEmpty().trim(),
     body('preservationNote').trim(),
     body('culturalBackground').trim()
-]
+];
 
 const getLanguages = [
     async (req, res, next) => {
@@ -24,77 +21,87 @@ const getLanguages = [
 
         try {
             const languages = name
-            ? await languageService.findLanguageByName(name, parseInt(page) || 1, parseInt(limit) || 20)
-            : await languageService.findLanguages(parseInt(page) || 1, parseInt(limit) || 20);
+                ? await languageService.findLanguageByName(name, parseInt(page) || 1, parseInt(limit) || 20)
+                : await languageService.findLanguages(parseInt(page) || 1, parseInt(limit) || 20);
 
             res.status(200).json(languages);
-        } 
-        catch (err) {
-            next(err)
+        } catch (err) {
+            next(err);
         }
     }
 ];
-
 
 const getLanguageByCode = [
     async (req, res, next) => {
-        const { isoCode } = req.params
-        
-        try {
-            const language = await languageService.findLanguageByIsoCode(isoCode)
-
-            return res.status(200).json(language)
-        }
-        catch (err) {
-            next(err)
-        }
-    }
-]
-
-const getTranslations = [
-    async (req, res, next) => {
         const { isoCode } = req.params;
-        const { text, definition, status, page, limit } = req.query;
-
-        const pageNum = parseInt(page) || 1;
-        const limitNum = parseInt(limit) || 20;
 
         try {
-        let translations;
+            const language = await languageService.findLanguageByIsoCode(isoCode);
 
-        if (text) {
-            translations = await translationService.searchTranslationByWordText(
-            isoCode,
-            text,
-            status,
-            pageNum,
-            limitNum
-            );
-        } else if (definition) {
-            translations = await translationService.searchTranslationByWordDefinition(
-            isoCode,
-            definition,
-            status,
-            pageNum,
-            limitNum
-            );
-        } else {
-            translations = await languageService.getDictionary(
-            isoCode, 
-            status, 
-            pageNum, 
-            limitNum
-            );
-        }
+            if (!language) {
+                return res.status(404).json({ error: 'Language not found' });
+            }
 
-        res.status(200).json(translations);
+            return res.status(200).json(language);
         } catch (err) {
-        next(err);
+            next(err);
         }
     }
 ];
 
-//admin functions
+/**
+ * GET /languages/:isoCode/translations
+ *
+ * Query params:
+ *   text           - search wordText (contains)
+ *   definition     - search englishDefinition (contains)
+ *   status         - 'VERIFIED' | 'ALL'         (default: 'VERIFIED')
+ *   sortBy         - 'alpha-asc' | 'alpha-desc' | 'date-asc' | 'date-desc'  (default: 'alpha-asc')
+ *   coreWordsOnly  - 'true' | 'false'           (default: 'false')
+ *   page           - number                     (default: 1)
+ *   limit          - number                     (default: 20)
+ */
+const getTranslations = [
+    async (req, res, next) => {
+        const { isoCode } = req.params;
+        const {
+            text,
+            definition,
+            status = 'VERIFIED',
+            sortBy = 'alpha-asc',
+            coreWordsOnly,
+            page,
+            limit
+        } = req.query;
+
+        // Validate sortBy — reject unknown values rather than silently ignoring them
+        const VALID_SORTS = ['alpha-asc', 'alpha-desc', 'date-asc', 'date-desc'];
+        const resolvedSortBy = VALID_SORTS.includes(sortBy) ? sortBy : 'alpha-asc';
+
+        // Validate status
+        const VALID_STATUSES = ['VERIFIED', 'ALL'];
+        const resolvedStatus = VALID_STATUSES.includes(status) ? status : 'VERIFIED';
+
+        try {
+            const result = await languageService.getTranslations(isoCode, {
+                status: resolvedStatus,
+                page: parseInt(page) || 1,
+                limit: parseInt(limit) || 20,
+                textSearch: text || '',
+                definitionSearch: definition || '',
+                sortBy: resolvedSortBy,
+                coreWordsOnly: coreWordsOnly === 'true'
+            });
+
+            res.status(200).json(result);
+        } catch (err) {
+            next(err);
+        }
+    }
+];
+
+// ── Admin functions ───────────────────────────────────────────────────────────
+
 const addLanguage = [
     auth,
     isAdmin,
@@ -102,16 +109,14 @@ const addLanguage = [
     validationErrorCheck,
     async (req, res, next) => {
         const languageData = matchedData(req);
-
         try {
-            const addedLanguage = await languageService.addLanguage(languageData); 
+            const addedLanguage = await languageService.addLanguage(languageData);
             res.status(201).json(addedLanguage);
-        }
-        catch (err) {
+        } catch (err) {
             next(err);
         }
     }
-]
+];
 
 const updateLanguage = [
     auth,
@@ -121,7 +126,6 @@ const updateLanguage = [
     async (req, res, next) => {
         const { languageId } = req.params;
         const languageData = matchedData(req);
-
         try {
             const updatedLanguage = await languageService.updateLanguage(languageId, languageData);
             res.status(200).json(updatedLanguage);
@@ -129,24 +133,21 @@ const updateLanguage = [
             next(err);
         }
     }
-]
+];
 
 const deleteLanguage = [
     auth,
     isAdmin,
     async (req, res, next) => {
-        const { languageId } = req.params
-
+        const { languageId } = req.params;
         try {
-            await languageService.deleteLanguage(languageId)
-
-            res.sendStatus(204)
-        }
-        catch (err) {
-            next(err)
+            await languageService.deleteLanguage(languageId);
+            res.sendStatus(204);
+        } catch (err) {
+            next(err);
         }
     }
-]
+];
 
 const languageController = {
     getLanguages,
@@ -155,6 +156,6 @@ const languageController = {
     addLanguage,
     updateLanguage,
     deleteLanguage
-}
+};
 
-export default languageController
+export default languageController;
