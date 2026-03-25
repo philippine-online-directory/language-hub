@@ -94,8 +94,6 @@
   transform: translateY(2px);
 }
 
-/* ── Swap button ── */
-
 .swapZone {
   display: flex;
   align-items: center;
@@ -122,7 +120,8 @@
 .swapBtn svg {
   width: 18px;
   height: 18px;
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: rotate(var(--swap-rotation, 0deg));
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .swapBtn:hover:not(.swapDisabled) {
@@ -133,16 +132,10 @@
   transform: scale(1.08);
 }
 
-.swapBtn.swapping svg {
-  transform: rotate(180deg);
-}
-
 .swapDisabled {
   opacity: 0.35;
   cursor: not-allowed;
 }
-
-/* ── Panels ── */
 
 .panels {
   display: flex;
@@ -173,8 +166,6 @@
   color: #9CA3AF;
   margin-bottom: 10px;
 }
-
-/* Input panel */
 
 .inputPanel {
   background: transparent;

@@ -12,15 +12,16 @@ export default function Translator({ compact = false }) {
     const [loading, setLoading] = useState(false);
     const [inputError, setInputError] = useState('');
     const [modalOpen, setModalOpen] = useState(false);
-    const [swapping, setSwapping] = useState(false);
+    const [swapCount, setSwapCount] = useState(0);
     const inputRef = useRef(null);
 
     const debouncedInput = useDebounce(inputText, 500);
 
+    // Allows: letters (including accented), spaces, hyphens, apostrophes
+    // Blocks: digits, symbols like $, @, #, etc.
     const validate = (text) => {
         if (!text || !text.trim()) return '';
-        if (/\s/.test(text.trim())) return 'Please enter a single word only';
-        if (/[^a-zA-Z\u00C0-\u024F'-]/.test(text.trim())) return 'Only letters, hyphens, and apostrophes are allowed';
+        if (/[^a-zA-Z\u00C0-\u024F\s'.,\-]/.test(text.trim())) return 'Only letters, hyphens, apostrophes, periods, and commas are allowed';
         return '';
     };
 
@@ -57,11 +58,7 @@ export default function Translator({ compact = false }) {
                 );
                 setResults(data.results);
             } catch (err) {
-                if (err.response?.data?.error === 'MULTI_WORD') {
-                    setInputError('Please enter a single word only');
-                } else {
-                    setInputError('Something went wrong. Please try again.');
-                }
+                setInputError('Something went wrong. Please try again.');
                 setResults(null);
             } finally {
                 setLoading(false);
@@ -74,6 +71,7 @@ export default function Translator({ compact = false }) {
     const handleInputChange = (e) => {
         const val = e.target.value;
         setInputText(val);
+        // Clear error immediately as user types
         if (inputError) {
             const err = validate(val);
             if (!err) setInputError('');
@@ -83,8 +81,7 @@ export default function Translator({ compact = false }) {
     const handleSwap = () => {
         if (!selectedLanguage) return;
 
-        setSwapping(true);
-        setTimeout(() => setSwapping(false), 400);
+        setSwapCount(c => c + 1);
 
         const newDirection = direction === 'en-to-lang' ? 'lang-to-en' : 'en-to-lang';
 
@@ -120,7 +117,8 @@ export default function Translator({ compact = false }) {
 
                 <div className={styles.swapZone}>
                     <button
-                        className={`${styles.swapBtn} ${swapping ? styles.swapping : ''} ${!selectedLanguage ? styles.swapDisabled : ''}`}
+                        className={`${styles.swapBtn} ${!selectedLanguage ? styles.swapDisabled : ''}`}
+                        style={{ '--swap-rotation': `${swapCount * 180}deg` }}
                         onClick={handleSwap}
                         disabled={!selectedLanguage}
                         aria-label="Swap translation direction"
@@ -148,6 +146,7 @@ export default function Translator({ compact = false }) {
                 </div>
             </div>
 
+            {/* Main panels */}
             <div className={styles.panels}>
                 {/* Input panel */}
                 <div className={`${styles.panel} ${styles.inputPanel}`}>
@@ -158,7 +157,7 @@ export default function Translator({ compact = false }) {
                         value={inputText}
                         onChange={handleInputChange}
                         placeholder={direction === 'en-to-lang'
-                            ? 'Enter an English word…'
+                            ? 'Enter an English word or definition...'
                             : `Enter a ${selectedLanguage?.name ?? 'word'} word…`
                         }
                         rows={compact ? 3 : 5}

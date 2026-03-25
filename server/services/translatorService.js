@@ -7,10 +7,6 @@ async function translateWord(isoCode, word, direction) {
 
     const trimmed = word.trim();
 
-    if (/\s/.test(trimmed)) {
-        throw new Error('MULTI_WORD');
-    }
-
     if (direction !== 'en-to-lang' && direction !== 'lang-to-en') {
         throw new Error('Direction must be "en-to-lang" or "lang-to-en"');
     }
@@ -46,7 +42,7 @@ async function translateWord(isoCode, word, direction) {
             }
         },
         orderBy: [
-            { status: 'asc' }, // VERIFIED sorts before UNVERIFIED alphabetically
+            { status: 'desc' }, 
             { createdAt: 'desc' }
         ]
     });
