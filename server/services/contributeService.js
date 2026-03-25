@@ -11,7 +11,8 @@ async function contributeTranslation(
         englishDefinition,
         exampleSentence,
         audioUrl,
-        partOfSpeech
+        partOfSpeech,
+        usageComment
     }
 ) {
     const language = await prisma.language.findUnique({
@@ -36,7 +37,8 @@ async function contributeTranslation(
             exampleSentence: exampleSentence || null,
             audioUrl: audioUrl || null,
             partOfSpeech: partOfSpeech || null,
-            commonWordId: commonWord ? commonWord.id : null
+            commonWordId: commonWord ? commonWord.id : null,
+            usageComment: usageComment || null
         },
         include: {
             language: true

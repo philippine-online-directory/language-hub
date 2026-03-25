@@ -17,6 +17,7 @@ export default function ContributePage(){
         englishDefinition: '',
         exampleSentence: '',
         partOfSpeech: '',
+        usageComment: ''
     });
     const [audioFile, setAudioFile] = useState(null);
     const [audioMode, setAudioMode] = useState('upload'); // 'upload' or 'record'
@@ -306,6 +307,7 @@ export default function ContributePage(){
                 englishDefinition: '',
                 exampleSentence: '',
                 partOfSpeech: '',
+                usageComment: ''
             });
             setAudioFile(null);
             setAudioBlob(null);
@@ -461,6 +463,25 @@ export default function ContributePage(){
                             />
                             {errors.exampleSentence && (
                                 <span className={styles.errorText}>{errors.exampleSentence}</span>
+                            )}
+                        </div>
+
+                        <div className={styles.formGroup}>
+                            <label htmlFor="usageComment" className={styles.label}>
+                                Usage Comment
+                            </label>
+                            <textarea
+                                id="usageComment"
+                                name="usageComment"
+                                value={formData.usageComment}
+                                onChange={handleChange}
+                                className={styles.textarea}
+                                rows="3"
+                                required
+                                placeholder="Optional: Give a short note on when/how to use this word"
+                            />
+                            {errors.usageComment && (
+                                <span className={styles.errorText}>{errors.usageComment}</span>
                             )}
                         </div>
 
