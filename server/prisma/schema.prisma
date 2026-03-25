@@ -47,7 +47,7 @@ model Translation {
   wordText           String
   ipa                String?
   englishDefinition  String
-  exampleSentence    String
+  exampleSentence    String?
   status             Status    @default(UNVERIFIED)
   createdAt          DateTime  @default(now())
   publishedAt        DateTime?

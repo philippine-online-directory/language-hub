@@ -31,9 +31,9 @@ async function contributeTranslation(
             authorId: userId,
             languageId,
             wordText,
-            ipa,
+            ipa: ipa || null,
             englishDefinition,
-            exampleSentence,
+            exampleSentence: exampleSentence || null,
             audioUrl: audioUrl || null,
             partOfSpeech: partOfSpeech || null,
             commonWordId: commonWord ? commonWord.id : null
