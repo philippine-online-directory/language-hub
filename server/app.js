@@ -11,6 +11,7 @@ import setRouter from "./routes/setRouter.js";
 import authRouter from "./routes/authRouter.js";
 import profileRouter from "./routes/profileRouter.js";
 import audioRouter from "./routes/audioRouter.js";
+import translatorRouter from "./routes/translatorRouter.js";
 import handleError from "./middleware/errorHandler.js";
 import wordOfTheDayRouter from "./routes/wordOfTheDayRouter.js";
 import './jobs/emailScheduler.js'
@@ -43,6 +44,7 @@ app.use('/sets', setRouter)
 app.use('/profile', profileRouter)
 app.use('/audio', audioRouter)
 app.use('/word-of-the-day', wordOfTheDayRouter)
+app.use('/translate', translatorRouter)
 app.use(handleError)
 
 const PORT = process.env.PORT || 3000;
@@ -51,4 +53,3 @@ app.listen(PORT, () => {
 });
 
 //Run with node --watch --loader ts-node/esm app.js
-

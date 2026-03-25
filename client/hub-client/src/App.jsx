@@ -21,6 +21,7 @@ import GameSessionsPage from './pages/GameSessionsPage/GameSessionsPage';
 import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
 import AdminLanguagesPage from './pages/AdminLanguagesPage/AdminLanguagesPage';
 import AdminTranslationsPage from './pages/AdminTranslationsPage/AdminTranslationsPage';
+import TranslatePage from './pages/TranslatePage/TranslatePage';
 import './App.css';
 
 function ProtectedRoute({ children }){
@@ -74,6 +75,7 @@ function AppContent(){
                 <Route path="/" element={<HomePage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
+                <Route path="/translate" element={<TranslatePage />} />
                 
                 {/* Language Routes */}
                 <Route path="/languages" element={<LanguagesPage />} />
