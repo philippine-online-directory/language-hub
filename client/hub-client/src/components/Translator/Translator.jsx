@@ -71,7 +71,8 @@ export default function Translator({ compact = false }) {
     const handleInputChange = (e) => {
         const val = e.target.value;
         setInputText(val);
-        // Clear error immediately as user types
+        setResults(null);
+
         if (inputError) {
             const err = validate(val);
             if (!err) setInputError('');
@@ -97,6 +98,7 @@ export default function Translator({ compact = false }) {
         }
 
         setResults(null);
+        setLoading(false);
         setDirection(newDirection);
         inputRef.current?.focus();
     };
@@ -110,6 +112,7 @@ export default function Translator({ compact = false }) {
 
     return (
         <div className={`${styles.translator} ${compact ? styles.compact : ''}`}>
+            {/* Language bar */}
             <div className={styles.langBar}>
                 <div className={styles.langSlot}>
                     <span className={styles.langFixed}>English</span>
@@ -157,7 +160,7 @@ export default function Translator({ compact = false }) {
                         value={inputText}
                         onChange={handleInputChange}
                         placeholder={direction === 'en-to-lang'
-                            ? 'Enter an English word or definition...'
+                            ? 'Enter an English word…'
                             : `Enter a ${selectedLanguage?.name ?? 'word'} word…`
                         }
                         rows={compact ? 3 : 5}
