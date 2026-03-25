@@ -29,7 +29,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 32px;
+  gap: 24px; /* reduced from 32px to accommodate extra link */
 }
 
 /* ============================================
@@ -59,8 +59,8 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   transition: all 0.3s ease;
-  display: inline-block; /* Changed to inline-block for better text rendering */
-  padding-bottom: 2px; /* Extra padding for descenders */
+  display: inline-block;
+  padding-bottom: 2px;
 }
 
 .logoAccent {
@@ -71,8 +71,8 @@
   font-weight: 700;
   position: relative;
   animation: shimmer 3s ease-in-out infinite;
-  display: inline-block; /* Changed to inline-block for better text rendering */
-  padding-bottom: 2px; /* Extra padding for descenders */
+  display: inline-block;
+  padding-bottom: 2px;
 }
 
 @keyframes shimmer {
@@ -144,31 +144,31 @@
 
 .navLinks {
   display: flex;
-  gap: 4px;
+  gap: 2px; /* reduced from 4px to keep all links fitting */
   align-items: center;
   flex: 1;
 }
 
 .navLink {
-  font-size: 15px;
+  font-size: 14px; /* reduced from 15px to keep all links fitting */
   color: #6B7280;
   text-decoration: none;
   font-weight: 600;
-  padding: 10px 14px;
+  padding: 10px 11px; /* reduced from 10px 14px */
   border-radius: 10px;
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
   overflow: hidden;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px; /* reduced from 6px */
   letter-spacing: 0.01em;
   white-space: nowrap;
 }
 
 .linkIcon {
-  width: 16px;
-  height: 16px;
+  width: 15px; /* reduced from 16px */
+  height: 15px;
   flex-shrink: 0;
   opacity: 0.7;
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -340,6 +340,23 @@
    RESPONSIVE
    ============================================ */
 
+@media (max-width: 1100px) {
+  /* Hide text labels on medium screens, keep icons */
+  .navLink span {
+    display: none;
+  }
+
+  .navLink {
+    padding: 10px;
+  }
+
+  .linkIcon {
+    width: 18px;
+    height: 18px;
+    opacity: 0.8;
+  }
+}
+
 @media (max-width: 968px) {
   .mobileMenuButton {
     display: flex;
@@ -374,6 +391,11 @@
     width: 100%;
     padding: 14px 16px;
     justify-content: flex-start;
+  }
+
+  /* Restore text labels in mobile menu */
+  .navLink span {
+    display: inline;
   }
 
   .actions {
