@@ -72,10 +72,75 @@ async function findLanguages(page = 1, limit = 20) {
 }
 
 async function findLanguageByIsoCode(code) {
-    const language = await prisma.language.findUnique({
-        where: { isoCode: code }
-    });
-    return language;
+    // Fetch language and top contributors in parallel
+    const [language, contributorGroups] = await Promise.all([
+        prisma.language.findUnique({
+            where: { isoCode: code }
+        }),
+        prisma.translation.groupBy({
+            by: ['authorId'],
+            where: {
+                language: { isoCode: code },
+                status: 'VERIFIED'
+            },
+            _count: { authorId: true },
+            orderBy: [
+                { _count: { authorId: 'desc' } },
+                { authorId: 'asc' }
+            ],
+            take: 3
+        })
+    ]);
+
+    if (!language) return null;
+
+    let topContributors = [];
+
+    if (contributorGroups.length > 0) {
+        const authorIds = contributorGroups.map(g => g.authorId);
+
+        // Get earliest verified contribution per author for tiebreaking
+        const earliestContributions = await prisma.translation.findMany({
+            where: {
+                language: { isoCode: code },
+                status: 'VERIFIED',
+                authorId: { in: authorIds }
+            },
+            select: { authorId: true, createdAt: true },
+            orderBy: { createdAt: 'asc' },
+            distinct: ['authorId']
+        });
+
+        const earliestMap = {};
+        earliestContributions.forEach(c => {
+            earliestMap[c.authorId] = c.createdAt;
+        });
+
+        // Fetch user info for non-deleted authors
+        const users = await prisma.user.findMany({
+            where: { id: { in: authorIds } },
+            select: { id: true, username: true }
+        });
+
+        const userMap = {};
+        users.forEach(u => { userMap[u.id] = u.username; });
+
+        // Build and sort: count desc, then earliest contribution asc as tiebreaker
+        topContributors = contributorGroups
+            .map(g => ({
+                id: userMap[g.authorId] ? g.authorId : null,
+                username: userMap[g.authorId] ?? 'Deleted user',
+                count: g._count.authorId,
+                earliestAt: earliestMap[g.authorId] ?? new Date(0)
+            }))
+            .sort((a, b) => {
+                if (b.count !== a.count) return b.count - a.count;
+                return new Date(a.earliestAt) - new Date(b.earliestAt);
+            })
+            .map(({ id, username, count }) => ({ id, username, count }));
+    }
+
+    return { ...language, topContributors };
 }
 
 async function findLanguageByName(phrase, page = 1, limit = 20) {
