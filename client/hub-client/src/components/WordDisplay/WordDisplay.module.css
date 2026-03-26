@@ -626,6 +626,147 @@
   font-style: italic;
 }
 
+/* ── Collapsed right-side group (verified + badge) ─────────────────────────── */
+
+.collapsedRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ── Expanded header actions (badge + collapse button) ─────────────────────── */
+
+.expandedHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ── Missing fields badge ──────────────────────────────────────────────────── */
+
+.missingBadgeWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.missingBadge {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(234, 179, 8, 0.10);
+  border: 1px solid rgba(234, 179, 8, 0.28);
+  border-radius: 8px;
+  color: #B45309;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.missingBadge:hover {
+  background: rgba(234, 179, 8, 0.18);
+  border-color: rgba(234, 179, 8, 0.5);
+  color: #92400E;
+  transform: scale(1.08);
+}
+
+.missingBadge:active {
+  transform: scale(0.95);
+}
+
+.missingBadgeActive {
+  background: rgba(234, 179, 8, 0.18);
+  border-color: rgba(234, 179, 8, 0.5);
+  color: #92400E;
+}
+
+/* ── Missing fields popup ──────────────────────────────────────────────────── */
+
+.missingPopup {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 50;
+  min-width: 210px;
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(234, 179, 8, 0.22);
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.04),
+    0 10px 24px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(234, 179, 8, 0.08);
+  animation: popupIn 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: top right;
+}
+
+@keyframes popupIn {
+  from {
+    opacity: 0;
+    transform: scale(0.88) translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Amber top-edge accent line */
+.missingPopup::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 16px;
+  right: 16px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(234, 179, 8, 0.6), transparent);
+  border-radius: 0 0 2px 2px;
+}
+
+.missingPopupTitle {
+  font-family: 'Fraunces', serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #92400E;
+  margin: 0 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.missingList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.missingListItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 18px;
+  color: #6B7280;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+}
+
+.missingDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(234, 179, 8, 0.7);
+  flex-shrink: 0;
+}
+
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   .wordDisplay,
@@ -670,6 +811,16 @@
   }
 
   .addButton:hover::before {
+    transform: none;
+  }
+
+  .missingPopup {
+    animation: none;
+  }
+
+  .missingBadge,
+  .missingBadge:hover {
+    transition: none;
     transform: none;
   }
 }
