@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { languageService } from '../../api/languageService';
 import useDebounce from '../../hooks/useDebounce';
 import WordDisplay from '../../components/WordDisplay/WordDisplay';
@@ -7,8 +7,6 @@ import Pagination from '../../components/Pagination/Pagination';
 import Button from '../../components/Button/Button';
 import Input from '../../components/Input/Input';
 import styles from './LanguageDetailPage.module.css';
-
-// ── Constants ──────────────────────────────────────────────────────────────────
 
 const SORT_OPTIONS = [
     { value: 'alpha-asc',  label: 'A → Z' },
@@ -29,25 +27,23 @@ const SEARCH_MODE_OPTIONS = [
 
 const TRANSLATIONS_PER_PAGE = 20;
 
-// ── Component ──────────────────────────────────────────────────────────────────
-
 export default function LanguageDetailPage() {
     const { isoCode } = useParams();
     const navigate = useNavigate();
 
-    // Language metadata
+    
     const [language,    setLanguage]    = useState(null);
     const [langLoading, setLangLoading] = useState(true);
     const [langError,   setLangError]   = useState(null);
 
-    // Translations
+    
     const [translations,         setTranslations]         = useState([]);
     const [pagination,           setPagination]           = useState(null);
     const [translationsLoading,  setTranslationsLoading]  = useState(true);
     const [translationsError,    setTranslationsError]    = useState(null);
     const [retryCount,           setRetryCount]           = useState(0);
 
-    // Controls
+    
     const [searchQuery,   setSearchQuery]   = useState('');
     const [searchMode,    setSearchMode]    = useState('text');
     const [statusMode,    setStatusMode]    = useState('VERIFIED');
@@ -55,19 +51,22 @@ export default function LanguageDetailPage() {
     const [coreWordsOnly, setCoreWordsOnly] = useState(false);
     const [currentPage,   setCurrentPage]   = useState(1);
 
+    
+    const [pillOpen, setPillOpen] = useState(false);
+
     const [mounted, setMounted] = useState(false);
     const debouncedSearch = useDebounce(searchQuery, 400);
     const gridRef = useRef(null);
 
-    // ── Mount ──────────────────────────────────────────────────────────────────
+    
     useEffect(() => { setMounted(true); }, []);
 
-    // ── Reset page on any filter/search change ─────────────────────────────────
+    
     useEffect(() => {
         setCurrentPage(1);
     }, [debouncedSearch, searchMode, statusMode, sortBy, coreWordsOnly]);
 
-    // ── Fetch language metadata ────────────────────────────────────────────────
+    
     useEffect(() => {
         let cancelled = false;
 
@@ -99,7 +98,7 @@ export default function LanguageDetailPage() {
         return () => { cancelled = true; };
     }, [isoCode]);
 
-    // ── Fetch translations ─────────────────────────────────────────────────────
+    
     useEffect(() => {
         let cancelled = false;
 
@@ -142,7 +141,7 @@ export default function LanguageDetailPage() {
         return () => { cancelled = true; };
     }, [isoCode, debouncedSearch, searchMode, statusMode, sortBy, coreWordsOnly, currentPage, retryCount]);
 
-    // ── Scroll-in animation observer ──────────────────────────────────────────
+    
     useEffect(() => {
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (prefersReducedMotion || !gridRef.current) return;
@@ -157,7 +156,7 @@ export default function LanguageDetailPage() {
         return () => observer.disconnect();
     }, [translations]);
 
-    // ── Helpers ────────────────────────────────────────────────────────────────
+    
     const handleRetry = useCallback(() => {
         setRetryCount(c => c + 1);
     }, []);
@@ -184,7 +183,7 @@ export default function LanguageDetailPage() {
         !!searchQuery.trim(),
     ].filter(Boolean).length;
 
-    // ── Loading — language metadata ───────────────────────────────────────────
+    
     if (langLoading) {
         return (
             <div className={`${styles.languageDetailPage} ${mounted ? styles.mounted : ''}`}>
@@ -199,7 +198,7 @@ export default function LanguageDetailPage() {
         );
     }
 
-    // ── Error — language metadata ─────────────────────────────────────────────
+    
     if (langError || !language) {
         return (
             <div className={`${styles.languageDetailPage} ${mounted ? styles.mounted : ''}`}>
@@ -219,15 +218,19 @@ export default function LanguageDetailPage() {
         );
     }
 
-    // ── Main render ───────────────────────────────────────────────────────────
+    const hasContributors = language.topContributors && language.topContributors.length > 0;
+
+    
     return (
         <div className={`${styles.languageDetailPage} ${mounted ? styles.mounted : ''}`}>
             <div className={styles.backgroundPattern} />
 
             <div className={styles.container}>
 
-                {/* ── Header ── */}
+                {}
                 <header className={styles.header}>
+
+                    {}
                     <div className={styles.headerContent}>
                         <h1 className={styles.languageName}>{language.name}</h1>
                         <div className={styles.meta}>
@@ -242,15 +245,93 @@ export default function LanguageDetailPage() {
                             <p className={styles.preservationNote}>{language.preservationNote}</p>
                         )}
                     </div>
-                    <Button variant="primary" onClick={() => navigate('/contribute')}>
-                        Contribute Word
-                    </Button>
+
+                    {}
+                    <div className={styles.headerActions}>
+                        {hasContributors && (
+                            <button
+                                className={`${styles.contributorsPill} ${pillOpen ? styles.contributorsPillOpen : ''}`}
+                                onClick={() => setPillOpen(o => !o)}
+                                aria-expanded={pillOpen}
+                                aria-controls="contributors-drawer"
+                            >
+                                <span className={styles.pillTrophy}>🏆</span>
+                                Top Contributors
+                                <svg
+                                    className={styles.pillChevron}
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                    aria-hidden="true"
+                                >
+                                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                            </button>
+                        )}
+                        <Button variant="primary" onClick={() => navigate('/contribute')}>
+                            Contribute Word
+                        </Button>
+                    </div>
+
+                    {}
+                    {hasContributors && (
+                        <div className={`${styles.podiumDrawerWrap} ${pillOpen ? styles.podiumDrawerWrapOpen : ''}`}>
+                            <div
+                                id="contributors-drawer"
+                                className={`${styles.podiumDrawer} ${pillOpen ? styles.podiumDrawerOpen : ''}`}
+                            >
+                                <div className={styles.podiumDrawerInner}>
+                                    <div className={`${styles.contributorsPodium} ${styles[`podiumCount${language.topContributors.length}`]}`}>
+                                        {language.topContributors.map((contributor, index) => {
+                                            const rank = index + 1;
+                                            const rankMeta = [
+                                                { label: '1st', colorClass: styles.rankGold },
+                                                { label: '2nd', colorClass: styles.rankSilver },
+                                                { label: '3rd', colorClass: styles.rankBronze },
+                                            ][index];
+
+                                            const cardContent = (
+                                                <>
+                                                    <span className={`${styles.rankBadge} ${rankMeta.colorClass}`}>
+                                                        {rankMeta.label}
+                                                    </span>
+                                                    <span className={styles.contributorName}>
+                                                        {contributor.username}
+                                                    </span>
+                                                    <span className={styles.contributorCount}>
+                                                        {contributor.count} verified {contributor.count === 1 ? 'word' : 'words'}
+                                                    </span>
+                                                </>
+                                            );
+
+                                            return contributor.id ? (
+                                                <Link
+                                                    key={contributor.id ?? index}
+                                                    to={`/profile/${contributor.id}`}
+                                                    className={`${styles.podiumCard} ${styles[`podiumRank${rank}`]}`}
+                                                    title={`View ${contributor.username}'s profile`}
+                                                >
+                                                    {cardContent}
+                                                </Link>
+                                            ) : (
+                                                <div
+                                                    key={index}
+                                                    className={`${styles.podiumCard} ${styles[`podiumRank${rank}`]} ${styles.podiumCardDeleted}`}
+                                                >
+                                                    {cardContent}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </header>
 
-                {/* ── Translations section ── */}
+                {}
                 <section className={styles.translationsSection}>
 
-                    {/* Heading row */}
+                    {}
                     <div className={styles.sectionHeadingRow}>
                         <h2 className={styles.sectionTitle}>Words &amp; Phrases</h2>
                         {activeFilterCount > 0 && (
@@ -264,13 +345,13 @@ export default function LanguageDetailPage() {
                         )}
                     </div>
 
-                    {/* ── Unified control panel ── */}
+                    {}
                     <div className={styles.controlPanel}>
 
-                        {/* Dropdowns + toggle row */}
+                        {}
                         <div className={styles.controlRow}>
 
-                            {/* Search mode */}
+                            {}
                             <div className={styles.controlGroup}>
                                 <label className={styles.controlLabel}>Search by</label>
                                 <div className={styles.selectWrapper}>
@@ -290,7 +371,7 @@ export default function LanguageDetailPage() {
                                 </div>
                             </div>
 
-                            {/* Sort */}
+                            {}
                             <div className={styles.controlGroup}>
                                 <label className={styles.controlLabel}>Sort</label>
                                 <div className={styles.selectWrapper}>
@@ -310,7 +391,7 @@ export default function LanguageDetailPage() {
                                 </div>
                             </div>
 
-                            {/* Status */}
+                            {}
                             <div className={styles.controlGroup}>
                                 <label className={styles.controlLabel}>Status</label>
                                 <div className={styles.selectWrapper}>
@@ -330,7 +411,7 @@ export default function LanguageDetailPage() {
                                 </div>
                             </div>
 
-                            {/* Core words toggle */}
+                            {}
                             <div className={styles.controlGroup}>
                                 <label className={styles.controlLabel}>Core words</label>
                                 <label className={`${styles.toggleWrapper} ${coreWordsOnly ? styles.toggleWrapperOn : ''}`}>
@@ -349,7 +430,7 @@ export default function LanguageDetailPage() {
                             </div>
                         </div>
 
-                        {/* Search input row */}
+                        {}
                         <div className={styles.searchRow}>
                             <div className={styles.searchInputWrapper}>
                                 <Input
@@ -375,7 +456,7 @@ export default function LanguageDetailPage() {
                         </div>
                     </div>
 
-                    {/* ── Results ── */}
+                    {}
                     {translationsLoading ? (
                         <div className={styles.loadingState}>
                             <div className={styles.loadingSpinner} />
