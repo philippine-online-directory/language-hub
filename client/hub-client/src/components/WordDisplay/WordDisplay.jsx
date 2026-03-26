@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import Card from '../Card/Card';
 import Button from '../Button/Button';
@@ -7,20 +7,98 @@ import { useAuth } from '../../context/AuthContext';
 import { setService } from '../../api/setService';
 import styles from './WordDisplay.module.css';
 
+const COMPLETABLE_FIELDS = [
+    { key: 'ipa',             label: 'IPA pronunciation' },
+    { key: 'audioUrl',        label: 'Audio pronunciation' },
+    { key: 'exampleSentence', label: 'Example sentence' },
+    { key: 'usageComment',    label: 'Usage / notes comment' },
+    { key: 'partOfSpeech',    label: 'Part of speech' },
+];
+
+function MissingFieldsBadge({ translation }) {
+    const [open, setOpen] = useState(false);
+    const wrapperRef = useRef(null);
+
+    const missingFields = COMPLETABLE_FIELDS.filter(f => !translation?.[f.key]);
+
+    // Close on outside click
+    useEffect(() => {
+        if (!open) return;
+        const handle = (e) => {
+            if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+                setOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handle);
+        return () => document.removeEventListener('mousedown', handle);
+    }, [open]);
+
+    // Close on Escape
+    useEffect(() => {
+        if (!open) return;
+        const handle = (e) => { if (e.key === 'Escape') setOpen(false); };
+        document.addEventListener('keydown', handle);
+        return () => document.removeEventListener('keydown', handle);
+    }, [open]);
+
+    if (missingFields.length === 0) return null;
+
+    return (
+        <div
+            className={styles.missingBadgeWrapper}
+            ref={wrapperRef}
+        >
+            <button
+                className={`${styles.missingBadge} ${open ? styles.missingBadgeActive : ''}`}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setOpen(prev => !prev);
+                }}
+                aria-label={`${missingFields.length} missing field${missingFields.length !== 1 ? 's' : ''}`}
+                aria-expanded={open}
+            >
+                {/* Warning triangle icon */}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                    <line x1="12" y1="9" x2="12" y2="13" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+            </button>
+
+            {open && (
+                <div
+                    className={styles.missingPopup}
+                    role="dialog"
+                    aria-label="Missing fields"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <p className={styles.missingPopupTitle}>Missing fields</p>
+                    <ul className={styles.missingList}>
+                        {missingFields.map(f => (
+                            <li key={f.key} className={styles.missingListItem}>
+                                <span className={styles.missingDot} />
+                                {f.label}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+        </div>
+    );
+}
+
 export default function WordDisplay({ translation, showAddToSet = true, defaultExpanded = false }){
     const { isAuthenticated } = useAuth();
     const [showModal, setShowModal] = useState(false);
-    const [modalMode, setModalMode] = useState('add'); // 'add' or 'remove'
+    const [modalMode, setModalMode] = useState('add');
     const [isExpanded, setIsExpanded] = useState(defaultExpanded);
     const [isHovered, setIsHovered] = useState(false);
     const [setsContainingTranslation, setSetsContainingTranslation] = useState([]);
     const [loadingSets, setLoadingSets] = useState(false);
 
-    // Check which sets contain this translation
     useEffect(() => {
         const checkSets = async () => {
             if (!translation?.id || !isAuthenticated) return;
-            
             setLoadingSets(true);
             try {
                 const sets = await setService.getSetsContainingTranslation(translation.id);
@@ -32,14 +110,11 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                 setLoadingSets(false);
             }
         };
-
         checkSets();
     }, [translation?.id, isAuthenticated]);
 
     const handleCardClick = () => {
-        if (!isExpanded) {
-            setIsExpanded(true);
-        }
+        if (!isExpanded) setIsExpanded(true);
     };
 
     const handleCollapse = (e) => {
@@ -49,7 +124,7 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
 
     return (
         <>
-            <div 
+            <div
                 className={`${styles.wordDisplayWrapper} ${isExpanded ? styles.expanded : ''}`}
                 onClick={handleCardClick}
                 onMouseEnter={() => setIsHovered(true)}
@@ -60,11 +135,14 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                         /* Collapsed View */
                         <div className={styles.collapsedView}>
                             <h2 className={styles.wordCollapsed}>{translation.wordText}</h2>
-                            {translation.status === 'VERIFIED' && (
-                                <div className={styles.verifiedBadgeSmall}>
-                                    ✓
-                                </div>
-                            )}
+
+                            <div className={styles.collapsedRight}>
+                                {translation.status === 'VERIFIED' && (
+                                    <div className={styles.verifiedBadgeSmall}>✓</div>
+                                )}
+                                <MissingFieldsBadge translation={translation} />
+                            </div>
+
                             {isHovered && (
                                 <div className={styles.hoverTooltip}>
                                     <span>See details</span>
@@ -86,16 +164,19 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                                         </span>
                                     )}
                                 </div>
-                                <button 
-                                    className={styles.collapseButton}
-                                    onClick={handleCollapse}
-                                    aria-label="Collapse"
-                                >
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                                    </svg>
-                                </button>
+                                <div className={styles.expandedHeaderActions}>
+                                    <MissingFieldsBadge translation={translation} />
+                                    <button
+                                        className={styles.collapseButton}
+                                        onClick={handleCollapse}
+                                        aria-label="Collapse"
+                                    >
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
 
                             {translation.ipa && (
@@ -147,11 +228,10 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                                             <span>Verified Translation</span>
                                         </div>
                                     )}
-                                    
                                     {translation.author && (
                                         <div className={styles.attribution}>
                                             <span className={styles.attributionText}>Contributed by</span>
-                                            <Link 
+                                            <Link
                                                 to={`/profile/${translation.author.id}`}
                                                 className={styles.authorLink}
                                                 onClick={(e) => e.stopPropagation()}
@@ -161,10 +241,10 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                                         </div>
                                     )}
                                 </div>
-                                
+
                                 {showAddToSet && isAuthenticated && (
-                                    <Button 
-                                        variant="secondary" 
+                                    <Button
+                                        variant="secondary"
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             setModalMode(setsContainingTranslation.length > 0 ? 'remove' : 'add');
@@ -173,7 +253,7 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                                         className={styles.addButton}
                                         disabled={loadingSets}
                                     >
-                                        {loadingSets ? 'Loading...' : 
+                                        {loadingSets ? 'Loading...' :
                                             setsContainingTranslation.length > 0 ? 'Remove from Set' : 'Add to Set'}
                                     </Button>
                                 )}
@@ -184,7 +264,7 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
             </div>
 
             {showModal && (
-                <AddToSetModal 
+                <AddToSetModal
                     translation={translation}
                     mode={modalMode}
                     setsContainingTranslation={setsContainingTranslation}
