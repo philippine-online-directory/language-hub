@@ -116,6 +116,46 @@
   animation: gradientSlide 3s linear infinite;
 }
 
+.checkboxWrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.checkbox {
+    width: 16px;
+    height: 16px;
+    margin-top: 3px;
+    flex-shrink: 0;
+    accent-color: #C0763A;
+    cursor: pointer;
+}
+
+.checkboxLabel {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #374151;
+    cursor: pointer;
+}
+
+.ipLink {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    font-size: inherit;
+    color: #C0763A;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: opacity 0.15s ease;
+}
+
+.ipLink:hover {
+    opacity: 0.7;
+}
+
 @keyframes gradientSlide {
   0% {
     background-position: 0% center;
