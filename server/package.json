@@ -4,7 +4,10 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsx --watch app.js",
+    "dev:debug": "tsx --watch --inspect app.js",
+    "start": "node app.js"
   },
   "keywords": [],
   "author": "",
@@ -26,11 +29,12 @@
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.0.2",
     "node-cron": "^4.2.1",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.2"
   },
   "devDependencies": {
     "prisma": "^7.5.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "tsx": "^4.21.0"
   }
 }

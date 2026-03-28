@@ -16,7 +16,7 @@ export default function SetsPage(){
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [viewMode, setViewMode] = useState('my');
+    const [viewMode, setViewMode] = useState('public');
     const [currentPage, setCurrentPage] = useState(1);
     const [pagination, setPagination] = useState(null);
     const [mounted, setMounted] = useState(false);
@@ -29,6 +29,13 @@ export default function SetsPage(){
         setMounted(true);
     }, []);
 
+    // Set default view to 'my' if user is authenticated
+    useEffect(() => {
+        if (isAuthenticated) {
+            setViewMode('my');
+        }
+    }, [isAuthenticated]);
+
     // Reset to page 1 when view mode or search changes
     useEffect(() => {
         setCurrentPage(1);
@@ -38,6 +45,15 @@ export default function SetsPage(){
         const fetchSets = async () => {
             setLoading(true);
             setError(null);
+
+            // If trying to view "My Sets" without authentication, don't fetch
+            if (viewMode === 'my' && !isAuthenticated) {
+                setSets([]);
+                setPagination(null);
+                setLoading(false);
+                return;
+            }
+
             try {
                 let result;
                 if (viewMode === 'my') {
@@ -61,7 +77,7 @@ export default function SetsPage(){
         };
 
         fetchSets();
-    }, [viewMode, debouncedSearch, currentPage]);
+    }, [viewMode, debouncedSearch, currentPage, isAuthenticated]);
 
     // Scroll animation observer
     useEffect(() => {
@@ -122,7 +138,7 @@ export default function SetsPage(){
                         <h1 className={styles.title}>Vocabulary Sets</h1>
                         <p className={styles.subtitle}>
                             {viewMode === 'my' 
-                                ? 'Create and manage your language learning collections'
+                                ? (isAuthenticated ? 'Create and manage your language learning collections' : 'Sign in to create and manage your vocabulary sets')
                                 : 'Discover sets created by other learners'
                             }
                         </p>
@@ -193,13 +209,17 @@ export default function SetsPage(){
                                 <svg className={styles.emptyIcon} viewBox="0 0 20 20" fill="currentColor">
                                     <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
                                 </svg>
-                                <p>You haven't created any sets yet.</p>
-                                {isAuthenticated ? (
-                                    <Button variant="primary" onClick={() => navigate('/sets/create')}>
-                                        Create Your First Set
-                                    </Button>
+                                {!isAuthenticated ? (
+                                    <p>
+                                        <Link to="/login">Sign in</Link> to create and manage your vocabulary sets.
+                                    </p>
                                 ) : (
-                                    <p>Sign in to create and manage your vocabulary sets.</p>
+                                    <>
+                                        <p>You haven't created any sets yet.</p>
+                                        <Button variant="primary" onClick={() => navigate('/sets/create')}>
+                                            Create Your First Set
+                                        </Button>
+                                    </>
                                 )}
                             </>
                         ) : (
