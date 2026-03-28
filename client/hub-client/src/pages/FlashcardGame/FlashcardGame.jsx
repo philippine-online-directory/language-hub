@@ -144,8 +144,8 @@ export default function FlashcardGame() {
                             <Button onClick={() => { setGameResult(null); setCurrentIndex(0); setIsFlipped(false); setViewedCards(new Set()); setWords(prev => [...prev].sort(() => Math.random() - 0.5));}}>
                                 Play Again
                             </Button>
-                            <Button variant="secondary" onClick={() => navigate('/sets')}>
-                                Back to Sets
+                            <Button variant="secondary" onClick={() => navigate(`/sets/${setId}`)}>
+                                Back to Set
                             </Button>
                         </div>
                     </div>

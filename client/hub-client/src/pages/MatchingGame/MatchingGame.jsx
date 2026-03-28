@@ -168,8 +168,8 @@ export default function MatchingGame() {
                             <Button onClick={() => { setGameResult(null); setMatchedPairs([]); setSelectedCards([]); setMoves(0); setGameComplete(false); setCards(prev => [...prev].sort(() => Math.random() - 0.5));}}>
                                 Play Again
                             </Button>
-                            <Button variant="secondary" onClick={() => navigate('/sets')}>
-                                Back to Sets
+                            <Button variant="secondary" onClick={() => navigate(`/sets/${setId}`)}>
+                                Back to Set
                             </Button>
                         </div>
                     </div>

@@ -156,8 +156,8 @@ export default function WritingGame() {
                             <Button onClick={() => { setGameResult(null); setCurrentIndex(0); setUserAnswer(''); setFeedback(null); setCorrectCount(0); setAttempts(0); setShowHint(false); }}>
                                 Play Again
                             </Button>
-                            <Button variant="secondary" onClick={() => navigate('/sets')}>
-                                Back to Sets
+                            <Button variant="secondary" onClick={() => navigate(`/sets/${setId}`)}>
+                                Back to Set
                             </Button>
                         </div>
                     </div>
