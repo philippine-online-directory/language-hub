@@ -2,13 +2,15 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { setService } from '../../api/setService';
 import { gameService } from '../../api/gameService';
+import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
 import Input from '../../components/Input/Input';
 import styles from './WritingGame.module.css';
 
-export default function WritingGame(){
+export default function WritingGame() {
     const { setId } = useParams();
+    const { isAuthenticated } = useAuth();
     const navigate = useNavigate();
     const [words, setWords] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -20,6 +22,7 @@ export default function WritingGame(){
     const [showHint, setShowHint] = useState(false);
     const [mounted, setMounted] = useState(false);
     const [attempts, setAttempts] = useState(0);
+    const [gameResult, setGameResult] = useState(null);
 
     useEffect(() => {
         setMounted(true);
@@ -30,23 +33,23 @@ export default function WritingGame(){
             try {
                 // Fetch the translations array directly
                 const translations = await setService.getSetWords(setId);
-                
+
                 console.log('Fetched translations:', translations);
-                
+
                 // Backend returns array of translations directly
                 if (!Array.isArray(translations) || translations.length === 0) {
                     throw new Error('No words found in set');
                 }
-                
+
                 // Shuffle the words
                 const shuffled = [...translations].sort(() => Math.random() - 0.5);
                 setWords(shuffled);
-            } 
+            }
             catch (err) {
                 console.error('Error fetching words:', err);
                 alert('Failed to load game');
                 navigate(`/sets/${setId}`);
-            } 
+            }
             finally {
                 setLoading(false);
             }
@@ -59,7 +62,7 @@ export default function WritingGame(){
         const userAnswerNormalized = userAnswer.trim().toLowerCase();
         const correctAnswerNormalized = currentWord.wordText.trim().toLowerCase();
         const correct = userAnswerNormalized === correctAnswerNormalized;
-        
+
         setFeedback({
             correct,
             correctAnswer: currentWord.wordText,
@@ -79,7 +82,7 @@ export default function WritingGame(){
             setUserAnswer('');
             setFeedback(null);
             setShowHint(false);
-        } 
+        }
         else {
             handleFinish();
         }
@@ -95,18 +98,20 @@ export default function WritingGame(){
         const duration = Math.floor((Date.now() - startTime) / 1000);
         // Score = accuracy: correct answers out of all attempted questions (0-100%)
         const score = attempts > 0 ? Math.round((correctCount / attempts) * 100) : 0;
-        
-        try {
-            await gameService.uploadGameSession(setId, {
-                gameType: 'WRITING',
-                score,
-                duration,
-            });
-        } catch (err) {
-            console.error('Error saving game session:', err);
+
+        if (isAuthenticated) {
+            try {
+                await gameService.uploadGameSession(setId, {
+                    gameType: 'WRITING',
+                    score,
+                    duration,
+                });
+            } catch (err) {
+                console.error('Error saving game session:', err);
+            }
         }
-        
-        navigate(`/sets/${setId}`);
+        setGameResult({ score, duration, correct: correctCount, total: words.length });
+        // navigate(`/sets/${setId}`);
     };
 
     // Called when user exits early — navigates without saving
@@ -119,6 +124,47 @@ export default function WritingGame(){
             checkAnswer();
         }
     };
+
+    // Game result screen
+    if (gameResult) {
+        return (
+            <div className={`${styles.writingGame} ${styles.mounted}`}>
+                <div className={styles.backgroundPattern}></div>
+                <div className={styles.container}>
+                    <div className={styles.resultsScreen}>
+                        <h1 className={styles.resultsTitle}>Practice Complete!</h1>
+                        {isAuthenticated ? (
+                            <p className={styles.resultsSaved}>Your results have been saved</p>
+                        ) : (
+                            <p className={styles.resultsGuest}>Sign in to save your progress</p>
+                        )}
+                        <div className={styles.resultsStats}>
+                            <div className={styles.resultsStat}>
+                                <span className={styles.resultsStatValue}>{gameResult.score}%</span>
+                                <span className={styles.resultsStatLabel}>Accuracy</span>
+                            </div>
+                            <div className={styles.resultsStat}>
+                                <span className={styles.resultsStatValue}>{gameResult.correct}/{gameResult.total}</span>
+                                <span className={styles.resultsStatLabel}>Correct</span>
+                            </div>
+                            <div className={styles.resultsStat}>
+                                <span className={styles.resultsStatValue}>{gameResult.duration}s</span>
+                                <span className={styles.resultsStatLabel}>Duration</span>
+                            </div>
+                        </div>
+                        <div className={styles.resultsActions}>
+                            <Button onClick={() => { setGameResult(null); setCurrentIndex(0); setUserAnswer(''); setFeedback(null); setCorrectCount(0); setAttempts(0); setShowHint(false); }}>
+                                Play Again
+                            </Button>
+                            <Button variant="secondary" onClick={() => navigate('/sets')}>
+                                Back to Sets
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     if (loading) {
         return (
@@ -155,7 +201,7 @@ export default function WritingGame(){
     return (
         <div className={`${styles.writingGame} ${mounted ? styles.mounted : ''}`}>
             <div className={styles.backgroundPattern}></div>
-            
+
             <div className={styles.container}>
                 <header className={styles.header}>
                     <div className={styles.headerLeft}>
@@ -183,8 +229,8 @@ export default function WritingGame(){
                 </header>
 
                 <div className={styles.progressBar}>
-                    <div 
-                        className={styles.progressFill} 
+                    <div
+                        className={styles.progressFill}
                         style={{ width: `${progressPercent}%` }}
                     ></div>
                 </div>
@@ -233,7 +279,7 @@ export default function WritingGame(){
                                 >
                                     Check Answer
                                 </Button>
-                                
+
                                 <Button
                                     variant="secondary"
                                     onClick={() => setShowHint(!showHint)}
@@ -284,8 +330,8 @@ export default function WritingGame(){
                         </>
                     ) : (
                         <div className={`${styles.feedback} ${
-                            feedback.correct ? styles.correct : styles.incorrect
-                        }`}>
+                        feedback.correct ? styles.correct : styles.incorrect
+                            }`}>
                             <div className={styles.feedbackIcon}>
                                 {feedback.correct ? (
                                     <svg viewBox="0 0 20 20" fill="currentColor">

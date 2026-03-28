@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { setService } from '../../api/setService';
 import { gameService } from '../../api/gameService';
+import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
 import styles from './MatchingGame.module.css';
 
-export default function MatchingGame(){
+export default function MatchingGame() {
     const { setId } = useParams();
+    const { isAuthenticated } = useAuth();
     const navigate = useNavigate();
     const [cards, setCards] = useState([]);
     const [selectedCards, setSelectedCards] = useState([]);
@@ -18,6 +20,7 @@ export default function MatchingGame(){
     const [isChecking, setIsChecking] = useState(false);
     const [mounted, setMounted] = useState(false);
     const [gameComplete, setGameComplete] = useState(false);
+    const [gameResult, setGameResult] = useState(null);
 
     useEffect(() => {
         setMounted(true);
@@ -28,17 +31,17 @@ export default function MatchingGame(){
             try {
                 // Fetch the translations array directly
                 const translations = await setService.getSetWords(setId);
-                
+
                 console.log('Fetched translations:', translations);
-                
+
                 // Backend returns array of translations directly
                 if (!Array.isArray(translations) || translations.length === 0) {
                     throw new Error('No words found in set');
                 }
-                
+
                 // Take up to 8 words for the game
                 const words = translations.slice(0, 8);
-                
+
                 // Create pairs of cards
                 const gameCards = [];
                 words.forEach((word, idx) => {
@@ -57,7 +60,7 @@ export default function MatchingGame(){
                         translation: word,
                     });
                 });
-                
+
                 // Shuffle the cards
                 const shuffledCards = gameCards.sort(() => Math.random() - 0.5);
                 setCards(shuffledCards);
@@ -86,7 +89,7 @@ export default function MatchingGame(){
             setIsChecking(true);
             const currentMoves = moves + 1;
             setMoves(currentMoves);
-            
+
             // Check if cards match
             if (newSelected[0].pairId === newSelected[1].pairId) {
                 // Match found!
@@ -95,7 +98,7 @@ export default function MatchingGame(){
                     setMatchedPairs(newMatchedPairs);
                     setSelectedCards([]);
                     setIsChecking(false);
-                    
+
                     // Check if game is complete
                     if (newMatchedPairs.length === cards.length / 2) {
                         setGameComplete(true);
@@ -118,19 +121,62 @@ export default function MatchingGame(){
         // Use finalMoves parameter to avoid stale closure on moves state
         const currentMoves = finalMoves ?? moves;
         const score = currentMoves > 0 ? Math.min(100, Math.round((totalPairs / currentMoves) * 100)) : 0;
-        
-        try {
-            await gameService.uploadGameSession(setId, {
-                gameType: 'MATCHING',
-                score: Math.round(score),
-                duration,
-            });
-        } catch (err) {
-            console.error('Error saving game session:', err);
+
+        if (isAuthenticated) {
+            try {
+                await gameService.uploadGameSession(setId, {
+                    gameType: 'MATCHING',
+                    score: Math.round(score),
+                    duration,
+                });
+            } catch (err) {
+                console.error('Error saving game session:', err);
+            }
         }
-        
-        navigate(`/sets/${setId}`);
+        setGameResult({ score: Math.round(score), duration, moves: currentMoves, totalPairs });
+        // navigate(`/sets/${setId}`);
     };
+
+    // Game result screen
+    if (gameResult) {
+        return (
+            <div className={`${styles.matchingGame} ${styles.mounted}`}>
+                <div className={styles.backgroundPattern}></div>
+                <div className={styles.container}>
+                    <div className={styles.resultsScreen}>
+                        <h1 className={styles.resultsTitle}>Game Complete!</h1>
+                        {isAuthenticated ? (
+                            <p className={styles.resultsSaved}>Your results have been saved</p>
+                        ) : (
+                            <p className={styles.resultsGuest}>Sign in to save your progress</p>
+                        )}
+                        <div className={styles.resultsStats}>
+                            <div className={styles.resultsStat}>
+                                <span className={styles.resultsStatValue}>{gameResult.score}%</span>
+                                <span className={styles.resultsStatLabel}>Score</span>
+                            </div>
+                            <div className={styles.resultsStat}>
+                                <span className={styles.resultsStatValue}>{gameResult.moves}</span>
+                                <span className={styles.resultsStatLabel}>Moves</span>
+                            </div>
+                            <div className={styles.resultsStat}>
+                                <span className={styles.resultsStatValue}>{gameResult.duration}s</span>
+                                <span className={styles.resultsStatLabel}>Duration</span>
+                            </div>
+                        </div>
+                        <div className={styles.resultsActions}>
+                            <Button onClick={() => { setGameResult(null); setMatchedPairs([]); setSelectedCards([]); setMoves(0); setGameComplete(false); setCards(prev => [...prev].sort(() => Math.random() - 0.5));}}>
+                                Play Again
+                            </Button>
+                            <Button variant="secondary" onClick={() => navigate('/sets')}>
+                                Back to Sets
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     if (loading) {
         return (
@@ -150,7 +196,7 @@ export default function MatchingGame(){
     return (
         <div className={`${styles.matchingGame} ${mounted ? styles.mounted : ''}`}>
             <div className={styles.backgroundPattern}></div>
-            
+
             <div className={styles.container}>
                 <header className={styles.header}>
                     <div className={styles.headerLeft}>
@@ -191,7 +237,7 @@ export default function MatchingGame(){
                     {cards.map((card, index) => {
                         const isSelected = selectedCards.find(c => c.id === card.id);
                         const isMatched = matchedPairs.includes(card.pairId);
-                        
+
                         return (
                             <div
                                 key={card.id}

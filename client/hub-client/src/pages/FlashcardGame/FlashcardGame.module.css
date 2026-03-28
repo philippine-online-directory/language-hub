@@ -11,6 +11,84 @@
   animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+/* Results Screen */
+
+.resultsScreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    gap: 24px;
+    padding: 40px 24px;
+    overflow: visible;
+}
+
+.resultsTitle {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: #1F2937;
+    margin: 0;
+    letter-spacing: -0.02em;
+    padding: 4px 8px;
+    overflow: visible;
+    line-height: 1.2;
+}
+
+.resultsSaved {
+    font-size: 14px;
+    color: #16A34A;
+    font-weight: 500;
+    margin: 0;
+}
+
+.resultsGuest {
+    font-size: 14px;
+    color: #9CA3AF;
+    margin: 0;
+}
+
+.resultsStats {
+    display: flex;
+    gap: 16px;
+    background: #F9FAFB;
+    border: 1px solid rgba(229, 231, 235, 0.8);
+    border-radius: 16px;
+    padding: 24px 32px;
+}
+
+.resultsStat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 80px;
+}
+
+.resultsStatValue {
+    font-size: 28px;
+    font-weight: 700;
+    color: #C0763A;
+    letter-spacing: -0.02em;
+}
+
+.resultsStatLabel {
+    font-size: 12px;
+    color: #9CA3AF;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+}
+
+.resultsActions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
