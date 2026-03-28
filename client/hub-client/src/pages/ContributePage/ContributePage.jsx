@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { contributionService } from '../../api/contributionService';
 import { languageService } from '../../api/languageService';
+import IntellectualPropertyModal from '../../components/IntellectualPropertyModal/IntellectualPropertyModal';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
@@ -35,6 +36,8 @@ export default function ContributePage(){
     const [uploadingAudio, setUploadingAudio] = useState(false);
     const [success, setSuccess] = useState(false);
     const [mounted, setMounted] = useState(false);
+    const [ipAgreed, setIpAgreed] = useState(false);
+    const [showIPModal, setShowIPModal] = useState(false);
 
     const MAX_RECORDING_SECONDS = 10;
 
@@ -240,6 +243,7 @@ export default function ContributePage(){
         if (!formData.languageId) newErrors.languageId = 'Please select a language';
         if (!formData.wordText) newErrors.wordText = 'Word is required';
         if (!formData.englishDefinition) newErrors.englishDefinition = 'Definition is required';
+        if (!ipAgreed) newErrors.ipAgreed = 'You must confirm your intellectual property rights before submitting';
         
         return newErrors;
     };
@@ -328,12 +332,15 @@ export default function ContributePage(){
             setLoading(false);
             setUploadingAudio(false);
             setUploadProgress(0);
+            setIpAgreed(false);
         }
     };
 
     return (
         <div className={`${styles.contributePage} ${mounted ? styles.mounted : ''}`}>
             <div className={styles.backgroundPattern}></div>
+
+            <IntellectualPropertyModal isOpen={showIPModal} onClose={() => setShowIPModal(false)} />
             
             <div className={styles.container}>
                 <header className={styles.header}>
@@ -642,7 +649,30 @@ export default function ContributePage(){
                                 <span className={styles.errorText}>{errors.audio}</span>
                             )}
                         </div>
-
+                        {/* Intellectual Property Rights */}
+                        <div className={`${styles.formGroup} ${styles.ipRightsGroup}`}>
+                            <div className={styles.checkboxWrapper}>
+                                <input
+                                    type="checkbox"
+                                    id="ipAgreed"
+                                    checked={ipAgreed}
+                                    onChange={(e) => {
+                                        setIpAgreed(e.target.checked);
+                                        if (errors.ipAgreed) setErrors({ ...errors, ipAgreed: '' });
+                                    }}
+                                    className={styles.checkbox}
+                                />
+                                <label htmlFor="ipAgreed" className={styles.checkboxLabel}>
+                                    I confirm that I hold the{' '}
+                                    <Link className={styles.ipLink} onClick={() => setShowIPModal(true)}>
+                                        intellectual property rights
+                                    </Link>
+                                    {' '}to this contribution, or have the right to share it, and I grant this platform a license to use it for language preservation purposes.{' '}
+                                    <span className={styles.required}>*</span>
+                                </label>
+                            </div>
+                            {errors.ipAgreed && <span className={styles.errorText}>{errors.ipAgreed}</span>}
+                        </div>
                         <div className={styles.actions}>
                             <Button type="submit" fullWidth disabled={loading || languagesLoading}>
                                 {uploadingAudio ? (
