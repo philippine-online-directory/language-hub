@@ -85,6 +85,44 @@
   animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+.contributeButton {
+  font-size: 12px; /* reduced from 15px to keep all links fitting */
+  color: #6B7280;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 10px 11px; /* reduced from 10px 14px */
+  border-radius: 10px;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 5px; /* reduced from 6px */
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  border: none; 
+  margin-top: 15px;
+}
+
+.contributeButton::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(192, 118, 58, 0.08);
+  transform: scale(0);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border-radius: 10px;
+}
+
+.contributeButton:hover::before {
+  transform: scale(1);
+}
+
+.contributeButton:hover {
+  color: #C0763A;
+  transform: translateY(-2px);
+}
+
 @keyframes popIn {
   0% {
     transform: scale(0);
@@ -150,7 +188,7 @@
 
 /* Expanded State - Smoother Expansion */
 .expandedCard {
-  padding: 28px;
+  padding: 30px;
   animation: expandCard 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -569,6 +607,7 @@
 .addButton {
   position: relative;
   overflow: hidden;
+  margin-top: auto;
   animation: buttonSlide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.85s backwards;
 }
 
@@ -693,6 +732,8 @@
   right: 0;
   z-index: 50;
   min-width: 210px;
+  max-height: 170px; /* ✅ limit height */
+  overflow-y: auto;  /* ✅ enable vertical scrolling */
   background: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
