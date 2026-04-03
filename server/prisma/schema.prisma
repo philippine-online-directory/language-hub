@@ -84,7 +84,8 @@ model TranslationUpdateRequest {
   translation    Translation @relation(fields: [translationId], references: [id])
   submittedById  String
   submittedBy    User        @relation(fields: [submittedById], references: [id])
-
+  languageId     String
+  
   proposedData   Json
   createdAt      DateTime    @default(now())
 }
