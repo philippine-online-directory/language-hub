@@ -6,11 +6,12 @@ const addTranslationUpdateRequest = [
   auth,
   async (req, res, next) => {
     try {
-      const { translationId, proposedData } = req.body
+      const { translationId, languageId, proposedData } = req.body
       const submittedById = req.user.id
 
       const request = await translationUpdateRequestService.addTranslationUpdateRequest({
         translationId,
+        languageId,
         submittedById,
         proposedData,
       })
@@ -23,7 +24,6 @@ const addTranslationUpdateRequest = [
 ]
 
 // Admin Features
-
 const acceptTranslationUpdateRequest = [
   auth,
   isAdmin,
@@ -70,9 +70,10 @@ const getTranslationUpdateRequests = [
   isAdmin,
   async (req, res, next) => {
     try {
-      const { page = 1, limit = 20 } = req.query
+      const { page = 1, limit = 20, languageId } = req.query
 
       const result = await translationUpdateRequestService.getTranslationUpdateRequests(
+        languageId,
         Number(page),
         Number(limit),
       )

@@ -1,10 +1,11 @@
 import prisma from '../prisma.js'
 import storageService from './storageService.js'
 
-async function addTranslationUpdateRequest({ translationId, submittedById, proposedData }) {
+async function addTranslationUpdateRequest({ translationId, languageId, submittedById, proposedData }) {
     const addedTranslationUpdateRequest = await prisma.translationUpdateRequest.create({
         data: {
             translationId,
+            languageId,
             submittedById,
             proposedData,
             createdAt: new Date(),
@@ -35,6 +36,11 @@ async function acceptTranslationUpdateRequest(requestId) {
   const isAlreadySecondary = translation.secondaryAuthors.some(
     (u) => u.id === submittedById
   );
+
+  // If new audio is proposed and translation already has one, delete old audio
+  if (proposedData.audioUrl && translation.audioUrl) {
+    await storageService.deleteAudioFile(translation.audioUrl);
+  }
 
   // Apply proposedData to the translation
   const updatedTranslation = await prisma.translation.update({
@@ -69,7 +75,7 @@ async function deleteTranslationUpdateRequest(requestId) {
 
   if (request.proposedData && request.proposedData.audioUrl) {
     try {
-      await storageService.deleteFile(request.proposedData.audioUrl);
+      await storageService.deleteAudioFile(request.proposedData.audioUrl);
     } catch (err) {
       throw new Error('Failed to delete proposed audio file: ' + err.message);
     }
@@ -77,11 +83,14 @@ async function deleteTranslationUpdateRequest(requestId) {
 }
 
 
-async function getTranslationUpdateRequests(page = 1, limit = 20) {
+async function getTranslationUpdateRequests(languageId, page = 1, limit = 20) {
   const skip = (page - 1) * limit;
 
   const [requests, total] = await Promise.all([
     prisma.translationUpdateRequest.findMany({
+      where: {
+        languageId
+      },
       include: {
         translation: {
           include: {
@@ -106,11 +115,32 @@ async function getTranslationUpdateRequests(page = 1, limit = 20) {
         createdAt: 'desc',
       },
     }),
-    prisma.translationUpdateRequest.count(),
+
+    prisma.translationUpdateRequest.count({
+      where: { languageId },
+    }),
   ]);
 
+  const updatedRequests = await Promise.all(
+    requests.map(async (req) => {
+      const updatedReq = { ...req };
+
+      if (updatedReq.translation.audioUrl) {
+        updatedReq.translation.audioUrl =
+          await storageService.generateDownloadUrl(updatedReq.translation.audioUrl);
+      }
+
+      if (updatedReq.proposedData?.audioUrl) {
+        updatedReq.proposedData.audioUrl =
+          await storageService.generateDownloadUrl(updatedReq.proposedData.audioUrl);
+      }
+
+      return updatedReq;
+    })
+  );
+
   return {
-    requests,
+    requests: updatedRequests,
     pagination: {
       page,
       limit,
@@ -120,12 +150,11 @@ async function getTranslationUpdateRequests(page = 1, limit = 20) {
   };
 }
 
-
 const translationUpdateRequestService = {
     addTranslationUpdateRequest,
     acceptTranslationUpdateRequest,
     deleteTranslationUpdateRequest,
-    getTranslationUpdateRequests
+    getTranslationUpdateRequests,
 };
 
 export default translationUpdateRequestService;
