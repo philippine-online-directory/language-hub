@@ -3,9 +3,11 @@ import Button from '../Button/Button';
 import Card from '../Card/Card';
 import styles from './ContributeMissingModal.module.css';
 import Input from '../Input/Input';
+import { contributionService } from '../../api/contributionService';
+import { translationUpdateRequestService } from '../../api/translationUpdateRequestService';
 
 export default function ContributeMissingModal({ translation, fieldsToContribute, onClose }){
-    const [processing, setProcessing] = useState(false);
+    console.log('ContributeMissingModal rendered with translation:', translation);
     const [audioFile, setAudioFile] = useState(null);
     const [audioMode, setAudioMode] = useState('upload'); // 'upload' or 'record'
     const [isRecording, setIsRecording] = useState(false);
@@ -19,6 +21,8 @@ export default function ContributeMissingModal({ translation, fieldsToContribute
     const [uploadingAudio, setUploadingAudio] = useState(false);
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
+
     
     const MAX_RECORDING_SECONDS = 10;
 
@@ -28,6 +32,12 @@ export default function ContributeMissingModal({ translation, fieldsToContribute
         partOfSpeech: '',
         usageComment: ''
     });
+
+    const cleanFormData = (data) => {
+      return Object.fromEntries(
+        Object.entries(data).filter(([_, value]) => value !== '')
+      );
+    };
 
     useEffect(() => {
         let interval;
@@ -239,71 +249,73 @@ export default function ContributeMissingModal({ translation, fieldsToContribute
       setUploadProgress(0);
       
       try {
-        // let audioS3Key = null;
+        let audioS3Key = null;
 
-        // const audioToUpload = audioFile || (audioBlob ? new File([audioBlob], 'recording.webm', { type: 'audio/webm' }) : null);
+        const audioToUpload = audioFile || (audioBlob ? new File([audioBlob], 'recording.webm', { type: 'audio/webm' }) : null);
         
-        // if (audioToUpload) {
-        //     setUploadingAudio(true);
-        //     setUploadProgress(10);
+        if (audioToUpload) {
+            setUploadingAudio(true);
+            setUploadProgress(10);
             
-        //     try {
-        //         // Simulate progress during upload
-        //         const progressInterval = setInterval(() => {
-        //             setUploadProgress(prev => {
-        //                 if (prev >= 90) return prev;
-        //                 return prev + 10;
-        //             });
-        //         }, 200);
+            try {
+                // Simulate progress during upload
+                const progressInterval = setInterval(() => {
+                    setUploadProgress(prev => {
+                        if (prev >= 90) return prev;
+                        return prev + 10;
+                    });
+                }, 200);
 
-        //         audioS3Key = await contributionService.uploadAudio(audioToUpload);
+                audioS3Key = await contributionService.uploadAudio(audioToUpload);
                 
-        //         clearInterval(progressInterval);
-        //         setUploadProgress(100);
-        //     } catch (uploadError) {
-        //         setErrors({
-        //             submit: 'Failed to upload audio file. Please try again.',
-        //         });
-        //         setLoading(false);
-        //         setUploadingAudio(false);
-        //         setUploadProgress(0);
-        //         return;
-        //     }
+                clearInterval(progressInterval);
+                setUploadProgress(100);
+            } catch (uploadError) {
+                setErrors({
+                    submit: 'Failed to upload audio file. Please try again.',
+                });
+                setLoading(false);
+                setUploadingAudio(false);
+                setUploadProgress(0);
+                return;
+            }
             
-        //     // Small delay to show 100% progress
-        //     await new Promise(resolve => setTimeout(resolve, 300));
-        //     setUploadingAudio(false);
-        // }
-
-        // await contributionService.contributeTranslation({
-        //     ...formData,
-        //     audioUrl: audioS3Key,
-        // });
-
-        // setSuccess(true);
-        // setFormData({
-        //     languageId: formData.languageId,
-        //     wordText: '',
-        //     ipa: '',
-        //     englishDefinition: '',
-        //     exampleSentence: '',
-        //     partOfSpeech: '',
-        //     usageComment: ''
-        // });
-        // setAudioFile(null);
-        // setAudioBlob(null);
-        // setRecordingTime(0);
-        // setUploadProgress(0);
-
-        // const fileInput = document.getElementById('audioFile');
-        // if (fileInput) fileInput.value = '';
+            // Small delay to show 100% progress
+            await new Promise(resolve => setTimeout(resolve, 300));
+            setUploadingAudio(false);
+        }
         
-        // setTimeout(() => setSuccess(false), 5000);
+        await translationUpdateRequestService.addTranslationUpdateRequest(
+          translation.id,
+          translation.languageId,
+          {
+            ...cleanFormData(formData),
+            ...(audioS3Key ? { audioUrl: audioS3Key } : {})
+          }
+        );
+
+        setSuccess(true);
+        setErrors({});
+        setFormData({
+          ipa: '',
+          exampleSentence: '',
+          partOfSpeech: '',
+          usageComment: ''
+        });
+        setAudioFile(null);
+        setAudioBlob(null);
+        setRecordingTime(0);
+        setUploadProgress(0);
+
+        const fileInput = document.getElementById('audioFile');
+        if (fileInput) fileInput.value = '';
+        
+        setTimeout(() => setSuccess(false), 5000);
     } 
     catch (err) {
-        // setErrors({
-        //     submit: err.response?.data?.message || err.message || 'Failed to submit contribution. Please try again.',
-        // });
+        setErrors({
+            submit: err.response?.data?.message || err.message || 'Failed to submit contribution. Please try again.',
+        });
     } 
     finally {
         setLoading(false);
@@ -321,7 +333,14 @@ export default function ContributeMissingModal({ translation, fieldsToContribute
                 <p className={styles.subtitle}>
                     Contribute missing fields for "<strong>{translation.wordText}</strong>"
                 </p>
+
                 
+                {success && (
+                    <div className={styles.success}>
+                        Update Request submitted successfully. Thank you for your contribution!
+                    </div>
+                )}
+
                 {errors.submit && <div className={styles.error}>{errors.submit}</div>}
 
                 <form noValidate onSubmit={handleSubmit} className={styles.form}>
@@ -567,7 +586,7 @@ export default function ContributeMissingModal({ translation, fieldsToContribute
                     )}
 
                 <div className={styles.actions}>
-                    <Button type="submit" fullWidth>
+                    <Button type="submit" fullWidth disabled={loading || isRecording}>
                           {uploadingAudio ? (
                               <span className={styles.uploadingText}>
                                   Uploading Audio... {uploadProgress}%
