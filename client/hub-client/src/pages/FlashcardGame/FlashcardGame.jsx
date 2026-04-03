@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { setService } from '../../api/setService';
 import { gameService } from '../../api/gameService';
+import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
 import styles from './FlashcardGame.module.css';
 
-export default function FlashcardGame(){
+export default function FlashcardGame() {
     const { setId } = useParams();
+    const { isAuthenticated } = useAuth();
     const navigate = useNavigate();
     const [words, setWords] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -17,6 +19,7 @@ export default function FlashcardGame(){
     const [startTime] = useState(Date.now());
     const [viewedCards, setViewedCards] = useState(new Set());
     const [mounted, setMounted] = useState(false);
+    const [gameResult, setGameResult] = useState(null);
 
     useEffect(() => {
         setMounted(true);
@@ -27,14 +30,14 @@ export default function FlashcardGame(){
             try {
                 // Fetch the translations array directly
                 const translations = await setService.getSetWords(setId);
-                
+
                 console.log('Fetched translations:', translations);
-                
+
                 // Backend returns array of translations directly
                 if (!Array.isArray(translations) || translations.length === 0) {
                     throw new Error('No words found in set');
                 }
-                
+
                 // Shuffle the words
                 const shuffled = [...translations].sort(() => Math.random() - 0.5);
                 setWords(shuffled);
@@ -78,18 +81,20 @@ export default function FlashcardGame(){
         const duration = Math.floor((Date.now() - startTime) / 1000);
         // Score = percentage of cards viewed (0-100%)
         const score = words.length > 0 ? Math.round((viewedCards.size / words.length) * 100) : 0;
-        
-        try {
-            await gameService.uploadGameSession(setId, {
-                gameType: 'FLASHCARD',
-                score,
-                duration,
-            });
-        } catch (err) {
-            console.error('Error saving game session:', err);
+
+        if (isAuthenticated) {
+            try {
+                await gameService.uploadGameSession(setId, {
+                    gameType: 'FLASHCARD',
+                    score,
+                    duration,
+                });
+            } catch (err) {
+                console.error('Error saving game session:', err);
+            }
         }
-        
-        navigate(`/sets/${setId}`);
+        setGameResult({ score, duration, viewed: viewedCards.size, total: words.length });
+        // navigate(`/sets/${setId}`);
     };
 
     const handleKeyPress = (e) => {
@@ -107,6 +112,47 @@ export default function FlashcardGame(){
         window.addEventListener('keydown', handleKeyPress);
         return () => window.removeEventListener('keydown', handleKeyPress);
     }, [currentIndex, isFlipped]);
+
+    // Game result screen
+    if (gameResult) {
+        return (
+            <div className={`${styles.flashcardGame} ${styles.mounted}`}>
+                <div className={styles.backgroundPattern}></div>
+                <div className={styles.container}>
+                    <div className={styles.resultsScreen}>
+                        <h1 className={styles.resultsTitle}>Session Complete!</h1>
+                        {isAuthenticated ? (
+                            <p className={styles.resultsSaved}>Your results have been saved</p>
+                        ) : (
+                            <p className={styles.resultsGuest}>Sign in to save your progress</p>
+                        )}
+                        <div className={styles.resultsStats}>
+                            <div className={styles.resultsStat}>
+                                <span className={styles.resultsStatValue}>{gameResult.score}%</span>
+                                <span className={styles.resultsStatLabel}>Cards Viewed</span>
+                            </div>
+                            <div className={styles.resultsStat}>
+                                <span className={styles.resultsStatValue}>{gameResult.viewed}/{gameResult.total}</span>
+                                <span className={styles.resultsStatLabel}>Completed</span>
+                            </div>
+                            <div className={styles.resultsStat}>
+                                <span className={styles.resultsStatValue}>{gameResult.duration}s</span>
+                                <span className={styles.resultsStatLabel}>Duration</span>
+                            </div>
+                        </div>
+                        <div className={styles.resultsActions}>
+                            <Button onClick={() => { setGameResult(null); setCurrentIndex(0); setIsFlipped(false); setViewedCards(new Set()); setWords(prev => [...prev].sort(() => Math.random() - 0.5));}}>
+                                Play Again
+                            </Button>
+                            <Button variant="secondary" onClick={() => navigate(`/sets/${setId}`)}>
+                                Back to Set
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     if (loading) {
         return (
@@ -142,7 +188,7 @@ export default function FlashcardGame(){
     return (
         <div className={`${styles.flashcardGame} ${mounted ? styles.mounted : ''}`}>
             <div className={styles.backgroundPattern}></div>
-            
+
             <div className={styles.container}>
                 <header className={styles.header}>
                     <div className={styles.headerLeft}>
@@ -162,14 +208,14 @@ export default function FlashcardGame(){
                 </header>
 
                 <div className={styles.progressBar}>
-                    <div 
-                        className={styles.progressFill} 
+                    <div
+                        className={styles.progressFill}
                         style={{ width: `${progress}%` }}
                     ></div>
                 </div>
 
                 <div className={styles.cardContainer}>
-                    <div 
+                    <div
                         className={`${styles.flashcardWrapper} ${isFlipped ? styles.flipped : ''}`}
                         onClick={handleFlip}
                     >
@@ -189,10 +235,10 @@ export default function FlashcardGame(){
                                 </div>
                                 <div className={styles.flipHint}>
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
-                                        <path d="M21 3v5h-5"/>
-                                        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
-                                        <path d="M3 21v-5h5"/>
+                                        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+                                        <path d="M21 3v5h-5" />
+                                        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+                                        <path d="M3 21v-5h5" />
                                     </svg>
                                     <span>Click to flip</span>
                                 </div>
@@ -230,12 +276,12 @@ export default function FlashcardGame(){
                                 }}
                             >
                                 {showDetails ? 'Hide Details' : 'Show More Details'}
-                                <svg 
-                                    width="16" 
-                                    height="16" 
-                                    viewBox="0 0 24 24" 
-                                    fill="none" 
-                                    stroke="currentColor" 
+                                <svg
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
                                     strokeWidth="2"
                                     style={{ transform: showDetails ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }}
                                 >
