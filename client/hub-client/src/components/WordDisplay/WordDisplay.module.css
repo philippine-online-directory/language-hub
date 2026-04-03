@@ -563,6 +563,99 @@
   width: 100%;
 }
 
+
+.secondaryAuthors {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.moreAuthorsLabel {
+  color: #9CA3AF;
+  font-weight: 400;
+  font-size: 13px;
+  transition: color 0.3s ease;
+  position: relative;
+}
+
+.moreAuthorsLabel::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #9CA3AF;
+  transition: width 0.3s ease;
+}
+
+.moreAuthorsLabel:hover {
+  color: #6B7280; /* slightly darker gray */
+}
+
+.moreAuthorsLabel:hover::after {
+  width: 100%;
+}
+
+.secondaryAuthorsDropdown {
+  display: none;
+  position: absolute;
+  bottom: 100%;       
+  left: 0;
+  background: rgba(243, 244, 246, 0.95);
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.15);
+  animation: fadeInSlideUp 0.3s ease;
+  z-index: 10;
+}
+
+.secondaryAuthors:hover .secondaryAuthorsDropdown {
+  display: block;
+}
+
+@keyframes fadeInSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px); 
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.secondaryAuthorLink {
+  display: block;
+  color: #C0763A;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+  margin: 4px 0;
+}
+
+.secondaryAuthorLink::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #C0763A;
+  transition: width 0.3s ease;
+}
+
+.secondaryAuthorLink:hover {
+  color: #D68A4F;
+}
+
+.secondaryAuthorLink:hover::after {
+  width: 100%;
+}
+
 .verifiedBadge {
   display: inline-flex;
   align-items: center;

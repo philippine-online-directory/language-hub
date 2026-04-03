@@ -258,6 +258,26 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                                             >
                                                 @{translation.author.username}
                                             </Link>
+
+                                            {translation.secondaryAuthors?.length > 0 && (
+                                                <div className={styles.secondaryAuthors}>
+                                                  <span className={styles.moreAuthorsLabel}>
+                                                    +{translation.secondaryAuthors.length} more
+                                                  </span>
+                                                  <div className={styles.secondaryAuthorsDropdown}>
+                                                    {translation.secondaryAuthors.map((author) => (
+                                                      <Link
+                                                        key={author.id}
+                                                        to={`/profile/${author.id}`}
+                                                        className={styles.secondaryAuthorLink}
+                                                        onClick={(e) => e.stopPropagation()}
+                                                      >
+                                                        @{author.username}
+                                                      </Link>
+                                                    ))}
+                                                  </div>
+                                                </div>
+                                              )}
                                         </div>
                                     )}
                                 </div>
