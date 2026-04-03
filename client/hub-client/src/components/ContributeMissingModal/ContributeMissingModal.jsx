@@ -7,7 +7,6 @@ import { contributionService } from '../../api/contributionService';
 import { translationUpdateRequestService } from '../../api/translationUpdateRequestService';
 
 export default function ContributeMissingModal({ translation, fieldsToContribute, onClose }){
-    console.log('ContributeMissingModal rendered with translation:', translation);
     const [audioFile, setAudioFile] = useState(null);
     const [audioMode, setAudioMode] = useState('upload'); // 'upload' or 'record'
     const [isRecording, setIsRecording] = useState(false);
@@ -235,7 +234,6 @@ export default function ContributeMissingModal({ translation, fieldsToContribute
     };
 
     const handleSubmit = async (e) => {
-      console.log('Submitting contribution with data:', formData);
       e.preventDefault();
       const validationErrors = validate();
 
