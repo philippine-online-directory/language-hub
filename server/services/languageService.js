@@ -211,7 +211,8 @@ async function getTranslations(isoCode, {
             where: whereClause,
             include: {
                 language: true,
-                author: { select: { id: true, username: true } }
+                author: { select: { id: true, username: true } },
+                secondaryAuthors: { select: { id: true, username: true } }
             },
             skip,
             take: limit,
