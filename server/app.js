@@ -18,13 +18,25 @@ import translationUpdateRequestRouter from "./routes/translationUpdateRequest.js
 import './jobs/emailScheduler.js'
 
 
-const origin = process.env.FRONTEND_URL || 'http://localhost:5173'
+const allowedOrigins = [
+  'https://philippineonlinedictionary.com',
+  'https://www.philippineonlinedictionary.com',
+  'http://localhost:5173'
+];
 
 app.use(cors({
-    origin,
-    credentials: true,
-    optionsSuccessStatus: 200
-}))
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error('Not allowed by CORS: ' + origin));
+  },
+  credentials: true,
+  optionsSuccessStatus: 200
+}));
 
 if (process.env.NODE_ENV === 'production') {
   app.use(rateLimit({
