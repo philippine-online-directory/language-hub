@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx --watch app.js",
     "dev:debug": "tsx --watch --inspect app.js",
-    "start": "node --loader tsx/esm app.js"
+    "start": "node --import tsx/esm app.js"
   },
   "keywords": [],
   "author": "",
