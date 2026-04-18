@@ -9,7 +9,8 @@ const getWordOfTheDay = async () => {
             translation: {
                 include: {
                     language: { select: { name: true } },
-                    author: { select: { id: true, username: true } }
+                    author: { select: { id: true, username: true } },
+                    secondaryAuthors: { select: { id: true, username: true } }
                 }
             }
         }

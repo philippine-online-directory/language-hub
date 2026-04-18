@@ -23,9 +23,13 @@ model User {
   reminderType       ReminderType?
   lastReminderSentAt DateTime?
 
-  contributions Translation[]
+  contributions Translation[] @relation("PrimaryAuthor")
+  secondaryTranslations Translation[] @relation("secondaryAuthors")
+  
   createdSets   VocabSet[]
   gameScores    GameSession[]
+
+  submittedRequests TranslationUpdateRequest[]
 }
 
 model Language {
@@ -59,13 +63,31 @@ model Translation {
   languageId String
   language   Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
 
+  // Primary author
   authorId String
-  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author   User @relation("PrimaryAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+
+  // Secondary authors
+  secondaryAuthors User[] @relation("secondaryAuthors")
+
+  updateRequests TranslationUpdateRequest[]
 
   setWords      SetWord[]
   wordOfTheDays WordOfTheDay[]
   commonWord    CommonWord?    @relation(fields: [commonWordId], references: [id])
   commonWordId  Int?
+}
+
+model TranslationUpdateRequest {
+  id             String      @id @default(cuid())
+  translationId  String
+  translation    Translation @relation(fields: [translationId], references: [id])
+  submittedById  String
+  submittedBy    User        @relation(fields: [submittedById], references: [id])
+  languageId     String
+  
+  proposedData   Json
+  createdAt      DateTime    @default(now())
 }
 
 model VocabSet {

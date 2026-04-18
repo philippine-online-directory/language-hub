@@ -35,7 +35,6 @@ cron.schedule('0 8 * * *', async () => {
 
   for (const user of todaysBatch) {
     try {
-      console.log(`Sending reminder to ${user.email} with type ${user.reminderType}`);
 
       await brevo.transactionalEmails.sendTransacEmail({
         subject: `[POD] ${user.reminderType === "WORD" ? "Here’s today’s Word of the Day 🎉" : "Still haven’t checked today’s word? 👀"}`,

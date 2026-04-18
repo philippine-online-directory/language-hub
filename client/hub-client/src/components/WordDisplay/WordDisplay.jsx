@@ -6,6 +6,8 @@ import AddToSetModal from '../AddToSetModal/AddToSetModal';
 import { useAuth } from '../../context/AuthContext';
 import { setService } from '../../api/setService';
 import styles from './WordDisplay.module.css';
+import ContributeMissingModal from '../ContributeMissingModal/ContributeMissingModal';
+import { createPortal } from 'react-dom';
 
 const COMPLETABLE_FIELDS = [
     { key: 'ipa',             label: 'IPA pronunciation' },
@@ -15,7 +17,7 @@ const COMPLETABLE_FIELDS = [
     { key: 'partOfSpeech',    label: 'Part of speech' },
 ];
 
-function MissingFieldsBadge({ translation }) {
+function MissingFieldsBadge({ translation, setShowContributeModal, setFieldsToContribute}) {
     const [open, setOpen] = useState(false);
     const wrapperRef = useRef(null);
 
@@ -81,7 +83,23 @@ function MissingFieldsBadge({ translation }) {
                             </li>
                         ))}
                     </ul>
+
+                    <div>
+                        <button
+                          type="button"
+                          className={styles.contributeButton}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowContributeModal(true);
+                            setFieldsToContribute(missingFields.map(f => f.key));
+                          }}
+
+                        >
+                          Contribute Missing Fields
+                        </button>
+                    </div>
                 </div>
+                
             )}
         </div>
     );
@@ -95,6 +113,8 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
     const [isHovered, setIsHovered] = useState(false);
     const [setsContainingTranslation, setSetsContainingTranslation] = useState([]);
     const [loadingSets, setLoadingSets] = useState(false);
+    const [showContributeModal, setShowContributeModal] = useState(false);
+    const [fieldsToContribute, setFieldsToContribute] = useState([]);
 
     useEffect(() => {
         const checkSets = async () => {
@@ -140,7 +160,7 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                                 {translation.status === 'VERIFIED' && (
                                     <div className={styles.verifiedBadgeSmall}>✓</div>
                                 )}
-                                <MissingFieldsBadge translation={translation} />
+                                <MissingFieldsBadge translation={translation} setShowContributeModal={setShowContributeModal} setFieldsToContribute={setFieldsToContribute} />
                             </div>
 
                             {isHovered && (
@@ -165,7 +185,7 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                                     )}
                                 </div>
                                 <div className={styles.expandedHeaderActions}>
-                                    <MissingFieldsBadge translation={translation} />
+                                    <MissingFieldsBadge translation={translation} setShowContributeModal={setShowContributeModal} setFieldsToContribute={setFieldsToContribute}/>
                                     <button
                                         className={styles.collapseButton}
                                         onClick={handleCollapse}
@@ -238,6 +258,26 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                                             >
                                                 @{translation.author.username}
                                             </Link>
+
+                                            {translation.secondaryAuthors?.length > 0 && (
+                                                <div className={styles.secondaryAuthors}>
+                                                  <span className={styles.moreAuthorsLabel}>
+                                                    +{translation.secondaryAuthors.length} more
+                                                  </span>
+                                                  <div className={styles.secondaryAuthorsDropdown}>
+                                                    {translation.secondaryAuthors.map((author) => (
+                                                      <Link
+                                                        key={author.id}
+                                                        to={`/profile/${author.id}`}
+                                                        className={styles.secondaryAuthorLink}
+                                                        onClick={(e) => e.stopPropagation()}
+                                                      >
+                                                        @{author.username}
+                                                      </Link>
+                                                    ))}
+                                                  </div>
+                                                </div>
+                                              )}
                                         </div>
                                     )}
                                 </div>
@@ -277,6 +317,15 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                         }
                     }}
                 />
+            )}
+
+            {showContributeModal && createPortal(
+                <ContributeMissingModal
+                    translation={translation}
+                    fieldsToContribute={fieldsToContribute}
+                    onClose={() => setShowContributeModal(false)}
+                />,
+                document.body
             )}
         </>
     );

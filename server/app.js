@@ -14,6 +14,7 @@ import audioRouter from "./routes/audioRouter.js";
 import translatorRouter from "./routes/translatorRouter.js";
 import handleError from "./middleware/errorHandler.js";
 import wordOfTheDayRouter from "./routes/wordOfTheDayRouter.js";
+import translationUpdateRequestRouter from "./routes/translationUpdateRequest.js";
 import './jobs/emailScheduler.js'
 
 
@@ -36,7 +37,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 
-
 app.use('/', authRouter)
 app.use('/contributions', contributionRouter)
 app.use('/languages', languageRouter)
@@ -44,6 +44,7 @@ app.use('/sets', setRouter)
 app.use('/profile', profileRouter)
 app.use('/audio', audioRouter)
 app.use('/word-of-the-day', wordOfTheDayRouter)
+app.use('/translation-requests', translationUpdateRequestRouter)
 app.use('/translate', translatorRouter)
 app.use(handleError)
 

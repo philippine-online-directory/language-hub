@@ -79,7 +79,7 @@ const getTranslations = [
         const resolvedSortBy = VALID_SORTS.includes(sortBy) ? sortBy : 'alpha-asc';
 
         // Validate status
-        const VALID_STATUSES = ['VERIFIED', 'ALL'];
+        const VALID_STATUSES = ['VERIFIED', 'UNVERIFIED', 'ALL'];
         const resolvedStatus = VALID_STATUSES.includes(status) ? status : 'VERIFIED';
 
         try {
