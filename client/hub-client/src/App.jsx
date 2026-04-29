@@ -5,6 +5,8 @@ import LoginPage from './pages/LoginPage/LoginPage';
 import RegisterPage from './pages/RegisterPage/RegisterPage';
 import LanguagesPage from './pages/LanguagesPage/LanguagesPage';
 import LanguageDetailPage from './pages/LanguageDetailPage/LanguageDetailPage';
+import CommonWordsPage from './pages/CommonWordsPage/CommonWordsPage';
+import MissingCommonWordsPage from './pages/MissingCommonWordsPage/MissingCommonWordsPage';
 import ContributePage from './pages/ContributePage/ContributePage';
 import UserContributionsPage from './pages/UserContributionsPage/UserContributionsPage';
 import SetsPage from './pages/SetsPage/SetsPage';
@@ -78,7 +80,9 @@ function AppContent(){
                 <Route path="/translate" element={<TranslatePage />} />
                 
                 {/* Language Routes */}
+                <Route path="/common-words" element={<CommonWordsPage />} />
                 <Route path="/languages" element={<LanguagesPage />} />
+                <Route path="/languages/:isoCode/missing-words" element={<MissingCommonWordsPage />} />
                 <Route path="/languages/:isoCode" element={<LanguageDetailPage />} />
                 
                 {/* Set Routes */}

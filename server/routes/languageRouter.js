@@ -5,6 +5,8 @@ const languageRouter = Router();
 
 
 languageRouter.get('/', languageController.getLanguages)
+languageRouter.get('/common-words', languageController.getCommonWords)
+languageRouter.get('/:isoCode/missing-words', languageController.getMissingCommonWords);
 languageRouter.get('/:isoCode', languageController.getLanguageByCode);
 
 // Admin protected language routes

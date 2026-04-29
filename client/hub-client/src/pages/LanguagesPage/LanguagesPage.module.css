@@ -68,6 +68,19 @@
 .header {
   margin-bottom: 48px;
   animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.1s backwards;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.headerContent {
+  max-width: 760px;
+}
+
+.headerActions {
+  flex-shrink: 0;
 }
 
 .title {
@@ -245,6 +258,10 @@
   .languagesGrid {
     grid-template-columns: 1fr;
     gap: 20px;
+  }
+
+  .headerActions {
+    width: 100%;
   }
 
   .searchModes {

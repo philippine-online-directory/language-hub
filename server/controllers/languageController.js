@@ -1,6 +1,7 @@
 import auth from '../middleware/auth.js'
 import { isAdmin } from '../middleware/roleAuth.js'
 import languageService from '../services/languageService.js'
+import commonWordService from '../services/commonWordService.js'
 import { body, matchedData } from 'express-validator'
 import validationErrorCheck from '../middleware/expressValidate.js'
 
@@ -44,6 +45,46 @@ const getLanguageByCode = [
 
             return res.status(200).json(language);
         } catch (err) {
+            next(err);
+        }
+    }
+];
+
+const getCommonWords = [
+    async (req, res, next) => {
+        const { page, limit } = req.query;
+
+        try {
+            const commonWords = await commonWordService.getCommonWords(
+                parseInt(page) || 1,
+                parseInt(limit) || 20
+            );
+
+            res.status(200).json(commonWords);
+        } catch (err) {
+            next(err);
+        }
+    }
+];
+
+const getMissingCommonWords = [
+    async (req, res, next) => {
+        const { isoCode } = req.params;
+        const { page, limit } = req.query;
+
+        try {
+            const commonWords = await commonWordService.getMissingCommonWords(
+                isoCode,
+                parseInt(page) || 1,
+                parseInt(limit) || 20
+            );
+
+            res.status(200).json(commonWords);
+        } catch (err) {
+            if (err.statusCode === 404) {
+                return res.status(404).json({ error: err.message });
+            }
+
             next(err);
         }
     }
@@ -152,6 +193,8 @@ const deleteLanguage = [
 const languageController = {
     getLanguages,
     getLanguageByCode,
+    getCommonWords,
+    getMissingCommonWords,
     getTranslations,
     addLanguage,
     updateLanguage,

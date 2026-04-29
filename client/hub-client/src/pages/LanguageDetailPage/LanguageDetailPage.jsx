@@ -270,6 +270,12 @@ export default function LanguageDetailPage() {
                         <Button variant="primary" onClick={() => navigate('/contribute')}>
                             Contribute Word
                         </Button>
+                        <Button
+                            variant="secondary"
+                            onClick={() => navigate(`/languages/${isoCode}/missing-words`)}
+                        >
+                            Missing Core Words
+                        </Button>
                     </div>
 
                     {}

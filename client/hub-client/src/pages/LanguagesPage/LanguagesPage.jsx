@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { languageService } from '../../api/languageService';
 import { wordOfTheDayService } from '../../api/wordOfTheDayService';
 import WordDisplay from '../../components/WordDisplay/WordDisplay';
@@ -6,9 +7,11 @@ import useDebounce from '../../hooks/useDebounce';
 import LanguageCard from '../../components/LanguageCard/LanguageCard';
 import Pagination from '../../components/Pagination/Pagination';
 import Input from '../../components/Input/Input';
+import Button from '../../components/Button/Button';
 import styles from './LanguagesPage.module.css';
 
 export default function LanguagesPage() {
+    const navigate = useNavigate();
     const [languages, setLanguages] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(true);
@@ -131,10 +134,20 @@ export default function LanguagesPage() {
 
             <div className={styles.container}>
                 <header className={styles.header}>
-                    <h1 className={styles.title}>Explore Languages</h1>
-                    <p className={styles.subtitle}>
-                        Discover and learn from endangered and minority languages around the Philippines
-                    </p>
+                    <div className={styles.headerContent}>
+                        <h1 className={styles.title}>Explore Languages</h1>
+                        <p className={styles.subtitle}>
+                            Discover and learn from endangered and minority languages around the Philippines
+                        </p>
+                    </div>
+                    <div className={styles.headerActions}>
+                        <Button
+                            variant="secondary"
+                            onClick={() => navigate('/common-words')}
+                        >
+                            View Common Words
+                        </Button>
+                    </div>
                 </header>
 
                 <div className={styles.searchSection}>

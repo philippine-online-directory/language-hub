@@ -13,6 +13,20 @@ export const languageService = {
         return response.data;
     },
 
+    getCommonWords: async (page = 1, limit = 20) => {
+        const response = await api.get('/languages/common-words', {
+            params: { page, limit }
+        });
+        return response.data;
+    },
+
+    getMissingCommonWords: async (isoCode, page = 1, limit = 20) => {
+        const response = await api.get(`/languages/${isoCode}/missing-words`, {
+            params: { page, limit }
+        });
+        return response.data;
+    },
+
     getTranslations: async (isoCode, options = {}) => {
         const params = { ...options };
         if (typeof params.coreWordsOnly === 'boolean') {
