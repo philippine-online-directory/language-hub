@@ -46,7 +46,8 @@ async function generateDownloadUrls(fileNames) {
 function generateStorageKey(originalFileName) {
   const timestamp = Date.now()
   const randomString = Math.random().toString(36).slice(2)
-  const extension = originalFileName.split('.').pop().toLowerCase()
+  const dotIndex = originalFileName.lastIndexOf('.')
+  const extension = dotIndex > 0 ? originalFileName.slice(dotIndex + 1).toLowerCase() : 'bin'
 
   return `audio/${timestamp}-${randomString}.${extension}`
 }

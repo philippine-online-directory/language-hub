@@ -16,7 +16,6 @@ async function searchUsers(username, page = 1, limit = 20){
             select: {
                 id: true,
                 username: true,
-                email: true,
                 role: true,
                 createdAt: true,
                 _count: {
@@ -96,9 +95,11 @@ async function getMyProfile(userId){
 async function setMyProfile(userId, updates) {
   if (!userId) throw new Error("Must be logged in to update your profile");
 
+  const { reminderType } = updates;
+
   await prisma.user.update({
     where: { id: userId },
-    data: updates, // { reminderType: updates.reminderType } or other fields that need to be updated
+    data: { reminderType },
   });
 
 }

@@ -20,8 +20,9 @@ async function auth(req, res, next){
                 createdAt: true,
             }
         });
+        if (!req.user) return res.status(401).json({ error: 'User no longer exists' });
         next();
-    } 
+    }
     catch (err) {
         return res.status(401).json({ error: 'Invalid token' });
     }

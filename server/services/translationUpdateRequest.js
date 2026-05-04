@@ -42,11 +42,19 @@ async function acceptTranslationUpdateRequest(requestId) {
     await storageService.deleteAudioFile(translation.audioUrl);
   }
 
+  const ALLOWED_PROPOSAL_FIELDS = [
+    'wordText', 'ipa', 'englishDefinition', 'exampleSentence',
+    'audioUrl', 'partOfSpeech', 'usageComment'
+  ];
+  const safeData = Object.fromEntries(
+    Object.entries(proposedData).filter(([k]) => ALLOWED_PROPOSAL_FIELDS.includes(k))
+  );
+
   // Apply proposedData to the translation
   const updatedTranslation = await prisma.translation.update({
     where: { id: translationId },
     data: {
-      ...proposedData,
+      ...safeData,
       ...( !isPrimaryAuthor && !isAlreadySecondary
         ? { secondaryAuthors: { connect: { id: submittedById } } }
         : {} ),

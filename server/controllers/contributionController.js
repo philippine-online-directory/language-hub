@@ -58,9 +58,10 @@ const getUserContributions = [
     auth,
     async (req, res, next) => {
         const { id } = req.user
+        const { page = 1, limit = 20 } = req.query
 
         try {
-            const contributions = await contributeService.getUserContributions(id);
+            const contributions = await contributeService.getUserContributions(id, Number(page), Number(limit));
 
             res.status(200).json(contributions)
         }

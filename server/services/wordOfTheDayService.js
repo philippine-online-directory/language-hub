@@ -71,6 +71,8 @@ const assignWordOfTheDay = async () => {
         }
     });
 
+    if (!translation) throw new Error('No eligible translation found — DB may have changed during selection');
+
     await prisma.$transaction([
         prisma.translation.update({
             where: { id: translation.id },

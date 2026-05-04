@@ -27,6 +27,11 @@ async function contributeTranslation(
     // Try to match to top 3000 words
     const commonWord = await findCommonWordMatch(englishDefinition);
 
+    // Check before inserting whether this common word is already covered for this language
+    const isFirstCoverage = commonWord
+        ? (await prisma.translation.count({ where: { languageId, commonWordId: commonWord.id } })) === 0
+        : false;
+
     const contributedTranslation = await prisma.translation.create({
         data: {
             authorId: userId,
@@ -45,14 +50,10 @@ async function contributeTranslation(
         }
     });
 
-    if (commonWord) {
+    if (isFirstCoverage) {
         await prisma.language.update({
             where: { id: languageId },
-            data: {
-                completionCount: {
-                    increment: 1
-                }
-            }
+            data: { completionCount: { increment: 1 } }
         });
     }
 
