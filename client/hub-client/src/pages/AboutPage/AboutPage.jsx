@@ -1,0 +1,103 @@
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { useEffect, useRef } from 'react';
+import Button from '../../components/Button/Button';
+import styles from './AboutPage.module.css';
+
+export default function AboutPage() {
+    const navigate = useNavigate();
+    const { isAuthenticated } = useAuth();
+    const featuresRef = useRef(null);
+    const ctaRef = useRef(null);
+
+    useEffect(() => {
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReducedMotion) return;
+
+        const observerOptions = { threshold: 0.15, rootMargin: '0px' };
+
+        const observerCallback = (entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add(styles.visible);
+                } else {
+                    entry.target.classList.remove(styles.visible);
+                }
+            });
+        };
+
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+        if (featuresRef.current) {
+            const featureElements = featuresRef.current.querySelectorAll(`.${styles.feature}`);
+            featureElements.forEach(el => observer.observe(el));
+        }
+
+        if (ctaRef.current) {
+            observer.observe(ctaRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, []);
+
+    return (
+        <div className={styles.aboutPage}>
+            <div className={styles.pageHeader}>
+                <div className={styles.pageHeaderInner}>
+                    <h1 className={styles.pageTitle}>About Philippine Online Dictionary</h1>
+                    <p className={styles.pageSubtitle}>
+                        Explore words and phrases from languages around the <strong>Philippines</strong>.
+                        Contribute translations, build vocabulary sets, and help keep
+                        linguistic diversity alive.
+                    </p>
+                </div>
+            </div>
+
+            <div className={styles.container}>
+                <section className={styles.features} ref={featuresRef}>
+                    <div className={styles.feature}>
+                        <h2 className={styles.featureTitle}>Explore</h2>
+                        <p className={styles.featureDescription}>
+                            Discover words and phrases from endangered and minority
+                            languages, complete with pronunciation guides and cultural context.
+                        </p>
+                    </div>
+
+                    <div className={styles.feature}>
+                        <h2 className={styles.featureTitle}>Contribute</h2>
+                        <p className={styles.featureDescription}>
+                            Share your knowledge by contributing translations, recordings,
+                            and example sentences. Every contribution helps preserve linguistic heritage.
+                        </p>
+                    </div>
+
+                    <div className={styles.feature}>
+                        <h2 className={styles.featureTitle}>Learn</h2>
+                        <p className={styles.featureDescription}>
+                            Create custom vocabulary sets and practice with interactive games.
+                            Make language preservation part of your learning journey.
+                        </p>
+                    </div>
+                </section>
+
+                <section className={styles.callToAction} ref={ctaRef}>
+                    <h2 className={styles.ctaTitle}>
+                        You're helping keep languages alive
+                    </h2>
+                    <p className={styles.ctaDescription}>
+                        Join a community dedicated to preserving the Philippines' linguistic diversity.
+                        Every word shared is a step toward cultural preservation.
+                    </p>
+                    {!isAuthenticated && (
+                        <Button
+                            variant="primary"
+                            onClick={() => navigate('/register')}
+                        >
+                            Join Now
+                        </Button>
+                    )}
+                </section>
+            </div>
+        </div>
+    );
+}

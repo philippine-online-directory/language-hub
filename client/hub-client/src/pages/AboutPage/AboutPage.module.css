@@ -1,0 +1,239 @@
+.aboutPage {
+  background: #F6F4EF;
+  min-height: 100vh;
+}
+
+.pageHeader {
+  background: #F6F4EF;
+  padding: 80px 24px 64px;
+  text-align: center;
+  border-bottom: 1px solid rgba(229, 231, 235, 0.6);
+}
+
+.pageHeaderInner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.pageTitle {
+  font-family: 'Fraunces', serif;
+  font-size: 48px;
+  line-height: 56px;
+  font-weight: 600;
+  color: #1F2937;
+  margin-bottom: 20px;
+  letter-spacing: -0.02em;
+}
+
+.pageSubtitle {
+  font-size: 20px;
+  line-height: 32px;
+  color: #6B7280;
+}
+
+.pageSubtitle strong {
+  color: #C0763A;
+  font-weight: 600;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 96px 24px;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 48px;
+  margin-bottom: 96px;
+  perspective: 1000px;
+}
+
+.feature {
+  text-align: center;
+  padding: 40px 32px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(229, 231, 235, 0.6);
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(60px) scale(0.95);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feature:nth-child(1) { transition-delay: 0s; }
+.feature:nth-child(2) { transition-delay: 0.1s; }
+.feature:nth-child(3) { transition-delay: 0.2s; }
+
+.feature.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.feature::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(192, 118, 58, 0.05) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.feature:hover {
+  transform: translateY(-12px) rotateX(5deg);
+  box-shadow: 0 20px 60px rgba(192, 118, 58, 0.15);
+  border-color: rgba(192, 118, 58, 0.3);
+}
+
+.feature:hover::before {
+  opacity: 1;
+}
+
+.featureTitle {
+  font-family: 'Fraunces', serif;
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 500;
+  color: #1F2937;
+  margin-bottom: 16px;
+}
+
+.featureDescription {
+  font-size: 16px;
+  line-height: 24px;
+  color: #6B7280;
+}
+
+.callToAction {
+  text-align: center;
+  padding: 64px 48px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(192, 118, 58, 0.05) 100%);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  border: 1px solid rgba(192, 118, 58, 0.2);
+  box-shadow: 0 20px 60px rgba(192, 118, 58, 0.1);
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(60px) rotateX(-5deg);
+  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.callToAction.visible {
+  opacity: 1;
+  transform: translateY(0) rotateX(0deg);
+}
+
+.callToAction::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(192, 118, 58, 0.05) 50%,
+    transparent 70%
+  );
+  animation: rotateGlow 10s linear infinite;
+}
+
+@keyframes rotateGlow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.ctaTitle {
+  font-family: 'Fraunces', serif;
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 500;
+  color: #1F2937;
+  margin-bottom: 16px;
+}
+
+.ctaDescription {
+  font-size: 18px;
+  line-height: 28px;
+  color: #6B7280;
+  margin-bottom: 32px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feature,
+  .callToAction {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .feature.visible,
+  .callToAction.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  .callToAction::before {
+    animation: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .pageTitle {
+    font-size: 36px;
+    line-height: 44px;
+  }
+
+  .pageSubtitle {
+    font-size: 18px;
+    line-height: 28px;
+  }
+
+  .container {
+    padding: 64px 16px;
+  }
+
+  .features {
+    gap: 32px;
+    margin-bottom: 64px;
+  }
+
+  .callToAction {
+    padding: 32px 24px;
+  }
+
+  .ctaTitle {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  .ctaDescription {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pageTitle {
+    font-size: 28px;
+    line-height: 36px;
+  }
+
+  .pageHeader {
+    padding: 60px 16px 48px;
+  }
+}
