@@ -89,7 +89,7 @@ export function wordOfTheDayTemplate(formattedDate, word, language, definition, 
       </head>
       <body>
         <div class="card">
-          <div class="header">Philippine Online Directory</div>
+          <div class="header">Philippine Online Dictionary</div>
           <div class="intro">
             We are pleased to present the Word of the Day for <strong>${formattedDate}</strong>.  
             May this entry help preserve and celebrate the diverse languages of the Philippines.
@@ -103,7 +103,7 @@ export function wordOfTheDayTemplate(formattedDate, word, language, definition, 
             <a href="http://localhost:5173" class="cta">Explore More Words</a>
           </div>
           <div class="footer">
-            Philippine Online Directory — dedicated to keeping our languages alive
+            Philippine Online Dictionary — dedicated to keeping our languages alive
           </div>
         </div>
       </body>
@@ -181,7 +181,7 @@ export function checkWordOfTheDayTemplate() {
       <body>
         <div class="card">
           <div class="header">
-            Philippine Online Directory
+            Philippine Online Dictionary
           </div>
 
           <h1>Don’t Miss Today’s Word!</h1>
@@ -195,7 +195,7 @@ export function checkWordOfTheDayTemplate() {
           </div>
 
           <div class="footer">
-            Philippine Online Directory — dedicated to preserving and celebrating our languages
+            Philippine Online Dictionary — dedicated to preserving and celebrating our languages
           </div>
         </div>
       </body>

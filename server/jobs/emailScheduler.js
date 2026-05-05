@@ -38,7 +38,7 @@ cron.schedule('0 8 * * *', async () => {
 
       await brevo.transactionalEmails.sendTransacEmail({
         subject: `[POD] ${user.reminderType === "WORD" ? "Here’s today’s Word of the Day 🎉" : "Still haven’t checked today’s word? 👀"}`,
-        sender: { name: "Philippine Online Directory", email: "philippineonlinedirectory.auto@gmail.com" },
+        sender: { name: "Philippine Online Dictionary", email: "philippineonlinedirectory.auto@gmail.com" },
         to: [{ email: user.email }],
         htmlContent: user.reminderType === "WORD" ? wordTemplate : checkTemplate
       });

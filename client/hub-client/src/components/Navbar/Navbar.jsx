@@ -38,7 +38,7 @@ export default function Navbar(){
             <div className={styles.container}>
                 <Link to="/" className={styles.logo}>
                     <span className={styles.logoText}>Philippine Online</span>
-                    <span className={styles.logoAccent}>Directory</span>
+                    <span className={styles.logoAccent}>Dictionary</span>
                 </Link>
 
                 {/* Mobile Menu Button */}
@@ -54,26 +54,26 @@ export default function Navbar(){
 
                 {/* Desktop Navigation */}
                 <div className={`${styles.navLinks} ${mobileMenuOpen ? styles.mobileMenuOpen : ''}`}>
-                    {/* Translate link — visible to all users */}
+                    {/* Dictionaries — show for all users */}
                     <Link
-                        to="/translate"
-                        className={`${styles.navLink} ${isActive('/translate') ? styles.active : ''}`}
-                    >
-                        <svg className={styles.linkIcon} viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M8 5a1 1 0 000 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z" />
-                        </svg>
-                        <span>Translate</span>
-                    </Link>
-
-                    {/* Languages — show for all users */}
-                    <Link 
-                            to="/languages" 
-                            className={`${styles.navLink} ${isActive('/languages') ? styles.active : ''}`}
+                        to="/languages"
+                        className={`${styles.navLink} ${isActive('/languages') ? styles.active : ''}`}
                     >
                         <svg className={styles.linkIcon} viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.107 3.567 1 1 0 01-1.334-1.49 17.087 17.087 0 003.13-3.733 18.992 18.992 0 01-1.487-2.494 1 1 0 111.79-.89c.234.47.489.928.764 1.372.417-.934.752-1.913.997-2.927H3a1 1 0 110-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.982a.869.869 0 01.02.037l.99 1.98a1 1 0 11-1.79.895L15.383 16h-4.764l-.724 1.447a1 1 0 11-1.788-.894l.99-1.98.019-.038 2.99-5.982A1 1 0 0113 8zm-1.382 6h2.764L13 11.236 11.618 14z" clipRule="evenodd" />
                         </svg>
-                        <span>Languages</span>
+                        <span>Dictionaries</span>
+                    </Link>
+
+                    {/* About — visible to all users */}
+                    <Link
+                        to="/about"
+                        className={`${styles.navLink} ${isActive('/about') ? styles.active : ''}`}
+                    >
+                        <svg className={styles.linkIcon} viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                        </svg>
+                        <span>About</span>
                     </Link>
 
                     {/* Sets tab — visible to all users */}
