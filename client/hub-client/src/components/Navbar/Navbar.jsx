@@ -118,6 +118,17 @@ export default function Navbar(){
                             <span>Dictionaries</span>
                         </Link>
 
+                        {/* Contribute — always visible, behavior depends on auth state */}
+                        <button
+                            className={`${styles.navLink} ${styles.navLinkButton} ${isActive('/contribute') ? styles.active : ''}`}
+                            onClick={handleContributeClick}
+                        >
+                            <svg className={styles.linkIcon} viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
+                            </svg>
+                            <span>Contribute</span>
+                        </button>
+
                         {/* About — visible to all users */}
                         <Link
                             to="/about"
@@ -161,17 +172,6 @@ export default function Navbar(){
                             </svg>
                             <span>Community</span>
                         </Link>
-
-                        {/* Contribute — always visible, behavior depends on auth state */}
-                        <button
-                            className={`${styles.navLink} ${styles.navLinkButton} ${isActive('/contribute') ? styles.active : ''}`}
-                            onClick={handleContributeClick}
-                        >
-                            <svg className={styles.linkIcon} viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
-                            </svg>
-                            <span>Contribute</span>
-                        </button>
 
                         {/* Authenticated-only tabs */}
                         {user && (
