@@ -61,22 +61,18 @@ export default function LanguagesPage() {
 
             try {
                 let result;
-                if (searchMode === 'isoCode') {
-                    if (!debouncedSearch) {
-                        setLanguages([]);
-                        setPagination(null);
-                        setLoading(false);
-                        return;
-                    }
-                    const language = await languageService.getLanguageByCode(debouncedSearch);
-                    result = {
-                        languages: language ? [language] : [],
-                        pagination: { page: 1, limit: 1, total: language ? 1 : 0, totalPages: 1 }
-                    };
+                if (searchMode === 'isoCode' && !debouncedSearch) {
+                    setLanguages([]);
+                    setPagination(null);
+                    setLoading(false);
+                    return;
                 }
-                else {
-                    result = await languageService.getLanguages(currentPage, LANGUAGES_PER_PAGE, debouncedSearch);
-                }
+                result = await languageService.getLanguages(
+                    searchMode === 'isoCode' ? 1 : currentPage,
+                    LANGUAGES_PER_PAGE,
+                    debouncedSearch,
+                    searchMode
+                );
 
                 setLanguages(result.languages);
                 setPagination(result.pagination);
@@ -86,13 +82,8 @@ export default function LanguagesPage() {
                 }
             }
             catch (err) {
-                if (searchMode === 'isoCode' && err.response?.status === 404) {
-                    setLanguages([]);
-                    setPagination(null);
-                } else {
-                    setError('Failed to load languages. Please try again.');
-                    console.error('Error fetching languages:', err);
-                }
+                setError('Failed to load languages. Please try again.');
+                console.error('Error fetching languages:', err);
             }
             finally {
                 setLoading(false);
