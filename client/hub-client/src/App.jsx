@@ -17,6 +17,7 @@ import PublicProfilePage from './pages/PublicProfilePage/PublicProfilePage';
 import UsersPage from './pages/UsersPage/UsersPage';
 import HomePage from './pages/HomePage/HomePage';
 import AboutPage from './pages/AboutPage/AboutPage';
+import SiteGuidePage from './pages/SiteGuidePage/SiteGuidePage';
 import FlashcardGame from './pages/FlashcardGame/FlashcardGame';
 import MatchingGame from './pages/MatchingGame/MatchingGame';
 import WritingGame from './pages/WritingGame/WritingGame';
@@ -77,6 +78,7 @@ function AppContent(){
                 {/* Public Routes */}
                 <Route path="/" element={<HomePage />} />
                 <Route path="/about" element={<AboutPage />} />
+                <Route path="/site-guide" element={<SiteGuidePage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/translate" element={<TranslatePage />} />
