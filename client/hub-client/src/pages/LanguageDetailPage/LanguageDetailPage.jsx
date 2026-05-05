@@ -183,7 +183,7 @@ export default function LanguageDetailPage() {
         const items = gridRef.current.querySelectorAll(`.${styles.animateItem}`);
         items.forEach(item => observer.observe(item));
         return () => observer.disconnect();
-    }, [translations]);
+    }, [translations, translationsOpen]);
 
     const handleRetry = useCallback(() => {
         setRetryCount(c => c + 1);
