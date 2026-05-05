@@ -53,7 +53,7 @@
 }
 
 .heroTextWrapper {
-  max-width: 640px;
+  max-width: 760px;
   animation: slideInTextFromRight 1.2s cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
@@ -91,9 +91,12 @@
 }
 
 .heroActions {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, max-content);
   gap: 16px;
-  flex-wrap: wrap;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
 }
 
 .container {
@@ -399,7 +402,9 @@
   }
 
   .heroActions {
+    grid-template-columns: 1fr;
     justify-content: center;
+    width: 100%;
   }
 
   .container {
