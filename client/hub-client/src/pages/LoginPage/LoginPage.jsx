@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
@@ -8,6 +8,7 @@ import styles from './LoginPage.module.css';
 
 export default function LoginPage(){
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const { login } = useAuth();
     const [formData, setFormData] = useState({
         email: '',
@@ -15,6 +16,9 @@ export default function LoginPage(){
     });
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
+
+    const redirectTo = searchParams.get('redirect') || '/';
+    const isContributeIntent = searchParams.get('intent') === 'contribute';
 
     const handleChange = (e) => {
         setFormData({
@@ -44,25 +48,29 @@ export default function LoginPage(){
         e.preventDefault();
 
         const validationErrors = validate();
-        
+
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             return;
         }
-        
+
         setLoading(true);
 
         try {
             await login(formData);
-            navigate('/');
-        } 
+            navigate(redirectTo);
+        }
         catch (err) {
             setErrors(err.response?.data?.message || 'Login failed. Please try again.');
-        } 
+        }
         finally {
             setLoading(false);
         }
     };
+
+    const registerHref = isContributeIntent
+        ? `/register?redirect=${encodeURIComponent(redirectTo)}&intent=contribute`
+        : '/register';
 
     return (
         <div className={styles.loginPage}>
@@ -72,6 +80,12 @@ export default function LoginPage(){
                     <p className={styles.subtitle}>
                         Continue your journey in language preservation
                     </p>
+
+                    {isContributeIntent && (
+                        <div className={styles.contributeNotice}>
+                            <strong>You must create an account or sign in to contribute translations.</strong>
+                        </div>
+                    )}
 
                     {errors.submit && <div className={styles.error}>{errors.submit}</div>}
 
@@ -105,7 +119,7 @@ export default function LoginPage(){
 
                     <p className={styles.registerLink}>
                         Don't have an account?{' '}
-                        <Link to="/register" className={styles.link}>
+                        <Link to={registerHref} className={styles.link}>
                             Register here
                         </Link>
                     </p>

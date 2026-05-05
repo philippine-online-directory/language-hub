@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
@@ -8,6 +8,7 @@ import styles from './RegisterPage.module.css';
 
 export default function RegisterPage(){
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const { register } = useAuth();
     const [formData, setFormData] = useState({
         email: '',
@@ -17,6 +18,9 @@ export default function RegisterPage(){
     });
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
+
+    const redirectTo = searchParams.get('redirect') || '/';
+    const isContributeIntent = searchParams.get('intent') === 'contribute';
 
     const handleChange = (e) => {
         setFormData({
@@ -32,32 +36,32 @@ export default function RegisterPage(){
 
     const validate = () => {
         const newErrors = {};
-        
+
         if (!formData.email) {
             newErrors.email = 'Email is required';
-        } 
+        }
         else if (!/\S+@\S+\.\S+/.test(formData.email)) {
             newErrors.email = 'Email is invalid';
         }
-        
+
         if (!formData.username) {
             newErrors.username = 'Username is required';
-        } 
+        }
         else if (formData.username.length < 4) {
             newErrors.username = 'Username must be at least 4 characters';
         }
-        
+
         if (!formData.password) {
             newErrors.password = 'Password is required';
-        } 
+        }
         else if (formData.password.length < 8) {
             newErrors.password = 'Password must be at least 8 characters';
         }
-        
+
         if (formData.password !== formData.confirmPassword) {
             newErrors.confirmPassword = 'Passwords do not match';
         }
-        
+
         return newErrors;
     };
 
@@ -65,40 +69,54 @@ export default function RegisterPage(){
     const handleSubmit = async (e) => {
         e.preventDefault();
         const validationErrors = validate();
-        
+
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             return;
         }
 
         setLoading(true);
-        
+
         try {
             await register({
                 email: formData.email,
                 username: formData.username,
                 password: formData.password,
             });
-            navigate('/login');
-        } 
+            // Preserve redirect and intent so login page can redirect after auth
+            const loginHref = isContributeIntent
+                ? `/login?redirect=${encodeURIComponent(redirectTo)}&intent=contribute`
+                : '/login';
+            navigate(loginHref);
+        }
         catch (err) {
             setErrors({
                 submit: err.response?.data?.message || 'Registration failed. Please try again.',
             });
-        } 
+        }
         finally {
             setLoading(false);
         }
     };
 
+    const loginHref = isContributeIntent
+        ? `/login?redirect=${encodeURIComponent(redirectTo)}&intent=contribute`
+        : '/login';
+
     return (
         <div className={styles.registerPage}>
             <div className={styles.container}>
                 <Card className={styles.registerCard}>
-                    <h1 className={styles.title}>Join LanguageHub</h1>
+                    <h1 className={styles.title}>Join Philippine Online Dictionary</h1>
                     <p className={styles.subtitle}>
                         Help preserve endangered languages for future generations
                     </p>
+
+                    {isContributeIntent && (
+                        <div className={styles.contributeNotice}>
+                            <strong>You must create an account or sign in to contribute translations.</strong>
+                        </div>
+                    )}
 
                     {errors.submit && <div className={styles.error}>{errors.submit}</div>}
 
@@ -154,7 +172,7 @@ export default function RegisterPage(){
 
                     <p className={styles.loginLink}>
                         Already have an account?{' '}
-                        <Link to="/login" className={styles.link}>
+                        <Link to={loginHref} className={styles.link}>
                         Login here
                         </Link>
                     </p>
@@ -162,7 +180,4 @@ export default function RegisterPage(){
             </div>
         </div>
     );
-
-
-
 }
