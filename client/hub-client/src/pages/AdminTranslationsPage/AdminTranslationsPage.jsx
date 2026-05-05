@@ -64,6 +64,7 @@ export default function AdminTranslationsPage(){
     // Delete state
     const [translationToDelete, setTranslationToDelete] = useState(null);
     const [translationUpdateToDelete, setTranslationUpdateToDelete] = useState(null);
+    const [expandedId, setExpandedId] = useState(null);
 
     const [isDeleting, setIsDeleting] = useState(false);
 
@@ -92,6 +93,7 @@ export default function AdminTranslationsPage(){
     }, []);
 
     useEffect(() => {
+        setExpandedId(null);
         if (selectedLanguageIso) {
             if (filter === 'UPDATE') {
                 fetchTranslationUpdates();
@@ -356,10 +358,11 @@ export default function AdminTranslationsPage(){
                         {filter !== 'UPDATE' && (
                           translations.map((translation) => (
                               <div key={translation.id} className={styles.translationItem}>
-                                <WordDisplay 
-                                  translation={translation} 
+                                <WordDisplay
+                                  translation={translation}
                                   showAddToSet={false}
-                                  defaultExpanded={false}
+                                  expanded={expandedId === translation.id}
+                                  onToggle={setExpandedId}
                                 />
                                 <div className={styles.adminActions}>
                                   {translation.status === 'UNVERIFIED' ? (

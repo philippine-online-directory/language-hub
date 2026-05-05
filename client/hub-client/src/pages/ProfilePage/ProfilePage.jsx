@@ -13,6 +13,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('contributions');
+  const [expandedId, setExpandedId] = useState(null);
   const contentRef = useRef(null);
 
   useEffect(() => {
@@ -234,9 +235,11 @@ export default function ProfilePage() {
                       className={styles.animateItem}
                       style={{ '--item-index': index }}
                     >
-                      <WordDisplay 
+                      <WordDisplay
                         translation={contribution}
                         showAddToSet={false}
+                        expanded={expandedId === contribution.id}
+                        onToggle={setExpandedId}
                       />
                     </div>
                   ))}

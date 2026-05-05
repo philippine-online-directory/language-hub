@@ -61,6 +61,7 @@ export default function LanguageDetailPage() {
 
     const [translationsOpen, setTranslationsOpen] = useState(true);
     const [missingWordsOpen, setMissingWordsOpen] = useState(true);
+    const [expandedId, setExpandedId] = useState(null);
 
     const [pillOpen, setPillOpen] = useState(false);
 
@@ -72,7 +73,12 @@ export default function LanguageDetailPage() {
 
     useEffect(() => {
         setCurrentPage(1);
+        setExpandedId(null);
     }, [debouncedSearch, searchMode, statusMode, sortBy, coreWordsOnly]);
+
+    useEffect(() => {
+        setExpandedId(null);
+    }, [currentPage]);
 
     useEffect(() => {
         let cancelled = false;
@@ -572,7 +578,8 @@ export default function LanguageDetailPage() {
                                                         <WordDisplay
                                                             translation={translation}
                                                             showAddToSet={true}
-                                                            defaultExpanded={false}
+                                                            expanded={expandedId === translation.id}
+                                                            onToggle={setExpandedId}
                                                         />
                                                     </div>
                                                 ))}

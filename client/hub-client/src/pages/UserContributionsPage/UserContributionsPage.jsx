@@ -11,6 +11,7 @@ export default function UserContributionsPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [pagination, setPagination] = useState(null);
     const [mounted, setMounted] = useState(false);
+    const [expandedId, setExpandedId] = useState(null);
     const gridRef = useRef(null);
 
     const CONTRIBUTIONS_PER_PAGE = 20;
@@ -20,6 +21,7 @@ export default function UserContributionsPage() {
     }, []);
 
     useEffect(() => {
+        setExpandedId(null);
         const fetchContributions = async () => {
             setLoading(true);
             setError(null);
@@ -129,7 +131,8 @@ export default function UserContributionsPage() {
                                     <WordDisplay
                                         translation={contribution}
                                         showAddToSet={true}
-                                        defaultExpanded={false}
+                                        expanded={expandedId === contribution.id}
+                                        onToggle={setExpandedId}
                                     />
                                 </div>
                             ))}

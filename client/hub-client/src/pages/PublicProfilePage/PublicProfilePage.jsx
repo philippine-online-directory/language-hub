@@ -12,6 +12,7 @@ export default function PublicProfilePage() {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('contributions');
   const [mounted, setMounted] = useState(false);
+  const [expandedId, setExpandedId] = useState(null);
   const gridRef = useRef(null);
 
   useEffect(() => {
@@ -198,10 +199,11 @@ export default function PublicProfilePage() {
                     className={styles.animateItem}
                     style={{ '--item-index': index }}
                   >
-                    <WordDisplay 
+                    <WordDisplay
                       translation={contribution}
                       showAddToSet={false}
-                      defaultExpanded={false}
+                      expanded={expandedId === contribution.id}
+                      onToggle={setExpandedId}
                     />
                   </div>
                 ))}

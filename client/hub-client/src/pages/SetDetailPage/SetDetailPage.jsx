@@ -14,6 +14,7 @@ export default function SetDetailPage() {
   const [set, setSet] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [expandedId, setExpandedId] = useState(null);
 
   useEffect(() => {
     const fetchSet = async () => {
@@ -183,7 +184,7 @@ export default function SetDetailPage() {
             <div className={styles.wordsGrid}>
               {set.setWords.map(({ translation }) => (
                 <div key={translation.id} className={styles.wordItem}>
-                  <WordDisplay translation={translation} showAddToSet={false} />
+                  <WordDisplay translation={translation} showAddToSet={false} expanded={expandedId === translation.id} onToggle={setExpandedId} />
                   {isOwner && (
                     <Button
                       variant="secondary"
