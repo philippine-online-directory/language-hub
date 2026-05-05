@@ -10,6 +10,16 @@ export default function HomePage() {
     const { isAuthenticated } = useAuth();
     const translatorRef = useRef(null);
 
+    const handleScrollToTranslator = () => {
+        if (!translatorRef.current) return;
+
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        translatorRef.current.scrollIntoView({
+            behavior: prefersReducedMotion ? 'auto' : 'smooth',
+            block: 'start',
+        });
+    };
+
     useEffect(() => {
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (prefersReducedMotion || !translatorRef.current) return;
@@ -73,6 +83,12 @@ export default function HomePage() {
                                     Login or register to contribute
                                 </Button>
                             )}
+                            <Button
+                                variant="secondary"
+                                onClick={handleScrollToTranslator}
+                            >
+                                Use the Translator
+                            </Button>
                         </div>
                     </div>
                 </div>

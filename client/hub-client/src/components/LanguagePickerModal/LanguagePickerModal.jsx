@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { languageService } from '../../api/languageService';
 import styles from './LanguagePickerModal.module.css';
 
@@ -82,7 +83,7 @@ export default function LanguagePickerModal({ isOpen, onClose, onSelect, selecte
 
     if (!isOpen) return null;
 
-    return (
+    return createPortal(
         <div className={styles.backdrop} onClick={handleBackdropClick} role="dialog" aria-modal="true" aria-label="Select a language">
             <div className={styles.modal} ref={modalRef}>
                 <div className={styles.modalHeader}>
@@ -166,6 +167,7 @@ export default function LanguagePickerModal({ isOpen, onClose, onSelect, selecte
                     )}
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
