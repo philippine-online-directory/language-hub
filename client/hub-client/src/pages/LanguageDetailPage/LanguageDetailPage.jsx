@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { languageService } from '../../api/languageService';
+import { useAuth } from '../../context/AuthContext';
 import useDebounce from '../../hooks/useDebounce';
 import WordDisplay from '../../components/WordDisplay/WordDisplay';
 import Pagination from '../../components/Pagination/Pagination';
@@ -26,24 +27,31 @@ const SEARCH_MODE_OPTIONS = [
 ];
 
 const TRANSLATIONS_PER_PAGE = 20;
+const MISSING_WORDS_PER_PAGE = 20;
+const TOTAL_COMMON_WORDS = 2809;
 
 export default function LanguageDetailPage() {
     const { isoCode } = useParams();
     const navigate = useNavigate();
+    const { isAuthenticated } = useAuth();
 
-    
     const [language,    setLanguage]    = useState(null);
     const [langLoading, setLangLoading] = useState(true);
     const [langError,   setLangError]   = useState(null);
 
-    
     const [translations,         setTranslations]         = useState([]);
     const [pagination,           setPagination]           = useState(null);
     const [translationsLoading,  setTranslationsLoading]  = useState(true);
     const [translationsError,    setTranslationsError]    = useState(null);
     const [retryCount,           setRetryCount]           = useState(0);
 
-    
+    const [missingWords,        setMissingWords]        = useState([]);
+    const [missingPagination,   setMissingPagination]   = useState(null);
+    const [missingLoading,      setMissingLoading]      = useState(true);
+    const [missingError,        setMissingError]        = useState(null);
+    const [missingPage,         setMissingPage]         = useState(1);
+    const [missingRetryCount,   setMissingRetryCount]   = useState(0);
+
     const [searchQuery,   setSearchQuery]   = useState('');
     const [searchMode,    setSearchMode]    = useState('text');
     const [statusMode,    setStatusMode]    = useState('VERIFIED');
@@ -51,22 +59,21 @@ export default function LanguageDetailPage() {
     const [coreWordsOnly, setCoreWordsOnly] = useState(false);
     const [currentPage,   setCurrentPage]   = useState(1);
 
-    
+    const [translationsOpen, setTranslationsOpen] = useState(true);
+    const [missingWordsOpen, setMissingWordsOpen] = useState(true);
+
     const [pillOpen, setPillOpen] = useState(false);
 
     const [mounted, setMounted] = useState(false);
     const debouncedSearch = useDebounce(searchQuery, 400);
     const gridRef = useRef(null);
 
-    
     useEffect(() => { setMounted(true); }, []);
 
-    
     useEffect(() => {
         setCurrentPage(1);
     }, [debouncedSearch, searchMode, statusMode, sortBy, coreWordsOnly]);
 
-    
     useEffect(() => {
         let cancelled = false;
 
@@ -98,7 +105,6 @@ export default function LanguageDetailPage() {
         return () => { cancelled = true; };
     }, [isoCode]);
 
-    
     useEffect(() => {
         let cancelled = false;
 
@@ -141,7 +147,30 @@ export default function LanguageDetailPage() {
         return () => { cancelled = true; };
     }, [isoCode, debouncedSearch, searchMode, statusMode, sortBy, coreWordsOnly, currentPage, retryCount]);
 
-    
+    useEffect(() => {
+        let cancelled = false;
+
+        const fetchMissingWords = async () => {
+            setMissingLoading(true);
+            setMissingError(null);
+            try {
+                const result = await languageService.getMissingCommonWords(isoCode, missingPage, MISSING_WORDS_PER_PAGE);
+                if (cancelled) return;
+                setMissingWords(result.words || result.data || result || []);
+                setMissingPagination(result.pagination || null);
+            } catch (err) {
+                if (cancelled) return;
+                setMissingError('Failed to load missing words.');
+                console.error('Error fetching missing words:', err);
+            } finally {
+                if (!cancelled) setMissingLoading(false);
+            }
+        };
+
+        fetchMissingWords();
+        return () => { cancelled = true; };
+    }, [isoCode, missingPage, missingRetryCount]);
+
     useEffect(() => {
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (prefersReducedMotion || !gridRef.current) return;
@@ -156,9 +185,12 @@ export default function LanguageDetailPage() {
         return () => observer.disconnect();
     }, [translations]);
 
-    
     const handleRetry = useCallback(() => {
         setRetryCount(c => c + 1);
+    }, []);
+
+    const handleMissingRetry = useCallback(() => {
+        setMissingRetryCount(c => c + 1);
     }, []);
 
     const handleResetFilters = useCallback(() => {
@@ -169,6 +201,19 @@ export default function LanguageDetailPage() {
         setCoreWordsOnly(false);
         setCurrentPage(1);
     }, []);
+
+    const handleMissingWordClick = useCallback((word) => {
+        const contributeUrl = `/contribute?languageIsoCode=${isoCode}&englishWord=${encodeURIComponent(word.word)}&commonWordId=${word.id}`;
+        if (isAuthenticated) {
+            navigate(contributeUrl);
+        } else {
+            navigate(`/login?redirect=${encodeURIComponent(contributeUrl)}&intent=contribute`);
+        }
+    }, [isoCode, isAuthenticated, navigate]);
+
+    const filteredMissingWords = debouncedSearch.trim()
+        ? missingWords.filter(w => w.word.toLowerCase().includes(debouncedSearch.toLowerCase()))
+        : missingWords;
 
     const isFiltered =
         statusMode !== 'VERIFIED' ||
@@ -183,7 +228,6 @@ export default function LanguageDetailPage() {
         !!searchQuery.trim(),
     ].filter(Boolean).length;
 
-    
     if (langLoading) {
         return (
             <div className={`${styles.languageDetailPage} ${mounted ? styles.mounted : ''}`}>
@@ -198,7 +242,6 @@ export default function LanguageDetailPage() {
         );
     }
 
-    
     if (langError || !language) {
         return (
             <div className={`${styles.languageDetailPage} ${mounted ? styles.mounted : ''}`}>
@@ -219,8 +262,10 @@ export default function LanguageDetailPage() {
     }
 
     const hasContributors = language.topContributors && language.topContributors.length > 0;
+    const completionPct = language.completionCount != null
+        ? Math.round(language.completionCount / TOTAL_COMMON_WORDS * 100)
+        : null;
 
-    
     return (
         <div className={`${styles.languageDetailPage} ${mounted ? styles.mounted : ''}`}>
             <div className={styles.backgroundPattern} />
@@ -232,7 +277,12 @@ export default function LanguageDetailPage() {
 
                     {}
                     <div className={styles.headerContent}>
-                        <h1 className={styles.languageName}>{language.name}</h1>
+                        <div className={styles.languageNameRow}>
+                            <h1 className={styles.languageName}>{language.name}</h1>
+                            {completionPct !== null && (
+                                <span className={styles.completionBadge}>{completionPct}% complete</span>
+                            )}
+                        </div>
                         <div className={styles.meta}>
                             <span className={styles.isoCode}>{language.isoCode.toUpperCase()}</span>
                             {language.speakerCount != null && language.speakerCount > 0 && (
@@ -269,12 +319,6 @@ export default function LanguageDetailPage() {
                         )}
                         <Button variant="primary" onClick={() => navigate('/contribute')}>
                             Contribute Word
-                        </Button>
-                        <Button
-                            variant="secondary"
-                            onClick={() => navigate(`/languages/${isoCode}/missing-words`)}
-                        >
-                            Missing Core Words
                         </Button>
                     </div>
 
@@ -463,73 +507,167 @@ export default function LanguageDetailPage() {
                     </div>
 
                     {}
-                    {translationsLoading ? (
-                        <div className={styles.loadingState}>
-                            <div className={styles.loadingSpinner} />
-                            <p>Loading translations…</p>
-                        </div>
-                    ) : translationsError ? (
-                        <div className={styles.errorCard}>
-                            <svg viewBox="0 0 20 20" fill="currentColor" className={styles.errorIcon}>
-                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                            </svg>
-                            <p>{translationsError}</p>
-                            <Button variant="secondary" onClick={handleRetry}>
-                                Try again
-                            </Button>
-                        </div>
-                    ) : translations.length === 0 ? (
-                        <div className={styles.empty}>
-                            <svg className={styles.emptyIcon} viewBox="0 0 20 20" fill="currentColor">
-                                <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
-                            </svg>
-                            <p>
-                                {coreWordsOnly && !searchQuery.trim()
-                                    ? 'No core words have been contributed for this language yet.'
-                                    : searchQuery.trim()
-                                        ? `No translations found for "${searchQuery}".`
-                                        : 'No words available yet. Be the first to contribute!'}
-                            </p>
-                            {isFiltered && (
-                                <Button variant="secondary" onClick={handleResetFilters}>
-                                    Reset filters
-                                </Button>
-                            )}
-                        </div>
-                    ) : (
-                        <>
-                            <p className={styles.resultCount}>
-                                {pagination?.total.toLocaleString()} {pagination?.total === 1 ? 'word' : 'words'} found
-                                {searchQuery.trim() ? ` for "${searchQuery}"` : ''}
-                            </p>
+                    <div className={styles.columnsGrid}>
 
-                            <div className={styles.translationsGrid} ref={gridRef}>
-                                {translations.map((translation, index) => (
-                                    <div
-                                        key={translation.id}
-                                        className={styles.animateItem}
-                                        style={{ '--item-index': index }}
-                                    >
-                                        <WordDisplay
-                                            translation={translation}
-                                            showAddToSet={true}
-                                            defaultExpanded={false}
-                                        />
-                                    </div>
-                                ))}
+                        {}
+                        <div className={styles.column}>
+                            <div className={styles.columnHeader}>
+                                <h3 className={styles.columnTitle}>
+                                    Existing Translations
+                                    {pagination && <span className={styles.columnCount}>({pagination.total.toLocaleString()})</span>}
+                                </h3>
+                                <button
+                                    className={styles.toggleColBtn}
+                                    onClick={() => setTranslationsOpen(o => !o)}
+                                    aria-expanded={translationsOpen}
+                                >
+                                    {translationsOpen ? 'Hide' : 'Show'}
+                                </button>
                             </div>
 
-                            {pagination && pagination.totalPages > 1 && (
-                                <Pagination
-                                    currentPage={currentPage}
-                                    totalPages={pagination.totalPages}
-                                    onPageChange={setCurrentPage}
-                                    totalItems={pagination.total}
-                                    itemsPerPage={pagination.limit}
-                                />
+                            {translationsOpen && (
+                                <>
+                                    {translationsLoading ? (
+                                        <div className={styles.colLoadingState}>
+                                            <div className={styles.loadingSpinner} />
+                                            <p>Loading translations…</p>
+                                        </div>
+                                    ) : translationsError ? (
+                                        <div className={styles.errorCard}>
+                                            <svg viewBox="0 0 20 20" fill="currentColor" className={styles.errorIcon}>
+                                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                            </svg>
+                                            <p>{translationsError}</p>
+                                            <Button variant="secondary" onClick={handleRetry}>
+                                                Try again
+                                            </Button>
+                                        </div>
+                                    ) : translations.length === 0 ? (
+                                        <div className={styles.empty}>
+                                            <svg className={styles.emptyIcon} viewBox="0 0 20 20" fill="currentColor">
+                                                <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
+                                            </svg>
+                                            <p>
+                                                {coreWordsOnly && !searchQuery.trim()
+                                                    ? 'No core words have been contributed for this language yet.'
+                                                    : searchQuery.trim()
+                                                        ? `No translations found for "${searchQuery}".`
+                                                        : 'No words available yet. Be the first to contribute!'}
+                                            </p>
+                                            {isFiltered && (
+                                                <Button variant="secondary" onClick={handleResetFilters}>
+                                                    Reset filters
+                                                </Button>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <div className={styles.translationsGrid} ref={gridRef}>
+                                                {translations.map((translation, index) => (
+                                                    <div
+                                                        key={translation.id}
+                                                        className={styles.animateItem}
+                                                        style={{ '--item-index': index }}
+                                                    >
+                                                        <WordDisplay
+                                                            translation={translation}
+                                                            showAddToSet={true}
+                                                            defaultExpanded={false}
+                                                        />
+                                                    </div>
+                                                ))}
+                                            </div>
+
+                                            {pagination && pagination.totalPages > 1 && (
+                                                <Pagination
+                                                    currentPage={currentPage}
+                                                    totalPages={pagination.totalPages}
+                                                    onPageChange={setCurrentPage}
+                                                    totalItems={pagination.total}
+                                                    itemsPerPage={pagination.limit}
+                                                />
+                                            )}
+                                        </>
+                                    )}
+                                </>
                             )}
-                        </>
-                    )}
+                        </div>
+
+                        {}
+                        <div className={styles.column}>
+                            <div className={styles.columnHeader}>
+                                <h3 className={styles.columnTitle}>
+                                    Missing Common Words
+                                    {missingPagination && <span className={styles.columnCount}>({missingPagination.total?.toLocaleString() ?? missingWords.length})</span>}
+                                </h3>
+                                <button
+                                    className={styles.toggleColBtn}
+                                    onClick={() => setMissingWordsOpen(o => !o)}
+                                    aria-expanded={missingWordsOpen}
+                                >
+                                    {missingWordsOpen ? 'Hide' : 'Show'}
+                                </button>
+                            </div>
+
+                            {missingWordsOpen && (
+                                <>
+                                    {missingLoading ? (
+                                        <div className={styles.colLoadingState}>
+                                            <div className={styles.loadingSpinner} />
+                                            <p>Loading missing words…</p>
+                                        </div>
+                                    ) : missingError ? (
+                                        <div className={styles.errorCard}>
+                                            <svg viewBox="0 0 20 20" fill="currentColor" className={styles.errorIcon}>
+                                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                            </svg>
+                                            <p>{missingError}</p>
+                                            <Button variant="secondary" onClick={handleMissingRetry}>
+                                                Try again
+                                            </Button>
+                                        </div>
+                                    ) : filteredMissingWords.length === 0 ? (
+                                        <div className={styles.empty}>
+                                            <svg className={styles.emptyIcon} viewBox="0 0 20 20" fill="currentColor">
+                                                <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
+                                            </svg>
+                                            <p>
+                                                {debouncedSearch.trim()
+                                                    ? `No missing words match "${debouncedSearch}".`
+                                                    : 'All common words have been contributed!'}
+                                            </p>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <div className={styles.missingWordsList}>
+                                                {filteredMissingWords.map(word => (
+                                                    <button
+                                                        key={word.id}
+                                                        className={styles.missingWordCard}
+                                                        onClick={() => handleMissingWordClick(word)}
+                                                        type="button"
+                                                    >
+                                                        <span className={styles.missingWordText}>{word.word}</span>
+                                                        <span className={styles.missingWordHint}>Click to contribute</span>
+                                                    </button>
+                                                ))}
+                                            </div>
+
+                                            {missingPagination && missingPagination.totalPages > 1 && (
+                                                <Pagination
+                                                    currentPage={missingPage}
+                                                    totalPages={missingPagination.totalPages}
+                                                    onPageChange={setMissingPage}
+                                                    totalItems={missingPagination.total}
+                                                    itemsPerPage={MISSING_WORDS_PER_PAGE}
+                                                />
+                                            )}
+                                        </>
+                                    )}
+                                </>
+                            )}
+                        </div>
+                    </div>
                 </section>
             </div>
         </div>

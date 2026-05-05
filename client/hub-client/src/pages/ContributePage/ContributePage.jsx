@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { contributionService } from '../../api/contributionService';
 import { languageService } from '../../api/languageService';
 import IntellectualPropertyModal from '../../components/IntellectualPropertyModal/IntellectualPropertyModal';
@@ -10,6 +10,7 @@ import styles from './ContributePage.module.css';
 
 export default function ContributePage(){
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const [languages, setLanguages] = useState([]);
     const [formData, setFormData] = useState({
         languageId: '',
@@ -38,6 +39,7 @@ export default function ContributePage(){
     const [mounted, setMounted] = useState(false);
     const [ipAgreed, setIpAgreed] = useState(false);
     const [showIPModal, setShowIPModal] = useState(false);
+    const [prefillWord, setPrefillWord] = useState('');
 
     const MAX_RECORDING_SECONDS = 10;
 
@@ -102,10 +104,24 @@ export default function ContributePage(){
         const fetchLanguages = async () => {
             setLanguagesLoading(true);
             try {
-                // Fetch first page with many languages
                 const result = await languageService.getLanguages(1, 100);
-                setLanguages(result.languages || []);
-            } 
+                const langs = result.languages || [];
+                setLanguages(langs);
+
+                const isoCode = searchParams.get('languageIsoCode');
+                const englishWord = searchParams.get('englishWord');
+
+                if (isoCode || englishWord) {
+                    setPrefillWord(englishWord || '');
+                    setFormData(prev => ({
+                        ...prev,
+                        languageId: isoCode
+                            ? (langs.find(l => l.isoCode === isoCode)?.id ?? prev.languageId)
+                            : prev.languageId,
+                        englishDefinition: englishWord || prev.englishDefinition,
+                    }));
+                }
+            }
             catch (err) {
                 console.error('Error fetching languages:', err);
                 setErrors({ submit: 'Failed to load languages. Please refresh the page.' });
@@ -352,6 +368,11 @@ export default function ContributePage(){
 
                 <Card className={styles.formCard}>
                     <div>Required fields are labeled with a *</div>
+                    {prefillWord && (
+                        <div className={styles.prefillBanner}>
+                            Creating a contribution for &ldquo;{prefillWord}&rdquo;
+                        </div>
+                    )}
                     {success && (
                         <div className={styles.success}>
                             This word has been preserved. Thank you for your contribution!

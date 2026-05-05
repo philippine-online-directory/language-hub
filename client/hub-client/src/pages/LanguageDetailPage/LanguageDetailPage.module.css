@@ -162,6 +162,32 @@
   margin: 0;
 }
 
+.languageNameRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.languageNameRow .languageName {
+  margin-bottom: 0;
+}
+
+.completionBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 13px;
+  background: rgba(192, 118, 58, 0.10);
+  border: 1px solid rgba(192, 118, 58, 0.30);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #C0763A;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
 .translationsSection {
   margin-top: 24px;
   animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s backwards;
@@ -418,11 +444,129 @@
   letter-spacing: 0.01em;
 }
 
+.columnsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.column {
+  min-width: 0;
+}
+
+.columnHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid rgba(192, 118, 58, 0.15);
+}
+
+.columnTitle {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1F2937;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.columnCount {
+  font-size: 14px;
+  font-weight: 500;
+  color: #9CA3AF;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+}
+
+.toggleColBtn {
+  padding: 5px 12px;
+  background: rgba(192, 118, 58, 0.07);
+  border: 1px solid rgba(192, 118, 58, 0.22);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #C0763A;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+}
+.toggleColBtn:hover {
+  background: rgba(192, 118, 58, 0.14);
+  border-color: rgba(192, 118, 58, 0.35);
+}
+
+.colLoadingState {
+  text-align: center;
+  padding: 40px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.colLoadingState p {
+  font-size: 15px;
+  color: #6B7280;
+  margin: 0;
+}
+
+.missingWordsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.missingWordCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(229, 231, 235, 0.8);
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  width: 100%;
+}
+.missingWordCard:hover {
+  border-color: rgba(192, 118, 58, 0.35);
+  background: rgba(192, 118, 58, 0.04);
+  box-shadow: 0 2px 8px rgba(192, 118, 58, 0.08);
+}
+
+.missingWordText {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1F2937;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.missingWordHint {
+  font-size: 12px;
+  font-weight: 500;
+  color: #C0763A;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
 .translationsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: 24px;
-  margin-bottom: 48px;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
 }
 
 .animateItem {
@@ -778,9 +922,17 @@ a.podiumCard:hover {
   }
 }
 
-@media (max-width: 1024px) {
-  .translationsGrid {
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+@media (max-width: 768px) {
+  .columnsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .column:first-child {
+    order: 2;
+  }
+
+  .column:last-child {
+    order: 1;
   }
 }
 
