@@ -17,7 +17,7 @@ const COMPLETABLE_FIELDS = [
     { key: 'partOfSpeech',    label: 'Part of speech' },
 ];
 
-function MissingFieldsBadge({ translation, setShowContributeModal, setFieldsToContribute}) {
+function MissingFieldsBadge({ translation, setShowContributeModal, setFieldsToContribute, isCardExpanded }) {
     const [open, setOpen] = useState(false);
     const wrapperRef = useRef(null);
 
@@ -47,7 +47,7 @@ function MissingFieldsBadge({ translation, setShowContributeModal, setFieldsToCo
 
     return (
         <div
-            className={styles.missingBadgeWrapper}
+            className={`${styles.missingBadgeWrapper} ${!isCardExpanded ? styles.missingBadgeInert : ''}`}
             ref={wrapperRef}
         >
             <button
@@ -105,11 +105,12 @@ function MissingFieldsBadge({ translation, setShowContributeModal, setFieldsToCo
     );
 }
 
-export default function WordDisplay({ translation, showAddToSet = true, defaultExpanded = false }){
+export default function WordDisplay({ translation, showAddToSet = true, defaultExpanded = false, expanded, onToggle }){
     const { isAuthenticated } = useAuth();
     const [showModal, setShowModal] = useState(false);
     const [modalMode, setModalMode] = useState('add');
-    const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+    const [isExpandedInternal, setIsExpandedInternal] = useState(defaultExpanded);
+    const isExpanded = expanded !== undefined ? expanded : isExpandedInternal;
     const [isHovered, setIsHovered] = useState(false);
     const [setsContainingTranslation, setSetsContainingTranslation] = useState([]);
     const [loadingSets, setLoadingSets] = useState(false);
@@ -134,12 +135,16 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
     }, [translation?.id, isAuthenticated]);
 
     const handleCardClick = () => {
-        if (!isExpanded) setIsExpanded(true);
+        if (!isExpanded) {
+            if (onToggle) onToggle(translation.id);
+            else setIsExpandedInternal(true);
+        }
     };
 
     const handleCollapse = (e) => {
         e.stopPropagation();
-        setIsExpanded(false);
+        if (onToggle) onToggle(null);
+        else setIsExpandedInternal(false);
     };
 
     return (
@@ -160,7 +165,7 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                                 {translation.status === 'VERIFIED' && (
                                     <div className={styles.verifiedBadgeSmall}>✓</div>
                                 )}
-                                <MissingFieldsBadge translation={translation} setShowContributeModal={setShowContributeModal} setFieldsToContribute={setFieldsToContribute} />
+                                <MissingFieldsBadge translation={translation} setShowContributeModal={setShowContributeModal} setFieldsToContribute={setFieldsToContribute} isCardExpanded={false} />
                             </div>
 
                             {isHovered && (
@@ -185,7 +190,7 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                                     )}
                                 </div>
                                 <div className={styles.expandedHeaderActions}>
-                                    <MissingFieldsBadge translation={translation} setShowContributeModal={setShowContributeModal} setFieldsToContribute={setFieldsToContribute}/>
+                                    <MissingFieldsBadge translation={translation} setShowContributeModal={setShowContributeModal} setFieldsToContribute={setFieldsToContribute} isCardExpanded={true} />
                                     <button
                                         className={styles.collapseButton}
                                         onClick={handleCollapse}

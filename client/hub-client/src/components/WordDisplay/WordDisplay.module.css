@@ -784,6 +784,10 @@
   align-items: center;
 }
 
+.missingBadgeInert {
+  pointer-events: none;
+}
+
 .missingBadge {
   width: 28px;
   height: 28px;
