@@ -25,7 +25,12 @@ function ContributeModal({ onClose, onLogin, onRegister }) {
         <div className={styles.modalOverlay} role="dialog" aria-modal="true">
             <div className={styles.modal} ref={ref}>
                 <button className={styles.modalClose} onClick={onClose} aria-label="Close">✕</button>
-                <div className={styles.modalIcon}>✏️</div>
+                <div className={styles.modalIcon}>
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M12 20h9" />
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                    </svg>
+                </div>
                 <h2 className={styles.modalTitle}>Sign in to Contribute</h2>
                 <p className={styles.modalText}>
                     You must log in or create an account before contributing translations.

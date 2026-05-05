@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { contributionService } from '../../api/contributionService';
 import { languageService } from '../../api/languageService';
@@ -8,9 +8,110 @@ import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
 import styles from './ContributePage.module.css';
 
-export default function ContributePage(){
+const STEPS = [
+    { id: 1, label: 'Language & Word', requiredFields: ['languageId', 'wordText'] },
+    { id: 2, label: 'Meaning', requiredFields: ['englishDefinition'] },
+    { id: 3, label: 'Context & Audio', requiredFields: [] },
+    { id: 4, label: 'Review', requiredFields: [] },
+];
+
+const POS_OPTIONS = [
+    { value: 'noun',         label: 'Noun',         definition: 'Names a person, place, thing, or idea.' },
+    { value: 'verb',         label: 'Verb',         definition: 'Expresses an action, occurrence, or state.' },
+    { value: 'adjective',    label: 'Adjective',    definition: 'Describes or modifies a noun or pronoun.' },
+    { value: 'adverb',       label: 'Adverb',       definition: 'Modifies a verb, adjective, or other adverb.' },
+    { value: 'pronoun',      label: 'Pronoun',      definition: 'Stands in place of a noun (e.g., siya, ito).' },
+    { value: 'preposition',  label: 'Preposition',  definition: 'Shows relationship between a noun and other words.' },
+    { value: 'conjunction',  label: 'Conjunction',  definition: 'Connects words, phrases, or clauses.' },
+    { value: 'interjection', label: 'Interjection', definition: 'Expresses a sudden emotion or reaction.' },
+    { value: 'particle',     label: 'Particle',     definition: 'A function word with grammatical role (common in Philippine languages).' },
+    { value: 'phrase',       label: 'Phrase',       definition: 'A group of words functioning as a single unit.' },
+    { value: 'other',        label: 'Other',        definition: 'Does not fit the categories above.' },
+];
+
+const MAX_RECORDING_SECONDS = 10;
+
+function PosChip({ option, selected, onSelect }) {
+    const [showTip, setShowTip] = useState(false);
+    const tipRef = useRef(null);
+
+    return (
+        <div className={styles.posChipWrapper}>
+            <button
+                type="button"
+                className={`${styles.posChip} ${selected ? styles.posChipSelected : ''}`}
+                onClick={() => onSelect(selected ? '' : option.value)}
+                onMouseEnter={() => setShowTip(true)}
+                onMouseLeave={() => setShowTip(false)}
+                onFocus={() => setShowTip(true)}
+                onBlur={() => setShowTip(false)}
+                aria-pressed={selected}
+            >
+                {option.label}
+            </button>
+            {showTip && (
+                <div className={styles.posTooltip} role="tooltip" ref={tipRef}>
+                    {option.definition}
+                </div>
+            )}
+        </div>
+    );
+}
+
+function StepSidebar({ currentStep, visitedSteps, formData, audioFile, audioBlob }) {
+    const isStepFilled = (step) => {
+        if (!visitedSteps.has(step.id)) return false;
+        return step.requiredFields.every(f => !!formData[f]);
+    };
+
+    return (
+        <aside className={styles.sidebar}>
+            <ol className={styles.sidebarList}>
+                {STEPS.map((step) => {
+                    const isCurrent = currentStep === step.id;
+                    const isVisited = visitedSteps.has(step.id) && !isCurrent;
+                    const filled = isStepFilled(step);
+
+                    let state = 'upcoming';
+                    if (isCurrent) state = 'current';
+                    else if (isVisited && filled) state = 'done';
+                    else if (isVisited && !filled && step.requiredFields.length > 0) state = 'skipped';
+                    else if (isVisited) state = 'done';
+
+                    return (
+                        <li key={step.id} className={`${styles.sidebarStep} ${styles[`sidebarStep--${state}`]}`}>
+                            <span className={styles.sidebarStepIcon} aria-hidden="true">
+                                {state === 'done' && (
+                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                        <polyline points="2 7 5.5 10.5 12 4" />
+                                    </svg>
+                                )}
+                                {state === 'skipped' && (
+                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                        <line x1="7" y1="3" x2="7" y2="8" />
+                                        <circle cx="7" cy="11" r="0.5" fill="currentColor" />
+                                    </svg>
+                                )}
+                                {state === 'current' && <span className={styles.sidebarDot} />}
+                                {state === 'upcoming' && <span className={styles.sidebarEmpty} />}
+                            </span>
+                            <span className={styles.sidebarStepLabel}>{step.label}</span>
+                        </li>
+                    );
+                })}
+            </ol>
+        </aside>
+    );
+}
+
+export default function ContributePage() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
+
+    const [currentStep, setCurrentStep] = useState(1);
+    const [direction, setDirection] = useState('forward');
+    const [visitedSteps, setVisitedSteps] = useState(new Set([1]));
+
     const [languages, setLanguages] = useState([]);
     const [formData, setFormData] = useState({
         languageId: '',
@@ -19,10 +120,10 @@ export default function ContributePage(){
         englishDefinition: '',
         exampleSentence: '',
         partOfSpeech: '',
-        usageComment: ''
+        usageComment: '',
     });
     const [audioFile, setAudioFile] = useState(null);
-    const [audioMode, setAudioMode] = useState('upload'); // 'upload' or 'record'
+    const [audioMode, setAudioMode] = useState('upload');
     const [isRecording, setIsRecording] = useState(false);
     const [recordingTime, setRecordingTime] = useState(0);
     const [mediaRecorder, setMediaRecorder] = useState(null);
@@ -41,18 +142,13 @@ export default function ContributePage(){
     const [showIPModal, setShowIPModal] = useState(false);
     const [prefillWord, setPrefillWord] = useState('');
 
-    const MAX_RECORDING_SECONDS = 10;
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
+    useEffect(() => { setMounted(true); }, []);
 
     useEffect(() => {
         let interval;
         if (isRecording) {
             interval = setInterval(() => {
                 setRecordingTime(prev => {
-                    // Auto-stop at 10 seconds
                     if (prev >= MAX_RECORDING_SECONDS) {
                         stopRecording();
                         return MAX_RECORDING_SECONDS;
@@ -66,37 +162,24 @@ export default function ContributePage(){
         return () => clearInterval(interval);
     }, [isRecording]);
 
-    // Waveform visualization effect
     useEffect(() => {
         let animationId;
         if (isRecording && analyser) {
-            const bufferLength = analyser.frequencyBinCount;
-            const dataArray = new Uint8Array(bufferLength);
-
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
             const updateWaveform = () => {
                 analyser.getByteTimeDomainData(dataArray);
                 setWaveformData(new Uint8Array(dataArray));
                 animationId = requestAnimationFrame(updateWaveform);
             };
-
             updateWaveform();
         }
-        return () => {
-            if (animationId) {
-                cancelAnimationFrame(animationId);
-            }
-        };
+        return () => { if (animationId) cancelAnimationFrame(animationId); };
     }, [isRecording, analyser]);
 
-    // Cleanup media recorder on unmount
     useEffect(() => {
         return () => {
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                mediaRecorder.stop();
-            }
-            if (audioContext && audioContext.state !== 'closed') {
-                audioContext.close();
-            }
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+            if (audioContext && audioContext.state !== 'closed') audioContext.close();
         };
     }, [mediaRecorder, audioContext]);
 
@@ -121,48 +204,36 @@ export default function ContributePage(){
                         englishDefinition: englishWord || prev.englishDefinition,
                     }));
                 }
-            }
-            catch (err) {
+            } catch (err) {
                 console.error('Error fetching languages:', err);
                 setErrors({ submit: 'Failed to load languages. Please refresh the page.' });
-            }
-            finally {
+            } finally {
                 setLanguagesLoading(false);
             }
         };
-
         fetchLanguages();
     }, []);
 
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
-        if (errors[e.target.name]) {
-            setErrors({ ...errors, [e.target.name]: '' });
-        }
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+        if (errors[e.target.name]) setErrors({ ...errors, [e.target.name]: '' });
     };
 
     const handleAudioChange = (e) => {
         const file = e.target.files[0];
-        if (file) {
-            const validTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/webm', 'audio/m4a'];
-            if (!validTypes.includes(file.type)) {
-                setErrors({ ...errors, audio: 'Please select a valid audio file (MP3, WAV, OGG, WebM, or M4A)' });
-                return;
-            }
-            // Validate file size (max 10MB)
-            if (file.size > 10 * 1024 * 1024) {
-                setErrors({ ...errors, audio: 'Audio file must be less than 10MB' });
-                return;
-            }
-            setAudioFile(file);
-            setAudioBlob(null); // Clear any recorded audio
-            if (errors.audio) {
-                setErrors({ ...errors, audio: '' });
-            }
+        if (!file) return;
+        const validTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/webm', 'audio/m4a'];
+        if (!validTypes.includes(file.type)) {
+            setErrors({ ...errors, audio: 'Please select a valid audio file (MP3, WAV, OGG, WebM, or M4A)' });
+            return;
         }
+        if (file.size > 10 * 1024 * 1024) {
+            setErrors({ ...errors, audio: 'Audio file must be less than 10MB' });
+            return;
+        }
+        setAudioFile(file);
+        setAudioBlob(null);
+        if (errors.audio) setErrors({ ...errors, audio: '' });
     };
 
     const handleAudioModeChange = (mode) => {
@@ -170,59 +241,36 @@ export default function ContributePage(){
         setAudioFile(null);
         setAudioBlob(null);
         setRecordingTime(0);
-        if (errors.audio) {
-            setErrors({ ...errors, audio: '' });
-        }
+        if (errors.audio) setErrors({ ...errors, audio: '' });
     };
 
     const startRecording = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            
-            // Set up audio context for waveform visualization
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const source = audioCtx.createMediaStreamSource(stream);
             const analyserNode = audioCtx.createAnalyser();
             analyserNode.fftSize = 256;
             source.connect(analyserNode);
-            
             setAudioContext(audioCtx);
             setAnalyser(analyserNode);
-            
-            const recorder = new MediaRecorder(stream, {
-                mimeType: 'audio/webm'
-            });
-            
+
+            const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
             const chunks = [];
-            
-            recorder.ondataavailable = (e) => {
-                if (e.data.size > 0) {
-                    chunks.push(e.data);
-                }
-            };
-            
+            recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
             recorder.onstop = () => {
                 const blob = new Blob(chunks, { type: 'audio/webm' });
-                
-                // Validate size (max 10MB)
                 if (blob.size > 10 * 1024 * 1024) {
                     setErrors({ ...errors, audio: 'Recording is too large (max 10MB).' });
                     setAudioBlob(null);
                 } else {
                     setAudioBlob(blob);
-                    setAudioFile(null); // Clear any uploaded file
-                    if (errors.audio) {
-                        setErrors({ ...errors, audio: '' });
-                    }
+                    setAudioFile(null);
+                    if (errors.audio) setErrors({ ...errors, audio: '' });
                 }
-                
-                // Stop all tracks and close audio context
-                stream.getTracks().forEach(track => track.stop());
-                if (audioCtx && audioCtx.state !== 'closed') {
-                    audioCtx.close();
-                }
+                stream.getTracks().forEach(t => t.stop());
+                if (audioCtx && audioCtx.state !== 'closed') audioCtx.close();
             };
-            
             recorder.start();
             setMediaRecorder(recorder);
             setIsRecording(true);
@@ -242,9 +290,7 @@ export default function ContributePage(){
     const deleteRecording = () => {
         setAudioBlob(null);
         setRecordingTime(0);
-        if (errors.audio) {
-            setErrors({ ...errors, audio: '' });
-        }
+        if (errors.audio) setErrors({ ...errors, audio: '' });
     };
 
     const formatTime = (seconds) => {
@@ -253,63 +299,93 @@ export default function ContributePage(){
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
-    const validate = () => {
+    const validateStep = (step) => {
         const newErrors = {};
-        
+        if (step === 1) {
+            if (!formData.languageId) newErrors.languageId = 'Please select a language';
+            if (!formData.wordText) newErrors.wordText = 'Word is required';
+        }
+        if (step === 2) {
+            if (!formData.englishDefinition) newErrors.englishDefinition = 'Definition is required';
+        }
+        if (step === 4) {
+            if (!ipAgreed) newErrors.ipAgreed = 'You must confirm your intellectual property rights before submitting';
+        }
+        return newErrors;
+    };
+
+    const validateAll = () => {
+        const newErrors = {};
         if (!formData.languageId) newErrors.languageId = 'Please select a language';
         if (!formData.wordText) newErrors.wordText = 'Word is required';
         if (!formData.englishDefinition) newErrors.englishDefinition = 'Definition is required';
         if (!ipAgreed) newErrors.ipAgreed = 'You must confirm your intellectual property rights before submitting';
-        
         return newErrors;
+    };
+
+    const stepForError = (errorKey) => {
+        if (['languageId', 'wordText'].includes(errorKey)) return 1;
+        if (['englishDefinition'].includes(errorKey)) return 2;
+        if (['audio'].includes(errorKey)) return 3;
+        return 4;
+    };
+
+    const goToStep = (next) => {
+        setDirection(next > currentStep ? 'forward' : 'back');
+        setCurrentStep(next);
+        setVisitedSteps(prev => new Set([...prev, next]));
+    };
+
+    const handleNext = () => {
+        const stepErrors = validateStep(currentStep);
+        if (Object.keys(stepErrors).length > 0) {
+            setErrors(stepErrors);
+            return;
+        }
+        setErrors({});
+        goToStep(currentStep + 1);
+    };
+
+    const handleBack = () => {
+        setErrors({});
+        goToStep(currentStep - 1);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const validationErrors = validate();
-        
+        const validationErrors = validateAll();
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
+            const firstErrorKey = Object.keys(validationErrors)[0];
+            goToStep(stepForError(firstErrorKey));
             return;
         }
 
         setLoading(true);
         setSuccess(false);
         setUploadProgress(0);
-        
+
         try {
             let audioS3Key = null;
-
             const audioToUpload = audioFile || (audioBlob ? new File([audioBlob], 'recording.webm', { type: 'audio/webm' }) : null);
-            
+
             if (audioToUpload) {
                 setUploadingAudio(true);
                 setUploadProgress(10);
-                
                 try {
-                    // Simulate progress during upload
                     const progressInterval = setInterval(() => {
-                        setUploadProgress(prev => {
-                            if (prev >= 90) return prev;
-                            return prev + 10;
-                        });
+                        setUploadProgress(prev => (prev >= 90 ? prev : prev + 10));
                     }, 200);
-
                     audioS3Key = await contributionService.uploadAudio(audioToUpload);
-                    
                     clearInterval(progressInterval);
                     setUploadProgress(100);
-                } catch (uploadError) {
-                    setErrors({
-                        submit: 'Failed to upload audio file. Please try again.',
-                    });
+                } catch {
+                    setErrors({ submit: 'Failed to upload audio file. Please try again.' });
                     setLoading(false);
                     setUploadingAudio(false);
                     setUploadProgress(0);
                     return;
                 }
-                
-                // Small delay to show 100% progress
                 await new Promise(resolve => setTimeout(resolve, 300));
                 setUploadingAudio(false);
             }
@@ -327,24 +403,24 @@ export default function ContributePage(){
                 englishDefinition: '',
                 exampleSentence: '',
                 partOfSpeech: '',
-                usageComment: ''
+                usageComment: '',
             });
             setAudioFile(null);
             setAudioBlob(null);
             setRecordingTime(0);
             setUploadProgress(0);
+            setCurrentStep(1);
+            setVisitedSteps(new Set([1]));
 
             const fileInput = document.getElementById('audioFile');
             if (fileInput) fileInput.value = '';
-            
+
             setTimeout(() => setSuccess(false), 5000);
-        } 
-        catch (err) {
+        } catch (err) {
             setErrors({
                 submit: err.response?.data?.message || err.message || 'Failed to submit contribution. Please try again.',
             });
-        } 
-        finally {
+        } finally {
             setLoading(false);
             setUploadingAudio(false);
             setUploadProgress(0);
@@ -352,378 +428,435 @@ export default function ContributePage(){
         }
     };
 
+    const animKey = `step-${currentStep}-${direction}`;
+
     return (
         <div className={`${styles.contributePage} ${mounted ? styles.mounted : ''}`}>
-            <div className={styles.backgroundPattern}></div>
+            <div className={styles.backgroundPattern} />
 
             <IntellectualPropertyModal isOpen={showIPModal} onClose={() => setShowIPModal(false)} />
-            
+
             <div className={styles.container}>
                 <header className={styles.header}>
                     <h1 className={styles.title}>Contribute a Word</h1>
-                    <p className={styles.subtitle}>
-                        Help preserve languages by sharing words and phrases you know
-                    </p>
+                    <p className={styles.subtitle}>Help preserve languages by sharing words and phrases you know</p>
                 </header>
 
-                <Card className={styles.formCard}>
-                    <div>Required fields are labeled with a *</div>
-                    {prefillWord && (
-                        <div className={styles.prefillBanner}>
-                            Creating a contribution for &ldquo;{prefillWord}&rdquo;
-                        </div>
-                    )}
-                    {success && (
-                        <div className={styles.success}>
-                            This word has been preserved. Thank you for your contribution!
-                        </div>
-                    )}
+                <div className={styles.layout}>
+                    <StepSidebar
+                        currentStep={currentStep}
+                        visitedSteps={visitedSteps}
+                        formData={formData}
+                        audioFile={audioFile}
+                        audioBlob={audioBlob}
+                    />
 
-                    {errors.submit && <div className={styles.error}>{errors.submit}</div>}
-
-                    <form noValidate onSubmit={handleSubmit} className={styles.form}>
-                        <div className={styles.formGroup}>
-                            <label htmlFor="languageId" className={styles.label}>
-                                Language <span className={styles.required}>*</span>
-                            </label>
-                            {languagesLoading ? (
-                                <div className={styles.loadingSelect}>Loading languages...</div>
-                            ) : (
-                                <select
-                                    id="languageId"
-                                    name="languageId"
-                                    value={formData.languageId}
-                                    onChange={handleChange}
-                                    className={styles.select}
-                                    required
-                                >
-                                    <option value="">Select a language</option>
-                                    {languages.map((lang) => (
-                                        <option key={lang.id} value={lang.id}>
-                                            {lang.name} ({lang.isoCode.toUpperCase()})
-                                        </option>
-                                    ))}
-                                </select>
-                            )}
-                            {errors.languageId && (
-                                <span className={styles.errorText}>{errors.languageId}</span>
-                            )}
-                        </div>
-
-                        <Input
-                            label="Word or Phrase"
-                            type="text"
-                            name="wordText"
-                            value={formData.wordText}
-                            onChange={handleChange}
-                            error={errors.wordText}
-                            required
-                            placeholder="Enter the word in the native language"
-                        />
-
-                        <div className={styles.formGroup}>
-                            <label htmlFor="partOfSpeech" className={styles.label}>
-                                Part of Speech
-                            </label>
-                            <select
-                                id="partOfSpeech"
-                                name="partOfSpeech"
-                                value={formData.partOfSpeech}
-                                onChange={handleChange}
-                                className={styles.select}
-                            >
-                                <option value="">Select part of speech</option>
-                                <option value="noun">Noun</option>
-                                <option value="verb">Verb</option>
-                                <option value="adjective">Adjective</option>
-                                <option value="adverb">Adverb</option>
-                                <option value="pronoun">Pronoun</option>
-                                <option value="preposition">Preposition</option>
-                                <option value="conjunction">Conjunction</option>
-                                <option value="interjection">Interjection</option>
-                                <option value="particle">Particle</option>
-                                <option value="phrase">Phrase</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
-
-                        <Input
-                            label="Pronunciation (IPA)"
-                            type="text"
-                            name="ipa"
-                            value={formData.ipa}
-                            onChange={handleChange}
-                            placeholder="Optional: International Phonetic Alphabet notation"
-                        />
-
-                        <div className={styles.formGroup}>
-                            <label htmlFor="englishDefinition" className={styles.label}>
-                                English Definition <span className={styles.required}>*</span>
-                            </label>
-                            <textarea
-                                id="englishDefinition"
-                                name="englishDefinition"
-                                value={formData.englishDefinition}
-                                onChange={handleChange}
-                                className={styles.textarea}
-                                rows="3"
-                                required
-                                placeholder="Provide the English definition"
-                            />
-                            {errors.englishDefinition && (
-                                <span className={styles.errorText}>{errors.englishDefinition}</span>
-                            )}
-                        </div>
-
-                        <div className={styles.formGroup}>
-                            <label htmlFor="exampleSentence" className={styles.label}>
-                                Example Sentence 
-                            </label>
-                            <textarea
-                                id="exampleSentence"
-                                name="exampleSentence"
-                                value={formData.exampleSentence}
-                                onChange={handleChange}
-                                className={styles.textarea}
-                                rows="3"
-                                required
-                                placeholder="Optional: Give an example sentence in the language"
-                            />
-                            {errors.exampleSentence && (
-                                <span className={styles.errorText}>{errors.exampleSentence}</span>
-                            )}
-                        </div>
-
-                        <div className={styles.formGroup}>
-                            <label htmlFor="usageComment" className={styles.label}>
-                                Usage Comment
-                            </label>
-                            <textarea
-                                id="usageComment"
-                                name="usageComment"
-                                value={formData.usageComment}
-                                onChange={handleChange}
-                                className={styles.textarea}
-                                rows="3"
-                                required
-                                placeholder="Optional: Give a short note on when/how to use this word"
-                            />
-                            {errors.usageComment && (
-                                <span className={styles.errorText}>{errors.usageComment}</span>
-                            )}
-                        </div>
-
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>
-                                Audio Pronunciation
-                            </label>
-                            
-                            {/* Mode Selector */}
-                            <div className={styles.audioModeSelector}>
-                                <button
-                                    type="button"
-                                    className={`${styles.modeButton} ${audioMode === 'upload' ? styles.modeButtonActive : ''}`}
-                                    onClick={() => handleAudioModeChange('upload')}
-                                >
-                                    📁 Upload File
-                                </button>
-                                <button
-                                    type="button"
-                                    className={`${styles.modeButton} ${audioMode === 'record' ? styles.modeButtonActive : ''}`}
-                                    onClick={() => handleAudioModeChange('record')}
-                                >
-                                    🎤 Record Audio
-                                </button>
+                    <div className={styles.cardWrapper}>
+                        {prefillWord && (
+                            <div className={styles.prefillBanner}>
+                                Creating a contribution for &ldquo;{prefillWord}&rdquo;
                             </div>
+                        )}
 
-                            {/* Upload Mode */}
-                            {audioMode === 'upload' && (
-                                <div className={styles.uploadSection}>
-                                    <input
-                                        type="file"
-                                        id="audioFile"
-                                        accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg,audio/webm,audio/m4a"
-                                        onChange={handleAudioChange}
-                                        className={styles.fileInput}
-                                    />
-                                    {audioFile && (
-                                        <div className={styles.fileInfo}>
-                                            <span>✓ {audioFile.name} ({(audioFile.size / 1024 / 1024).toFixed(2)} MB)</span>
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    setAudioFile(null);
-                                                    const fileInput = document.getElementById('audioFile');
-                                                    if (fileInput) fileInput.value = '';
-                                                }}
-                                                className={styles.deleteButton}
-                                            >
-                                                ✕
-                                            </button>
+                        {success && (
+                            <div className={styles.success}>
+                                This word has been preserved. Thank you for your contribution!
+                            </div>
+                        )}
+
+                        <Card className={styles.formCard}>
+                            <div
+                                key={animKey}
+                                className={`${styles.stepContent} ${direction === 'forward' ? styles.slideInRight : styles.slideInLeft}`}
+                            >
+                                <div className={styles.stepHeader}>
+                                    <span className={styles.stepCount}>Step {currentStep} of {STEPS.length}</span>
+                                    <h2 className={styles.stepTitle}>{STEPS[currentStep - 1].label}</h2>
+                                    {currentStep === 1 && (
+                                        <p className={styles.requiredNote}>Required fields are labeled with a <span className={styles.required}>*</span></p>
+                                    )}
+                                </div>
+
+                                <form noValidate onSubmit={handleSubmit}>
+                                    {errors.submit && <div className={styles.error}>{errors.submit}</div>}
+
+                                    {/* Step 1: Language & Word */}
+                                    {currentStep === 1 && (
+                                        <div className={styles.stepFields}>
+                                            <div className={styles.formGroup}>
+                                                <label htmlFor="languageId" className={styles.label}>
+                                                    Language <span className={styles.required}>*</span>
+                                                </label>
+                                                {languagesLoading ? (
+                                                    <div className={styles.loadingSelect}>Loading languages...</div>
+                                                ) : (
+                                                    <select
+                                                        id="languageId"
+                                                        name="languageId"
+                                                        value={formData.languageId}
+                                                        onChange={handleChange}
+                                                        className={styles.select}
+                                                        required
+                                                    >
+                                                        <option value="">Select a language</option>
+                                                        {languages.map((lang) => (
+                                                            <option key={lang.id} value={lang.id}>
+                                                                {lang.name} ({lang.isoCode.toUpperCase()})
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                )}
+                                                {errors.languageId && <span className={styles.errorText}>{errors.languageId}</span>}
+                                            </div>
+
+                                            <Input
+                                                label="Word or Phrase"
+                                                type="text"
+                                                name="wordText"
+                                                value={formData.wordText}
+                                                onChange={handleChange}
+                                                error={errors.wordText}
+                                                required
+                                                placeholder="Enter the word in the native language"
+                                            />
+
+                                            <Input
+                                                label="Pronunciation (IPA)"
+                                                type="text"
+                                                name="ipa"
+                                                value={formData.ipa}
+                                                onChange={handleChange}
+                                                placeholder="Optional: International Phonetic Alphabet notation"
+                                            />
                                         </div>
                                     )}
-                                    <p className={styles.hint}>Max 10MB • MP3, WAV, OGG, WebM, or M4A</p>
-                                </div>
-                            )}
 
-                            {/* Record Mode */}
-                            {audioMode === 'record' && (
-                                <div className={styles.recordSection}>
-                                    {!audioBlob ? (
-                                        <>
-                                            <div className={styles.recordControls}>
-                                                {!isRecording ? (
-                                                    <button
-                                                        type="button"
-                                                        onClick={startRecording}
-                                                        className={styles.recordButton}
-                                                        disabled={loading}
-                                                    >
-                                                        <span className={styles.recordIcon}>⏺</span>
-                                                        Start Recording
-                                                    </button>
-                                                ) : (
-                                                    <>
-                                                        <div className={styles.recordingContainer}>
-                                                            {/* Waveform Visualization */}
-                                                            <div className={styles.waveformContainer}>
-                                                                <svg className={styles.waveform} viewBox="0 0 256 100" preserveAspectRatio="none">
-                                                                    <path
-                                                                        d={Array.from(waveformData).map((value, i) => {
-                                                                            const x = (i / waveformData.length) * 256;
-                                                                            const y = ((value - 128) / 128) * 40 + 50;
-                                                                            return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
-                                                                        }).join(' ')}
-                                                                        fill="none"
-                                                                        stroke="url(#waveGradient)"
-                                                                        strokeWidth="2"
-                                                                        strokeLinecap="round"
-                                                                        strokeLinejoin="round"
-                                                                    />
-                                                                    <defs>
-                                                                        <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                                                            <stop offset="0%" stopColor="#DC2626" />
-                                                                            <stop offset="50%" stopColor="#EF4444" />
-                                                                            <stop offset="100%" stopColor="#F87171" />
-                                                                        </linearGradient>
-                                                                    </defs>
-                                                                </svg>
-                                                            </div>
-
-                                                            {/* Recording Timer with Progress */}
-                                                            <div className={styles.recordingInfo}>
-                                                                <div className={styles.recordingIndicator}>
-                                                                    <span className={styles.recordingDot}></span>
-                                                                    Recording: {formatTime(recordingTime)} / {formatTime(MAX_RECORDING_SECONDS)}
-                                                                </div>
-                                                                <div className={styles.recordingProgress}>
-                                                                    <div 
-                                                                        className={styles.recordingProgressBar}
-                                                                        style={{ width: `${(recordingTime / MAX_RECORDING_SECONDS) * 100}%` }}
-                                                                    ></div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <button
-                                                            type="button"
-                                                            onClick={stopRecording}
-                                                            className={styles.stopButton}
-                                                        >
-                                                            <span className={styles.stopIcon}>⏹</span>
-                                                            Stop Recording
-                                                        </button>
-                                                    </>
-                                                )}
-                                            </div>
-                                            <p className={styles.hint}>Max {MAX_RECORDING_SECONDS} seconds • Click allow when prompted for microphone access</p>
-                                        </>
-                                    ) : (
-                                        <div className={styles.recordingPreview}>
-                                            <div className={styles.previewHeader}>
-                                                <span className={styles.previewTitle}>Preview Your Recording</span>
-                                                <span className={styles.previewDuration}>{formatTime(recordingTime)}</span>
-                                            </div>
-                                            
-                                            <audio controls src={URL.createObjectURL(audioBlob)} className={styles.audioPreview}>
-                                                Your browser does not support the audio element.
-                                            </audio>
-                                            
-                                            <div className={styles.recordingActions}>
-                                                <button
-                                                    type="button"
-                                                    onClick={deleteRecording}
-                                                    className={styles.reRecordButton}
-                                                >
-                                                    🔄 Re-record
-                                                </button>
-                                                <div className={styles.recordingInfo}>
-                                                    <span>✓ Ready to upload ({(audioBlob.size / 1024).toFixed(1)} KB)</span>
+                                    {/* Step 2: Meaning */}
+                                    {currentStep === 2 && (
+                                        <div className={styles.stepFields}>
+                                            <div className={styles.formGroup}>
+                                                <label className={styles.label}>Part of Speech</label>
+                                                <p className={styles.posHint}>Hover or focus a chip to see its definition.</p>
+                                                <div className={styles.posGrid}>
+                                                    {POS_OPTIONS.map(option => (
+                                                        <PosChip
+                                                            key={option.value}
+                                                            option={option}
+                                                            selected={formData.partOfSpeech === option.value}
+                                                            onSelect={(val) => {
+                                                                setFormData({ ...formData, partOfSpeech: val });
+                                                            }}
+                                                        />
+                                                    ))}
                                                 </div>
                                             </div>
+
+                                            <div className={styles.formGroup}>
+                                                <label htmlFor="englishDefinition" className={styles.label}>
+                                                    English Definition <span className={styles.required}>*</span>
+                                                </label>
+                                                <textarea
+                                                    id="englishDefinition"
+                                                    name="englishDefinition"
+                                                    value={formData.englishDefinition}
+                                                    onChange={handleChange}
+                                                    className={styles.textarea}
+                                                    rows="3"
+                                                    required
+                                                    placeholder="Provide the English definition"
+                                                />
+                                                {errors.englishDefinition && <span className={styles.errorText}>{errors.englishDefinition}</span>}
+                                            </div>
                                         </div>
                                     )}
-                                </div>
-                            )}
 
-                            {errors.audio && (
-                                <span className={styles.errorText}>{errors.audio}</span>
-                            )}
-                        </div>
-                        {/* Intellectual Property Rights */}
-                        <div className={`${styles.formGroup} ${styles.ipRightsGroup}`}>
-                            <div className={styles.checkboxWrapper}>
-                                <input
-                                    type="checkbox"
-                                    id="ipAgreed"
-                                    checked={ipAgreed}
-                                    onChange={(e) => {
-                                        setIpAgreed(e.target.checked);
-                                        if (errors.ipAgreed) setErrors({ ...errors, ipAgreed: '' });
-                                    }}
-                                    className={styles.checkbox}
-                                />
-                                <label htmlFor="ipAgreed" className={styles.checkboxLabel}>
-                                    I confirm that I hold the{' '}
-                                    <Link className={styles.ipLink} onClick={() => setShowIPModal(true)}>
-                                        intellectual property rights
-                                    </Link>
-                                    {' '}to this contribution, or have the right to share it, and I grant this platform a license to use it for language preservation purposes.{' '}
-                                    <span className={styles.required}>*</span>
-                                </label>
+                                    {/* Step 3: Context & Audio */}
+                                    {currentStep === 3 && (
+                                        <div className={styles.stepFields}>
+                                            <div className={styles.formGroup}>
+                                                <label className={styles.label}>Audio Pronunciation</label>
+
+                                                <div className={styles.audioModeSelector}>
+                                                    <button
+                                                        type="button"
+                                                        className={`${styles.modeButton} ${audioMode === 'upload' ? styles.modeButtonActive : ''}`}
+                                                        onClick={() => handleAudioModeChange('upload')}
+                                                    >
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                                            <polyline points="17 8 12 3 7 8" />
+                                                            <line x1="12" y1="3" x2="12" y2="15" />
+                                                        </svg>
+                                                        Upload File
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className={`${styles.modeButton} ${audioMode === 'record' ? styles.modeButtonActive : ''}`}
+                                                        onClick={() => handleAudioModeChange('record')}
+                                                    >
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                                                            <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                                                            <line x1="12" y1="19" x2="12" y2="23" />
+                                                            <line x1="8" y1="23" x2="16" y2="23" />
+                                                        </svg>
+                                                        Record Audio
+                                                    </button>
+                                                </div>
+
+                                                {audioMode === 'upload' && (
+                                                    <div className={styles.uploadSection}>
+                                                        <input
+                                                            type="file"
+                                                            id="audioFile"
+                                                            accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg,audio/webm,audio/m4a"
+                                                            onChange={handleAudioChange}
+                                                            className={styles.fileInput}
+                                                        />
+                                                        {audioFile && (
+                                                            <div className={styles.fileInfo}>
+                                                                <span>{audioFile.name} ({(audioFile.size / 1024 / 1024).toFixed(2)} MB)</span>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => {
+                                                                        setAudioFile(null);
+                                                                        const fileInput = document.getElementById('audioFile');
+                                                                        if (fileInput) fileInput.value = '';
+                                                                    }}
+                                                                    className={styles.deleteButton}
+                                                                    aria-label="Remove file"
+                                                                >
+                                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+                                                                        <line x1="18" y1="6" x2="6" y2="18" />
+                                                                        <line x1="6" y1="6" x2="18" y2="18" />
+                                                                    </svg>
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                        <p className={styles.hint}>Max 10 MB &middot; MP3, WAV, OGG, WebM, or M4A</p>
+                                                    </div>
+                                                )}
+
+                                                {audioMode === 'record' && (
+                                                    <div className={styles.recordSection}>
+                                                        {!audioBlob ? (
+                                                            <>
+                                                                <div className={styles.recordControls}>
+                                                                    {!isRecording ? (
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={startRecording}
+                                                                            className={styles.recordButton}
+                                                                            disabled={loading}
+                                                                        >
+                                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                                                                <circle cx="12" cy="12" r="8" />
+                                                                            </svg>
+                                                                            Start Recording
+                                                                        </button>
+                                                                    ) : (
+                                                                        <>
+                                                                            <div className={styles.recordingContainer}>
+                                                                                <div className={styles.waveformContainer}>
+                                                                                    <svg className={styles.waveform} viewBox="0 0 256 100" preserveAspectRatio="none">
+                                                                                        <path
+                                                                                            d={Array.from(waveformData).map((value, i) => {
+                                                                                                const x = (i / waveformData.length) * 256;
+                                                                                                const y = ((value - 128) / 128) * 40 + 50;
+                                                                                                return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+                                                                                            }).join(' ')}
+                                                                                            fill="none"
+                                                                                            stroke="url(#waveGradient)"
+                                                                                            strokeWidth="2"
+                                                                                            strokeLinecap="round"
+                                                                                            strokeLinejoin="round"
+                                                                                        />
+                                                                                        <defs>
+                                                                                            <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                                                                <stop offset="0%" stopColor="#DC2626" />
+                                                                                                <stop offset="50%" stopColor="#EF4444" />
+                                                                                                <stop offset="100%" stopColor="#F87171" />
+                                                                                            </linearGradient>
+                                                                                        </defs>
+                                                                                    </svg>
+                                                                                </div>
+                                                                                <div className={styles.recordingInfo}>
+                                                                                    <div className={styles.recordingIndicator}>
+                                                                                        <span className={styles.recordingDot} />
+                                                                                        Recording: {formatTime(recordingTime)} / {formatTime(MAX_RECORDING_SECONDS)}
+                                                                                    </div>
+                                                                                    <div className={styles.recordingProgress}>
+                                                                                        <div
+                                                                                            className={styles.recordingProgressBar}
+                                                                                            style={{ width: `${(recordingTime / MAX_RECORDING_SECONDS) * 100}%` }}
+                                                                                        />
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <button
+                                                                                type="button"
+                                                                                onClick={stopRecording}
+                                                                                className={styles.stopButton}
+                                                                            >
+                                                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                                                                    <rect x="4" y="4" width="16" height="16" rx="2" />
+                                                                                </svg>
+                                                                                Stop Recording
+                                                                            </button>
+                                                                        </>
+                                                                    )}
+                                                                </div>
+                                                                <p className={styles.hint}>Max {MAX_RECORDING_SECONDS} seconds &middot; Click allow when prompted for microphone access</p>
+                                                            </>
+                                                        ) : (
+                                                            <div className={styles.recordingPreview}>
+                                                                <div className={styles.previewHeader}>
+                                                                    <span className={styles.previewTitle}>Preview Your Recording</span>
+                                                                    <span className={styles.previewDuration}>{formatTime(recordingTime)}</span>
+                                                                </div>
+                                                                <audio controls src={URL.createObjectURL(audioBlob)} className={styles.audioPreview}>
+                                                                    Your browser does not support the audio element.
+                                                                </audio>
+                                                                <div className={styles.recordingActions}>
+                                                                    <button type="button" onClick={deleteRecording} className={styles.reRecordButton}>
+                                                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                                                            <polyline points="1 4 1 10 7 10" />
+                                                                            <path d="M3.51 15a9 9 0 1 0 .49-3.51" />
+                                                                        </svg>
+                                                                        Re-record
+                                                                    </button>
+                                                                    <span className={styles.recordingReady}>Ready to upload ({(audioBlob.size / 1024).toFixed(1)} KB)</span>
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
+
+                                                {errors.audio && <span className={styles.errorText}>{errors.audio}</span>}
+                                            </div>
+
+                                            <div className={styles.formGroup}>
+                                                <label htmlFor="exampleSentence" className={styles.label}>Example Sentence</label>
+                                                <textarea
+                                                    id="exampleSentence"
+                                                    name="exampleSentence"
+                                                    value={formData.exampleSentence}
+                                                    onChange={handleChange}
+                                                    className={styles.textarea}
+                                                    rows="3"
+                                                    placeholder="Optional: Give an example sentence in the language"
+                                                />
+                                            </div>
+
+                                            <div className={styles.formGroup}>
+                                                <label htmlFor="usageComment" className={styles.label}>Usage Comment</label>
+                                                <textarea
+                                                    id="usageComment"
+                                                    name="usageComment"
+                                                    value={formData.usageComment}
+                                                    onChange={handleChange}
+                                                    className={styles.textarea}
+                                                    rows="3"
+                                                    placeholder="Optional: Give a short note on when/how to use this word"
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Step 4: Review & Submit */}
+                                    {currentStep === 4 && (
+                                        <div className={styles.stepFields}>
+                                            <dl className={styles.reviewList}>
+                                                <ReviewRow label="Language" value={languages.find(l => l.id === formData.languageId)?.name} />
+                                                <ReviewRow label="Word or Phrase" value={formData.wordText} />
+                                                {formData.ipa && <ReviewRow label="Pronunciation (IPA)" value={formData.ipa} />}
+                                                {formData.partOfSpeech && (
+                                                    <ReviewRow
+                                                        label="Part of Speech"
+                                                        value={POS_OPTIONS.find(p => p.value === formData.partOfSpeech)?.label}
+                                                    />
+                                                )}
+                                                <ReviewRow label="English Definition" value={formData.englishDefinition} />
+                                                {(audioFile || audioBlob) && (
+                                                    <ReviewRow label="Audio" value={audioFile ? audioFile.name : 'Recorded audio'} />
+                                                )}
+                                                {formData.exampleSentence && <ReviewRow label="Example Sentence" value={formData.exampleSentence} />}
+                                                {formData.usageComment && <ReviewRow label="Usage Comment" value={formData.usageComment} />}
+                                            </dl>
+
+                                            <div className={`${styles.formGroup} ${styles.ipRightsGroup}`}>
+                                                <div className={styles.checkboxWrapper}>
+                                                    <input
+                                                        type="checkbox"
+                                                        id="ipAgreed"
+                                                        checked={ipAgreed}
+                                                        onChange={(e) => {
+                                                            setIpAgreed(e.target.checked);
+                                                            if (errors.ipAgreed) setErrors({ ...errors, ipAgreed: '' });
+                                                        }}
+                                                        className={styles.checkbox}
+                                                    />
+                                                    <label htmlFor="ipAgreed" className={styles.checkboxLabel}>
+                                                        I confirm that I hold the{' '}
+                                                        <Link className={styles.ipLink} onClick={() => setShowIPModal(true)}>
+                                                            intellectual property rights
+                                                        </Link>
+                                                        {' '}to this contribution, or have the right to share it, and I grant this platform a license to use it for language preservation purposes.{' '}
+                                                        <span className={styles.required}>*</span>
+                                                    </label>
+                                                </div>
+                                                {errors.ipAgreed && <span className={styles.errorText}>{errors.ipAgreed}</span>}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Navigation */}
+                                    <div className={styles.stepNav}>
+                                        {currentStep > 1 && (
+                                            <Button type="button" variant="secondary" onClick={handleBack}>
+                                                Back
+                                            </Button>
+                                        )}
+                                        {currentStep < STEPS.length ? (
+                                            <Button type="button" onClick={handleNext} disabled={languagesLoading && currentStep === 1}>
+                                                Next
+                                            </Button>
+                                        ) : (
+                                            <Button type="submit" disabled={loading || languagesLoading}>
+                                                {uploadingAudio
+                                                    ? `Uploading Audio... ${uploadProgress}%`
+                                                    : loading ? 'Submitting...' : 'Submit Contribution'}
+                                            </Button>
+                                        )}
+                                    </div>
+
+                                    {uploadingAudio && (
+                                        <div className={styles.uploadProgressBar}>
+                                            <div className={styles.uploadProgressFill} style={{ width: `${uploadProgress}%` }} />
+                                        </div>
+                                    )}
+                                </form>
                             </div>
-                            {errors.ipAgreed && <span className={styles.errorText}>{errors.ipAgreed}</span>}
-                        </div>
-                        <div className={styles.actions}>
-                            <Button type="submit" fullWidth disabled={loading || languagesLoading}>
-                                {uploadingAudio ? (
-                                    <span className={styles.uploadingText}>
-                                        Uploading Audio... {uploadProgress}%
-                                    </span>
-                                ) : loading ? 'Submitting...' : 'Submit Contribution'}
-                            </Button>
-                            
-                            {uploadingAudio && (
-                                <div className={styles.uploadProgressBar}>
-                                    <div 
-                                        className={styles.uploadProgressFill}
-                                        style={{ width: `${uploadProgress}%` }}
-                                    ></div>
-                                </div>
-                            )}
-                            
-                            <Button
-                                type="button"
-                                variant="secondary"
-                                fullWidth
-                                onClick={() => navigate('/contributions')}
-                            >
+                        </Card>
+
+                        <div className={styles.secondaryAction}>
+                            <Button type="button" variant="secondary" fullWidth onClick={() => navigate('/contributions')}>
                                 View My Contributions
                             </Button>
                         </div>
-                    </form>
-                </Card>
+                    </div>
+                </div>
             </div>
+        </div>
+    );
+}
+
+function ReviewRow({ label, value }) {
+    if (!value) return null;
+    return (
+        <div className={styles.reviewRow}>
+            <dt className={styles.reviewLabel}>{label}</dt>
+            <dd className={styles.reviewValue}>{value}</dd>
         </div>
     );
 }

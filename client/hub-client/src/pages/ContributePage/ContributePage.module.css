@@ -1,8 +1,8 @@
-/* ContributePage - Site Design System */
+/* ContributePage – multi-step form */
 
 .contributePage {
   min-height: 100vh;
-  padding: 80px 24px 40px;
+  padding: 80px 24px 60px;
   background: #F6F4EF;
   position: relative;
   overflow: hidden;
@@ -12,14 +12,8 @@
 }
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .contributePage.mounted {
@@ -30,12 +24,9 @@
 
 .backgroundPattern {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   opacity: 0.02;
-  background-image: 
+  background-image:
     repeating-linear-gradient(45deg, #C0763A 0px, #C0763A 1px, transparent 1px, transparent 20px),
     repeating-linear-gradient(-45deg, #C0763A 0px, #C0763A 1px, transparent 1px, transparent 20px);
   pointer-events: none;
@@ -51,19 +42,18 @@
   background: radial-gradient(circle, rgba(192, 118, 58, 0.06) 0%, transparent 70%);
   border-radius: 50%;
   animation: float 22s ease-in-out infinite;
+  pointer-events: none;
 }
 
 @keyframes float {
-  0%, 100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(-30px, 30px) scale(1.05);
-  }
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%       { transform: translate(-30px, 30px) scale(1.05); }
 }
 
+/* ─── Page structure ─────────────────────────────────────── */
+
 .container {
-  max-width: 800px;
+  max-width: 940px;
   margin: 0 auto;
   position: relative;
   z-index: 1;
@@ -93,15 +83,122 @@
   color: #6B7280;
 }
 
-.formCard {
+/* ─── Two-column layout ──────────────────────────────────── */
+
+.layout {
+  display: grid;
+  grid-template-columns: 196px 1fr;
+  gap: 24px;
+  align-items: start;
+  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s backwards;
+}
+
+.cardWrapper {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 12px;
+}
+
+/* ─── Sidebar ────────────────────────────────────────────── */
+
+.sidebar {
+  position: sticky;
+  top: 100px;
+}
+
+.sidebarList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebarStep {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  transition: background 0.2s ease;
+}
+
+.sidebarStep--current {
+  background: rgba(192, 118, 58, 0.08);
+}
+
+.sidebarStepIcon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.sidebarStep--done .sidebarStepIcon {
+  color: #059669;
+}
+
+.sidebarStep--skipped .sidebarStepIcon {
+  color: #D97706;
+}
+
+.sidebarStep--current .sidebarStepIcon {
+  color: #C0763A;
+}
+
+.sidebarStep--upcoming .sidebarStepIcon {
+  color: #D1D5DB;
+}
+
+.sidebarDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #C0763A;
+  box-shadow: 0 0 0 3px rgba(192, 118, 58, 0.2);
+}
+
+.sidebarEmpty {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+}
+
+.sidebarStepLabel {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.sidebarStep--current .sidebarStepLabel {
+  color: #92400E;
+  font-weight: 600;
+}
+
+.sidebarStep--done .sidebarStepLabel {
+  color: #374151;
+}
+
+.sidebarStep--skipped .sidebarStepLabel {
+  color: #92400E;
+}
+
+.sidebarStep--upcoming .sidebarStepLabel {
+  color: #9CA3AF;
+}
+
+/* ─── Card ───────────────────────────────────────────────── */
+
+.formCard {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   position: relative;
   overflow: hidden;
-  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s backwards;
 }
 
 .formCard::before {
@@ -116,135 +213,68 @@
   animation: gradientSlide 3s linear infinite;
 }
 
-.checkboxWrapper {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-}
-
-.checkbox {
-    width: 16px;
-    height: 16px;
-    margin-top: 3px;
-    flex-shrink: 0;
-    accent-color: #C0763A;
-    cursor: pointer;
-}
-
-.checkboxLabel {
-    font-size: 0.9rem;
-    line-height: 1.6;
-    color: #374151;
-    cursor: pointer;
-}
-
-.ipLink {
-    background: none;
-    border: none;
-    padding: 0;
-    font: inherit;
-    font-size: inherit;
-    color: #C0763A;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: opacity 0.15s ease;
-}
-
-.ipLink:hover {
-    opacity: 0.7;
-}
-
 @keyframes gradientSlide {
-  0% {
-    background-position: 0% center;
-  }
-  100% {
-    background-position: 200% center;
-  }
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
 }
 
-.prefillBanner {
-  padding: 14px 18px;
-  background: rgba(192, 118, 58, 0.08);
-  border: 1px solid rgba(192, 118, 58, 0.25);
-  border-left: 4px solid #C0763A;
-  border-radius: 10px;
-  color: #92400E;
-  font-size: 14px;
+/* ─── Step transitions ───────────────────────────────────── */
+
+.stepContent {
+  will-change: transform, opacity;
+}
+
+@keyframes slideInFromRight {
+  from { opacity: 0; transform: translateX(32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInFromLeft {
+  from { opacity: 0; transform: translateX(-32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.slideInRight { animation: slideInFromRight 0.28s cubic-bezier(0.22, 1, 0.36, 1); }
+.slideInLeft  { animation: slideInFromLeft  0.28s cubic-bezier(0.22, 1, 0.36, 1); }
+
+/* ─── Step header ────────────────────────────────────────── */
+
+.stepHeader {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(229, 231, 235, 0.7);
+}
+
+.stepCount {
+  font-size: 12px;
   font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #C0763A;
+  display: block;
+  margin-bottom: 4px;
 }
 
-.success {
-  padding: 16px 20px;
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  border-radius: 12px;
-  color: #059669;
-  font-size: 15px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  animation: slideDown 0.4s ease-out;
+.stepTitle {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: #1F2937;
+  margin: 0 0 6px;
 }
 
-.success::before {
-  content: '✓';
-  font-size: 20px;
-  font-weight: 700;
-  animation: checkPop 0.5s ease-out;
+.requiredNote {
+  font-size: 13px;
+  color: #6B7280;
+  margin: 0;
 }
 
-@keyframes checkPop {
-  0% {
-    transform: scale(0);
-  }
-  50% {
-    transform: scale(1.2);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
+/* ─── Form fields ────────────────────────────────────────── */
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.error {
-  padding: 16px 20px;
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: 12px;
-  color: #DC2626;
-  font-size: 15px;
-  animation: shake 0.4s ease;
-}
-
-@keyframes shake {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-6px);
-  }
-  75% {
-    transform: translateX(6px);
-  }
-}
-
-.form {
+.stepFields {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 .formGroup {
@@ -267,12 +297,14 @@
 .textarea {
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   font-size: 16px;
-  padding: 14px 16px;
+  padding: 13px 16px;
   border: 2px solid #E5E7EB;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.9);
   color: #1F2937;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .select:focus,
@@ -290,14 +322,16 @@
 
 .fileInput {
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
-  font-size: 16px;
-  padding: 14px 16px;
+  font-size: 15px;
+  padding: 13px 16px;
   border: 2px solid #E5E7EB;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.9);
   color: #1F2937;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .fileInput:focus {
@@ -307,7 +341,7 @@
 }
 
 .fileInput::file-selector-button {
-  padding: 8px 16px;
+  padding: 7px 14px;
   margin-right: 12px;
   background: linear-gradient(135deg, #C0763A 0%, #D68A4F 100%);
   color: white;
@@ -315,7 +349,8 @@
   border-radius: 8px;
   cursor: pointer;
   font-weight: 500;
-  transition: all 0.3s ease;
+  font-size: 14px;
+  transition: all 0.25s ease;
 }
 
 .fileInput::file-selector-button:hover {
@@ -323,48 +358,115 @@
   transform: translateY(-1px);
 }
 
-.fileInfo {
-  font-size: 14px;
-  color: #6B7280;
-  margin-top: 8px;
-  padding: 8px 12px;
-  background: rgba(192, 118, 58, 0.05);
-  border-radius: 8px;
-  border-left: 3px solid #C0763A;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .hint {
   font-size: 13px;
   color: #9CA3AF;
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
-/* Audio Mode Selector */
+/* ─── POS chips ──────────────────────────────────────────── */
+
+.posHint {
+  font-size: 13px;
+  color: #9CA3AF;
+  margin: 0 0 2px;
+}
+
+.posGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.posChipWrapper {
+  position: relative;
+}
+
+.posChip {
+  padding: 7px 14px;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 20px;
+  background: white;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.posChip:hover,
+.posChip:focus-visible {
+  border-color: #C0763A;
+  color: #C0763A;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(192, 118, 58, 0.1);
+}
+
+.posChipSelected {
+  border-color: #C0763A;
+  background: rgba(192, 118, 58, 0.08);
+  color: #92400E;
+  font-weight: 600;
+}
+
+.posTooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1F2937;
+  color: #F9FAFB;
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 8px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+  max-width: 220px;
+  white-space: normal;
+  z-index: 100;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.posTooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #1F2937;
+}
+
+/* ─── Audio mode selector ────────────────────────────────── */
+
 .audioModeSelector {
   display: flex;
   gap: 8px;
-  margin-bottom: 16px;
   padding: 4px;
   background: rgba(243, 244, 246, 0.5);
   border-radius: 10px;
-  font-family: 'Fraunces', serif;
+  margin-bottom: 12px;
 }
 
 .modeButton {
   flex: 1;
-  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 14px;
   background: transparent;
   border: none;
   border-radius: 8px;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
   font-size: 14px;
   font-weight: 500;
   color: #6B7280;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  font-family: 'Fraunces', serif;
+  transition: all 0.2s ease;
 }
 
 .modeButton:hover {
@@ -375,17 +477,49 @@
 .modeButtonActive {
   background: white;
   color: #C0763A;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
-/* Upload Section */
+/* ─── Upload / record sections ───────────────────────────── */
+
 .uploadSection {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-/* Record Section */
+.fileInfo {
+  font-size: 14px;
+  color: #6B7280;
+  padding: 8px 12px;
+  background: rgba(192, 118, 58, 0.05);
+  border-radius: 8px;
+  border-left: 3px solid #C0763A;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.deleteButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 8px;
+  background: transparent;
+  border: 1px solid #DC2626;
+  border-radius: 6px;
+  color: #DC2626;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.deleteButton:hover {
+  background: #DC2626;
+  color: white;
+}
+
 .recordSection {
   padding: 20px;
   background: linear-gradient(135deg, rgba(243, 244, 246, 0.8) 0%, rgba(249, 250, 251, 0.9) 100%);
@@ -398,7 +532,6 @@
   flex-direction: column;
   gap: 16px;
   align-items: center;
-  font-family: 'Fraunces', serif;
 }
 
 .recordingContainer {
@@ -406,10 +539,8 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  font-family: 'Fraunces', serif;
 }
 
-/* Waveform Visualization */
 .waveformContainer {
   width: 100%;
   height: 100px;
@@ -441,19 +572,17 @@
   filter: drop-shadow(0 2px 4px rgba(220, 38, 38, 0.2));
 }
 
-/* Recording Info */
 .recordingInfo {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  font-family: 'Fraunces', serif;
 }
 
 .recordingIndicator {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 16px;
+  padding: 9px 16px;
   background: rgba(220, 38, 38, 0.1);
   border-radius: 8px;
   color: #DC2626;
@@ -472,24 +601,16 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.6;
-    transform: scale(1.3);
-  }
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(1.3); }
 }
 
-/* Recording Progress Bar */
 .recordingProgress {
   width: 100%;
-  height: 6px;
+  height: 5px;
   background: rgba(220, 38, 38, 0.15);
   border-radius: 3px;
   overflow: hidden;
-  position: relative;
 }
 
 .recordingProgressBar {
@@ -497,7 +618,6 @@
   background: linear-gradient(90deg, #DC2626 0%, #EF4444 50%, #F87171 100%);
   border-radius: 3px;
   transition: width 0.3s ease;
-  box-shadow: 0 0 8px rgba(220, 38, 38, 0.4);
 }
 
 .recordButton,
@@ -505,13 +625,14 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 28px;
+  padding: 13px 26px;
   border: none;
   border-radius: 12px;
-  font-size: 16px;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -543,22 +664,14 @@
   box-shadow: 0 6px 16px rgba(107, 114, 128, 0.4);
 }
 
-.recordIcon,
-.stopIcon {
-  font-size: 20px;
-  line-height: 1;
-}
-
-/* Recording Preview */
 .recordingPreview {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
   padding: 16px;
   background: white;
   border-radius: 10px;
   border: 1px solid rgba(229, 231, 235, 0.8);
-  font-family: 'Fraunces', serif;
 }
 
 .previewHeader {
@@ -571,18 +684,17 @@
 
 .previewTitle {
   font-weight: 600;
-  font-size: 15px;
+  font-size: 14px;
   color: #1F2937;
 }
 
 .previewDuration {
-  font-size: 14px;
-  color: #6B7280;
-  font-weight: 500;
-  padding: 4px 12px;
+  font-size: 13px;
+  padding: 3px 10px;
   background: rgba(192, 118, 58, 0.1);
   border-radius: 6px;
   color: #C0763A;
+  font-weight: 500;
 }
 
 .audioPreview {
@@ -590,10 +702,6 @@
   border-radius: 8px;
   outline: none;
   height: 44px;
-}
-
-.audioPreview:focus {
-  box-shadow: 0 0 0 3px rgba(192, 118, 58, 0.1);
 }
 
 .recordingActions {
@@ -605,57 +713,137 @@
 }
 
 .reRecordButton {
-  padding: 10px 18px;
-  background: transparent;
-  border: 2px solid #DC2626;
-  border-radius: 8px;
-  color: #DC2626;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   gap: 6px;
+  padding: 9px 16px;
+  background: transparent;
+  border: 1.5px solid #DC2626;
+  border-radius: 8px;
+  color: #DC2626;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
 }
 
 .reRecordButton:hover {
   background: #DC2626;
   color: white;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
 }
 
-.recordingInfo span {
-  font-size: 14px;
+.recordingReady {
+  font-size: 13px;
   color: #059669;
   font-weight: 500;
 }
 
-.deleteButton {
-  padding: 6px 12px;
-  background: transparent;
-  border: 1px solid #DC2626;
-  border-radius: 6px;
-  color: #DC2626;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
+/* ─── Review step ────────────────────────────────────────── */
 
-.deleteButton:hover {
-  background: #DC2626;
-  color: white;
-}
-
-/* Upload Progress */
-.uploadingText {
+.reviewList {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: 'Fraunces', serif;
+  flex-direction: column;
+  gap: 0;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 0;
 }
+
+.reviewRow {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 12px;
+  padding: 13px 16px;
+  border-bottom: 1px solid rgba(229, 231, 235, 0.6);
+}
+
+.reviewRow:last-child {
+  border-bottom: none;
+}
+
+.reviewRow:nth-child(even) {
+  background: rgba(246, 244, 239, 0.5);
+}
+
+.reviewLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+}
+
+.reviewValue {
+  font-size: 15px;
+  color: #1F2937;
+  margin: 0;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+/* ─── IP rights ──────────────────────────────────────────── */
+
+.ipRightsGroup {
+  padding-top: 4px;
+}
+
+.checkboxWrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  margin-top: 3px;
+  flex-shrink: 0;
+  accent-color: #C0763A;
+  cursor: pointer;
+}
+
+.checkboxLabel {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #374151;
+  cursor: pointer;
+}
+
+.ipLink {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-size: inherit;
+  color: #C0763A;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: opacity 0.15s ease;
+}
+
+.ipLink:hover { opacity: 0.7; }
+
+/* ─── Step navigation ────────────────────────────────────── */
+
+.stepNav {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(229, 231, 235, 0.6);
+}
+
+.secondaryAction {
+  max-width: 100%;
+}
+
+/* ─── Upload progress ────────────────────────────────────── */
 
 .uploadProgressBar {
   width: 100%;
@@ -663,8 +851,7 @@
   background: rgba(192, 118, 58, 0.2);
   border-radius: 2px;
   overflow: hidden;
-  margin-top: -8px;
-  margin-bottom: 8px;
+  margin-top: 8px;
 }
 
 .uploadProgressFill {
@@ -675,13 +862,51 @@
   box-shadow: 0 0 8px rgba(192, 118, 58, 0.5);
 }
 
-.loadingSelect {
-  padding: 14px 16px;
-  border: 2px solid #E5E7EB;
+/* ─── Banners ────────────────────────────────────────────── */
+
+.prefillBanner {
+  padding: 13px 16px;
+  background: rgba(192, 118, 58, 0.08);
+  border: 1px solid rgba(192, 118, 58, 0.25);
+  border-left: 4px solid #C0763A;
+  border-radius: 10px;
+  color: #92400E;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.success {
+  padding: 15px 18px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.3);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #6B7280;
-  font-size: 16px;
+  color: #059669;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideDown 0.4s ease-out;
+}
+
+.success::before {
+  content: '';
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23059669' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.error {
+  padding: 14px 18px;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+  color: #DC2626;
+  font-size: 14px;
+  margin-bottom: 16px;
+  animation: shake 0.4s ease;
 }
 
 .errorText {
@@ -690,58 +915,90 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font-family: 'Fraunces', serif;
 }
 
 .errorText::before {
-  content: '⚠';
+  content: '';
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23DC2626' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='8' x2='12' y2='12'/%3E%3Cline x1='12' y1='16' x2='12.01' y2='16'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
-.actions {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 12px;
+.loadingSelect {
+  padding: 13px 16px;
+  border: 2px solid #E5E7EB;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #6B7280;
+  font-size: 16px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .contributePage,
-  .header,
-  .formCard {
-    animation: none;
-  }
+/* ─── Animations ─────────────────────────────────────────── */
 
-  .formCard::before {
-    animation: none;
-  }
-
-  .success::before {
-    animation: none;
-  }
-
-  .error {
-    animation: none;
-  }
-
-  .contributePage::before {
-    animation: none;
-  }
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25%       { transform: translateX(-6px); }
+  75%       { transform: translateX(6px); }
+}
+
+/* ─── Responsive ─────────────────────────────────────────── */
 
 @media (max-width: 768px) {
   .contributePage {
-    padding: 48px 20px 24px;
+    padding: 56px 16px 40px;
   }
 
   .title {
     font-size: 32px;
     line-height: 40px;
   }
+
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+    order: -1;
+  }
+
+  .sidebarList {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .sidebarStep {
+    padding: 6px 10px;
+    gap: 6px;
+    flex: 0 1 auto;
+  }
+
+  .sidebarStepLabel {
+    font-size: 12px;
+  }
+
+  .posGrid {
+    gap: 6px;
+  }
+
+  .reviewRow {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
 }
 
 @media (max-width: 480px) {
   .contributePage {
-    padding: 32px 16px 24px;
+    padding: 48px 12px 32px;
   }
 
   .title {
@@ -751,5 +1008,24 @@
 
   .subtitle {
     font-size: 16px;
+  }
+
+  .stepNav {
+    flex-direction: column-reverse;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contributePage,
+  .header,
+  .formCard,
+  .slideInRight,
+  .slideInLeft {
+    animation: none;
+  }
+
+  .formCard::before,
+  .contributePage::before {
+    animation: none;
   }
 }

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar/Navbar';
 import LoginPage from './pages/LoginPage/LoginPage';
@@ -30,11 +30,12 @@ import './App.css';
 
 function ProtectedRoute({ children }){
     const { isAuthenticated, loading } = useAuth();
+    const location = useLocation();
 
     if (loading) {
         return (
-            <div style={{ 
-                textAlign: 'center', 
+            <div style={{
+                textAlign: 'center',
                 padding: '48px',
                 color: '#6B7280',
                 fontSize: '16px'
@@ -44,7 +45,14 @@ function ProtectedRoute({ children }){
         );
     }
 
-    return isAuthenticated ? children : <Navigate to="/login" />;
+    if (!isAuthenticated) {
+        const redirectTo = location.pathname + location.search;
+        const isContribute = location.pathname.startsWith('/contribute');
+        const loginUrl = `/login?redirect=${encodeURIComponent(redirectTo)}${isContribute ? '&intent=contribute' : ''}`;
+        return <Navigate to={loginUrl} />;
+    }
+
+    return children;
 }
 
 function AdminRoute({ children }){
