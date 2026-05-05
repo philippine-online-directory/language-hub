@@ -61,12 +61,6 @@ export default function LanguagesPage() {
 
             try {
                 let result;
-                if (searchMode === 'isoCode' && !debouncedSearch) {
-                    setLanguages([]);
-                    setPagination(null);
-                    setLoading(false);
-                    return;
-                }
                 result = await languageService.getLanguages(
                     searchMode === 'isoCode' ? 1 : currentPage,
                     LANGUAGES_PER_PAGE,
