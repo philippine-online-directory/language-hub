@@ -397,7 +397,7 @@ export default function ContributePage(){
                             onChange={handleChange}
                             error={errors.wordText}
                             required
-                            placeholder="Enter the word in the original language"
+                            placeholder="Enter the word in the native language"
                         />
 
                         <div className={styles.formGroup}>
@@ -466,7 +466,7 @@ export default function ContributePage(){
                                 className={styles.textarea}
                                 rows="3"
                                 required
-                                placeholder="Optional: Show how this word is used in context"
+                                placeholder="Optional: Give an example sentence in the language"
                             />
                             {errors.exampleSentence && (
                                 <span className={styles.errorText}>{errors.exampleSentence}</span>
