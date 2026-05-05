@@ -156,7 +156,7 @@ export default function LanguageDetailPage() {
             try {
                 const result = await languageService.getMissingCommonWords(isoCode, missingPage, MISSING_WORDS_PER_PAGE);
                 if (cancelled) return;
-                setMissingWords(result.words || result.data || result || []);
+                setMissingWords(result.commonWords || []);
                 setMissingPagination(result.pagination || null);
             } catch (err) {
                 if (cancelled) return;
