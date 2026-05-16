@@ -159,7 +159,12 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                     {!isExpanded ? (
                         /* Collapsed View */
                         <div className={styles.collapsedView}>
-                            <h2 className={styles.wordCollapsed}>{translation.wordText}</h2>
+                            <div className={styles.collapsedWordGroup}>
+                                <h2 className={styles.wordCollapsed}>{translation.wordText}</h2>
+                                {translation.englishDefinition && (
+                                    <span className={styles.wordEnglish}>{translation.englishDefinition}</span>
+                                )}
+                            </div>
 
                             <div className={styles.collapsedRight}>
                                 {translation.status === 'VERIFIED' && (
