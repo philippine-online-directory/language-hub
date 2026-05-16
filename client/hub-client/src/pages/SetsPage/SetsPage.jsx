@@ -135,12 +135,15 @@ export default function SetsPage(){
                 {/* Header */}
                 <header className={styles.header}>
                     <div className={styles.headerContent}>
-                        <h1 className={styles.title}>Vocabulary Sets</h1>
+                        <h1 className={styles.title}>Sets &amp; Games</h1>
                         <p className={styles.subtitle}>
-                            {viewMode === 'my' 
+                            {viewMode === 'my'
                                 ? (isAuthenticated ? 'Create and manage your language learning collections' : 'Sign in to create and manage your vocabulary sets')
                                 : 'Discover sets created by other learners'
                             }
+                        </p>
+                        <p className={styles.gamesNote}>
+                            To play games, open any set below — your own or a public one.
                         </p>
                     </div>
                     {viewMode === 'my' && isAuthenticated && (
