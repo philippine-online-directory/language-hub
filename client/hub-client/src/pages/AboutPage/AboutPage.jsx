@@ -44,11 +44,11 @@ export default function AboutPage() {
         <div className={styles.aboutPage}>
             <div className={styles.pageHeader}>
                 <div className={styles.pageHeaderInner}>
-                    <h1 className={styles.pageTitle}>About Philippine Online Dictionary</h1>
+                    <h1 className={styles.pageTitle}>Our Mission</h1>
                     <p className={styles.pageSubtitle}>
-                        Explore words and phrases from languages around the <strong>Philippines</strong>.
-                        Contribute translations, build vocabulary sets, and help keep
-                        linguistic diversity alive.
+                        The Philippines is home to over <strong>180 languages</strong> — many of them endangered,
+                        underdocumented, and at risk of disappearing within a generation.
+                        We built this dictionary to do something about that.
                     </p>
                 </div>
             </div>
@@ -56,44 +56,48 @@ export default function AboutPage() {
             <div className={styles.container}>
                 <section className={styles.features} ref={featuresRef}>
                     <div className={styles.feature}>
-                        <h2 className={styles.featureTitle}>Explore</h2>
+                        <h2 className={styles.featureTitle}>Why It Matters</h2>
                         <p className={styles.featureDescription}>
-                            Discover words and phrases from endangered and minority
-                            languages, complete with pronunciation guides and cultural context.
+                            When a language disappears, so does an entire way of seeing the world — its stories,
+                            concepts, and cultural knowledge. Many Philippine minority languages have few written
+                            records and no digital presence. We exist to change that.
                         </p>
                     </div>
 
                     <div className={styles.feature}>
-                        <h2 className={styles.featureTitle}>Contribute</h2>
+                        <h2 className={styles.featureTitle}>Community-Powered Preservation</h2>
                         <p className={styles.featureDescription}>
-                            Share your knowledge by contributing translations, recordings,
-                            and example sentences. Every contribution helps preserve linguistic heritage.
+                            No single institution can document every language. That's why this dictionary is
+                            built by the people who speak them — native speakers, researchers, diaspora communities,
+                            and language enthusiasts contributing word by word.
                         </p>
                     </div>
 
                     <div className={styles.feature}>
-                        <h2 className={styles.featureTitle}>Learn</h2>
+                        <h2 className={styles.featureTitle}>Free and Open</h2>
                         <p className={styles.featureDescription}>
-                            Create custom vocabulary sets and practice with interactive games.
-                            Make language preservation part of your learning journey.
+                            Everything here is freely accessible. Whether you're a student reconnecting with
+                            your heritage, a researcher documenting a language, or simply curious about the
+                            Philippines' linguistic richness — this resource is for you.
                         </p>
                     </div>
                 </section>
 
                 <section className={styles.callToAction} ref={ctaRef}>
                     <h2 className={styles.ctaTitle}>
-                        You're helping keep languages alive
+                        Every word you share keeps a language alive
                     </h2>
                     <p className={styles.ctaDescription}>
-                        Join a community dedicated to preserving the Philippines' linguistic diversity.
-                        Every word shared is a step toward cultural preservation.
+                        Join a growing community dedicated to preserving the Philippines' linguistic heritage.
+                        Contribute a translation, fill in a missing word, or simply spread the word.
+                        Small contributions add up to something lasting.
                     </p>
                     {!isAuthenticated && (
                         <Button
                             variant="primary"
                             onClick={() => navigate('/register')}
                         >
-                            Join Now
+                            Join the Community
                         </Button>
                     )}
                 </section>
