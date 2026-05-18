@@ -65,4 +65,4 @@ app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
 
-//Run with node --watch --loader tsx/esm app.js
+//Run with node --watch --import tsx/esm app.js

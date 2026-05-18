@@ -526,6 +526,13 @@ export default function LanguageDetailPage() {
                             </svg>
                             <span className={styles.legendText}>Missing fields — expand the card, then click this icon to fill them in</span>
                         </div>
+                        <div className={styles.legendItem}>
+                            <svg className={styles.legendHint} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M15 15l-2 5L9 9l11 4-5 2z" />
+                                <path d="M15 15l-2 5L9 9l11 4-5 2z" />
+                            </svg>
+                            <span className={styles.legendText}>Hover over a card and click "See details" to view translation info</span>
+                        </div>
                     </div>
 
                     {}
