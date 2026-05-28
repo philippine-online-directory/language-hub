@@ -580,3 +580,15 @@
     flex-direction: column;
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  .logoText {
+    background: none;
+    -webkit-text-fill-color: var(--text-primary);
+  }
+
+  .logoAccent {
+    background: none;
+    -webkit-text-fill-color: var(--text-primary);
+  }
+}

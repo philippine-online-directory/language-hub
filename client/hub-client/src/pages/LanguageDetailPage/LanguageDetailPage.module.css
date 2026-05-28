@@ -1109,3 +1109,11 @@ a.podiumCard:hover {
     justify-content: flex-start;
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  .languageName {
+    background: none;
+    -webkit-text-fill-color: var(--text-primary);
+    animation: none;
+  }
+}

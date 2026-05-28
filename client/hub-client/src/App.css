@@ -44,7 +44,7 @@
     --text-placeholder: #5C4E3E;
     --border: rgba(192, 118, 58, 0.25);
     --border-rgba: rgba(192, 118, 58, 0.2);
-    --heading-gradient: linear-gradient(135deg, #F0EBE3 0%, #C0763A 100%);
+    --heading-gradient: #F0EBE3;
     --scrollbar-track: #1A1410;
     --input-bg: rgba(42, 32, 24, 0.9);
     --input-bg-focus: #2A2018;

@@ -765,3 +765,10 @@
     font-size: 14px;
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  .statValue {
+    background: none;
+    -webkit-text-fill-color: var(--text-primary);
+  }
+}

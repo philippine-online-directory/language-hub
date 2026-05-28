@@ -325,3 +325,11 @@
     padding: 32px 0;
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  .setName {
+    background: none;
+    -webkit-text-fill-color: var(--text-primary);
+    animation: none;
+  }
+}
