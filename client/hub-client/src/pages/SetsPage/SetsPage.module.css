@@ -87,6 +87,11 @@
   font-weight: 500;
 }
 
+.signInLink {
+  color: #C0763A;
+  font-weight: 600;
+}
+
 .helpButton {
   display: inline-flex;
   align-items: center;

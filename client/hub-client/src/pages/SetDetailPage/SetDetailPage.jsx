@@ -92,7 +92,7 @@ export default function SetDetailPage() {
     );
   }
 
-  const isOwner = user && set.ownerId === user.id;
+  const isOwner = user && set.owner?.username === user.username;
   const hasWords = set.setWords && set.setWords.length > 0;
 
   return (
