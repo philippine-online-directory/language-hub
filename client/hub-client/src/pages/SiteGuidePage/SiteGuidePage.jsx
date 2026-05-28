@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { setsGamesSteps } from '../../data/setsGamesGuide';
 import styles from './SiteGuidePage.module.css';
 
 const guideSections = [
@@ -85,30 +86,7 @@ const guideSections = [
         eyebrow: 'Study and Practice',
         title: 'Create Sets and Play Games',
         description: 'Sets let you organize translations into collections, then practice them through interactive games whether the set is your own or public.',
-        steps: [
-            {
-                number: '10',
-                title: 'Open the Sets & Games Tab',
-                description: 'Use the Sets & Games tab in the navbar to enter the vocabulary sets area of the site. To play games, you need to open a set first — either one you created or a public one.',
-                action: { label: 'Go to Sets & Games', to: '/sets' },
-            },
-            {
-                number: '11',
-                title: 'Create Your Own Sets or Browse Public Sets',
-                description: 'From the Sets & Games page, logged-in users can switch between My Sets and Public Sets to create a new collection or explore sets made by other users.',
-                action: { label: 'Browse Sets', to: '/sets' },
-            },
-            {
-                number: '12',
-                title: 'Add Translations to a Set',
-                description: 'After creating a set, add translations to it from dictionary entries so the set becomes a focused study collection for that language.',
-            },
-            {
-                number: '13',
-                title: 'Open a Set and Play Games',
-                description: 'Open any set to launch games like flashcards, matching, and writing. Games are only available from inside a set — your own or a public one.',
-            },
-        ],
+        steps: setsGamesSteps,
     },
 ];
 
