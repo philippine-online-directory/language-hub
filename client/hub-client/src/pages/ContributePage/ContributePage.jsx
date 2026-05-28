@@ -1,8 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { contributionService } from '../../api/contributionService';
 import { languageService } from '../../api/languageService';
 import IntellectualPropertyModal from '../../components/IntellectualPropertyModal/IntellectualPropertyModal';
+import MissingWordsSidebar from '../../components/MissingWordsSidebar/MissingWordsSidebar';
+import MissingWordsBottomSheet from '../../components/MissingWordsSidebar/MissingWordsBottomSheet';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
@@ -141,6 +143,9 @@ export default function ContributePage() {
     const [ipAgreed, setIpAgreed] = useState(false);
     const [showIPModal, setShowIPModal] = useState(false);
     const [prefillWord, setPrefillWord] = useState('');
+    const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
+
+    const selectedIsoCode = languages.find(l => l.id === formData.languageId)?.isoCode ?? null;
 
     useEffect(() => { setMounted(true); }, []);
 
@@ -351,6 +356,17 @@ export default function ContributePage() {
         goToStep(currentStep - 1);
     };
 
+    const handleMissingWordClick = useCallback((word) => {
+        if (loading) return;
+        setFormData(prev => ({ ...prev, englishDefinition: word.word, wordText: '' }));
+        setPrefillWord(word.word);
+        setErrors({});
+        setDirection('back');
+        setCurrentStep(1);
+        setVisitedSteps(new Set([1]));
+        setMobileSheetOpen(false);
+    }, [loading]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const validationErrors = validateAll();
@@ -443,13 +459,24 @@ export default function ContributePage() {
                 </header>
 
                 <div className={styles.layout}>
-                    <StepSidebar
-                        currentStep={currentStep}
-                        visitedSteps={visitedSteps}
-                        formData={formData}
-                        audioFile={audioFile}
-                        audioBlob={audioBlob}
-                    />
+                    <div>
+                        <StepSidebar
+                            currentStep={currentStep}
+                            visitedSteps={visitedSteps}
+                            formData={formData}
+                            audioFile={audioFile}
+                            audioBlob={audioBlob}
+                        />
+                        {selectedIsoCode && (
+                            <button
+                                type="button"
+                                className={styles.mobileSheetBtn}
+                                onClick={() => setMobileSheetOpen(true)}
+                            >
+                                View Missing Words
+                            </button>
+                        )}
+                    </div>
 
                     <div className={styles.cardWrapper}>
                         {prefillWord && (
@@ -845,8 +872,19 @@ export default function ContributePage() {
                             </Button>
                         </div>
                     </div>
+
+                    <div className={styles.missingSidebarColumn}>
+                        <MissingWordsSidebar isoCode={selectedIsoCode} onWordClick={handleMissingWordClick} />
+                    </div>
                 </div>
             </div>
+
+            <MissingWordsBottomSheet
+                isOpen={mobileSheetOpen}
+                onClose={() => setMobileSheetOpen(false)}
+                isoCode={selectedIsoCode}
+                onWordClick={handleMissingWordClick}
+            />
         </div>
     );
 }

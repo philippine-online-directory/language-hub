@@ -1,0 +1,226 @@
+.sidebar {
+  min-width: 0;
+  position: sticky;
+  top: 100px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(192, 118, 58, 0.2) transparent;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(192, 118, 58, 0.2);
+  border-radius: 2px;
+}
+
+/* ─── Header ─────────────────────────────────────────── */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid rgba(192, 118, 58, 0.15);
+  position: sticky;
+  top: 0;
+  background: var(--bg-body);
+  z-index: 1;
+  padding-top: 2px;
+}
+
+.title {
+  font-family: 'Fraunces', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.count {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-placeholder);
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+}
+
+.toggleBtn {
+  padding: 5px 12px;
+  background: rgba(192, 118, 58, 0.07);
+  border: 1px solid rgba(192, 118, 58, 0.22);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #C0763A;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+}
+.toggleBtn:hover {
+  background: rgba(192, 118, 58, 0.14);
+  border-color: rgba(192, 118, 58, 0.35);
+}
+
+/* ─── Body ───────────────────────────────────────────── */
+
+.body {
+  padding-bottom: 8px;
+}
+
+.placeholder {
+  font-size: 14px;
+  color: var(--text-placeholder);
+  text-align: center;
+  padding: 32px 16px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ─── Loading ────────────────────────────────────────── */
+
+.loadingState {
+  text-align: center;
+  padding: 40px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.loadingState p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(192, 118, 58, 0.1);
+  border-top-color: #C0763A;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── Error ──────────────────────────────────────────── */
+
+.errorCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  padding: 32px 16px;
+  background: rgba(192, 118, 58, 0.05);
+  border: 1px solid rgba(192, 118, 58, 0.2);
+  border-radius: 12px;
+}
+.errorCard p {
+  font-size: 14px;
+  color: #C0763A;
+  margin: 0;
+}
+
+.errorIcon {
+  width: 32px;
+  height: 32px;
+  color: #C0763A;
+  opacity: 0.7;
+}
+
+.retryBtn {
+  padding: 8px 16px;
+  background: transparent;
+  border: 1.5px solid rgba(192, 118, 58, 0.4);
+  border-radius: 8px;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #C0763A;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.retryBtn:hover {
+  background: rgba(192, 118, 58, 0.08);
+  border-color: #C0763A;
+}
+
+/* ─── Empty ──────────────────────────────────────────── */
+
+.empty {
+  text-align: center;
+  padding: 40px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.empty p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.emptyIcon {
+  width: 40px;
+  height: 40px;
+  color: #D1D5DB;
+}
+
+/* ─── Word list ──────────────────────────────────────── */
+
+.wordsList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.wordCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-rgba);
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  width: 100%;
+}
+.wordCard:hover {
+  border-color: rgba(192, 118, 58, 0.35);
+  background: rgba(192, 118, 58, 0.04);
+  box-shadow: 0 2px 6px rgba(192, 118, 58, 0.08);
+}
+
+.wordText {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wordHint {
+  font-size: 11px;
+  font-weight: 500;
+  color: #C0763A;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
