@@ -7,6 +7,7 @@ import Card from '../../components/Card/Card';
 import Button from '../../components/Button/Button';
 import Input from '../../components/Input/Input';
 import Pagination from '../../components/Pagination/Pagination';
+import SetsGamesHelpModal from '../../components/SetsGamesHelpModal/SetsGamesHelpModal';
 import styles from './SetsPage.module.css';
 
 export default function SetsPage(){
@@ -20,6 +21,7 @@ export default function SetsPage(){
     const [currentPage, setCurrentPage] = useState(1);
     const [pagination, setPagination] = useState(null);
     const [mounted, setMounted] = useState(false);
+    const [helpOpen, setHelpOpen] = useState(false);
     const gridRef = useRef(null);
 
     const debouncedSearch = useDebounce(searchQuery, 500);
@@ -128,6 +130,8 @@ export default function SetsPage(){
     };
 
     return (
+        <>
+        {helpOpen && <SetsGamesHelpModal onClose={() => setHelpOpen(false)} />}
         <div className={`${styles.setsPage} ${mounted ? styles.mounted : ''}`}>
             <div className={styles.backgroundPattern}></div>
             
@@ -145,6 +149,12 @@ export default function SetsPage(){
                         <p className={styles.gamesNote}>
                             To play games, open any set below — your own or a public one.
                         </p>
+                        <button className={styles.helpButton} onClick={() => setHelpOpen(true)}>
+                            <svg viewBox="0 0 20 20" fill="currentColor" width="15" height="15">
+                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                            </svg>
+                            How do I use Sets &amp; Games?
+                        </button>
                     </div>
                     {viewMode === 'my' && isAuthenticated && (
                         <Button variant="primary" onClick={() => navigate('/sets/create')}>
@@ -214,7 +224,7 @@ export default function SetsPage(){
                                 </svg>
                                 {!isAuthenticated ? (
                                     <p>
-                                        <Link to="/login">Sign in</Link> to create and manage your vocabulary sets.
+                                        <Link to="/login?redirect=/sets">Sign in</Link> to create and manage your vocabulary sets.
                                     </p>
                                 ) : (
                                     <>
@@ -320,5 +330,6 @@ export default function SetsPage(){
                 )}
             </div>
         </div>
+        </>
     );
 }
