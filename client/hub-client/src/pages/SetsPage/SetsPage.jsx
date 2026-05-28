@@ -17,7 +17,7 @@ export default function SetsPage(){
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [viewMode, setViewMode] = useState('public');
+    const [viewMode, setViewMode] = useState(() => isAuthenticated ? 'my' : 'public');
     const [currentPage, setCurrentPage] = useState(1);
     const [pagination, setPagination] = useState(null);
     const [mounted, setMounted] = useState(false);
@@ -44,6 +44,8 @@ export default function SetsPage(){
     }, [viewMode, debouncedSearch]);
 
     useEffect(() => {
+        let ignore = false;
+
         const fetchSets = async () => {
             setLoading(true);
             setError(null);
@@ -63,22 +65,29 @@ export default function SetsPage(){
                 } else {
                     result = await setService.searchPublicSets(currentPage, SETS_PER_PAGE, debouncedSearch);
                 }
-                
-                setSets(result.sets);
-                setPagination(result.pagination);
 
-                if (currentPage > 1) {
-                    window.scrollTo({ top: 200, behavior: 'smooth' });
+                if (!ignore) {
+                    setSets(result.sets);
+                    setPagination(result.pagination);
+
+                    if (currentPage > 1) {
+                        window.scrollTo({ top: 200, behavior: 'smooth' });
+                    }
                 }
             } catch (err) {
-                setError('Failed to load sets. Please try again.');
-                console.error('Error fetching sets:', err);
+                if (!ignore) {
+                    setError('Failed to load sets. Please try again.');
+                    console.error('Error fetching sets:', err);
+                }
             } finally {
-                setLoading(false);
+                if (!ignore) {
+                    setLoading(false);
+                }
             }
         };
 
         fetchSets();
+        return () => { ignore = true; };
     }, [viewMode, debouncedSearch, currentPage, isAuthenticated]);
 
     // Scroll animation observer
