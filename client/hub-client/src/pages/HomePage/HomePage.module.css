@@ -3,44 +3,11 @@
 }
 
 .hero {
-  min-height: 100vh;
-  position: relative;
-  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--bg-body);
-}
-
-.heroMapWrapper {
-  position: absolute;
-  top: 50%;
-  right: -15%;
-  transform: translateY(-50%);
-  width: 140vh;
-  height: 140vh;
-  z-index: 1;
-  pointer-events: none;
-  animation: slideInMapFromRight 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.3s backwards;
-}
-
-.heroMap {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: brightness(0) saturate(100%);
-  opacity: 0.12;
-}
-
-@keyframes slideInMapFromRight {
-  from {
-    opacity: 0;
-    transform: translateY(-50%) translateX(40%);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(-50%) translateX(0);
-  }
+  padding: 80px 0 64px;
 }
 
 .heroContent {
@@ -92,20 +59,13 @@
 
 .heroActions {
   display: grid;
-  grid-template-columns: repeat(3, max-content);
+  grid-template-columns: repeat(2, max-content);
   gap: 16px;
   align-items: center;
   width: fit-content;
   max-width: 100%;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 96px 24px;
-  position: relative;
-  z-index: 1;
-}
 
 .features {
   display: grid;
@@ -179,17 +139,9 @@
 }
 
 .translatorSection {
-  margin-bottom: 96px;
-  opacity: 0;
-  transform: translateY(60px) scale(0.98);
-  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-              transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-  scroll-margin-top: 112px;
-}
-
-.translatorSection.visible {
+  margin-top: 48px;
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: none;
 }
 
 .translatorSectionHeader {
@@ -307,28 +259,21 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .heroMapWrapper,
   .heroTextWrapper {
     animation: none;
     opacity: 1;
-    transform: translateY(-50%);
-  }
-
-  .heroTextWrapper {
     transform: none;
   }
 
   .feature,
-  .callToAction,
-  .translatorSection {
+  .callToAction {
     opacity: 1;
     transform: none;
     transition: none;
   }
 
   .feature.visible,
-  .callToAction.visible,
-  .translatorSection.visible {
+  .callToAction.visible {
     opacity: 1;
     transform: none;
   }
@@ -339,12 +284,6 @@
 }
 
 @media (max-width: 1024px) {
-  .heroMapWrapper {
-    width: 120vh;
-    height: 120vh;
-    right: -25%;
-  }
-
   .heroTitle {
     font-size: 48px;
     line-height: 56px;
@@ -353,33 +292,7 @@
 
 @media (max-width: 768px) {
   .hero {
-    min-height: 100vh;
-    padding: 80px 0 60px;
-  }
-
-  .heroMapWrapper {
-    width: 160vw;
-    height: 160vw;
-    top: auto;
-    bottom: -20%;
-    right: -30%;
-    transform: none;
-    animation: slideInMapFromBottom 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.3s backwards;
-  }
-
-  @keyframes slideInMapFromBottom {
-    from {
-      opacity: 0;
-      transform: translateY(40%);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .heroMap {
-    opacity: 0.08;
+    padding: 64px 0 48px;
   }
 
   .heroContent {
@@ -407,36 +320,6 @@
     width: 100%;
   }
 
-  .container {
-    padding: 64px 16px;
-  }
-
-  .features {
-    gap: 32px;
-    margin-bottom: 64px;
-  }
-
-  .featureTitle {
-    font-size: 20px;
-  }
-
-  .callToAction {
-    padding: 32px 24px;
-  }
-
-  .ctaTitle {
-    font-size: 24px;
-    line-height: 32px;
-  }
-
-  .ctaDescription {
-    font-size: 16px;
-  }
-
-  .translatorSection {
-    margin-bottom: 64px;
-  }
-
   .translatorTitle {
     font-size: 26px;
     line-height: 34px;
@@ -452,13 +335,6 @@
   .heroSubtitle {
     font-size: 16px;
     line-height: 26px;
-  }
-
-  .heroMapWrapper {
-    width: 180vw;
-    height: 180vw;
-    bottom: -30%;
-    right: -40%;
   }
 
   .translatorTitle {
