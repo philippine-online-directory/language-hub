@@ -18,9 +18,9 @@
 }
 
 .modal {
-  background: #FFFFFF;
+  background: var(--bg-elevated);
   border-radius: 24px;
-  border: 1px solid rgba(229, 231, 235, 0.8);
+  border: 1px solid var(--border-rgba);
   box-shadow: 0 32px 80px rgba(31, 41, 55, 0.2), 0 0 0 1px rgba(192, 118, 58, 0.08);
   width: 100%;
   max-width: 520px;
@@ -55,14 +55,14 @@
   font-family: 'Fraunces', serif;
   font-size: 22px;
   font-weight: 600;
-  color: #1F2937;
+  color: var(--text-primary);
   margin: 0 0 4px;
   letter-spacing: -0.01em;
 }
 
 .modalSubtitle {
   font-size: 13px;
-  color: #9CA3AF;
+  color: var(--text-placeholder);
   margin: 0;
 }
 
@@ -70,9 +70,9 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  border: 1px solid rgba(229, 231, 235, 0.8);
+  border: 1px solid var(--border-rgba);
   background: transparent;
-  color: #6B7280;
+  color: var(--text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -129,14 +129,14 @@
   font-family: 'Fraunces', serif;
   font-size: 15px;
   font-weight: 600;
-  color: #1F2937;
+  color: var(--text-primary);
   margin: 0;
   letter-spacing: -0.01em;
 }
 
 .sectionText {
   font-size: 14px;
-  color: #4B5563;
+  color: var(--text-muted);
   line-height: 1.65;
   margin: 0;
 }
@@ -157,12 +157,12 @@
   align-items: flex-start;
   gap: 10px;
   font-size: 14px;
-  color: #4B5563;
+  color: var(--text-muted);
   line-height: 1.55;
 }
 
 .listItem strong {
-  color: #1F2937;
+  color: var(--text-primary);
 }
 
 .listIcon {

@@ -18,9 +18,9 @@
 }
 
 .modal {
-  background: #FFFFFF;
+  background: var(--bg-elevated);
   border-radius: 24px;
-  border: 1px solid rgba(229, 231, 235, 0.8);
+  border: 1px solid var(--border-rgba);
   box-shadow: 0 32px 80px rgba(31, 41, 55, 0.2), 0 0 0 1px rgba(192, 118, 58, 0.08);
   width: 100%;
   max-width: 520px;
@@ -55,14 +55,14 @@
   font-family: 'Fraunces', serif;
   font-size: 22px;
   font-weight: 600;
-  color: #1F2937;
+  color: var(--text-primary);
   margin: 0 0 4px;
   letter-spacing: -0.01em;
 }
 
 .modalSubtitle {
   font-size: 13px;
-  color: #9CA3AF;
+  color: var(--text-placeholder);
   margin: 0;
 }
 
@@ -70,9 +70,9 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  border: 1px solid rgba(229, 231, 235, 0.8);
+  border: 1px solid var(--border-rgba);
   background: transparent;
-  color: #6B7280;
+  color: var(--text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -101,18 +101,18 @@
   transform: translateY(-50%);
   width: 16px;
   height: 16px;
-  color: #9CA3AF;
+  color: var(--text-placeholder);
   pointer-events: none;
 }
 
 .searchInput {
   width: 100%;
   padding: 10px 36px 10px 38px;
-  border: 1px solid rgba(229, 231, 235, 0.8);
+  border: 1px solid var(--border-rgba);
   border-radius: 12px;
   font-size: 14px;
-  color: #1F2937;
-  background: #F9FAFB;
+  color: var(--text-primary);
+  background: var(--disabled-bg);
   outline: none;
   transition: all 0.2s ease;
   box-sizing: border-box;
@@ -120,12 +120,12 @@
 
 .searchInput:focus {
   border-color: rgba(192, 118, 58, 0.5);
-  background: #FFFFFF;
+  background: var(--bg-elevated);
   box-shadow: 0 0 0 3px rgba(192, 118, 58, 0.08);
 }
 
 .searchInput::placeholder {
-  color: #9CA3AF;
+  color: var(--text-placeholder);
 }
 
 .clearSearch {
@@ -135,7 +135,7 @@
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: #9CA3AF;
+  color: var(--text-placeholder);
   cursor: pointer;
   padding: 4px;
   display: flex;
@@ -213,7 +213,7 @@
 .langName {
   font-size: 15px;
   font-weight: 600;
-  color: #1F2937;
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -225,15 +225,15 @@
 
 .langMeta {
   font-size: 12px;
-  color: #9CA3AF;
+  color: var(--text-placeholder);
 }
 
 .isoCode {
   font-size: 12px;
   font-weight: 600;
-  color: #9CA3AF;
+  color: var(--text-placeholder);
   font-family: monospace;
-  background: rgba(229, 231, 235, 0.6);
+  background: var(--border-rgba);
   padding: 3px 8px;
   border-radius: 6px;
   flex-shrink: 0;
@@ -262,7 +262,7 @@
   gap: 12px;
   padding: 48px 24px;
   text-align: center;
-  color: #6B7280;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
@@ -286,7 +286,7 @@
 .emptyIcon {
   width: 40px;
   height: 40px;
-  color: #D1D5DB;
+  color: var(--text-placeholder);
 }
 
 @media (prefers-reduced-motion: reduce) {
