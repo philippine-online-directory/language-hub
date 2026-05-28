@@ -143,7 +143,13 @@
 }
 
 .searchWrapper {
-  max-width: 600px;
+  max-width: 640px;
+}
+
+@media (min-width: 1024px) {
+  .searchWrapper {
+    max-width: 100%;
+  }
 }
 
 .searchInput {
