@@ -224,7 +224,7 @@ export default function SetsPage(){
                                 </svg>
                                 {!isAuthenticated ? (
                                     <p>
-                                        <Link to="/login?redirect=/sets" className={styles.signInLink}>Sign in</Link> to create and manage your vocabulary sets.
+                                        <Link to="/login?redirect=/sets" className={styles.signInLink}>Sign in here</Link> to create and manage your vocabulary sets.
                                     </p>
                                 ) : (
                                     <>

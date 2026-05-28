@@ -181,7 +181,7 @@ export default function SetDetailPage() {
                     to={set.language ? `/languages/${set.language.isoCode}` : '/languages'}
                     className={styles.emptyLink}
                   >
-                    {set.language ? `${set.language.name} dictionary` : 'Dictionaries page'}
+                    {set.language ? `${set.language.name} dictionary here` : 'Dictionaries page'}
                   </Link>
                   {' '}— expand any word card and click &ldquo;Add to Set&rdquo;.
                 </p>
