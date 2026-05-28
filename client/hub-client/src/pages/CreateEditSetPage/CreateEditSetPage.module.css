@@ -3,7 +3,7 @@
 .createEditSetPage {
   min-height: 100vh;
   padding: 80px 24px 40px;
-  background: #F6F4EF;
+  background: var(--bg-body);
   position: relative;
   overflow: hidden;
   opacity: 0;
@@ -62,7 +62,7 @@
   font-size: 48px;
   line-height: 56px;
   font-weight: 600;
-  background: linear-gradient(135deg, #1F2937 0%, #C0763A 100%);
+  background: var(--heading-gradient);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -73,7 +73,7 @@
 .subtitle {
   font-size: 18px;
   line-height: 28px;
-  color: #6B7280;
+  color: var(--text-secondary);
 }
 
 /* ============================================
@@ -127,7 +127,7 @@
 .label {
   font-size: 15px;
   font-weight: 600;
-  color: #1F2937;
+  color: var(--text-primary);
   letter-spacing: 0.01em;
 }
 
@@ -140,10 +140,10 @@
   font-family: 'IBM Plex Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 15px;
   padding: 14px 16px;
-  border: 2px solid #E5E7EB;
+  border: 2px solid var(--border);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #1F2937;
+  background: var(--input-bg);
+  color: var(--text-primary);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -151,7 +151,7 @@
 .textarea:focus {
   outline: none;
   border-color: #C0763A;
-  background: #FFFFFF;
+  background: var(--input-bg-focus);
   box-shadow: 0 0 0 4px rgba(192, 118, 58, 0.1);
 }
 
@@ -191,7 +191,7 @@
   align-items: center;
   gap: 6px;
   font-size: 13px;
-  color: #6B7280;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
@@ -210,16 +210,16 @@
   align-items: flex-start;
   gap: 14px;
   padding: 18px 20px;
-  border: 2px solid #E5E7EB;
+  border: 2px solid var(--border);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--input-bg);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
 }
 
 .checkboxWrapper:hover {
   border-color: rgba(192, 118, 58, 0.3);
-  background: #FFFFFF;
+  background: var(--input-bg-focus);
   box-shadow: 0 2px 8px rgba(192, 118, 58, 0.06);
 }
 
@@ -246,7 +246,7 @@
   gap: 8px;
   font-size: 15px;
   font-weight: 600;
-  color: #1F2937;
+  color: var(--text-primary);
   letter-spacing: 0.01em;
 }
 
@@ -259,7 +259,7 @@
 
 .checkboxHelper {
   font-size: 13px;
-  color: #6B7280;
+  color: var(--text-secondary);
   font-weight: 400;
   line-height: 1.5;
 }
@@ -274,7 +274,7 @@
   gap: 12px;
   margin-top: 12px;
   padding-top: 24px;
-  border-top: 1px solid rgba(229, 231, 235, 0.6);
+  border-top: 1px solid var(--border-rgba);
 }
 
 .buttonSpinner {
@@ -311,7 +311,7 @@
 .loadingState p {
   font-size: 18px;
   line-height: 28px;
-  color: #6B7280;
+  color: var(--text-secondary);
   margin: 0;
 }
 

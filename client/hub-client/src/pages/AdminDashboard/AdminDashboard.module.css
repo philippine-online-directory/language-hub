@@ -1,6 +1,6 @@
 .adminDashboard {
   min-height: calc(100vh - 80px);
-  background: #F6F4EF;
+  background: var(--bg-body);
   padding: 48px 24px;
 }
 
@@ -17,19 +17,19 @@
   font-size: 32px;
   line-height: 40px;
   font-weight: 600;
-  color: #1F2937;
+  color: var(--text-primary);
   margin-bottom: 8px;
 }
 
 .subtitle {
   font-size: 16px;
-  color: #6B7280;
+  color: var(--text-secondary);
 }
 
 .unauthorized {
   text-align: center;
   padding: 48px;
-  color: #6B7280;
+  color: var(--text-secondary);
 }
 
 .adminGrid {
@@ -52,12 +52,12 @@
   font-size: 20px;
   line-height: 28px;
   font-weight: 500;
-  color: #1F2937;
+  color: var(--text-primary);
   margin-bottom: 12px;
 }
 
 .cardDescription {
   font-size: 16px;
   line-height: 24px;
-  color: #6B7280;
+  color: var(--text-secondary);
 }

@@ -3,7 +3,7 @@
 .contributionsPage {
   min-height: 100vh;
   padding: 80px 24px 40px;
-  background: #F6F4EF;
+  background: var(--bg-body);
   position: relative;
   overflow: hidden;
   opacity: 0;
@@ -58,7 +58,7 @@
   font-size: 48px;
   line-height: 56px;
   font-weight: 600;
-  background: linear-gradient(135deg, #1F2937 0%, #C0763A 100%);
+  background: var(--heading-gradient);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -69,7 +69,7 @@
 .subtitle {
   font-size: 18px;
   line-height: 28px;
-  color: #6B7280;
+  color: var(--text-secondary);
 }
 
 .statsBar {
@@ -86,10 +86,10 @@
   align-items: center;
   gap: 12px;
   padding: 24px;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--bg-surface);
   backdrop-filter: blur(10px);
   border-radius: 16px;
-  border: 1px solid rgba(229, 231, 235, 0.6);
+  border: 1px solid var(--border-rgba);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -112,7 +112,7 @@
 
 .statLabel {
   font-size: 14px;
-  color: #6B7280;
+  color: var(--text-secondary);
   text-align: center;
   font-weight: 500;
   letter-spacing: 0.02em;
@@ -154,13 +154,13 @@
 .empty p {
   font-size: 18px;
   line-height: 28px;
-  color: #6B7280;
+  color: var(--text-secondary);
   margin: 0;
 }
 
 .emptySubtext {
   font-size: 15px !important;
-  color: #9CA3AF !important;
+  color: var(--text-placeholder) !important;
 }
 
 .error {

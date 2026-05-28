@@ -3,7 +3,7 @@
 .contributePage {
   min-height: 100vh;
   padding: 80px 24px 60px;
-  background: #F6F4EF;
+  background: var(--bg-body);
   position: relative;
   overflow: hidden;
   opacity: 0;
@@ -70,7 +70,7 @@
   font-size: 40px;
   line-height: 48px;
   font-weight: 600;
-  background: linear-gradient(135deg, #1F2937 0%, #C0763A 100%);
+  background: var(--heading-gradient);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -80,7 +80,7 @@
 .subtitle {
   font-size: 18px;
   line-height: 28px;
-  color: #6B7280;
+  color: var(--text-secondary);
 }
 
 /* ─── Two-column layout ──────────────────────────────────── */
@@ -181,7 +181,7 @@
 }
 
 .sidebarStep--done .sidebarStepLabel {
-  color: #374151;
+  color: var(--text-primary);
 }
 
 .sidebarStep--skipped .sidebarStepLabel {
@@ -189,13 +189,13 @@
 }
 
 .sidebarStep--upcoming .sidebarStepLabel {
-  color: #9CA3AF;
+  color: var(--text-placeholder);
 }
 
 /* ─── Card ───────────────────────────────────────────────── */
 
 .formCard {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-surface);
   backdrop-filter: blur(20px);
   position: relative;
   overflow: hidden;
@@ -242,7 +242,7 @@
 .stepHeader {
   margin-bottom: 24px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(229, 231, 235, 0.7);
+  border-bottom: 1px solid var(--border-rgba);
 }
 
 .stepCount {
@@ -259,13 +259,13 @@
   font-family: 'Fraunces', serif;
   font-size: 22px;
   font-weight: 600;
-  color: #1F2937;
+  color: var(--text-primary);
   margin: 0 0 6px;
 }
 
 .requiredNote {
   font-size: 13px;
-  color: #6B7280;
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -286,7 +286,7 @@
 .label {
   font-size: 15px;
   font-weight: 500;
-  color: #1F2937;
+  color: var(--text-primary);
 }
 
 .required {
@@ -298,10 +298,10 @@
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   font-size: 16px;
   padding: 13px 16px;
-  border: 2px solid #E5E7EB;
+  border: 2px solid var(--border);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #1F2937;
+  background: var(--input-bg);
+  color: var(--text-primary);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   width: 100%;
   box-sizing: border-box;
@@ -324,10 +324,10 @@
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   font-size: 15px;
   padding: 13px 16px;
-  border: 2px solid #E5E7EB;
+  border: 2px solid var(--border);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #1F2937;
+  background: var(--input-bg);
+  color: var(--text-primary);
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   width: 100%;
@@ -360,7 +360,7 @@
 
 .hint {
   font-size: 13px;
-  color: #9CA3AF;
+  color: var(--text-placeholder);
   margin-top: 4px;
 }
 
@@ -368,7 +368,7 @@
 
 .posHint {
   font-size: 13px;
-  color: #9CA3AF;
+  color: var(--text-placeholder);
   margin: 0 0 2px;
 }
 
@@ -384,13 +384,13 @@
 
 .posChip {
   padding: 7px 14px;
-  border: 1.5px solid #E5E7EB;
+  border: 1.5px solid var(--border);
   border-radius: 20px;
-  background: white;
+  background: var(--bg-elevated);
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   font-size: 14px;
   font-weight: 500;
-  color: #374151;
+  color: var(--text-primary);
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
@@ -416,8 +416,8 @@
   bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
-  background: #1F2937;
-  color: #F9FAFB;
+  background: var(--text-primary);
+  color: var(--bg-elevated);
   font-size: 12px;
   line-height: 1.5;
   padding: 8px 12px;
@@ -437,7 +437,7 @@
   left: 50%;
   transform: translateX(-50%);
   border: 5px solid transparent;
-  border-top-color: #1F2937;
+  border-top-color: var(--text-primary);
 }
 
 /* ─── Audio mode selector ────────────────────────────────── */
@@ -446,7 +446,7 @@
   display: flex;
   gap: 8px;
   padding: 4px;
-  background: rgba(243, 244, 246, 0.5);
+  background: var(--bg-elevated);
   border-radius: 10px;
   margin-bottom: 12px;
 }
@@ -464,7 +464,7 @@
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   font-size: 14px;
   font-weight: 500;
-  color: #6B7280;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -475,7 +475,7 @@
 }
 
 .modeButtonActive {
-  background: white;
+  background: var(--bg-elevated);
   color: #C0763A;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
 }
@@ -490,7 +490,7 @@
 
 .fileInfo {
   font-size: 14px;
-  color: #6B7280;
+  color: var(--text-secondary);
   padding: 8px 12px;
   background: rgba(192, 118, 58, 0.05);
   border-radius: 8px;
@@ -522,9 +522,9 @@
 
 .recordSection {
   padding: 20px;
-  background: linear-gradient(135deg, rgba(243, 244, 246, 0.8) 0%, rgba(249, 250, 251, 0.9) 100%);
+  background: var(--bg-elevated);
   border-radius: 12px;
-  border: 1px solid rgba(229, 231, 235, 0.6);
+  border: 1px solid var(--border-rgba);
 }
 
 .recordControls {
@@ -669,9 +669,9 @@
   flex-direction: column;
   gap: 14px;
   padding: 16px;
-  background: white;
+  background: var(--bg-elevated);
   border-radius: 10px;
-  border: 1px solid rgba(229, 231, 235, 0.8);
+  border: 1px solid var(--border-rgba);
 }
 
 .previewHeader {
@@ -679,13 +679,13 @@
   justify-content: space-between;
   align-items: center;
   padding-bottom: 12px;
-  border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+  border-bottom: 1px solid var(--border-rgba);
 }
 
 .previewTitle {
   font-weight: 600;
   font-size: 14px;
-  color: #1F2937;
+  color: var(--text-primary);
 }
 
 .previewDuration {
@@ -745,7 +745,7 @@
   display: flex;
   flex-direction: column;
   gap: 0;
-  border: 1.5px solid #E5E7EB;
+  border: 1.5px solid var(--border);
   border-radius: 12px;
   overflow: hidden;
   margin: 0;
@@ -756,7 +756,7 @@
   grid-template-columns: 160px 1fr;
   gap: 12px;
   padding: 13px 16px;
-  border-bottom: 1px solid rgba(229, 231, 235, 0.6);
+  border-bottom: 1px solid var(--border-rgba);
 }
 
 .reviewRow:last-child {
@@ -764,13 +764,13 @@
 }
 
 .reviewRow:nth-child(even) {
-  background: rgba(246, 244, 239, 0.5);
+  background: var(--bg-body);
 }
 
 .reviewLabel {
   font-size: 13px;
   font-weight: 600;
-  color: #6B7280;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   line-height: 1.5;
@@ -778,7 +778,7 @@
 
 .reviewValue {
   font-size: 15px;
-  color: #1F2937;
+  color: var(--text-primary);
   margin: 0;
   line-height: 1.5;
   word-break: break-word;
@@ -808,7 +808,7 @@
 .checkboxLabel {
   font-size: 14px;
   line-height: 1.6;
-  color: #374151;
+  color: var(--text-primary);
   cursor: pointer;
 }
 
@@ -836,7 +836,7 @@
   gap: 10px;
   margin-top: 28px;
   padding-top: 20px;
-  border-top: 1px solid rgba(229, 231, 235, 0.6);
+  border-top: 1px solid var(--border-rgba);
 }
 
 .secondaryAction {
@@ -929,10 +929,10 @@
 
 .loadingSelect {
   padding: 13px 16px;
-  border: 2px solid #E5E7EB;
+  border: 2px solid var(--border);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #6B7280;
+  background: var(--input-bg);
+  color: var(--text-secondary);
   font-size: 16px;
 }
 

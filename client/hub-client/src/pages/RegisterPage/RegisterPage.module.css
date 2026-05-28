@@ -1,6 +1,6 @@
 .registerPage {
   min-height: calc(100vh - 80px);
-  background: linear-gradient(135deg, #F6F4EF 0%, rgba(192, 118, 58, 0.05) 100%);
+  background: linear-gradient(135deg, var(--bg-body) 0%, rgba(192, 118, 58, 0.05) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -68,7 +68,7 @@
 }
 
 .registerCard {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-surface);
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(30px);
   padding: 48px;
@@ -107,7 +107,7 @@
   font-size: 32px;
   line-height: 40px;
   font-weight: 600;
-  background: linear-gradient(135deg, #1F2937 0%, #C0763A 100%);
+  background: var(--heading-gradient);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -118,7 +118,7 @@
 .subtitle {
   font-size: 15px;
   line-height: 22px;
-  color: #6B7280;
+  color: var(--text-secondary);
   text-align: center;
   margin-bottom: 32px;
 }
@@ -166,10 +166,10 @@
 .loginLink {
   text-align: center;
   font-size: 14px;
-  color: #6B7280;
+  color: var(--text-secondary);
   margin-top: 24px;
   padding-top: 24px;
-  border-top: 1px solid rgba(229, 231, 235, 0.6);
+  border-top: 1px solid var(--border-rgba);
 }
 
 .link {

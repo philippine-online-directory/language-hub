@@ -1,7 +1,7 @@
 .translatePage {
   min-height: 100vh;
   padding: 80px 24px 64px;
-  background: #F6F4EF;
+  background: var(--bg-body);
   position: relative;
   overflow: hidden;
   opacity: 0;
@@ -56,7 +56,7 @@
   font-size: 48px;
   line-height: 56px;
   font-weight: 600;
-  background: linear-gradient(135deg, #1F2937 0%, #C0763A 100%);
+  background: var(--heading-gradient);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -67,7 +67,7 @@
 .subtitle {
   font-size: 18px;
   line-height: 28px;
-  color: #6B7280;
+  color: var(--text-secondary);
   max-width: 560px;
 }
 
@@ -81,8 +81,8 @@
   align-items: flex-start;
   gap: 10px;
   padding: 16px 20px;
-  background: rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(229, 231, 235, 0.6);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-rgba);
   border-radius: 14px;
   animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.3s backwards;
 }
@@ -90,14 +90,14 @@
 .noteIcon {
   width: 18px;
   height: 18px;
-  color: #9CA3AF;
+  color: var(--text-placeholder);
   flex-shrink: 0;
   margin-top: 1px;
 }
 
 .note p {
   font-size: 14px;
-  color: #6B7280;
+  color: var(--text-secondary);
   line-height: 1.6;
   margin: 0;
 }

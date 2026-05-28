@@ -1,7 +1,7 @@
 .commonWordsPage {
   min-height: 100vh;
   padding: 80px 24px 40px;
-  background: #F6F4EF;
+  background: var(--bg-body);
   position: relative;
   overflow: hidden;
   opacity: 0;
@@ -72,7 +72,7 @@
   font-size: 48px;
   line-height: 56px;
   font-weight: 600;
-  background: linear-gradient(135deg, #1F2937 0%, #C0763A 100%);
+  background: var(--heading-gradient);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -82,14 +82,14 @@
 .subtitle {
   font-size: 18px;
   line-height: 28px;
-  color: #6B7280;
+  color: var(--text-secondary);
   margin: 0;
 }
 
 .resultCount {
   font-size: 13px;
   font-weight: 600;
-  color: #9CA3AF;
+  color: var(--text-placeholder);
   margin: 0 0 20px;
   letter-spacing: 0.02em;
   text-transform: uppercase;
@@ -106,9 +106,9 @@
   align-items: center;
   gap: 16px;
   padding: 20px 22px;
-  background: rgba(255, 255, 255, 0.82);
+  background: var(--bg-surface);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(229, 231, 235, 0.8);
+  border: 1px solid var(--border-rgba);
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(31, 41, 55, 0.05);
 }
@@ -125,7 +125,7 @@
   font-size: 24px;
   line-height: 32px;
   font-weight: 600;
-  color: #1F2937;
+  color: var(--text-primary);
   text-transform: lowercase;
 }
 
@@ -145,7 +145,7 @@
 .errorCard p {
   font-size: 17px;
   line-height: 26px;
-  color: #6B7280;
+  color: var(--text-secondary);
   margin: 0;
 }
 

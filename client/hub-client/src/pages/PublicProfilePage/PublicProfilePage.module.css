@@ -2,7 +2,7 @@
 
 .publicProfilePage {
   min-height: 100vh;
-  background: #F6F4EF;
+  background: var(--bg-body);
   padding: 80px 24px 40px;
   position: relative;
   overflow: hidden;
@@ -79,7 +79,7 @@
 .profileHeader {
   margin-bottom: 32px;
   padding-bottom: 24px;
-  border-bottom: 1px solid rgba(229, 231, 235, 0.6);
+  border-bottom: 1px solid var(--border-rgba);
 }
 
 .avatarSection {
@@ -158,7 +158,7 @@
   font-size: 36px;
   line-height: 44px;
   font-weight: 600;
-  background: linear-gradient(135deg, #1F2937 0%, #C0763A 100%);
+  background: var(--heading-gradient);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -200,7 +200,7 @@
   align-items: center;
   gap: 8px;
   font-size: 15px;
-  color: #6B7280;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
@@ -227,10 +227,10 @@
   align-items: center;
   gap: 12px;
   padding: 24px;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--bg-surface);
   backdrop-filter: blur(10px);
   border-radius: 16px;
-  border: 1px solid rgba(229, 231, 235, 0.6);
+  border: 1px solid var(--border-rgba);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -295,7 +295,7 @@
 
 .statLabel {
   font-size: 14px;
-  color: #6B7280;
+  color: var(--text-secondary);
   text-align: center;
   font-weight: 500;
   letter-spacing: 0.02em;
@@ -309,7 +309,7 @@
   display: flex;
   gap: 8px;
   margin-bottom: 48px;
-  border-bottom: 2px solid rgba(229, 231, 235, 0.6);
+  border-bottom: 2px solid var(--border-rgba);
   animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s backwards;
 }
 
@@ -323,7 +323,7 @@
   border-bottom: 3px solid transparent;
   font-size: 15px;
   font-weight: 600;
-  color: #6B7280;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -332,13 +332,13 @@
 }
 
 .tab:hover {
-  color: #1F2937;
+  color: var(--text-primary);
   background: rgba(192, 118, 58, 0.04);
   border-radius: 12px 12px 0 0;
 }
 
 .activeTab {
-  color: #1F2937;
+  color: var(--text-primary);
   border-bottom-color: #C0763A;
   background: rgba(192, 118, 58, 0.06);
   border-radius: 12px 12px 0 0;
@@ -445,7 +445,7 @@
   font-size: 22px;
   line-height: 30px;
   font-weight: 600;
-  color: #1F2937;
+  color: var(--text-primary);
   flex: 1;
   word-break: break-word;
   margin: 0;
@@ -470,7 +470,7 @@
 .setDescription {
   font-size: 15px;
   line-height: 24px;
-  color: #6B7280;
+  color: var(--text-secondary);
   flex: 1;
   position: relative;
   z-index: 1;
@@ -482,7 +482,7 @@
   flex-direction: column;
   gap: 8px;
   padding-top: 16px;
-  border-top: 1px solid rgba(229, 231, 235, 0.6);
+  border-top: 1px solid var(--border-rgba);
   font-size: 14px;
   position: relative;
   z-index: 1;
@@ -492,7 +492,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #6B7280;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
@@ -519,14 +519,14 @@
 .emptyIcon {
   width: 64px;
   height: 64px;
-  color: #D1D5DB;
+  color: var(--text-placeholder);
   margin-bottom: 8px;
 }
 
 .empty p {
   font-size: 18px;
   line-height: 28px;
-  color: #6B7280;
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -549,7 +549,7 @@
 .errorState p {
   font-size: 18px;
   line-height: 28px;
-  color: #6B7280;
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -734,7 +734,7 @@
   }
 
   .tab {
-    border-bottom: 1px solid rgba(229, 231, 235, 0.6);
+    border-bottom: 1px solid var(--border-rgba);
     border-left: 3px solid transparent;
     border-radius: 0;
     text-align: left;
@@ -747,7 +747,7 @@
   }
 
   .activeTab {
-    border-bottom-color: rgba(229, 231, 235, 0.6);
+    border-bottom-color: var(--border-rgba);
     border-left-color: #C0763A;
     border-radius: 0;
   }

@@ -2,7 +2,7 @@
   min-height: calc(100vh - 80px);
   background:
     radial-gradient(circle at top right, rgba(192, 118, 58, 0.12), transparent 28%),
-    linear-gradient(180deg, #F6F4EF 0%, #F2EEE6 100%);
+    linear-gradient(180deg, var(--bg-body) 0%, var(--bg-body) 100%);
 }
 
 .pageHeader {
@@ -82,10 +82,10 @@
   position: sticky;
   top: 108px;
   align-self: start;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-surface);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(229, 231, 235, 0.78);
+  border: 1px solid var(--border-rgba);
   border-radius: 24px;
   padding: 24px 20px;
   box-shadow: 0 16px 40px rgba(31, 41, 55, 0.08);
@@ -105,7 +105,7 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #9CA3AF;
+  color: var(--text-placeholder);
 }
 
 .sectionNavLinks {
@@ -124,7 +124,7 @@
   border: 1px solid transparent;
   border-radius: 14px;
   background: transparent;
-  color: #4B5563;
+  color: var(--text-muted);
   cursor: pointer;
   transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
 }
@@ -161,10 +161,10 @@
 
 .sectionBlock {
   scroll-margin-top: 112px;
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--bg-surface);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(229, 231, 235, 0.82);
+  border: 1px solid var(--border-rgba);
   border-radius: 28px;
   padding: 34px 34px 36px;
   box-shadow: 0 20px 44px rgba(31, 41, 55, 0.07);
@@ -199,7 +199,7 @@
   font-size: 32px;
   line-height: 1.12;
   font-weight: 600;
-  color: #1F2937;
+  color: var(--text-primary);
   margin: 0 0 12px;
 }
 
@@ -207,7 +207,7 @@
   max-width: 720px;
   font-size: 16px;
   line-height: 26px;
-  color: #6B7280;
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -220,9 +220,9 @@
 .stepCard {
   display: flex;
   gap: 18px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(249, 250, 251, 0.9) 100%);
+  background: linear-gradient(180deg, var(--bg-elevated) 0%, var(--bg-elevated) 100%);
   border-radius: 20px;
-  border: 1px solid rgba(229, 231, 235, 0.78);
+  border: 1px solid var(--border-rgba);
   padding: 22px 22px 24px;
   box-shadow: 0 8px 22px rgba(31, 41, 55, 0.05);
   opacity: 0;
@@ -270,7 +270,7 @@
   font-family: 'Fraunces', serif;
   font-size: 21px;
   font-weight: 600;
-  color: #1F2937;
+  color: var(--text-primary);
   margin: 0 0 10px;
   line-height: 1.24;
 }
@@ -278,7 +278,7 @@
 .stepDescription {
   font-size: 15px;
   line-height: 25px;
-  color: #4B5563;
+  color: var(--text-muted);
   margin: 0 0 16px;
 }
 
@@ -300,8 +300,8 @@
 
 .callout {
   margin-top: 8px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(248, 244, 237, 0.96) 100%);
-  border: 1px solid rgba(229, 231, 235, 0.82);
+  background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-elevated) 100%);
+  border: 1px solid var(--border-rgba);
   border-radius: 24px;
   padding: 34px 38px;
   box-shadow: 0 20px 44px rgba(31, 41, 55, 0.08);
@@ -320,7 +320,7 @@
   font-size: 28px;
   line-height: 1.12;
   font-weight: 600;
-  color: #1F2937;
+  color: var(--text-primary);
   margin: 0 0 12px;
 }
 
@@ -328,7 +328,7 @@
   max-width: 720px;
   font-size: 16px;
   line-height: 26px;
-  color: #4B5563;
+  color: var(--text-muted);
   margin: 0;
 }
 

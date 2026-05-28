@@ -2,7 +2,7 @@
 
 .flashcardGame {
   min-height: 100vh;
-  background: #F6F4EF;
+  background: var(--bg-body);
   padding: 80px 24px 40px;
   position: relative;
   overflow: hidden;
@@ -29,7 +29,7 @@
     font-family: 'Fraunces', serif;
     font-size: 32px;
     font-weight: 700;
-    color: #1F2937;
+    color: var(--text-primary);
     margin: 0;
     letter-spacing: -0.02em;
     padding: 4px 8px;
@@ -46,15 +46,15 @@
 
 .resultsGuest {
     font-size: 14px;
-    color: #9CA3AF;
+    color: var(--text-placeholder);
     margin: 0;
 }
 
 .resultsStats {
     display: flex;
     gap: 16px;
-    background: #F9FAFB;
-    border: 1px solid rgba(229, 231, 235, 0.8);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-rgba);
     border-radius: 16px;
     padding: 24px 32px;
 }
@@ -76,7 +76,7 @@
 
 .resultsStatLabel {
     font-size: 12px;
-    color: #9CA3AF;
+    color: var(--text-placeholder);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-weight: 500;
@@ -148,7 +148,7 @@
   font-size: 48px;
   line-height: 1.2;
   font-weight: 600;
-  color: #1F2937;
+  color: var(--text-primary);
   margin: 0;
   letter-spacing: -0.02em;
 }
@@ -158,13 +158,13 @@
   align-items: baseline;
   gap: 6px;
   font-family: 'Fraunces', serif;
-  color: #6B7280;
+  color: var(--text-secondary);
 }
 
 .currentCard {
   font-size: 32px;
   font-weight: 600;
-  color: #1F2937;
+  color: var(--text-primary);
 }
 
 .separator {
@@ -187,16 +187,16 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--bg-surface);
   backdrop-filter: blur(10px);
   padding: 12px 20px;
   border-radius: 12px;
-  border: 1px solid rgba(229, 231, 235, 0.6);
+  border: 1px solid var(--border-rgba);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .statItem:hover {
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--bg-elevated);
   border-color: rgba(192, 118, 58, 0.3);
   box-shadow: 0 8px 24px rgba(192, 118, 58, 0.1);
 }
@@ -205,7 +205,7 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #6B7280;
+  color: var(--text-secondary);
   margin-bottom: 4px;
   font-weight: 600;
 }
@@ -221,11 +221,11 @@
 .progressBar {
   width: 100%;
   height: 8px;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--bg-surface);
   border-radius: 12px;
   overflow: hidden;
   margin-bottom: 48px;
-  border: 1px solid rgba(229, 231, 235, 0.6);
+  border: 1px solid var(--border-rgba);
   animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s backwards;
 }
 
@@ -284,11 +284,11 @@
 .cardFace {
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--bg-surface);
   backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 48px;
-  border: 1px solid rgba(229, 231, 235, 0.6);
+  border: 1px solid var(--border-rgba);
   box-shadow: 0 8px 32px rgba(192, 118, 58, 0.08);
   display: flex;
   flex-direction: column;
@@ -299,7 +299,7 @@
 }
 
 .flashcardWrapper:hover .cardFace {
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--bg-elevated);
   border-color: rgba(192, 118, 58, 0.3);
   box-shadow: 0 20px 60px rgba(192, 118, 58, 0.15);
   transform: translateY(-4px);
@@ -336,7 +336,7 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #6B7280;
+  color: var(--text-secondary);
   font-weight: 600;
   margin-bottom: 8px;
 }
@@ -345,7 +345,7 @@
   font-family: 'Fraunces', serif;
   font-size: 56px;
   font-weight: 600;
-  color: #1F2937;
+  color: var(--text-primary);
   margin: 0;
   line-height: 1.2;
   text-align: center;
@@ -377,7 +377,7 @@
 .definition {
   font-size: 24px;
   line-height: 1.6;
-  color: #1F2937;
+  color: var(--text-primary);
   margin: 0;
   text-align: center;
   font-weight: 400;
@@ -388,7 +388,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: #6B7280;
+  color: var(--text-secondary);
   font-size: 14px;
   margin-top: 16px;
   opacity: 0.6;
@@ -418,9 +418,9 @@
   align-items: center;
   gap: 8px;
   padding: 12px 24px;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--bg-surface);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(229, 231, 235, 0.6);
+  border: 1px solid var(--border-rgba);
   border-radius: 12px;
   color: #C0763A;
   font-size: 14px;
@@ -431,7 +431,7 @@
 }
 
 .detailsToggle:hover {
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--bg-elevated);
   border-color: rgba(192, 118, 58, 0.3);
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(192, 118, 58, 0.1);
@@ -440,10 +440,10 @@
 .detailsCard {
   margin-top: 16px;
   padding: 24px;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--bg-surface);
   backdrop-filter: blur(10px);
   border-radius: 16px;
-  border: 1px solid rgba(229, 231, 235, 0.6);
+  border: 1px solid var(--border-rgba);
   animation: fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -467,7 +467,7 @@
 .detailValue {
   font-size: 16px;
   line-height: 1.6;
-  color: #1F2937;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -485,11 +485,11 @@
   align-items: center;
   gap: 12px;
   padding: 16px 32px;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--bg-surface);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(229, 231, 235, 0.6);
+  border: 1px solid var(--border-rgba);
   border-radius: 16px;
-  color: #1F2937;
+  color: var(--text-primary);
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
@@ -499,7 +499,7 @@
 }
 
 .navButton:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--bg-elevated);
   border-color: rgba(192, 118, 58, 0.3);
   transform: translateY(-3px);
   box-shadow: 0 20px 60px rgba(192, 118, 58, 0.15);
@@ -534,11 +534,11 @@
   align-items: center;
   gap: 8px;
   padding: 12px 24px;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--bg-surface);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(229, 231, 235, 0.6);
+  border: 1px solid var(--border-rgba);
   border-radius: 12px;
-  color: #6B7280;
+  color: var(--text-secondary);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -546,8 +546,8 @@
 }
 
 .exitButton:hover {
-  background: rgba(255, 255, 255, 0.9);
-  color: #1F2937;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
   border-color: rgba(192, 118, 58, 0.3);
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(192, 118, 58, 0.1);
@@ -567,7 +567,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #6B7280;
+  color: var(--text-secondary);
   font-size: 13px;
   font-weight: 500;
 }
@@ -575,13 +575,13 @@
 kbd {
   display: inline-block;
   padding: 4px 8px;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--bg-surface);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(229, 231, 235, 0.6);
+  border: 1px solid var(--border-rgba);
   border-radius: 6px;
   font-size: 12px;
   font-weight: 600;
-  color: #1F2937;
+  color: var(--text-primary);
 }
 
 /* Loading and Empty States */
@@ -592,14 +592,14 @@ kbd {
   justify-content: center;
   min-height: 60vh;
   gap: 24px;
-  color: #1F2937;
+  color: var(--text-primary);
   animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .loading p, .empty p {
   font-size: 18px;
   line-height: 28px;
-  color: #6B7280;
+  color: var(--text-secondary);
 }
 
 .spinner {

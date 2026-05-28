@@ -3,7 +3,7 @@
 .languagesPage {
   min-height: 100vh;
   padding: 80px 24px 40px;
-  background: #F6F4EF;
+  background: var(--bg-body);
   position: relative;
   overflow: hidden;
   opacity: 0;
@@ -88,7 +88,7 @@
   font-size: 48px;
   line-height: 56px;
   font-weight: 600;
-  background: linear-gradient(135deg, #1F2937 0%, #C0763A 100%);
+  background: var(--heading-gradient);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -99,7 +99,7 @@
 .subtitle {
   font-size: 18px;
   line-height: 28px;
-  color: #6B7280;
+  color: var(--text-secondary);
 }
 
 .searchSection {
@@ -112,11 +112,11 @@
   display: flex;
   gap: 16px;
   margin-bottom: 16px;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--bg-surface);
   backdrop-filter: blur(10px);
   padding: 12px;
   border-radius: 12px;
-  border: 1px solid rgba(229, 231, 235, 0.6);
+  border: 1px solid var(--border-rgba);
   flex-wrap: wrap;
 }
 
@@ -125,7 +125,7 @@
   align-items: center;
   gap: 8px;
   font-size: 15px;
-  color: #1F2937;
+  color: var(--text-primary);
   cursor: pointer;
   font-weight: 500;
   transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -185,7 +185,7 @@
 .empty p {
   font-size: 18px;
   line-height: 28px;
-  color: #6B7280;
+  color: var(--text-secondary);
   margin: 0;
 }
 

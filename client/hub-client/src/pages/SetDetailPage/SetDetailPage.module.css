@@ -1,7 +1,7 @@
 .setDetailPage {
   min-height: calc(100vh - 80px);
   padding: 48px 0;
-  background: linear-gradient(135deg, #F6F4EF 0%, rgba(192, 118, 58, 0.03) 100%);
+  background: linear-gradient(135deg, var(--bg-body) 0%, rgba(192, 118, 58, 0.03) 100%);
   position: relative;
   overflow: hidden;
 }
@@ -64,7 +64,7 @@
   left: 0;
   width: 100%;
   height: 2px;
-  background: linear-gradient(90deg, #E5E7EB 0%, transparent 100%);
+  background: linear-gradient(90deg, var(--border) 0%, transparent 100%);
 }
 
 .headerContent {
@@ -82,7 +82,7 @@
   font-size: 40px;
   line-height: 48px;
   font-weight: 600;
-  background: linear-gradient(135deg, #1F2937 0%, #C0763A 50%, #1F2937 100%);
+  background: linear-gradient(135deg, var(--text-primary) 0%, #C0763A 50%, var(--text-primary) 100%);
   background-size: 200% auto;
   background-clip: text;
   -webkit-background-clip: text;
@@ -122,7 +122,7 @@
 .setDescription {
   font-size: 18px;
   line-height: 28px;
-  color: #6B7280;
+  color: var(--text-secondary);
   margin-bottom: 16px;
 }
 
@@ -133,7 +133,7 @@
 }
 
 .metaItem {
-  color: #6B7280;
+  color: var(--text-secondary);
   padding: 4px 12px;
   background: rgba(107, 114, 128, 0.08);
   border-radius: 8px;
@@ -147,7 +147,7 @@
 .gamesCard {
   margin-bottom: 48px;
   text-align: center;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(192, 118, 58, 0.05) 100%);
+  background: linear-gradient(135deg, var(--bg-surface) 0%, rgba(192, 118, 58, 0.05) 100%);
   backdrop-filter: blur(20px);
   position: relative;
   overflow: hidden;
@@ -183,7 +183,7 @@
   font-size: 28px;
   line-height: 36px;
   font-weight: 600;
-  background: linear-gradient(135deg, #1F2937 0%, #C0763A 100%);
+  background: var(--heading-gradient);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -193,7 +193,7 @@
 
 .gamesDescription {
   font-size: 16px;
-  color: #6B7280;
+  color: var(--text-secondary);
   margin-bottom: 24px;
 }
 
@@ -258,11 +258,11 @@
 .empty {
   text-align: center;
   padding: 64px;
-  color: #6B7280;
-  background: rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
+  background: var(--bg-surface);
   backdrop-filter: blur(10px);
   border-radius: 16px;
-  border: 1px solid rgba(229, 231, 235, 0.8);
+  border: 1px solid var(--border-rgba);
 }
 
 .empty p {
@@ -272,7 +272,7 @@
 
 .emptyHint {
   font-size: 15px;
-  color: #6B7280;
+  color: var(--text-secondary);
 }
 
 .loading,
@@ -280,7 +280,7 @@
   text-align: center;
   padding: 64px;
   font-size: 18px;
-  color: #6B7280;
+  color: var(--text-secondary);
 }
 
 .error {

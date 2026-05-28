@@ -2,7 +2,7 @@
 
 .adminLanguagesPage {
   min-height: 100vh;
-  background: #F6F4EF;
+  background: var(--bg-body);
   padding: 80px 24px 40px;
   position: relative;
   overflow: hidden;
@@ -61,7 +61,7 @@
   font-size: 32px;
   line-height: 40px;
   font-weight: 600;
-  background: linear-gradient(135deg, #1F2937 0%, #C0763A 100%);
+  background: var(--heading-gradient);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -85,7 +85,7 @@
 
 .unauthorized p {
   font-size: 18px;
-  color: #6B7280;
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -99,7 +99,7 @@
   font-size: 24px;
   line-height: 32px;
   font-weight: 600;
-  color: #1F2937;
+  color: var(--text-primary);
   margin-bottom: 24px;
 }
 
@@ -128,19 +128,19 @@
 .label {
   font-size: 14px;
   font-weight: 500;
-  color: #1F2937;
+  color: var(--text-primary);
 }
 
 .textarea {
   padding: 14px 16px;
-  border: 2px solid #E5E7EB;
+  border: 2px solid var(--border);
   border-radius: 12px;
   font-size: 16px;
-  color: #1F2937;
+  color: var(--text-primary);
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   resize: vertical;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--input-bg);
 }
 
 .textarea:focus {
@@ -167,7 +167,7 @@
 .loadingState p {
   font-size: 18px;
   line-height: 28px;
-  color: #6B7280;
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -232,7 +232,7 @@
   font-size: 20px;
   line-height: 28px;
   font-weight: 600;
-  color: #1F2937;
+  color: var(--text-primary);
   margin-bottom: 8px;
 }
 
@@ -246,14 +246,14 @@
 
 .speakerCount {
   font-size: 14px;
-  color: #6B7280;
+  color: var(--text-secondary);
   margin-bottom: 8px;
 }
 
 .note {
   font-size: 14px;
   line-height: 20px;
-  color: #6B7280;
+  color: var(--text-secondary);
   margin-top: 8px;
   padding-left: 12px;
   border-left: 3px solid rgba(192, 118, 58, 0.3);
