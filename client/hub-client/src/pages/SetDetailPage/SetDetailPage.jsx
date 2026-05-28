@@ -176,7 +176,14 @@ export default function SetDetailPage() {
               <p>No words in this set yet.</p>
               {isOwner && (
                 <p className={styles.emptyHint}>
-                  Browse languages and add words using the "Add to Set" button on word cards.
+                  Start adding translations to this set from the{' '}
+                  <Link
+                    to={set.language ? `/languages/${set.language.isoCode}` : '/languages'}
+                    className={styles.emptyLink}
+                  >
+                    {set.language ? `${set.language.name} dictionary` : 'Dictionaries page'}
+                  </Link>
+                  {' '}— expand any word card and click &ldquo;Add to Set&rdquo;.
                 </p>
               )}
             </div>

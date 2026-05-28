@@ -275,6 +275,11 @@
   color: var(--text-secondary);
 }
 
+.emptyLink {
+  color: #C0763A;
+  font-weight: 500;
+}
+
 .loading,
 .error {
   text-align: center;
