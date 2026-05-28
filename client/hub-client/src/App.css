@@ -14,14 +14,51 @@
   --copper-500: #C0763A;
   --gray-500: #6B7280;
   --gray-200: #E5E7EB;
+
+  /* Semantic tokens — light mode */
+  --bg-body: #F6F4EF;
+  --bg-surface: rgba(255, 255, 255, 0.95);
+  --bg-elevated: #ffffff;
+  --text-primary: #1F2937;
+  --text-secondary: #6B7280;
+  --text-muted: #4B5563;
+  --text-placeholder: #9CA3AF;
+  --border: #E5E7EB;
+  --border-rgba: rgba(229, 231, 235, 0.8);
+  --heading-gradient: linear-gradient(135deg, #1F2937 0%, #C0763A 100%);
+  --scrollbar-track: #F6F4EF;
+  --input-bg: rgba(255, 255, 255, 0.9);
+  --input-bg-focus: #ffffff;
+  --disabled-bg: #F3F4F6;
+  --stripe-bg: rgba(0, 0, 0, 0.02);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-body: #1A1410;
+    --bg-surface: rgba(42, 32, 24, 0.95);
+    --bg-elevated: #332A1E;
+    --text-primary: #F0EBE3;
+    --text-secondary: #9E8E7A;
+    --text-muted: #C4B5A5;
+    --text-placeholder: #5C4E3E;
+    --border: rgba(192, 118, 58, 0.25);
+    --border-rgba: rgba(192, 118, 58, 0.2);
+    --heading-gradient: linear-gradient(135deg, #F0EBE3 0%, #C0763A 100%);
+    --scrollbar-track: #1A1410;
+    --input-bg: rgba(42, 32, 24, 0.9);
+    --input-bg-focus: #2A2018;
+    --disabled-bg: #2A2018;
+    --stripe-bg: rgba(255, 255, 255, 0.04);
+  }
 }
 
 body {
   font-family: 'IBM Plex Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 16px;
   line-height: 24px;
-  color: var(--indigo-900);
-  background: var(--parchment-50);
+  color: var(--text-primary);
+  background: var(--bg-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -74,7 +111,7 @@ body::before {
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
   font-weight: 600;
-  background: linear-gradient(135deg, var(--indigo-900) 0%, var(--copper-500) 100%);
+  background: var(--heading-gradient);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -124,7 +161,7 @@ a:not(.no-effect):hover::after {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--parchment-50);
+  background: var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -222,10 +259,10 @@ a:not(.no-effect):hover::after {
 
 /* Glassmorphism utility class */
 .glass {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-surface);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--border-rgba);
 }
 
 /* Reduced Motion */
@@ -246,10 +283,10 @@ a:not(.no-effect):hover::after {
 /* Selection styling */
 ::selection {
   background: rgba(192, 118, 58, 0.3);
-  color: var(--indigo-900);
+  color: var(--text-primary);
 }
 
 ::-moz-selection {
   background: rgba(192, 118, 58, 0.3);
-  color: var(--indigo-900);
+  color: var(--text-primary);
 }

@@ -8,7 +8,7 @@
 .label {
   font-size: 14px;
   font-weight: 500;
-  color: #1F2937;
+  color: var(--text-primary);
   transition: color 0.3s ease;
 }
 
@@ -19,19 +19,19 @@
 .input {
   width: 100%;
   padding: 14px 16px;
-  border: 2px solid #E5E7EB;
+  border: 2px solid var(--border);
   border-radius: 12px;
   font-size: 16px;
-  color: #1F2937;
+  color: var(--text-primary);
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--input-bg);
   backdrop-filter: blur(10px);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
 }
 
 .input::placeholder {
-  color: #9CA3AF;
+  color: var(--text-placeholder);
   transition: opacity 0.3s ease;
 }
 
@@ -39,7 +39,7 @@
 .input:focus {
   outline: none;
   border-color: #C0763A;
-  background: white;
+  background: var(--input-bg-focus);
   box-shadow: 0 0 0 4px rgba(192, 118, 58, 0.1),
               0 4px 12px rgba(192, 118, 58, 0.15);
   transform: translateY(-1px);
@@ -109,7 +109,7 @@
 
 /* Disabled state */
 .input:disabled {
-  background: #F3F4F6;
+  background: var(--disabled-bg);
   cursor: not-allowed;
   opacity: 0.6;
 }
@@ -137,10 +137,10 @@ textarea.input {
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: #6B7280;
+  color: var(--text-secondary);
   pointer-events: none;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: white;
+  background: var(--input-bg-focus);
   padding: 0 4px;
 }
 

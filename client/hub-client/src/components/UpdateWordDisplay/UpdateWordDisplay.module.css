@@ -56,7 +56,7 @@
   font-size: 24px;
   line-height: 32px;
   font-weight: 600;
-  background: linear-gradient(135deg, #1F2937 0%, #C0763A 100%);
+  background: var(--heading-gradient);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -87,7 +87,7 @@
 
 .contributeButton {
   font-size: 12px; /* reduced from 15px to keep all links fitting */
-  color: #6B7280;
+  color: var(--text-secondary);
   text-decoration: none;
   font-weight: 600;
   padding: 10px 11px; /* reduced from 10px 14px */
@@ -282,7 +282,7 @@
   font-size: 28px;
   line-height: 36px;
   font-weight: 500;
-  background: linear-gradient(135deg, #1F2937 0%, #C0763A 100%);
+  background: var(--heading-gradient);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -340,7 +340,7 @@
   background: rgba(107, 114, 128, 0.1);
   border: 1px solid rgba(107, 114, 128, 0.2);
   border-radius: 8px;
-  color: #6B7280;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   flex-shrink: 0;
@@ -360,7 +360,7 @@
 .ipa {
   font-size: 14px;
   line-height: 20px;
-  color: #6B7280;
+  color: var(--text-secondary);
   font-style: italic;
   margin-bottom: 16px;
   padding: 6px 12px;
@@ -409,7 +409,7 @@
 .definition {
   font-size: 16px;
   line-height: 24px;
-  color: #1F2937;
+  color: var(--text-primary);
   margin-bottom: 16px;
   animation: fadeInUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.55s backwards;
 }
@@ -428,7 +428,7 @@
 .audioLabel {
   font-size: 13px;
   font-weight: 500;
-  color: #6B7280;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -458,7 +458,7 @@
 .example {
   font-size: 15px;
   line-height: 22px;
-  color: #6B7280;
+  color: var(--text-secondary);
   font-style: italic;
   padding: 12px 16px;
   background: rgba(107, 114, 128, 0.05);
@@ -496,7 +496,7 @@
   align-items: center;
   margin-top: 16px;
   padding-top: 16px;
-  border-top: 1px solid rgba(229, 231, 235, 0.6);
+  border-top: 1px solid var(--border-rgba);
   flex-wrap: wrap;
   gap: 12px;
   animation: fadeInUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.75s backwards;
@@ -515,7 +515,7 @@
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  background: rgba(243, 244, 246, 0.8);
+  background: var(--disabled-bg);
   border-radius: 16px;
   font-size: 13px;
   animation: fadeInSlide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.85s backwards;
@@ -534,7 +534,7 @@
 }
 
 .attributionText {
-  color: #9CA3AF;
+  color: var(--text-placeholder);
   font-weight: 400;
 }
 
@@ -641,7 +641,7 @@
   padding: 12px 16px;
   background: rgba(107, 114, 128, 0.04);
   border-radius: 8px;
-  border: 1px solid rgba(229, 231, 235, 0.7);
+  border: 1px solid var(--border-rgba);
   border-left: 3px solid rgba(192, 118, 58, 0.4);
   animation: fadeInUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.65s backwards;
 }
@@ -662,7 +662,7 @@
 .usageCommentText {
   font-size: 14px;
   line-height: 22px;
-  color: #6B7280;
+  color: var(--text-secondary);
   margin: 0;
   font-style: italic;
 }
@@ -784,7 +784,7 @@
   min-width: 210px;
   max-height: 170px; /* ✅ limit height */
   overflow-y: auto;  /* ✅ enable vertical scrolling */
-  background: rgba(255, 255, 255, 0.97);
+  background: var(--bg-elevated);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(234, 179, 8, 0.22);
@@ -846,7 +846,7 @@
   gap: 8px;
   font-size: 13px;
   line-height: 18px;
-  color: #6B7280;
+  color: var(--text-secondary);
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
 }
 

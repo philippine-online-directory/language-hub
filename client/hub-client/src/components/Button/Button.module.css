@@ -69,7 +69,7 @@
 
 /* Secondary Button with Glass Effect */
 .secondary {
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--bg-surface);
   backdrop-filter: blur(10px);
   color: #C0763A;
   border: 2px solid #C0763A;
