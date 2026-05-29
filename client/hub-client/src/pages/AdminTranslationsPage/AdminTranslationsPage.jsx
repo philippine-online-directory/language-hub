@@ -5,49 +5,8 @@ import { translationUpdateRequestService } from '../../api/translationUpdateRequ
 import Button from '../../components/Button/Button';
 import WordDisplay from '../../components/WordDisplay/WordDisplay';
 import UpdateWordDisplay from '../../components/UpdateWordDisplay/UpdateWordDisplay';
+import ConfirmDeleteModal from '../../components/ConfirmDeleteModal/ConfirmDeleteModal';
 import styles from './AdminTranslationsPage.module.css';
-
-// Inline confirmation dialog — avoids blocking window.confirm()
-function DeleteConfirmModal({
-  type,              
-  targetLabel,        
-  hasAudio,           
-  onConfirm,
-  onCancel,
-  isDeleting
-}) {
-  return (
-    <div className={styles.modalOverlay} onClick={onCancel}>
-      <div className={styles.modalCard} onClick={(e) => e.stopPropagation()}>
-        <div className={styles.modalIcon}>
-          <svg viewBox="0 0 20 20" fill="currentColor" width="28" height="28">
-            <path
-              fillRule="evenodd"
-              d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </div>
-        <h3 className={styles.modalTitle}>
-          {type === "TRANSLATION" ? "Delete Translation?" : "Delete Translation Update?"}
-        </h3>
-        <p className={styles.modalBody}>
-          You are about to permanently delete {type === "TRANSLATION" ? "" : "the translation update for"} <strong>"{targetLabel}"</strong>.{" "}
-          {hasAudio && " The associated audio file will also be removed from storage."}{" "}
-          This action cannot be undone.
-        </p>
-        <div className={styles.modalActions}>
-          <Button variant="secondary" onClick={onCancel} disabled={isDeleting}>
-            Cancel
-          </Button>
-          <Button variant="danger" onClick={onConfirm} disabled={isDeleting}>
-            {isDeleting ? "Deleting…" : "Delete"}
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 
 export default function AdminTranslationsPage(){
@@ -247,10 +206,10 @@ export default function AdminTranslationsPage(){
             <div className={styles.backgroundPattern}></div>
 
             {translationToDelete && (
-                <DeleteConfirmModal
-                    type="TRANSLATION"
-                    targetLabel={translationToDelete.wordText}
-                    hasAudio={translationToDelete.audioUrl ? true : false}
+                <ConfirmDeleteModal
+                    itemType="Translation"
+                    itemName={translationToDelete.wordText}
+                    warning={translationToDelete.audioUrl ? 'The associated audio file will also be removed from storage.' : undefined}
                     onConfirm={handleTranslationDeleteConfirm}
                     onCancel={handleDeleteCancel}
                     isDeleting={isDeleting}
@@ -258,10 +217,10 @@ export default function AdminTranslationsPage(){
             )}
 
             {translationUpdateToDelete && (
-                <DeleteConfirmModal
-                    type="UPDATE"
-                    targetLabel={translationUpdateToDelete.translation.wordText}
-                    hasAudio={translationUpdateToDelete.proposedData.audioUrl ? true : false}
+                <ConfirmDeleteModal
+                    itemType="Translation Update"
+                    itemName={translationUpdateToDelete.translation.wordText}
+                    warning={translationUpdateToDelete.proposedData.audioUrl ? 'The associated audio file will also be removed from storage.' : undefined}
                     onConfirm={handleTranslationUpdateDeleteConfirm}
                     onCancel={handleDeleteCancel}
                     isDeleting={isDeleting}

@@ -8,6 +8,7 @@ import Button from '../../components/Button/Button';
 import Input from '../../components/Input/Input';
 import Pagination from '../../components/Pagination/Pagination';
 import SetsGamesHelpModal from '../../components/SetsGamesHelpModal/SetsGamesHelpModal';
+import ConfirmDeleteModal from '../../components/ConfirmDeleteModal/ConfirmDeleteModal';
 import styles from './SetsPage.module.css';
 
 export default function SetsPage(){
@@ -22,6 +23,7 @@ export default function SetsPage(){
     const [pagination, setPagination] = useState(null);
     const [mounted, setMounted] = useState(false);
     const [helpOpen, setHelpOpen] = useState(false);
+    const [pendingDelete, setPendingDelete] = useState(null);
     const gridRef = useRef(null);
 
     const debouncedSearch = useDebounce(searchQuery, 500);
@@ -116,22 +118,21 @@ export default function SetsPage(){
         return () => observer.disconnect();
     }, [sets]);
 
-    const handleDelete = async (setId, e) => {
+    const handleDeleteClick = (setId, setName, e) => {
         e.preventDefault();
         e.stopPropagation();
-        
-        if (!window.confirm('Are you sure you want to delete this set?')) {
-            return;
-        }
+        setPendingDelete({ id: setId, name: setName });
+    };
 
+    const handleDeleteConfirm = async () => {
+        if (!pendingDelete) return;
         try {
-            await setService.deleteSet(setId);
-            setSets(sets.filter((set) => set.id !== setId));
-            
-            // If deleted the last item on a page that isn't page 1, go back one page
+            await setService.deleteSet(pendingDelete.id);
+            setSets(sets.filter((set) => set.id !== pendingDelete.id));
             if (pagination && sets.length === 1 && currentPage > 1) {
                 setCurrentPage(currentPage - 1);
             }
+            setPendingDelete(null);
         } catch (err) {
             alert('Failed to delete set. Please try again.');
             console.error('Error deleting set:', err);
@@ -141,6 +142,14 @@ export default function SetsPage(){
     return (
         <>
         {helpOpen && <SetsGamesHelpModal onClose={() => setHelpOpen(false)} />}
+        {pendingDelete && (
+            <ConfirmDeleteModal
+                itemType="Set"
+                itemName={pendingDelete.name}
+                onConfirm={handleDeleteConfirm}
+                onCancel={() => setPendingDelete(null)}
+            />
+        )}
         <div className={`${styles.setsPage} ${mounted ? styles.mounted : ''}`}>
             <div className={styles.backgroundPattern}></div>
             
@@ -314,7 +323,7 @@ export default function SetsPage(){
                                                     </Button>
                                                     <Button
                                                         variant="secondary"
-                                                        onClick={(e) => handleDelete(set.id, e)}
+                                                        onClick={(e) => handleDeleteClick(set.id, set.name, e)}
                                                     >
                                                         Delete
                                                     </Button>

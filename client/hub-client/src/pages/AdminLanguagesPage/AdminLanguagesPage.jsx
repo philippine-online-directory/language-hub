@@ -4,6 +4,7 @@ import { languageService } from '../../api/languageService';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
 import Input from '../../components/Input/Input';
+import ConfirmDeleteModal from '../../components/ConfirmDeleteModal/ConfirmDeleteModal';
 import styles from './AdminLanguagesPage.module.css';
 
 export default function AdminLanguagesPage(){
@@ -13,6 +14,7 @@ export default function AdminLanguagesPage(){
     const [showForm, setShowForm] = useState(false);
     const [editingId, setEditingId] = useState(null);
     const [mounted, setMounted] = useState(false);
+    const [pendingDeleteLanguage, setPendingDeleteLanguage] = useState(null);
     const [formData, setFormData] = useState({
         name: '',
         isoCode: '',
@@ -55,13 +57,11 @@ export default function AdminLanguagesPage(){
         setShowForm(true);
     };
 
-    const handleDelete = async (languageId) => {
-        if (!window.confirm('Are you sure? This will delete all associated translations.')) {
-            return;
-        }
-
+    const handleDeleteConfirm = async () => {
+        if (!pendingDeleteLanguage) return;
         try {
-            await languageService.deleteLanguage(languageId);
+            await languageService.deleteLanguage(pendingDeleteLanguage.id);
+            setPendingDeleteLanguage(null);
             await fetchLanguages();
         } catch (err) {
             alert('Failed to delete language');
@@ -119,6 +119,15 @@ export default function AdminLanguagesPage(){
 
     return (
         <div className={`${styles.adminLanguagesPage} ${mounted ? styles.mounted : ''}`}>
+            {pendingDeleteLanguage && (
+                <ConfirmDeleteModal
+                    itemType="Language"
+                    itemName={pendingDeleteLanguage.name}
+                    warning="Deleting this will also delete all translations in the dictionary."
+                    onConfirm={handleDeleteConfirm}
+                    onCancel={() => setPendingDeleteLanguage(null)}
+                />
+            )}
             <div className={styles.backgroundPattern}></div>
             
             <div className={styles.container}>
@@ -226,7 +235,7 @@ export default function AdminLanguagesPage(){
                                     <Button variant="secondary" onClick={() => handleEdit(language)}>
                                         Edit
                                     </Button>
-                                    <Button variant="secondary" onClick={() => handleDelete(language.id)}>
+                                    <Button variant="secondary" onClick={() => setPendingDeleteLanguage({ id: language.id, name: language.name })}>
                                         Delete
                                     </Button>
                                 </div>

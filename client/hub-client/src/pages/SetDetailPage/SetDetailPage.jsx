@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import WordDisplay from '../../components/WordDisplay/WordDisplay';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
+import ConfirmDeleteModal from '../../components/ConfirmDeleteModal/ConfirmDeleteModal';
 import styles from './SetDetailPage.module.css';
 
 export default function SetDetailPage() {
@@ -15,6 +16,7 @@ export default function SetDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
+  const [pendingRemove, setPendingRemove] = useState(null);
 
   useEffect(() => {
     const fetchSet = async () => {
@@ -41,17 +43,15 @@ export default function SetDetailPage() {
     fetchSet();
   }, [setId]);
 
-  const handleRemoveWord = async (translationId) => {
-    if (!window.confirm('Remove this word from the set?')) {
-      return;
-    }
-
+  const handleRemoveConfirm = async () => {
+    if (!pendingRemove) return;
     try {
-      await setService.removeTranslationFromSet(setId, translationId);
+      await setService.removeTranslationFromSet(setId, pendingRemove.id);
       setSet({
         ...set,
-        setWords: set.setWords.filter((sw) => sw.translation.id !== translationId),
+        setWords: set.setWords.filter((sw) => sw.translation.id !== pendingRemove.id),
       });
+      setPendingRemove(null);
     } catch (err) {
       alert('Failed to remove word. Please try again.');
       console.error('Error removing word:', err);
@@ -97,6 +97,14 @@ export default function SetDetailPage() {
 
   return (
     <div className={styles.setDetailPage}>
+      {pendingRemove && (
+        <ConfirmDeleteModal
+          itemType="Word"
+          itemName={pendingRemove.wordText}
+          onConfirm={handleRemoveConfirm}
+          onCancel={() => setPendingRemove(null)}
+        />
+      )}
       <div className={styles.container}>
         <header className={styles.header}>
           <div className={styles.headerContent}>
@@ -195,7 +203,7 @@ export default function SetDetailPage() {
                   {isOwner && (
                     <Button
                       variant="secondary"
-                      onClick={() => handleRemoveWord(translation.id)}
+                      onClick={() => setPendingRemove({ id: translation.id, wordText: translation.wordText })}
                       className={styles.removeButton}
                     >
                       Remove from Set
