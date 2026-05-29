@@ -56,8 +56,6 @@ export default function LanguageDetailPage() {
     const [translationsOpen, setTranslationsOpen] = useState(true);
     const [expandedId, setExpandedId] = useState(null);
 
-    const [pillOpen, setPillOpen] = useState(false);
-
     const [mounted, setMounted] = useState(false);
     const debouncedSearch = useDebounce(searchQuery, 400);
     const gridRef = useRef(null);
@@ -265,25 +263,6 @@ export default function LanguageDetailPage() {
 
                     {}
                     <div className={styles.headerActions}>
-                        {hasContributors && (
-                            <button
-                                className={`${styles.contributorsPill} ${pillOpen ? styles.contributorsPillOpen : ''}`}
-                                onClick={() => setPillOpen(o => !o)}
-                                aria-expanded={pillOpen}
-                                aria-controls="contributors-drawer"
-                            >
-                                <span className={styles.pillTrophy}>🏆</span>
-                                Top Contributors
-                                <svg
-                                    className={styles.pillChevron}
-                                    viewBox="0 0 20 20"
-                                    fill="currentColor"
-                                    aria-hidden="true"
-                                >
-                                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                                </svg>
-                            </button>
-                        )}
                         <Button variant="primary" onClick={() => navigate('/contribute')}>
                             Contribute Word
                         </Button>
@@ -291,55 +270,53 @@ export default function LanguageDetailPage() {
 
                     {}
                     {hasContributors && (
-                        <div className={`${styles.podiumDrawerWrap} ${pillOpen ? styles.podiumDrawerWrapOpen : ''}`}>
-                            <div
-                                id="contributors-drawer"
-                                className={`${styles.podiumDrawer} ${pillOpen ? styles.podiumDrawerOpen : ''}`}
-                            >
-                                <div className={styles.podiumDrawerInner}>
-                                    <div className={`${styles.contributorsPodium} ${styles[`podiumCount${language.topContributors.length}`]}`}>
-                                        {language.topContributors.map((contributor, index) => {
-                                            const rank = index + 1;
-                                            const rankMeta = [
-                                                { label: '1st', colorClass: styles.rankGold },
-                                                { label: '2nd', colorClass: styles.rankSilver },
-                                                { label: '3rd', colorClass: styles.rankBronze },
-                                            ][index];
+                        <div className={styles.podiumSection}>
+                            <p className={styles.podiumSectionTitle}>🏆 Top Contributors</p>
+                            <div className={styles.contributorsPodium}>
+                                {(language.topContributors.length >= 3
+                                    ? [language.topContributors[1], language.topContributors[0], language.topContributors[2]]
+                                    : language.topContributors
+                                ).map((contributor) => {
+                                    const index = language.topContributors.indexOf(contributor);
+                                    const rank = index + 1;
+                                    const rankMeta = [
+                                        { label: '1st', colorClass: styles.rankGold },
+                                        { label: '2nd', colorClass: styles.rankSilver },
+                                        { label: '3rd', colorClass: styles.rankBronze },
+                                    ][index];
 
-                                            const cardContent = (
-                                                <>
-                                                    <span className={`${styles.rankBadge} ${rankMeta.colorClass}`}>
-                                                        {rankMeta.label}
-                                                    </span>
-                                                    <span className={styles.contributorName}>
-                                                        {contributor.username}
-                                                    </span>
-                                                    <span className={styles.contributorCount}>
-                                                        {contributor.count} verified {contributor.count === 1 ? 'word' : 'words'}
-                                                    </span>
-                                                </>
-                                            );
+                                    const cardContent = (
+                                        <>
+                                            <span className={`${styles.rankBadge} ${rankMeta.colorClass}`}>
+                                                {rankMeta.label}
+                                            </span>
+                                            <span className={styles.contributorName}>
+                                                {contributor.username}
+                                            </span>
+                                            <span className={styles.contributorCount}>
+                                                {contributor.count} verified {contributor.count === 1 ? 'word' : 'words'}
+                                            </span>
+                                        </>
+                                    );
 
-                                            return contributor.id ? (
-                                                <Link
-                                                    key={contributor.id ?? index}
-                                                    to={`/profile/${contributor.id}`}
-                                                    className={`${styles.podiumCard} ${styles[`podiumRank${rank}`]}`}
-                                                    title={`View ${contributor.username}'s profile`}
-                                                >
-                                                    {cardContent}
-                                                </Link>
-                                            ) : (
-                                                <div
-                                                    key={index}
-                                                    className={`${styles.podiumCard} ${styles[`podiumRank${rank}`]} ${styles.podiumCardDeleted}`}
-                                                >
-                                                    {cardContent}
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
+                                    return contributor.id ? (
+                                        <Link
+                                            key={contributor.id ?? index}
+                                            to={`/profile/${contributor.id}`}
+                                            className={`${styles.podiumCard} ${styles[`podiumRank${rank}`]}`}
+                                            title={`View ${contributor.username}'s profile`}
+                                        >
+                                            {cardContent}
+                                        </Link>
+                                    ) : (
+                                        <div
+                                            key={index}
+                                            className={`${styles.podiumCard} ${styles[`podiumRank${rank}`]} ${styles.podiumCardDeleted}`}
+                                        >
+                                            {cardContent}
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     )}

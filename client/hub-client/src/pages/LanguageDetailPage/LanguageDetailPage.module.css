@@ -693,94 +693,31 @@
   color: #D1D5DB;
 }
 
-.contributorsPill {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 7px 13px 7px 10px;
-  background: rgba(245, 158, 11, 0.08);
-  border: 1px solid rgba(245, 158, 11, 0.25);
-  border-radius: 999px;
+.podiumSection {
+  width: 100%;
+  order: 3;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-rgba);
+  margin-top: 8px;
+}
+
+.podiumSectionTitle {
   font-size: 12px;
   font-weight: 700;
   color: #B45309;
-  cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-  white-space: nowrap;
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
-  letter-spacing: 0.02em;
-}
-.contributorsPill:hover {
-  background: rgba(245, 158, 11, 0.14);
-  border-color: rgba(245, 158, 11, 0.4);
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.12);
-}
-.contributorsPillOpen {
-  background: rgba(245, 158, 11, 0.14);
-  border-color: rgba(245, 158, 11, 0.4);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin: 0 0 12px;
 }
 
-.pillTrophy {
-  font-size: 13px;
-  line-height: 1;
-  flex-shrink: 0;
+.podiumCard:nth-child(1) {
+  animation: cardRise 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.05s both;
 }
-
-.pillChevron {
-  width: 12px;
-  height: 12px;
-  flex-shrink: 0;
-  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-  color: #D97706;
+.podiumCard:nth-child(2) {
+  animation: cardRise 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.14s both;
 }
-.contributorsPillOpen .pillChevron {
-  transform: rotate(180deg);
-}
-
-.podiumDrawerWrap {
-  width: 100%;
-  order: 3;
-  
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.podiumDrawerWrapOpen {
-  grid-template-rows: 1fr;
-}
-
-.podiumDrawer {
-  overflow: hidden;
-  
-  opacity: 0;
-  transform: translateY(-6px);
-  transition:
-    opacity   0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.05s,
-    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.05s;
-}
-.podiumDrawerOpen {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.podiumDrawerInner {
-  padding-top: 16px;
-  border-top: 1px solid var(--border-rgba);
-  margin-top: 16px;
-}
-
-.podiumCard {
-  animation: none; 
-}
-
-.podiumDrawerOpen .podiumCard:nth-child(1) {
-  animation: cardRise 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.13s both;
-}
-.podiumDrawerOpen .podiumCard:nth-child(2) {
-  animation: cardRise 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.22s both;
-}
-.podiumDrawerOpen .podiumCard:nth-child(3) {
-  animation: cardRise 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.31s both;
+.podiumCard:nth-child(3) {
+  animation: cardRise 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.23s both;
 }
 
 @keyframes cardRise {
@@ -801,11 +738,6 @@
   display: flex;
   align-items: flex-end;
   gap: 10px;
-  justify-content: flex-start;
-}
-
-.podiumCount1,
-.podiumCount2 {
   justify-content: center;
 }
 
@@ -950,21 +882,9 @@ a.podiumCard:hover {
     transform: none;
     box-shadow: none;
   }
-  .podiumDrawer {
-    transition: none;
-    opacity: 1;
-    transform: none;
-  }
-  .podiumDrawerWrap {
-    transition: none;
-    grid-template-rows: 1fr;
-  }
-  .pillChevron {
-    transition: none;
-  }
-  .podiumDrawerOpen .podiumCard:nth-child(1),
-  .podiumDrawerOpen .podiumCard:nth-child(2),
-  .podiumDrawerOpen .podiumCard:nth-child(3) {
+  .podiumCard:nth-child(1),
+  .podiumCard:nth-child(2),
+  .podiumCard:nth-child(3) {
     animation: none;
     opacity: 1;
     transform: none;
@@ -1104,10 +1024,6 @@ a.podiumCard:hover {
     padding: 10px 14px;
   }
 
-  .podiumCount1,
-  .podiumCount2 {
-    justify-content: flex-start;
-  }
 }
 
 @media (prefers-color-scheme: dark) {
