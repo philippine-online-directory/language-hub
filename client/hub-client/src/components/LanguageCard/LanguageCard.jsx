@@ -22,7 +22,7 @@ export default function LanguageCard({ language }){
 
             <div className={styles.meta}>
                 <span className={styles.isoCode}>{language.isoCode.toUpperCase()}</span>
-                {language.speakerCount !== null && (
+                {language.speakerCount > 0 && (
                     <span className={styles.speakerCount}>
                         {language.speakerCount.toLocaleString()} speakers
                     </span>

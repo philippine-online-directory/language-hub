@@ -35,7 +35,7 @@ model User {
 model Language {
   id                 String  @id @default(cuid())
   name               String  @unique
-  speakerCount       Int?    @default(0)
+  speakerCount       Int?
   isoCode            String  @unique
   preservationNote   String?
   culturalBackground String?
