@@ -1,21 +1,23 @@
 import styles from './Button.module.css';
 
-export default function Button({ children, variant = 'primary', onClick, type, disabled = false, fullWidth = false, className = ''}){
+export default function Button({ children, variant = 'primary', onClick, type, disabled = false, fullWidth = false, className = '', loading = false }) {
     const classes = [
         styles.button,
         styles[variant],
         fullWidth ? styles.fullWdith : '',
+        loading ? styles.loading : '',
         className
-    ].filter(Boolean).join(' ')
+    ].filter(Boolean).join(' ');
 
     return (
         <button
             type={type}
             onClick={onClick}
-            disabled={disabled}
+            disabled={disabled || loading}
             className={classes}
         >
-            {children}
+            <span className={styles.t}>{children}</span>
+            <span className={styles.blob} />
         </button>
-    )
+    );
 }

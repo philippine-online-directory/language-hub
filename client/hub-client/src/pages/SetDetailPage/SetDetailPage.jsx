@@ -17,6 +17,7 @@ export default function SetDetailPage() {
   const [error, setError] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
   const [pendingRemove, setPendingRemove] = useState(null);
+  const [isPublishing, setIsPublishing] = useState(false);
 
   useEffect(() => {
     const fetchSet = async () => {
@@ -59,6 +60,7 @@ export default function SetDetailPage() {
   };
 
   const handlePublishToggle = async () => {
+    setIsPublishing(true);
     try {
       const updatedSet = await setService.publishSet(setId, {
         name: set.name,
@@ -69,6 +71,8 @@ export default function SetDetailPage() {
     } catch (err) {
       alert('Failed to update set visibility. Please try again.');
       console.error('Error updating set:', err);
+    } finally {
+      setIsPublishing(false);
     }
   };
 
@@ -137,6 +141,7 @@ export default function SetDetailPage() {
               <Button
                 variant={set.isPublic ? 'secondary' : 'primary'}
                 onClick={handlePublishToggle}
+                loading={isPublishing}
               >
                 {set.isPublic ? 'Make Private' : 'Publish Set'}
               </Button>

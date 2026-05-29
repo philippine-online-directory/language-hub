@@ -7,7 +7,9 @@
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   cursor: pointer;
   border: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    transform  0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 1.0s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
   display: inline-flex;
@@ -16,26 +18,40 @@
   gap: 8px;
 }
 
-/* Ripple effect */
-.button::before {
-  content: '';
+.button:active {
+  transform: scale(0.95) !important;
+  transition: transform 0.12s ease !important;
+}
+
+/* Text sits above the blob */
+.t {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Blob expands from center on hover */
+.blob {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.5);
   transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+  transition:
+    width   1.6s cubic-bezier(0.16, 1, 0.3, 1),
+    height  1.6s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.button:active::before {
-  width: 300px;
-  height: 300px;
-}
-
-/* Primary Button with Gradient */
+/* Primary — copper gradient, deep burnt-copper blob */
 .primary {
   background: linear-gradient(135deg, #C0763A 0%, #D68A4F 100%);
   color: white;
@@ -43,31 +59,23 @@
               0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.primary::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 999px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
+.primary .blob {
+  background: #7A3E12;
 }
 
 .primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(192, 118, 58, 0.4),
-              0 3px 10px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 5px rgba(192, 118, 58, 0.25),
+              0 8px 24px rgba(192, 118, 58, 0.35);
 }
 
-.primary:hover::after {
-  opacity: 1;
+.primary:hover .blob {
+  width: 280px;
+  height: 280px;
+  opacity: 0.55;
 }
 
-.primary:active {
-  transform: translateY(0);
-}
-
-/* Secondary Button with Glass Effect */
+/* Secondary — outlined copper, copper-tint bloom */
 .secondary {
   background: var(--bg-surface);
   backdrop-filter: blur(10px);
@@ -76,18 +84,23 @@
   box-shadow: 0 2px 10px rgba(192, 118, 58, 0.1);
 }
 
+.secondary .blob {
+  background: rgba(192, 118, 58, 0.18);
+}
+
 .secondary:hover {
-  background: rgba(192, 118, 58, 0.1);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(192, 118, 58, 0.2);
-  border-color: #D68A4F;
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 5px rgba(192, 118, 58, 0.15),
+              0 6px 18px rgba(192, 118, 58, 0.2);
 }
 
-.secondary:active {
-  transform: translateY(0);
+.secondary:hover .blob {
+  width: 280px;
+  height: 280px;
+  opacity: 1;
 }
 
-/* Danger Button */
+/* Danger — red gradient, deep crimson blob */
 .danger {
   background: linear-gradient(135deg, #EF4444 0%, #F87171 100%);
   color: white;
@@ -95,31 +108,30 @@
               0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.danger::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 999px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
+.danger .blob {
+  background: #991B1B;
 }
 
 .danger:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4),
-              0 3px 10px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 5px rgba(239, 68, 68, 0.22),
+              0 8px 24px rgba(239, 68, 68, 0.35);
 }
 
-.danger:hover::after {
-  opacity: 1;
+.danger:hover .blob {
+  width: 280px;
+  height: 280px;
+  opacity: 0.55;
 }
 
-.danger:active {
-  transform: translateY(0);
+/* Darker blobs in dark mode */
+@media (prefers-color-scheme: dark) {
+  .primary .blob { background: #5C2A08; }
+  .secondary .blob { background: rgba(192, 118, 58, 0.25); }
+  .danger .blob { background: #7F1D1D; }
 }
 
-/* Disabled State */
+/* Disabled — suppress animation */
 .button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -127,60 +139,52 @@
   box-shadow: none !important;
 }
 
-.button:disabled:hover {
-  transform: none;
+.button:disabled:hover .blob {
+  opacity: 0 !important;
+  width: 20px !important;
+  height: 20px !important;
 }
 
-/* Full Width */
-.fullWidth {
+/* Full width */
+.fullWdith {
   width: 100%;
 }
 
-/* Loading State */
+/* Loading — spinner via ::after, text hidden, blob suppressed */
 .loading {
-  position: relative;
-  color: transparent;
   pointer-events: none;
+  cursor: not-allowed;
+}
+
+.loading .t {
+  color: transparent;
+}
+
+.loading .blob {
+  display: none;
 }
 
 .loading::after {
   content: '';
   position: absolute;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   top: 50%;
   left: 50%;
-  margin-left: -8px;
-  margin-top: -8px;
-  border: 2px solid transparent;
-  border-top-color: currentColor;
+  margin-left: -9px;
+  margin-top: -9px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: rgba(255, 255, 255, 0.9);
   border-radius: 50%;
-  animation: spin 0.6s linear infinite;
+  animation: spin 0.7s linear infinite;
+  z-index: 3;
+}
+
+.secondary.loading::after {
+  border-color: rgba(192, 118, 58, 0.2);
+  border-top-color: #C0763A;
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Hover shine effect */
-.button::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.3),
-    transparent
-  );
-  transition: left 0.5s ease;
-}
-
-.button:hover::after {
-  left: 100%;
+  to { transform: rotate(360deg); }
 }

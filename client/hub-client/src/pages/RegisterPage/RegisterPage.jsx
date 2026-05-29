@@ -165,8 +165,8 @@ export default function RegisterPage(){
                             placeholder="Confirm your password"
                         />
 
-                        <Button type="submit" fullWidth disabled={loading}>
-                            {loading ? 'Creating account...' : 'Register'}
+                        <Button type="submit" fullWidth loading={loading}>
+                            Register
                         </Button>
                     </form>
 

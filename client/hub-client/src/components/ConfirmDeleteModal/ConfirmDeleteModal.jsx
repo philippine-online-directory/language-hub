@@ -39,8 +39,8 @@ export default function ConfirmDeleteModal({ itemType, itemName, warning, onConf
           <Button variant="secondary" onClick={onCancel} disabled={isDeleting}>
             Cancel
           </Button>
-          <Button variant="danger" onClick={onConfirm} disabled={isDeleting}>
-            {isDeleting ? 'Deleting…' : 'Delete'}
+          <Button variant="danger" onClick={onConfirm} loading={isDeleting}>
+            Delete
           </Button>
         </div>
       </div>

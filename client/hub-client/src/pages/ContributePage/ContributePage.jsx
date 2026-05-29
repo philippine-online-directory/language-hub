@@ -849,10 +849,8 @@ export default function ContributePage() {
                                                 Next
                                             </Button>
                                         ) : (
-                                            <Button type="submit" disabled={loading || languagesLoading}>
-                                                {uploadingAudio
-                                                    ? `Uploading Audio... ${uploadProgress}%`
-                                                    : loading ? 'Submitting...' : 'Submit Contribution'}
+                                            <Button type="submit" loading={loading || uploadingAudio} disabled={languagesLoading}>
+                                                {uploadingAudio ? `Uploading Audio… ${uploadProgress}%` : 'Submit Contribution'}
                                             </Button>
                                         )}
                                     </div>

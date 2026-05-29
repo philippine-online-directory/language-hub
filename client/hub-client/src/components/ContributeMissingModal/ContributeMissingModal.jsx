@@ -584,13 +584,9 @@ export default function ContributeMissingModal({ translation, fieldsToContribute
                     )}
 
                 <div className={styles.actions}>
-                    <Button type="submit" fullWidth disabled={loading || isRecording}>
-                          {uploadingAudio ? (
-                              <span className={styles.uploadingText}>
-                                  Uploading Audio... {uploadProgress}%
-                              </span>
-                          ) : loading ? 'Submitting...' : 'Submit Contribution'}
-                      </Button>
+                    <Button type="submit" fullWidth loading={loading || uploadingAudio} disabled={isRecording}>
+                        {uploadingAudio ? `Uploading Audio… ${uploadProgress}%` : 'Submit Contribution'}
+                    </Button>
                       
                       {uploadingAudio && (
                           <div className={styles.uploadProgressBar}>

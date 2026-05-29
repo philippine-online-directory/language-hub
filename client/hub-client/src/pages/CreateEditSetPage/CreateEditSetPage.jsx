@@ -264,15 +264,8 @@ export default function CreateEditSetPage(){
                         </div>
 
                         <div className={styles.actions}>
-                            <Button type="submit" variant="primary" fullWidth disabled={loading}>
-                                {loading ? (
-                                    <>
-                                        <div className={styles.buttonSpinner}></div>
-                                        Saving...
-                                    </>
-                                ) : (
-                                    isEditing ? 'Save Changes' : 'Create Set'
-                                )}
+                            <Button type="submit" variant="primary" fullWidth loading={loading}>
+                                {isEditing ? 'Save Changes' : 'Create Set'}
                             </Button>
                             <Button
                                 type="button"
