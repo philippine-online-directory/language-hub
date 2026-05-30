@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { languageService } from '../../api/languageService';
 import { wordOfTheDayService } from '../../api/wordOfTheDayService';
 import WordDisplay from '../../components/WordDisplay/WordDisplay';
+import WordOfTheDaySignup from '../../components/WordOfTheDaySignup/WordOfTheDaySignup';
 import useDebounce from '../../hooks/useDebounce';
 import LanguageCard from '../../components/LanguageCard/LanguageCard';
 import Pagination from '../../components/Pagination/Pagination';
@@ -135,6 +136,13 @@ export default function LanguagesPage() {
                     </div>
                 </header>
 
+                <div className={styles.requestNotice}>
+                    Want a new language or dictionary added?{' '}
+                    <a href="mailto:dguirao20@gmail.com" className={styles.requestLink}>
+                        Email us at dguirao20@gmail.com
+                    </a>
+                </div>
+
                 <div className={styles.searchSection}>
                     <div className={styles.searchModes}>
                         <label className={styles.radioLabel}>
@@ -242,11 +250,14 @@ export default function LanguagesPage() {
                 ) : wordError ? (
                     <div className={styles.error}>{wordError}</div>
                 ) : wordOfTheDay && (
-                    <WordDisplay
-                        translation={wordOfTheDay}
-                        showAddToSet={false}
-                        defaultExpanded={true}
-                    />
+                    <div className={styles.wordCard}>
+                        <WordDisplay
+                            translation={wordOfTheDay}
+                            showAddToSet={false}
+                            defaultExpanded={true}
+                        />
+                        <WordOfTheDaySignup />
+                    </div>
                 )}
             </div>
         </div>

@@ -102,6 +102,26 @@
   color: var(--text-secondary);
 }
 
+.requestNotice {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(192, 118, 58, 0.08);
+  border: 1px solid rgba(192, 118, 58, 0.25);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.15s backwards;
+}
+
+.requestLink {
+  color: inherit;
+  font-weight: 700;
+  text-decoration: none;
+}
+
 .searchSection {
   margin-bottom: 48px;
   max-width: 600px;
@@ -216,6 +236,12 @@
   height: 64px;
   color: #D1D5DB;
   margin-bottom: 8px;
+}
+
+.wordCard {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border-rgba);
 }
 
 @media (prefers-reduced-motion: reduce) {
