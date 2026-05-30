@@ -92,15 +92,12 @@ const getEmailTemplates = async (formattedDate) => {
     const wordOfTheDay = await getWordOfTheDay();
     const t = wordOfTheDay.translation;
 
+    const templateArgs = [formattedDate, t.wordText, t.language.name, t.englishDefinition, t.exampleSentence];
+
     return {
-        wordTemplate: wordOfTheDayTemplate(
-            formattedDate,
-            t.wordText,
-            t.language.name,
-            t.englishDefinition,
-            t.exampleSentence
-        ),
-        checkTemplate: checkWordOfTheDayTemplate()
+        wordTemplate: wordOfTheDayTemplate(...templateArgs),
+        checkTemplate: checkWordOfTheDayTemplate(),
+        templateArgs,
     };
 };
 

@@ -2,6 +2,7 @@ import cron from 'node-cron';
 import prisma from '../prisma.js'
 import brevo from '../brevo.js';
 import wordOfTheDayService from '../services/wordOfTheDayService.js';
+import { wordOfTheDayTemplate } from './helpers/emailTemplate.js';
 
 cron.schedule('0 0 * * *', async () => {
     await wordOfTheDayService.assignWordOfTheDay();
@@ -23,19 +24,25 @@ cron.schedule('0 8 * * *', async () => {
   };
   const formattedDate = now.toLocaleDateString("en-US", options);
 
-  const { wordTemplate, checkTemplate } = await wordOfTheDayService.getEmailTemplates(formattedDate);
+  const { wordTemplate, checkTemplate, templateArgs } = await wordOfTheDayService.getEmailTemplates(formattedDate);
 
   const users = await prisma.user.findMany({
     where: { reminderType: { not: null } },
-    orderBy: { lastReminderSentAt: 'asc' }
+    orderBy: { lastReminderSentAt: ‘asc’ }
+  });
+
+  const guests = await prisma.guestEmailSubscription.findMany({
+    where: { active: true },
+    orderBy: { createdAt: ‘asc’ }
   });
 
   // Max 300 per day to stay within email limits of brevo free tier
+  const remaining = 300 - users.length;
   const todaysBatch = users.slice(0, 300);
+  const guestBatch = remaining > 0 ? guests.slice(0, remaining) : [];
 
   for (const user of todaysBatch) {
     try {
-
       await brevo.transactionalEmails.sendTransacEmail({
         subject: `[POD] ${user.reminderType === "WORD" ? "Here’s today’s Word of the Day 🎉" : "Still haven’t checked today’s word? 👀"}`,
         sender: { name: "Philippine Online Dictionary", email: "philippineonlinedirectory.auto@gmail.com" },
@@ -49,6 +56,19 @@ cron.schedule('0 8 * * *', async () => {
       });
     } catch (err) {
       console.error(`Failed to send reminder to ${user.email}`, err);
+    }
+  }
+
+  for (const guest of guestBatch) {
+    try {
+      await brevo.transactionalEmails.sendTransacEmail({
+        subject: "[POD] Here’s today’s Word of the Day 🎉",
+        sender: { name: "Philippine Online Dictionary", email: "philippineonlinedirectory.auto@gmail.com" },
+        to: [{ email: guest.email }],
+        htmlContent: wordOfTheDayTemplate(...templateArgs, guest.unsubscribeToken)
+      });
+    } catch (err) {
+      console.error(`Failed to send word to guest ${guest.email}`, err);
     }
   }
 }, {
