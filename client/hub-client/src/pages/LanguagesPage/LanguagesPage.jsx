@@ -138,8 +138,8 @@ export default function LanguagesPage() {
 
                 <div className={styles.requestNotice}>
                     Want a new language or dictionary added?{' '}
-                    <a href="mailto:dguirao20@gmail.com" className={styles.requestLink}>
-                        Email us at dguirao20@gmail.com
+                    <a href="mailto:jongnavarro@jongnavarro.com" className={styles.requestLink}>
+                        Email us at jongnavarro@jongnavarro.com
                     </a>
                 </div>
 

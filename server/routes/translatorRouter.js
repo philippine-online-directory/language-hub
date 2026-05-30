@@ -3,7 +3,7 @@ import translatorController from '../controllers/translatorController.js';
 
 const translatorRouter = Router();
 
-// GET /translate/:isoCode?word=...&direction=...
+// GET /translate/:slug?word=...&direction=...
 translatorRouter.get('/:slug', translatorController.getTranslatedWord);
 
 export default translatorRouter;

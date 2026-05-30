@@ -467,7 +467,7 @@ export default function ContributePage() {
                             audioFile={audioFile}
                             audioBlob={audioBlob}
                         />
-                        {selectedIsoCode && (
+                        {selectedSlug && (
                             <button
                                 type="button"
                                 className={styles.mobileSheetBtn}

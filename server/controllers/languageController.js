@@ -100,7 +100,7 @@ const getMissingCommonWords = [
 ];
 
 /**
- * GET /languages/:isoCode/translations
+ * GET /languages/:slug/translations
  *
  * Query params:
  *   text           - search wordText (contains)
