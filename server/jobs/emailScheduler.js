@@ -16,11 +16,11 @@ cron.schedule('0 8 * * *', async () => {
 
   // Get current date in Philippine Standard Time
   const now = new Date();
-  const options = { 
-    timeZone: "Asia/Manila", 
-    year: "numeric", 
-    month: "long", 
-    day: "numeric" 
+  const options = {
+    timeZone: "Asia/Manila",
+    year: "numeric",
+    month: "long",
+    day: "numeric"
   };
   const formattedDate = now.toLocaleDateString("en-US", options);
 
@@ -28,12 +28,12 @@ cron.schedule('0 8 * * *', async () => {
 
   const users = await prisma.user.findMany({
     where: { reminderType: { not: null } },
-    orderBy: { lastReminderSentAt: ‘asc’ }
+    orderBy: { lastReminderSentAt: 'asc' }
   });
 
   const guests = await prisma.guestEmailSubscription.findMany({
     where: { active: true },
-    orderBy: { createdAt: ‘asc’ }
+    orderBy: { createdAt: 'asc' }
   });
 
   // Max 300 per day to stay within email limits of brevo free tier
@@ -44,7 +44,7 @@ cron.schedule('0 8 * * *', async () => {
   for (const user of todaysBatch) {
     try {
       await brevo.transactionalEmails.sendTransacEmail({
-        subject: `[POD] ${user.reminderType === "WORD" ? "Here’s today’s Word of the Day 🎉" : "Still haven’t checked today’s word? 👀"}`,
+        subject: `[POD] ${user.reminderType === "WORD" ? "Here's today's Word of the Day!" : "Still haven't checked today's word?"}`,
         sender: { name: "Philippine Online Dictionary", email: "philippineonlinedirectory.auto@gmail.com" },
         to: [{ email: user.email }],
         htmlContent: user.reminderType === "WORD" ? wordTemplate : checkTemplate
@@ -62,7 +62,7 @@ cron.schedule('0 8 * * *', async () => {
   for (const guest of guestBatch) {
     try {
       await brevo.transactionalEmails.sendTransacEmail({
-        subject: "[POD] Here’s today’s Word of the Day 🎉",
+        subject: "[POD] Here's today's Word of the Day!",
         sender: { name: "Philippine Online Dictionary", email: "philippineonlinedirectory.auto@gmail.com" },
         to: [{ email: guest.email }],
         htmlContent: wordOfTheDayTemplate(...templateArgs, guest.unsubscribeToken)
@@ -73,5 +73,5 @@ cron.schedule('0 8 * * *', async () => {
   }
 }, {
   scheduled: true,
-  timezone: "Asia/Manila"   // Philippine Standard Time
+  timezone: "Asia/Manila"
 });
