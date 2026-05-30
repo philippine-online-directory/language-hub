@@ -1,4 +1,6 @@
-export function wordOfTheDayTemplate(formattedDate, word, language, definition, example) {
+const APP_URL = process.env.APP_URL || 'http://localhost:5173';
+
+export function wordOfTheDayTemplate(formattedDate, word, language, definition, example, unsubscribeToken = null) {
   return `
     <html>
       <head>
@@ -100,10 +102,11 @@ export function wordOfTheDayTemplate(formattedDate, word, language, definition, 
           <div class="definition">${definition}</div>
           <div class="example">${example}</div>
           <div style="text-align:center;">
-            <a href="http://localhost:5173" class="cta">Explore More Words</a>
+            <a href="${APP_URL}" class="cta">Explore More Words</a>
           </div>
           <div class="footer">
             Philippine Online Dictionary — dedicated to keeping our languages alive
+            ${unsubscribeToken ? `<br><br><a href="${APP_URL}/unsubscribe?token=${unsubscribeToken}" style="color:#9CA3AF;font-size:12px;">Unsubscribe</a>` : ''}
           </div>
         </div>
       </body>
@@ -191,7 +194,7 @@ export function checkWordOfTheDayTemplate() {
           </div>
 
           <div style="text-align:center;">
-            <a href="http://localhost:5173" class="cta">View Today’s Word</a>
+            <a href="${APP_URL}" class="cta">View Today’s Word</a>
           </div>
 
           <div class="footer">
