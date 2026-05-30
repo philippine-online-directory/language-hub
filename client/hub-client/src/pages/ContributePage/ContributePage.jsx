@@ -145,7 +145,7 @@ export default function ContributePage() {
     const [prefillWord, setPrefillWord] = useState('');
     const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
 
-    const selectedIsoCode = languages.find(l => l.id === formData.languageId)?.isoCode ?? null;
+    const selectedSlug = languages.find(l => l.id === formData.languageId)?.slug ?? null;
 
     useEffect(() => { setMounted(true); }, []);
 
@@ -196,15 +196,15 @@ export default function ContributePage() {
                 const langs = result.languages || [];
                 setLanguages(langs);
 
-                const isoCode = searchParams.get('languageIsoCode');
+                const languageSlug = searchParams.get('languageSlug');
                 const englishWord = searchParams.get('englishWord');
 
-                if (isoCode || englishWord) {
+                if (languageSlug || englishWord) {
                     setPrefillWord(englishWord || '');
                     setFormData(prev => ({
                         ...prev,
-                        languageId: isoCode
-                            ? (langs.find(l => l.isoCode === isoCode)?.id ?? prev.languageId)
+                        languageId: languageSlug
+                            ? (langs.find(l => l.slug === languageSlug)?.id ?? prev.languageId)
                             : prev.languageId,
                         englishDefinition: englishWord || prev.englishDefinition,
                     }));
@@ -528,7 +528,7 @@ export default function ContributePage() {
                                                         <option value="">Select a language</option>
                                                         {languages.map((lang) => (
                                                             <option key={lang.id} value={lang.id}>
-                                                                {lang.name} ({lang.isoCode.toUpperCase()})
+                                                                {lang.name}{lang.isoCode ? ` (${lang.isoCode.toUpperCase()})` : ''}
                                                             </option>
                                                         ))}
                                                     </select>
@@ -872,7 +872,7 @@ export default function ContributePage() {
                     </div>
 
                     <div className={styles.missingSidebarColumn}>
-                        <MissingWordsSidebar isoCode={selectedIsoCode} onWordClick={handleMissingWordClick} />
+                        <MissingWordsSidebar slug={selectedSlug} onWordClick={handleMissingWordClick} />
                     </div>
                 </div>
             </div>
@@ -880,7 +880,7 @@ export default function ContributePage() {
             <MissingWordsBottomSheet
                 isOpen={mobileSheetOpen}
                 onClose={() => setMobileSheetOpen(false)}
-                isoCode={selectedIsoCode}
+                slug={selectedSlug}
                 onWordClick={handleMissingWordClick}
             />
         </div>

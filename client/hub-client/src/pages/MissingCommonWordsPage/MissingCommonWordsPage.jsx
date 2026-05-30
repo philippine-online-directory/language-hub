@@ -8,7 +8,7 @@ import styles from './MissingCommonWordsPage.module.css';
 const COMMON_WORDS_PER_PAGE = 20;
 
 export default function MissingCommonWordsPage() {
-    const { isoCode } = useParams();
+    const { slug } = useParams();
     const navigate = useNavigate();
     const [language, setLanguage] = useState(null);
     const [commonWords, setCommonWords] = useState([]);
@@ -25,7 +25,7 @@ export default function MissingCommonWordsPage() {
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [isoCode]);
+    }, [slug]);
 
     useEffect(() => {
         let cancelled = false;
@@ -36,8 +36,8 @@ export default function MissingCommonWordsPage() {
 
             try {
                 const [languageData, result] = await Promise.all([
-                    languageService.getLanguageByCode(isoCode),
-                    languageService.getMissingCommonWords(isoCode, currentPage, COMMON_WORDS_PER_PAGE)
+                    languageService.getLanguageBySlug(slug),
+                    languageService.getMissingCommonWords(slug, currentPage, COMMON_WORDS_PER_PAGE)
                 ]);
 
                 if (cancelled) return;
@@ -66,7 +66,7 @@ export default function MissingCommonWordsPage() {
 
         fetchPageData();
         return () => { cancelled = true; };
-    }, [isoCode, currentPage, retryCount]);
+    }, [slug, currentPage, retryCount]);
 
     return (
         <div className={`${styles.missingCommonWordsPage} ${mounted ? styles.mounted : ''}`}>
@@ -83,7 +83,7 @@ export default function MissingCommonWordsPage() {
                         </p>
                     </div>
                     <div className={styles.headerActions}>
-                        <Button variant="secondary" onClick={() => navigate(`/languages/${isoCode}`)}>
+                        <Button variant="secondary" onClick={() => navigate(`/languages/${slug}`)}>
                             Back to Language
                         </Button>
                     </div>

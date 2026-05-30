@@ -31,7 +31,7 @@ const TRANSLATIONS_PER_PAGE = 20;
 const TOTAL_COMMON_WORDS = 2809;
 
 export default function LanguageDetailPage() {
-    const { isoCode } = useParams();
+    const { slug } = useParams();
     const navigate = useNavigate();
     const { isAuthenticated } = useAuth();
 
@@ -78,7 +78,7 @@ export default function LanguageDetailPage() {
             setLangLoading(true);
             setLangError(null);
             try {
-                const data = await languageService.getLanguageByCode(isoCode);
+                const data = await languageService.getLanguageBySlug(slug);
                 if (cancelled) return;
                 if (!data) {
                     setLangError('Language not found.');
@@ -100,7 +100,7 @@ export default function LanguageDetailPage() {
 
         fetchLanguage();
         return () => { cancelled = true; };
-    }, [isoCode]);
+    }, [slug]);
 
     useEffect(() => {
         let cancelled = false;
@@ -122,7 +122,7 @@ export default function LanguageDetailPage() {
                     if (searchMode === 'definition') params.definition = debouncedSearch;
                 }
 
-                const result = await languageService.getTranslations(isoCode, params);
+                const result = await languageService.getTranslations(slug, params);
                 if (cancelled) return;
 
                 setTranslations(result.translations || []);
@@ -142,7 +142,7 @@ export default function LanguageDetailPage() {
 
         fetchTranslations();
         return () => { cancelled = true; };
-    }, [isoCode, debouncedSearch, searchMode, statusMode, sortBy, coreWordsOnly, currentPage, retryCount]);
+    }, [slug, debouncedSearch, searchMode, statusMode, sortBy, coreWordsOnly, currentPage, retryCount]);
 
     useEffect(() => {
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -172,13 +172,13 @@ export default function LanguageDetailPage() {
     }, []);
 
     const handleMissingWordClick = useCallback((word) => {
-        const contributeUrl = `/contribute?languageIsoCode=${isoCode}&englishWord=${encodeURIComponent(word.word)}&commonWordId=${word.id}`;
+        const contributeUrl = `/contribute?languageSlug=${slug}&englishWord=${encodeURIComponent(word.word)}&commonWordId=${word.id}`;
         if (isAuthenticated) {
             navigate(contributeUrl);
         } else {
             navigate(`/login?redirect=${encodeURIComponent(contributeUrl)}&intent=contribute`);
         }
-    }, [isoCode, isAuthenticated, navigate]);
+    }, [slug, isAuthenticated, navigate]);
 
     const isFiltered =
         statusMode !== 'VERIFIED' ||
@@ -249,7 +249,7 @@ export default function LanguageDetailPage() {
                             )}
                         </div>
                         <div className={styles.meta}>
-                            <span className={styles.isoCode}>{language.isoCode.toUpperCase()}</span>
+                            {language.isoCode && <span className={styles.isoCode}>{language.isoCode.toUpperCase()}</span>}
                             {language.speakerCount != null && language.speakerCount > 0 && (
                                 <span className={styles.speakerCount}>
                                     {language.speakerCount.toLocaleString()} speakers
@@ -561,7 +561,7 @@ export default function LanguageDetailPage() {
                             )}
                         </div>
 
-                        <MissingWordsSidebar isoCode={isoCode} onWordClick={handleMissingWordClick} />
+                        <MissingWordsSidebar slug={slug} onWordClick={handleMissingWordClick} />
                     </div>
                 </section>
             </div>

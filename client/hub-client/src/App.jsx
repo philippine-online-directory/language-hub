@@ -94,8 +94,8 @@ function AppContent(){
                 {/* Language Routes */}
                 <Route path="/common-words" element={<CommonWordsPage />} />
                 <Route path="/languages" element={<LanguagesPage />} />
-                <Route path="/languages/:isoCode/missing-words" element={<MissingCommonWordsPage />} />
-                <Route path="/languages/:isoCode" element={<LanguageDetailPage />} />
+                <Route path="/languages/:slug/missing-words" element={<MissingCommonWordsPage />} />
+                <Route path="/languages/:slug" element={<LanguageDetailPage />} />
                 
                 {/* Set Routes */}
                 <Route path="/sets" element={<SetsPage />} />

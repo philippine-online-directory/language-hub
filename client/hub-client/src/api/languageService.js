@@ -4,13 +4,13 @@ export const languageService = {
     getLanguages: async (page = 1, limit = 20, searchQuery = '', searchMode = 'name') => {
         const params = { page, limit };
         if (searchQuery && searchMode === 'name') params.name = searchQuery;
-        if (searchQuery && searchMode === 'isoCode') params.isoCode = searchQuery;
+        if (searchQuery && searchMode === 'slug') params.slug = searchQuery;
         const response = await api.get('/languages', { params });
         return response.data;
     },
 
-    getLanguageByCode: async (isoCode) => {
-        const response = await api.get(`/languages/${isoCode}`);
+    getLanguageBySlug: async (slug) => {
+        const response = await api.get(`/languages/${slug}`);
         return response.data;
     },
 
@@ -21,24 +21,24 @@ export const languageService = {
         return response.data;
     },
 
-    getMissingCommonWords: async (isoCode, page = 1, limit = 20) => {
-        const response = await api.get(`/languages/${isoCode}/missing-words`, {
+    getMissingCommonWords: async (slug, page = 1, limit = 20) => {
+        const response = await api.get(`/languages/${slug}/missing-words`, {
             params: { page, limit }
         });
         return response.data;
     },
 
-    getTranslations: async (isoCode, options = {}) => {
+    getTranslations: async (slug, options = {}) => {
         const params = { ...options };
         if (typeof params.coreWordsOnly === 'boolean') {
             params.coreWordsOnly = params.coreWordsOnly.toString();
         }
-        const response = await api.get(`/languages/${isoCode}/translations`, { params });
+        const response = await api.get(`/languages/${slug}/translations`, { params });
         return response.data;
     },
 
-    getTranslationById: async (isoCode, translationId) => {
-        const response = await api.get(`/languages/${isoCode}/translations/${translationId}`);
+    getTranslationById: async (slug, translationId) => {
+        const response = await api.get(`/languages/${slug}/translations/${translationId}`);
         return response.data;
     },
 
@@ -57,17 +57,17 @@ export const languageService = {
         return response.data;
     },
 
-    updateTranslationStatus: async (isoCode, translationId, status) => {
+    updateTranslationStatus: async (slug, translationId, status) => {
         const response = await api.patch(
-            `/languages/${isoCode}/translations/${translationId}`,
+            `/languages/${slug}/translations/${translationId}`,
             { status }
         );
         return response.data;
     },
 
-    deleteTranslation: async (isoCode, translationId) => {
+    deleteTranslation: async (slug, translationId) => {
         const response = await api.delete(
-            `/languages/${isoCode}/translations/${translationId}`
+            `/languages/${slug}/translations/${translationId}`
         );
         return response.data;
     },

@@ -52,7 +52,7 @@ export default function Translator({ compact = false }) {
             setLoading(true);
             try {
                 const data = await translatorService.translate(
-                    selectedLanguage.isoCode,
+                    selectedLanguage.slug,
                     text,
                     direction
                 );
@@ -265,7 +265,7 @@ export default function Translator({ compact = false }) {
                 isOpen={modalOpen}
                 onClose={() => setModalOpen(false)}
                 onSelect={setSelectedLanguage}
-                selectedIsoCode={selectedLanguage?.isoCode}
+                selectedSlug={selectedLanguage?.slug}
             />
         </div>
     );

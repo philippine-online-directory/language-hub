@@ -191,7 +191,7 @@ export default function SetDetailPage() {
                 <p className={styles.emptyHint}>
                   Start adding translations to this set from the{' '}
                   <Link
-                    to={set.language ? `/languages/${set.language.isoCode}` : '/languages'}
+                    to={set.language ? `/languages/${set.language.slug}` : '/languages'}
                     className={styles.emptyLink}
                   >
                     {set.language ? `${set.language.name} dictionary here` : 'Dictionaries page'}

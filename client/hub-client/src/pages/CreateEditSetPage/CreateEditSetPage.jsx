@@ -222,7 +222,7 @@ export default function CreateEditSetPage(){
                                 <option value="">Select a language</option>
                                 {languages.map((lang) => (
                                     <option key={lang.id} value={lang.id}>
-                                        {lang.name} ({lang.isoCode.toUpperCase()})
+                                        {lang.name}{lang.isoCode ? ` (${lang.isoCode.toUpperCase()})` : ''}
                                     </option>
                                 ))}
                             </select>

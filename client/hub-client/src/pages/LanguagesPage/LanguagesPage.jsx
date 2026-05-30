@@ -63,7 +63,7 @@ export default function LanguagesPage() {
             try {
                 let result;
                 result = await languageService.getLanguages(
-                    searchMode === 'isoCode' ? 1 : currentPage,
+                    searchMode === 'slug' ? 1 : currentPage,
                     LANGUAGES_PER_PAGE,
                     debouncedSearch,
                     searchMode
@@ -163,15 +163,15 @@ export default function LanguagesPage() {
                             <input
                                 type="radio"
                                 name="searchMode"
-                                value="isoCode"
-                                checked={searchMode === 'isoCode'}
+                                value="slug"
+                                checked={searchMode === 'slug'}
                                 onChange={(e) => {
                                     setSearchMode(e.target.value);
                                     setSearchQuery('');
                                 }}
                                 className={styles.radio}
                             />
-                            <span>Search by ISO Code</span>
+                            <span>Search by Slug</span>
                         </label>
                     </div>
 
@@ -180,7 +180,7 @@ export default function LanguagesPage() {
                         placeholder={
                             searchMode === 'name'
                                 ? 'Search languages...'
-                                : 'Enter ISO code (e.g., en, fr, es)...'
+                                : 'Enter slug (e.g., tagalog, bikol-central)...'
                         }
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -220,7 +220,7 @@ export default function LanguagesPage() {
                             ))}
                         </div>
 
-                        {pagination && pagination.totalPages > 1 && searchMode !== 'isoCode' && (
+                        {pagination && pagination.totalPages > 1 && searchMode !== 'slug' && (
                             <Pagination
                                 currentPage={currentPage}
                                 totalPages={pagination.totalPages}

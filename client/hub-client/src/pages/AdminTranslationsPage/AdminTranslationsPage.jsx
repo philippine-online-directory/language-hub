@@ -12,7 +12,7 @@ import styles from './AdminTranslationsPage.module.css';
 export default function AdminTranslationsPage(){
     const { user } = useAuth();
     const [languages, setLanguages] = useState([]);
-    const [selectedLanguageIso, setSelectedLanguageIso] = useState(''); // ISO code
+    const [selectedLanguageSlug, setSelectedLanguageSlug] = useState('');
     const [selectedLanguageId, setSelectedLanguageId] = useState(''); // Database ID
     const [translations, setTranslations] = useState([]);
     const [translationUpdates, setTranslationUpdates] = useState([]);
@@ -39,7 +39,7 @@ export default function AdminTranslationsPage(){
                 const languagesList = result.languages || [];
                 setLanguages(languagesList);
                 if (languagesList.length > 0) {
-                    setSelectedLanguageIso(languagesList[0].isoCode);
+                    setSelectedLanguageSlug(languagesList[0].slug);
                     setSelectedLanguageId(languagesList[0].id);
                 }
             } catch (err) {
@@ -53,7 +53,7 @@ export default function AdminTranslationsPage(){
 
     useEffect(() => {
         setExpandedId(null);
-        if (selectedLanguageIso) {
+        if (selectedLanguageSlug) {
             if (filter === 'UPDATE') {
                 fetchTranslationUpdates();
             }
@@ -65,13 +65,13 @@ export default function AdminTranslationsPage(){
                 fetchTranslations();
             }
         }
-    }, [selectedLanguageIso, filter]);
+    }, [selectedLanguageSlug, filter]);
 
     const fetchTranslations = async () => {
         setLoading(true);
         try {
             const result = await languageService.getTranslations(
-                selectedLanguageIso,
+                selectedLanguageSlug,
                 { status: filter, page: 1, limit: 1000 }
             );
             setTranslations(result.translations || []);
@@ -103,7 +103,7 @@ export default function AdminTranslationsPage(){
     const handleVerify = async (translationId) => {
         try {
             await languageService.updateTranslationStatus(
-                selectedLanguageIso,
+                selectedLanguageSlug,
                 translationId,
                 'VERIFIED'
             );
@@ -117,7 +117,7 @@ export default function AdminTranslationsPage(){
     const handleUnverify = async (translationId) => {
         try {
             await languageService.updateTranslationStatus(
-                selectedLanguageIso,
+                selectedLanguageSlug,
                 translationId,
                 'UNVERIFIED'
             );
@@ -151,7 +151,7 @@ export default function AdminTranslationsPage(){
         if (!translationToDelete) return;
         setIsDeleting(true);
         try {
-            await languageService.deleteTranslation(selectedLanguageIso, translationToDelete.id);
+            await languageService.deleteTranslation(selectedLanguageSlug, translationToDelete.id);
             // Optimistically remove from local list so we don't need a full refetch
             setTranslations((prev) => prev.filter((t) => t.id !== translationToDelete.id));
             setTranslationToDelete(null);
@@ -239,17 +239,17 @@ export default function AdminTranslationsPage(){
                             <div className={styles.loadingSelect}>Loading languages...</div>
                         ) : (
                             <select
-                              value={`${selectedLanguageIso}|${selectedLanguageId}`}
+                              value={`${selectedLanguageSlug}|${selectedLanguageId}`}
                               onChange={(e) => {
-                                const [iso, id] = e.target.value.split("|");
-                                setSelectedLanguageIso(iso);
+                                const [slug, id] = e.target.value.split("|");
+                                setSelectedLanguageSlug(slug);
                                 setSelectedLanguageId(id);
                               }}
                               className={styles.select}
                             >
                               {languages.map((lang) => (
-                                <option key={lang.id} value={`${lang.isoCode}|${lang.id}`}>
-                                  {lang.name} ({lang.isoCode.toUpperCase()})
+                                <option key={lang.id} value={`${lang.slug}|${lang.id}`}>
+                                  {lang.name}{lang.isoCode ? ` (${lang.isoCode.toUpperCase()})` : ''}
                                 </option>
                               ))}
                             </select>

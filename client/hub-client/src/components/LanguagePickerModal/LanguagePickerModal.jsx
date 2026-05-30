@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { languageService } from '../../api/languageService';
 import styles from './LanguagePickerModal.module.css';
 
-export default function LanguagePickerModal({ isOpen, onClose, onSelect, selectedIsoCode }) {
+export default function LanguagePickerModal({ isOpen, onClose, onSelect, selectedSlug }) {
     const [languages, setLanguages] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false);
@@ -78,7 +78,7 @@ export default function LanguagePickerModal({ isOpen, onClose, onSelect, selecte
 
     const filtered = languages.filter(lang =>
         lang.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        lang.isoCode.toLowerCase().includes(searchQuery.toLowerCase())
+        (lang.isoCode && lang.isoCode.toLowerCase().includes(searchQuery.toLowerCase()))
     );
 
     if (!isOpen) return null;
@@ -141,10 +141,10 @@ export default function LanguagePickerModal({ isOpen, onClose, onSelect, selecte
                             {filtered.map((lang) => (
                                 <li key={lang.id}>
                                     <button
-                                        className={`${styles.langItem} ${lang.isoCode === selectedIsoCode ? styles.selected : ''}`}
+                                        className={`${styles.langItem} ${lang.slug === selectedSlug ? styles.selected : ''}`}
                                         onClick={() => { onSelect(lang); onClose(); }}
                                         role="option"
-                                        aria-selected={lang.isoCode === selectedIsoCode}
+                                        aria-selected={lang.slug === selectedSlug}
                                     >
                                         <div className={styles.langInfo}>
                                             <span className={styles.langName}>{lang.name}</span>
@@ -154,8 +154,8 @@ export default function LanguagePickerModal({ isOpen, onClose, onSelect, selecte
                                                 </span>
                                             )}
                                         </div>
-                                        <span className={styles.isoCode}>{lang.isoCode}</span>
-                                        {lang.isoCode === selectedIsoCode && (
+                                        {lang.isoCode && <span className={styles.isoCode}>{lang.isoCode}</span>}
+                                        {lang.slug === selectedSlug && (
                                             <svg className={styles.checkIcon} viewBox="0 0 20 20" fill="currentColor">
                                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                             </svg>

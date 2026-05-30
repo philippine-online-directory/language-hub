@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import MissingWordsSidebar from './MissingWordsSidebar';
 import styles from './MissingWordsBottomSheet.module.css';
 
-export default function MissingWordsBottomSheet({ isOpen, onClose, isoCode, onWordClick }) {
+export default function MissingWordsBottomSheet({ isOpen, onClose, slug, onWordClick }) {
     const sheetRef = useRef(null);
     const triggerRef = useRef(null);
 
@@ -48,7 +48,7 @@ export default function MissingWordsBottomSheet({ isOpen, onClose, isoCode, onWo
                         <line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
                 </button>
-                <MissingWordsSidebar isoCode={isoCode} onWordClick={onWordClick} defaultOpen={true} />
+                <MissingWordsSidebar slug={slug} onWordClick={onWordClick} defaultOpen={true} />
             </div>
         </div>
     );

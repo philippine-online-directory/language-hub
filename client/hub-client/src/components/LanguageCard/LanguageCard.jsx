@@ -8,7 +8,7 @@ export default function LanguageCard({ language }){
     const navigate = useNavigate();
 
     const handleClick = () => {
-        navigate(`/languages/${language.isoCode}`);
+        navigate(`/languages/${language.slug}`);
     };
 
     const percent = Math.min(
@@ -21,7 +21,7 @@ export default function LanguageCard({ language }){
             <h3 className={styles.languageName}>{language.name}</h3>
 
             <div className={styles.meta}>
-                <span className={styles.isoCode}>{language.isoCode.toUpperCase()}</span>
+                {language.isoCode && <span className={styles.isoCode}>{language.isoCode.toUpperCase()}</span>}
                 {language.speakerCount > 0 && (
                     <span className={styles.speakerCount}>
                         {language.speakerCount.toLocaleString()} speakers

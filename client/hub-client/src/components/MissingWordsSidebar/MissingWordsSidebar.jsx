@@ -5,7 +5,7 @@ import styles from './MissingWordsSidebar.module.css';
 
 const WORDS_PER_PAGE = 20;
 
-export default function MissingWordsSidebar({ isoCode, onWordClick, defaultOpen }) {
+export default function MissingWordsSidebar({ slug, onWordClick, defaultOpen }) {
     const [isOpen, setIsOpen] = useState(() => {
         if (defaultOpen !== undefined) return defaultOpen;
         return typeof window !== 'undefined' ? !window.matchMedia('(max-width: 768px)').matches : true;
@@ -19,10 +19,10 @@ export default function MissingWordsSidebar({ isoCode, onWordClick, defaultOpen 
 
     useEffect(() => {
         setMissingPage(1);
-    }, [isoCode]);
+    }, [slug]);
 
     useEffect(() => {
-        if (!isoCode) {
+        if (!slug) {
             setMissingWords([]);
             setMissingPagination(null);
             setMissingLoading(false);
@@ -35,7 +35,7 @@ export default function MissingWordsSidebar({ isoCode, onWordClick, defaultOpen 
 
         const fetchWords = async () => {
             try {
-                const result = await languageService.getMissingCommonWords(isoCode, missingPage, WORDS_PER_PAGE);
+                const result = await languageService.getMissingCommonWords(slug, missingPage, WORDS_PER_PAGE);
                 if (cancelled) return;
                 setMissingWords(result.commonWords || []);
                 setMissingPagination(result.pagination || null);
@@ -49,7 +49,7 @@ export default function MissingWordsSidebar({ isoCode, onWordClick, defaultOpen 
 
         fetchWords();
         return () => { cancelled = true; };
-    }, [isoCode, missingPage, retryCount]);
+    }, [slug, missingPage, retryCount]);
 
     const handleRetry = useCallback(() => setRetryCount(c => c + 1), []);
 
@@ -60,7 +60,7 @@ export default function MissingWordsSidebar({ isoCode, onWordClick, defaultOpen 
             <div className={styles.header}>
                 <h3 className={styles.title}>
                     Missing Common Words
-                    {isoCode && (
+                    {slug && (
                         <span className={styles.count}>
                             ({missingPagination ? total.toLocaleString() : '…'})
                         </span>
@@ -78,7 +78,7 @@ export default function MissingWordsSidebar({ isoCode, onWordClick, defaultOpen 
 
             {isOpen && (
                 <div className={styles.body}>
-                    {!isoCode ? (
+                    {!slug ? (
                         <p className={styles.placeholder}>Select a language to see missing words</p>
                     ) : missingLoading ? (
                         <div className={styles.loadingState}>

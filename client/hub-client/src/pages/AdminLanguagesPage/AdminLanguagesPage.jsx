@@ -49,7 +49,7 @@ export default function AdminLanguagesPage(){
         setEditingId(language.id);
         setFormData({
             name: language.name,
-            isoCode: language.isoCode,
+            isoCode: language.isoCode ?? '',
             speakerCount: language.speakerCount?.toString() || '',
             preservationNote: language.preservationNote || '',
             culturalBackground: language.culturalBackground || ''
@@ -159,11 +159,10 @@ export default function AdminLanguagesPage(){
                             />
 
                             <Input
-                                label="ISO Code"
+                                label="ISO Code (optional)"
                                 type="text"
                                 value={formData.isoCode}
                                 onChange={(e) => setFormData({ ...formData, isoCode: e.target.value })}
-                                required
                                 placeholder="e.g., ibg"
                                 disabled={!!editingId}
                             />
@@ -221,7 +220,7 @@ export default function AdminLanguagesPage(){
                             <Card key={language.id} className={styles.languageCard}>
                                 <div className={styles.languageInfo}>
                                     <h3 className={styles.languageName}>{language.name}</h3>
-                                    <p className={styles.isoCode}>{language.isoCode.toUpperCase()}</p>
+                                    {language.isoCode && <p className={styles.isoCode}>{language.isoCode.toUpperCase()}</p>}
                                     {language.speakerCount && (
                                         <p className={styles.speakerCount}>
                                             {language.speakerCount.toLocaleString()} speakers
