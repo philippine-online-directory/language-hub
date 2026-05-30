@@ -287,7 +287,7 @@ export default function MatchingGame() {
                         Exit Game
                     </Button>
                     <div className={styles.instructions}>
-                        Click on cards to reveal and match pairs
+                        Click on a definition and on its matching word to reveal pairs
                     </div>
                 </div>
             </div>
