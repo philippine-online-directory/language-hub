@@ -36,7 +36,8 @@ model Language {
   id                 String  @id @default(cuid())
   name               String  @unique
   speakerCount       Int?
-  isoCode            String  @unique
+  isoCode            String? @unique
+  slug               String  @unique
   preservationNote   String?
   culturalBackground String?
 

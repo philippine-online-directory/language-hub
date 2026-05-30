@@ -11,19 +11,19 @@ const validateLanguage = [
         .optional({ nullable: true, checkFalsy: true })
         .isInt().withMessage('Speaker count must be an integer')
         .toInt(),
-    body('isoCode').notEmpty().trim(),
+    body('isoCode').optional({ nullable: true, checkFalsy: true }).trim(),
     body('preservationNote').trim(),
     body('culturalBackground').trim()
 ];
 
 const getLanguages = [
     async (req, res, next) => {
-        const { name, isoCode, page, limit } = req.query;
+        const { name, slug, page, limit } = req.query;
 
         try {
             let languages;
-            if (isoCode) {
-                const language = await languageService.findLanguageByIsoCode(isoCode);
+            if (slug) {
+                const language = await languageService.findLanguageBySlug(slug);
                 languages = {
                     languages: language ? [language] : [],
                     pagination: { page: 1, limit: 1, total: language ? 1 : 0, totalPages: 1 }
@@ -43,10 +43,10 @@ const getLanguages = [
 
 const getLanguageByCode = [
     async (req, res, next) => {
-        const { isoCode } = req.params;
+        const { slug } = req.params;
 
         try {
-            const language = await languageService.findLanguageByIsoCode(isoCode);
+            const language = await languageService.findLanguageBySlug(slug);
 
             if (!language) {
                 return res.status(404).json({ error: 'Language not found' });
@@ -78,12 +78,12 @@ const getCommonWords = [
 
 const getMissingCommonWords = [
     async (req, res, next) => {
-        const { isoCode } = req.params;
+        const { slug } = req.params;
         const { page, limit } = req.query;
 
         try {
             const commonWords = await commonWordService.getMissingCommonWords(
-                isoCode,
+                slug,
                 parseInt(page) || 1,
                 parseInt(limit) || 20
             );
@@ -113,7 +113,7 @@ const getMissingCommonWords = [
  */
 const getTranslations = [
     async (req, res, next) => {
-        const { isoCode } = req.params;
+        const { slug } = req.params;
         const {
             text,
             definition,
@@ -133,7 +133,7 @@ const getTranslations = [
         const resolvedStatus = VALID_STATUSES.includes(status) ? status : 'VERIFIED';
 
         try {
-            const result = await languageService.getTranslations(isoCode, {
+            const result = await languageService.getTranslations(slug, {
                 status: resolvedStatus,
                 page: parseInt(page) || 1,
                 limit: parseInt(limit) || 20,

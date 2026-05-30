@@ -20,11 +20,14 @@ async function attachSignedUrls(translations) {
 }
 
 async function addLanguage({ name, speakerCount, isoCode, preservationNote, culturalBackground }) {
+    const { slugify } = await import('../utils/slugify.js');
+    const slug = isoCode ? isoCode.toLowerCase().trim() : slugify(name);
     const addedLanguage = await prisma.language.create({
         data: {
             name,
             speakerCount,
-            isoCode,
+            isoCode: isoCode || null,
+            slug,
             preservationNote,
             culturalBackground
         }
@@ -37,7 +40,7 @@ async function updateLanguage(id, { name, speakerCount, isoCode, preservationNot
 
     const updatedLanguage = await prisma.language.update({
         where: { id },
-        data: { name, speakerCount, isoCode, preservationNote, culturalBackground }
+        data: { name, speakerCount, isoCode: isoCode || null, preservationNote, culturalBackground }
     });
     return updatedLanguage;
 }
@@ -71,16 +74,15 @@ async function findLanguages(page = 1, limit = 20) {
     };
 }
 
-async function findLanguageByIsoCode(code) {
-    // Fetch language and top contributors in parallel
+async function findLanguageBySlug(slug) {
     const [language, contributorGroups] = await Promise.all([
         prisma.language.findUnique({
-            where: { isoCode: code }
+            where: { slug }
         }),
         prisma.translation.groupBy({
             by: ['authorId'],
             where: {
-                language: { isoCode: code },
+                language: { slug },
                 status: 'VERIFIED'
             },
             _count: { authorId: true },
@@ -99,10 +101,9 @@ async function findLanguageByIsoCode(code) {
     if (contributorGroups.length > 0) {
         const authorIds = contributorGroups.map(g => g.authorId);
 
-        // Get earliest verified contribution per author for tiebreaking
         const earliestContributions = await prisma.translation.findMany({
             where: {
-                language: { isoCode: code },
+                language: { slug },
                 status: 'VERIFIED',
                 authorId: { in: authorIds }
             },
@@ -116,7 +117,6 @@ async function findLanguageByIsoCode(code) {
             earliestMap[c.authorId] = c.createdAt;
         });
 
-        // Fetch user info for non-deleted authors
         const users = await prisma.user.findMany({
             where: { id: { in: authorIds } },
             select: { id: true, username: true }
@@ -125,7 +125,6 @@ async function findLanguageByIsoCode(code) {
         const userMap = {};
         users.forEach(u => { userMap[u.id] = u.username; });
 
-        // Build and sort: count desc, then earliest contribution asc as tiebreaker
         topContributors = contributorGroups
             .map(g => ({
                 id: userMap[g.authorId] ? g.authorId : null,
@@ -167,7 +166,7 @@ async function findLanguageByName(phrase, page = 1, limit = 20) {
 }
 
 
-async function getTranslations(isoCode, {
+async function getTranslations(slug, {
     status = 'VERIFIED',
     page = 1,
     limit = 20,
@@ -179,7 +178,7 @@ async function getTranslations(isoCode, {
     const skip = (page - 1) * limit;
 
     const whereClause = {
-        language: { isoCode }
+        language: { slug }
     };
 
     if (status === 'VERIFIED' || status === 'UNVERIFIED') {
@@ -236,7 +235,7 @@ async function getTranslations(isoCode, {
 
 const languageService = {
     findLanguages,
-    findLanguageByIsoCode,
+    findLanguageBySlug,
     findLanguageByName,
     getTranslations,
     addLanguage,

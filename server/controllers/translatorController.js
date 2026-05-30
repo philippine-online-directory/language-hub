@@ -2,7 +2,7 @@ import translatorService from '../services/translatorService.js'
 
 const getTranslatedWord = [
     async (req, res, next) => {
-        const { isoCode } = req.params;
+        const { slug } = req.params;
         const { word, direction } = req.query;
 
         try {
@@ -10,7 +10,7 @@ const getTranslatedWord = [
                 return res.status(400).json({ error: 'Word is required' });
             }
 
-            const results = await translatorService.translateWord(isoCode, word, direction);
+            const results = await translatorService.translateWord(slug, word, direction);
             res.status(200).json({ results });
         } catch (err) {
             if (err.message === 'MULTI_WORD') {

@@ -1,6 +1,6 @@
 import prisma from '../prisma.js'
 
-async function translateWord(isoCode, word, direction) {
+async function translateWord(slug, word, direction) {
     if (!word || !word.trim()) {
         throw new Error('Word is required');
     }
@@ -15,7 +15,7 @@ async function translateWord(isoCode, word, direction) {
 
     if (direction === 'en-to-lang') {
         whereClause = {
-            language: { isoCode },
+            language: { slug },
             englishDefinition: {
                 equals: trimmed,
                 mode: 'insensitive'
@@ -23,7 +23,7 @@ async function translateWord(isoCode, word, direction) {
         };
     } else {
         whereClause = {
-            language: { isoCode },
+            language: { slug },
             wordText: {
                 equals: trimmed,
                 mode: 'insensitive'

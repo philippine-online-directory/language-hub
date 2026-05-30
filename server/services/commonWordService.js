@@ -41,9 +41,9 @@ export async function getCommonWords(page = 1, limit = 20) {
     };
 }
 
-export async function getMissingCommonWords(isoCode, page = 1, limit = 20) {
+export async function getMissingCommonWords(slug, page = 1, limit = 20) {
     const language = await prisma.language.findUnique({
-        where: { isoCode },
+        where: { slug },
         select: { id: true }
     });
 
@@ -57,7 +57,7 @@ export async function getMissingCommonWords(isoCode, page = 1, limit = 20) {
     const where = {
         translations: {
             none: {
-                language: { isoCode }
+                language: { slug }
             }
         }
     };
