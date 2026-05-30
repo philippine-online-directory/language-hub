@@ -15,6 +15,7 @@ import translatorRouter from "./routes/translatorRouter.js";
 import handleError from "./middleware/errorHandler.js";
 import wordOfTheDayRouter from "./routes/wordOfTheDayRouter.js";
 import translationUpdateRequestRouter from "./routes/translationUpdateRequest.js";
+import subscribeRouter from "./routes/subscribeRouter.js";
 import './jobs/emailScheduler.js'
 
 
@@ -58,6 +59,7 @@ app.use('/audio', audioRouter)
 app.use('/word-of-the-day', wordOfTheDayRouter)
 app.use('/translation-requests', translationUpdateRequestRouter)
 app.use('/translate', translatorRouter)
+app.use('/subscribe', subscribeRouter)
 app.use(handleError)
 
 const PORT = process.env.PORT || 3000;
