@@ -38,9 +38,12 @@ async function addLanguage({ name, speakerCount, isoCode, preservationNote, cult
 async function updateLanguage(id, { name, speakerCount, isoCode, preservationNote, culturalBackground }) {
     if (!id) throw new Error('Id missing: Must have id to identify which language to update');
 
+    const { slugify } = await import('../utils/slugify.js');
+    const slug = isoCode ? isoCode.toLowerCase().trim() : slugify(name);
+
     const updatedLanguage = await prisma.language.update({
         where: { id },
-        data: { name, speakerCount, isoCode: isoCode || null, preservationNote, culturalBackground }
+        data: { name, speakerCount, isoCode: isoCode || null, slug, preservationNote, culturalBackground }
     });
     return updatedLanguage;
 }
