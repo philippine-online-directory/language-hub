@@ -1,10 +1,9 @@
 import api from './axiosConfig';
 
 export const languageService = {
-    getLanguages: async (page = 1, limit = 20, searchQuery = '', searchMode = 'name') => {
+    getLanguages: async (page = 1, limit = 20, searchQuery = '') => {
         const params = { page, limit };
-        if (searchQuery && searchMode === 'name') params.name = searchQuery;
-        if (searchQuery && searchMode === 'slug') params.slug = searchQuery;
+        if (searchQuery) params.name = searchQuery;
         const response = await api.get('/languages', { params });
         return response.data;
     },

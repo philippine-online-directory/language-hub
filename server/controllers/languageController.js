@@ -18,17 +18,11 @@ const validateLanguage = [
 
 const getLanguages = [
     async (req, res, next) => {
-        const { name, slug, page, limit } = req.query;
+        const { name, page, limit } = req.query;
 
         try {
             let languages;
-            if (slug) {
-                const language = await languageService.findLanguageBySlug(slug);
-                languages = {
-                    languages: language ? [language] : [],
-                    pagination: { page: 1, limit: 1, total: language ? 1 : 0, totalPages: 1 }
-                };
-            } else if (name) {
+            if (name) {
                 languages = await languageService.findLanguageByName(name, parseInt(page) || 1, parseInt(limit) || 20);
             } else {
                 languages = await languageService.findLanguages(parseInt(page) || 1, parseInt(limit) || 20);

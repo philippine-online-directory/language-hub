@@ -17,7 +17,6 @@ export default function LanguagesPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [searchMode, setSearchMode] = useState('name');
     const [currentPage, setCurrentPage] = useState(1);
     const [pagination, setPagination] = useState(null);
     const [mounted, setMounted] = useState(false);
@@ -53,7 +52,7 @@ export default function LanguagesPage() {
     // Reset to page 1 when search changes
     useEffect(() => {
         setCurrentPage(1);
-    }, [debouncedSearch, searchMode]);
+    }, [debouncedSearch]);
 
     useEffect(() => {
         const fetchLanguages = async () => {
@@ -61,12 +60,10 @@ export default function LanguagesPage() {
             setError(null);
 
             try {
-                let result;
-                result = await languageService.getLanguages(
-                    searchMode === 'slug' ? 1 : currentPage,
+                const result = await languageService.getLanguages(
+                    currentPage,
                     LANGUAGES_PER_PAGE,
-                    debouncedSearch,
-                    searchMode
+                    debouncedSearch
                 );
 
                 setLanguages(result.languages);
@@ -86,7 +83,7 @@ export default function LanguagesPage() {
         };
 
         fetchLanguages();
-    }, [debouncedSearch, searchMode, currentPage]);
+    }, [debouncedSearch, currentPage]);
 
     // Scroll animation observer
     useEffect(() => {
@@ -144,44 +141,9 @@ export default function LanguagesPage() {
                 </div>
 
                 <div className={styles.searchSection}>
-                    <div className={styles.searchModes}>
-                        <label className={styles.radioLabel}>
-                            <input
-                                type="radio"
-                                name="searchMode"
-                                value="name"
-                                checked={searchMode === 'name'}
-                                onChange={(e) => {
-                                    setSearchMode(e.target.value);
-                                    setSearchQuery('');
-                                }}
-                                className={styles.radio}
-                            />
-                            <span>Search by Name</span>
-                        </label>
-                        <label className={styles.radioLabel}>
-                            <input
-                                type="radio"
-                                name="searchMode"
-                                value="slug"
-                                checked={searchMode === 'slug'}
-                                onChange={(e) => {
-                                    setSearchMode(e.target.value);
-                                    setSearchQuery('');
-                                }}
-                                className={styles.radio}
-                            />
-                            <span>Search by Slug</span>
-                        </label>
-                    </div>
-
                     <Input
                         type="text"
-                        placeholder={
-                            searchMode === 'name'
-                                ? 'Search languages...'
-                                : 'Enter slug (e.g., tagalog, bikol-central)...'
-                        }
+                        placeholder="Search languages..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className={styles.searchInput}
@@ -220,7 +182,7 @@ export default function LanguagesPage() {
                             ))}
                         </div>
 
-                        {pagination && pagination.totalPages > 1 && searchMode !== 'slug' && (
+                        {pagination && pagination.totalPages > 1 && (
                             <Pagination
                                 currentPage={currentPage}
                                 totalPages={pagination.totalPages}
