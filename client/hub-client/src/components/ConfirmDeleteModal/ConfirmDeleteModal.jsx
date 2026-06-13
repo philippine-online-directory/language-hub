@@ -2,7 +2,17 @@ import { createPortal } from 'react-dom';
 import Button from '../Button/Button';
 import styles from './ConfirmDeleteModal.module.css';
 
-export default function ConfirmDeleteModal({ itemType, itemName, warning, onConfirm, onCancel, isDeleting = false }) {
+export default function ConfirmDeleteModal({
+  itemType,
+  itemName,
+  warning,
+  title,
+  body,
+  confirmLabel = 'Delete',
+  onConfirm,
+  onCancel,
+  isDeleting = false
+}) {
   return createPortal(
     <div className={styles.overlay} onClick={onCancel}>
       <div className={styles.card} onClick={(e) => e.stopPropagation()}>
@@ -16,11 +26,13 @@ export default function ConfirmDeleteModal({ itemType, itemName, warning, onConf
           </svg>
         </div>
 
-        <h3 className={styles.title}>Delete {itemType}?</h3>
+        <h3 className={styles.title}>{title || `Delete ${itemType}?`}</h3>
 
-        <p className={styles.body}>
-          Would you like to delete <strong>"{itemName}"</strong>? This action cannot be undone.
-        </p>
+        {body || (
+          <p className={styles.body}>
+            Would you like to delete <strong>"{itemName}"</strong>? This action cannot be undone.
+          </p>
+        )}
 
         {warning && (
           <div className={styles.warning}>
@@ -40,7 +52,7 @@ export default function ConfirmDeleteModal({ itemType, itemName, warning, onConf
             Cancel
           </Button>
           <Button variant="danger" onClick={onConfirm} loading={isDeleting}>
-            Delete
+            {confirmLabel}
           </Button>
         </div>
       </div>

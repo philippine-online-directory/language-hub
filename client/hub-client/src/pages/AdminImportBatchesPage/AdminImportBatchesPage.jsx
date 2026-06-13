@@ -3,6 +3,7 @@ import { importBatchService } from '../../api/importBatchService';
 import { languageService } from '../../api/languageService';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
+import ConfirmDeleteModal from '../../components/ConfirmDeleteModal/ConfirmDeleteModal';
 import styles from './AdminImportBatchesPage.module.css';
 
 const STATUS_OPTIONS = [
@@ -12,6 +13,21 @@ const STATUS_OPTIONS = [
     { value: 'REJECTED', label: 'Rejected' },
     { value: 'ROLLED_BACK', label: 'Rolled back' }
 ];
+
+const DESTRUCTIVE_ACTIONS = {
+    reject: {
+        title: 'Reject import batch?',
+        verb: 'reject',
+        confirmLabel: 'Reject',
+        warning: 'Rejecting this batch will delete its imported translations.'
+    },
+    rollback: {
+        title: 'Roll back import batch?',
+        verb: 'roll back',
+        confirmLabel: 'Roll Back',
+        warning: 'Rolling back this approved batch will delete its imported translations.'
+    }
+};
 
 function formatStatus(status) {
     return status.replace(/_/g, ' ').toLowerCase();
@@ -31,6 +47,7 @@ export default function AdminImportBatchesPage() {
     const [loading, setLoading] = useState(true);
     const [detailLoading, setDetailLoading] = useState(false);
     const [actionLoading, setActionLoading] = useState('');
+    const [pendingAction, setPendingAction] = useState('');
     const [error, setError] = useState('');
 
     const loadBatches = useCallback(async () => {
@@ -86,9 +103,6 @@ export default function AdminImportBatchesPage() {
     const runAction = async (action) => {
         if (!selectedBatch) return;
 
-        if (action === 'reject' && !window.confirm('Reject this batch and delete its imported translations?')) return;
-        if (action === 'rollback' && !window.confirm('Rollback this approved batch and delete its imported translations?')) return;
-
         setActionLoading(action);
         setError('');
         try {
@@ -99,6 +113,7 @@ export default function AdminImportBatchesPage() {
             };
             const updated = await actions[action](selectedBatch.id);
             setSelectedBatch(updated);
+            setPendingAction('');
             await loadBatches();
         } catch (err) {
             setError(err.response?.data?.message || `Failed to ${action} import batch.`);
@@ -109,6 +124,22 @@ export default function AdminImportBatchesPage() {
 
     return (
         <div className={styles.adminImportPage}>
+            {pendingAction && selectedBatch && (
+                <ConfirmDeleteModal
+                    title={DESTRUCTIVE_ACTIONS[pendingAction].title}
+                    body={(
+                        <p className={styles.modalBody}>
+                            Would you like to {DESTRUCTIVE_ACTIONS[pendingAction].verb} <strong>"{selectedBatch.fileName}"</strong>?
+                            This action cannot be undone.
+                        </p>
+                    )}
+                    confirmLabel={DESTRUCTIVE_ACTIONS[pendingAction].confirmLabel}
+                    warning={DESTRUCTIVE_ACTIONS[pendingAction].warning}
+                    onConfirm={() => runAction(pendingAction)}
+                    onCancel={() => setPendingAction('')}
+                    isDeleting={actionLoading === pendingAction}
+                />
+            )}
             <div className={styles.container}>
                 <header className={styles.header}>
                     <h1 className={styles.title}>Import Batches</h1>
@@ -197,13 +228,13 @@ export default function AdminImportBatchesPage() {
                                             <Button type="button" onClick={() => runAction('approve')} loading={actionLoading === 'approve'}>
                                                 Approve Batch
                                             </Button>
-                                            <Button type="button" variant="danger" onClick={() => runAction('reject')} loading={actionLoading === 'reject'}>
+                                            <Button type="button" variant="danger" onClick={() => setPendingAction('reject')} loading={actionLoading === 'reject'}>
                                                 Reject Batch
                                             </Button>
                                         </>
                                     )}
                                     {selectedBatch.status === 'APPROVED' && (
-                                        <Button type="button" variant="danger" onClick={() => runAction('rollback')} loading={actionLoading === 'rollback'}>
+                                        <Button type="button" variant="danger" onClick={() => setPendingAction('rollback')} loading={actionLoading === 'rollback'}>
                                             Roll Back Batch
                                         </Button>
                                     )}
