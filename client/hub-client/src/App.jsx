@@ -8,6 +8,7 @@ import LanguageDetailPage from './pages/LanguageDetailPage/LanguageDetailPage';
 import CommonWordsPage from './pages/CommonWordsPage/CommonWordsPage';
 import MissingCommonWordsPage from './pages/MissingCommonWordsPage/MissingCommonWordsPage';
 import ContributePage from './pages/ContributePage/ContributePage';
+import BulkUploadPage from './pages/BulkUploadPage/BulkUploadPage';
 import UserContributionsPage from './pages/UserContributionsPage/UserContributionsPage';
 import SetsPage from './pages/SetsPage/SetsPage';
 import SetDetailPage from './pages/SetDetailPage/SetDetailPage';
@@ -25,6 +26,7 @@ import GameSessionsPage from './pages/GameSessionsPage/GameSessionsPage';
 import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
 import AdminLanguagesPage from './pages/AdminLanguagesPage/AdminLanguagesPage';
 import AdminTranslationsPage from './pages/AdminTranslationsPage/AdminTranslationsPage';
+import AdminImportBatchesPage from './pages/AdminImportBatchesPage/AdminImportBatchesPage';
 import TranslatePage from './pages/TranslatePage/TranslatePage';
 import './App.css';
 
@@ -152,6 +154,15 @@ function AppContent(){
                         </ProtectedRoute>
                     }
                 />
+
+                <Route
+                    path="/contribute/bulk"
+                    element={
+                        <ProtectedRoute>
+                            <BulkUploadPage />
+                        </ProtectedRoute>
+                    }
+                />
                 
                 <Route
                     path="/contributions"
@@ -186,6 +197,15 @@ function AppContent(){
                     element={
                         <AdminRoute>
                             <AdminTranslationsPage />
+                        </AdminRoute>
+                    }
+                />
+
+                <Route
+                    path="/admin/import-batches"
+                    element={
+                        <AdminRoute>
+                            <AdminImportBatchesPage />
                         </AdminRoute>
                     }
                 />

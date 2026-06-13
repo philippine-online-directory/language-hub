@@ -46,6 +46,15 @@ export default function AdminDashboard(){
                             </p>
                         </Card>
                     </Link>
+
+                    <Link to="/admin/import-batches" className={styles.adminLink}>
+                        <Card hoverable className={styles.adminCard}>
+                            <h2 className={styles.cardTitle}>Review Import Batches</h2>
+                            <p className={styles.cardDescription}>
+                                Approve, reject, or roll back bulk uploads from contributors
+                            </p>
+                        </Card>
+                    </Link>
                 </div>
             </div>
         </div>

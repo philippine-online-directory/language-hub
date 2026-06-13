@@ -60,7 +60,7 @@ function PosChip({ option, selected, onSelect }) {
     );
 }
 
-function StepSidebar({ currentStep, visitedSteps, formData, audioFile, audioBlob }) {
+function StepSidebar({ currentStep, visitedSteps, formData }) {
     const isStepFilled = (step) => {
         if (!visitedSteps.has(step.id)) return false;
         return step.requiredFields.every(f => !!formData[f]);
@@ -464,8 +464,6 @@ export default function ContributePage() {
                             currentStep={currentStep}
                             visitedSteps={visitedSteps}
                             formData={formData}
-                            audioFile={audioFile}
-                            audioBlob={audioBlob}
                         />
                         {selectedSlug && (
                             <button
@@ -865,6 +863,17 @@ export default function ContributePage() {
                         </Card>
 
                         <div className={styles.secondaryAction}>
+                            <div className={styles.bulkUploadPrompt}>
+                                <div>
+                                    <h3>Uploading many translations?</h3>
+                                    <p>
+                                        Use bulk upload for CSV or XLSX files from institutions, websites, or language teams.
+                                    </p>
+                                </div>
+                                <Button type="button" variant="secondary" onClick={() => navigate('/contribute/bulk')}>
+                                    Bulk Upload CSV/XLSX
+                                </Button>
+                            </div>
                             <Button type="button" variant="secondary" fullWidth onClick={() => navigate('/contributions')}>
                                 View My Contributions
                             </Button>
