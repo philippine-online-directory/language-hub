@@ -102,22 +102,34 @@ function rowsToRecords(rows) {
 }
 
 function parseCsv(buffer) {
-    const records = parse(buffer.toString('utf8'), {
-        columns: true,
-        skip_empty_lines: true,
-        trim: true,
-        bom: true
-    });
+    try {
+        const records = parse(buffer.toString('utf8'), {
+            columns: true,
+            skip_empty_lines: true,
+            trim: true,
+            bom: true
+        });
 
-    return records.map((record, index) => ({
-        rowNumber: index + 2,
-        data: mapRecord(record)
-    }));
+        return records.map((record, index) => ({
+            rowNumber: index + 2,
+            data: mapRecord(record)
+        }));
+    } catch {
+        const err = new Error('Could not parse CSV file. Check the header row and file formatting.');
+        err.statusCode = 400;
+        throw err;
+    }
 }
 
 async function parseXlsx(buffer) {
-    const rows = await readSheet(buffer);
-    return rowsToRecords(rows);
+    try {
+        const rows = await readSheet(buffer);
+        return rowsToRecords(rows);
+    } catch {
+        const err = new Error('Could not parse XLSX file. Check that it is a valid spreadsheet.');
+        err.statusCode = 400;
+        throw err;
+    }
 }
 
 async function parseImportFile(file) {
@@ -243,6 +255,12 @@ async function createImportBatch(user, { languageId, rightsConfirmed, file }) {
     }
 
     const parsedRows = await parseImportFile(file);
+    if (parsedRows.length === 0) {
+        const err = new Error('Import file does not contain any data rows');
+        err.statusCode = 400;
+        throw err;
+    }
+
     const existingKeys = await getExistingDuplicateKeys(languageId);
     const seenKeys = new Set();
     const translationStatus = user.role === 'ADMIN' ? 'VERIFIED' : 'UNVERIFIED';
