@@ -177,7 +177,7 @@ export default function AdminImportBatchesPage() {
                     <Card className={styles.listCard}>
                         <h2 className={styles.sectionTitle}>Batches</h2>
                         {loading ? (
-                            <p className={styles.muted}>Loading import batches...</p>
+                            <p className={`${styles.muted} ${styles.loadingText}`}>Loading import batches...</p>
                         ) : batches.length === 0 ? (
                             <p className={styles.muted}>No import batches found.</p>
                         ) : (
@@ -202,7 +202,9 @@ export default function AdminImportBatchesPage() {
 
                     <Card className={styles.detailCard}>
                         {!selectedBatch ? (
-                            <p className={styles.muted}>{detailLoading ? 'Loading batch...' : 'Select a batch to review its rows.'}</p>
+                            <p className={`${styles.muted} ${detailLoading ? styles.loadingText : ''}`}>
+                                {detailLoading ? 'Loading batch...' : 'Select a batch to review its rows.'}
+                            </p>
                         ) : (
                             <>
                                 <div className={styles.detailHeader}>
