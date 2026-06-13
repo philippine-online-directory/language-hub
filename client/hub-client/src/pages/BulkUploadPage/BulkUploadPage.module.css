@@ -73,34 +73,105 @@
 }
 
 .label {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 500;
   color: var(--text-primary);
 }
 
 .select,
 .fileInput {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 16px;
   width: 100%;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background: var(--bg-surface);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--input-bg);
   color: var(--text-primary);
-  font: inherit;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
 }
 
 .select {
-  min-height: 44px;
-  padding: 0 12px;
+  padding: 13px 16px;
+}
+
+.select:focus,
+.fileInput:focus {
+  outline: none;
+  border-color: #C0763A;
+  box-shadow: 0 0 0 4px rgba(192, 118, 58, 0.1);
+}
+
+.select:focus {
+  transform: translateY(-1px);
 }
 
 .fileInput {
-  padding: 12px;
+  font-size: 15px;
+  padding: 13px 16px;
+  cursor: pointer;
 }
 
-.fileName {
-  margin: 0;
-  color: var(--text-secondary);
+.fileInput::file-selector-button {
+  padding: 7px 14px;
+  margin-right: 12px;
+  background: linear-gradient(135deg, #C0763A 0%, #D68A4F 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
   font-size: 14px;
+  transition: all 0.25s ease;
+}
+
+.fileInput::file-selector-button:hover {
+  background: linear-gradient(135deg, #A96432 0%, #C0763A 100%);
+  transform: translateY(-1px);
+}
+
+.uploadSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fileInfo {
+  font-size: 14px;
+  color: var(--text-secondary);
+  padding: 8px 12px;
+  background: rgba(192, 118, 58, 0.05);
+  border-radius: 8px;
+  border-left: 3px solid #C0763A;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.deleteButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 8px;
+  background: transparent;
+  border: 1px solid #DC2626;
+  border-radius: 6px;
+  color: #DC2626;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.deleteButton:hover {
+  background: #DC2626;
+  color: white;
+}
+
+.hint {
+  font-size: 14px;
+  color: var(--text-placeholder);
+  margin: 4px 0 0;
 }
 
 .checkboxRow {

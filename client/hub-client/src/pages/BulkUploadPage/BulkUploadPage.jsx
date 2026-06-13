@@ -172,18 +172,36 @@ export default function BulkUploadPage() {
 
                                 <div className={styles.formGroup}>
                                     <label htmlFor="file" className={styles.label}>CSV or XLSX file</label>
-                                    <input
-                                        id="file"
-                                        type="file"
-                                        accept=".csv,.xlsx"
-                                        onChange={handleFileChange}
-                                        className={styles.fileInput}
-                                    />
-                                    {file && (
-                                        <p className={styles.fileName}>
-                                            Selected: {file.name} ({(file.size / 1024).toFixed(1)} KB)
-                                        </p>
-                                    )}
+                                    <div className={styles.uploadSection}>
+                                        <input
+                                            id="file"
+                                            type="file"
+                                            accept=".csv,.xlsx"
+                                            onChange={handleFileChange}
+                                            className={styles.fileInput}
+                                        />
+                                        {file && (
+                                            <div className={styles.fileInfo}>
+                                                <span>{file.name} ({(file.size / 1024).toFixed(1)} KB)</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setFile(null);
+                                                        const fileInput = document.getElementById('file');
+                                                        if (fileInput) fileInput.value = '';
+                                                    }}
+                                                    className={styles.deleteButton}
+                                                    aria-label="Remove file"
+                                                >
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+                                                        <line x1="18" y1="6" x2="6" y2="18" />
+                                                        <line x1="6" y1="6" x2="18" y2="18" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        )}
+                                        <p className={styles.hint}>CSV or XLSX only. Legacy XLS files are not supported.</p>
+                                    </div>
                                 </div>
 
                                 <label className={styles.checkboxRow}>
