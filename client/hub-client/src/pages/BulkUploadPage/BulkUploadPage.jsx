@@ -16,9 +16,8 @@ const TEMPLATE_HEADERS = [
 ];
 
 const SAMPLE_ROWS = [
-    ['kamusta', 'hello', 'interjection', '', 'Kamusta ka?', 'Common greeting'],
-    ['takbo', 'run', 'verb', '', '', ''],
-    ['takbo', 'run', 'noun', '', '', 'Allowed because part of speech differs']
+    ['bahay', 'house', 'noun', "/ba'haj/", 'Malaki ang bahay namin.', 'Use for a house or home where someone lives.'],
+    ['tubig', 'water', '', '', '', '']
 ];
 
 const XLSX_MIME_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
@@ -475,7 +474,7 @@ export default function BulkUploadPage() {
                                 <p><code>partOfSpeech</code> - noun, verb, phrase, etc.</p>
                                 <p><code>ipa</code> - pronunciation in IPA.</p>
                                 <p><code>exampleSentence</code> - sentence using the word.</p>
-                                <p><code>usageComment</code> - short note on context or use.</p>
+                                <p><code>usageComment</code> - note on how the word might be used.</p>
                             </div>
 
                             <div className={styles.duplicateNote}>
