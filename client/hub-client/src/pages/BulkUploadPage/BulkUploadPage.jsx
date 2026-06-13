@@ -21,18 +21,201 @@ const SAMPLE_ROWS = [
     ['takbo', 'run', 'noun', '', '', 'Allowed because part of speech differs']
 ];
 
-function downloadTemplate() {
+const XLSX_MIME_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
+const CRC_TABLE = Array.from({ length: 256 }, (_, index) => {
+    let value = index;
+    for (let bit = 0; bit < 8; bit += 1) {
+        value = value & 1 ? (0xEDB88320 ^ (value >>> 1)) : value >>> 1;
+    }
+    return value >>> 0;
+});
+
+function escapeXml(value) {
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+}
+
+function columnName(index) {
+    let name = '';
+    let current = index + 1;
+    while (current > 0) {
+        const remainder = (current - 1) % 26;
+        name = String.fromCharCode(65 + remainder) + name;
+        current = Math.floor((current - 1) / 26);
+    }
+    return name;
+}
+
+function createWorksheetXml(rows) {
+    const sheetData = rows.map((row, rowIndex) => {
+        const rowNumber = rowIndex + 1;
+        const cells = row.map((cell, columnIndex) => {
+            const ref = `${columnName(columnIndex)}${rowNumber}`;
+            return `<c r="${ref}" t="inlineStr"><is><t>${escapeXml(cell)}</t></is></c>`;
+        }).join('');
+        return `<row r="${rowNumber}">${cells}</row>`;
+    }).join('');
+
+    return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>${sheetData}</sheetData></worksheet>`;
+}
+
+function stringToBytes(value) {
+    return new TextEncoder().encode(value);
+}
+
+function uint16(value) {
+    const bytes = new Uint8Array(2);
+    new DataView(bytes.buffer).setUint16(0, value, true);
+    return bytes;
+}
+
+function uint32(value) {
+    const bytes = new Uint8Array(4);
+    new DataView(bytes.buffer).setUint32(0, value, true);
+    return bytes;
+}
+
+function concatBytes(chunks) {
+    const length = chunks.reduce((total, chunk) => total + chunk.length, 0);
+    const result = new Uint8Array(length);
+    let offset = 0;
+    chunks.forEach((chunk) => {
+        result.set(chunk, offset);
+        offset += chunk.length;
+    });
+    return result;
+}
+
+function crc32(bytes) {
+    let crc = 0xFFFFFFFF;
+    bytes.forEach((byte) => {
+        crc = CRC_TABLE[(crc ^ byte) & 0xFF] ^ (crc >>> 8);
+    });
+    return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+
+function createZip(files) {
+    const localFiles = [];
+    const centralDirectory = [];
+    let offset = 0;
+
+    files.forEach(({ path, content }) => {
+        const nameBytes = stringToBytes(path);
+        const contentBytes = stringToBytes(content);
+        const checksum = crc32(contentBytes);
+        const localHeader = concatBytes([
+            uint32(0x04034B50),
+            uint16(20),
+            uint16(0),
+            uint16(0),
+            uint16(0),
+            uint16(0),
+            uint32(checksum),
+            uint32(contentBytes.length),
+            uint32(contentBytes.length),
+            uint16(nameBytes.length),
+            uint16(0),
+            nameBytes
+        ]);
+        const centralHeader = concatBytes([
+            uint32(0x02014B50),
+            uint16(20),
+            uint16(20),
+            uint16(0),
+            uint16(0),
+            uint16(0),
+            uint16(0),
+            uint32(checksum),
+            uint32(contentBytes.length),
+            uint32(contentBytes.length),
+            uint16(nameBytes.length),
+            uint16(0),
+            uint16(0),
+            uint16(0),
+            uint16(0),
+            uint32(0),
+            uint32(offset),
+            nameBytes
+        ]);
+
+        localFiles.push(localHeader, contentBytes);
+        centralDirectory.push(centralHeader);
+        offset += localHeader.length + contentBytes.length;
+    });
+
+    const centralDirectoryBytes = concatBytes(centralDirectory);
+    const endRecord = concatBytes([
+        uint32(0x06054B50),
+        uint16(0),
+        uint16(0),
+        uint16(files.length),
+        uint16(files.length),
+        uint32(centralDirectoryBytes.length),
+        uint32(offset),
+        uint16(0)
+    ]);
+
+    return concatBytes([...localFiles, centralDirectoryBytes, endRecord]);
+}
+
+function createXlsxBlob(rows) {
+    const files = [
+        {
+            path: '[Content_Types].xml',
+            content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>`
+        },
+        {
+            path: '_rels/.rels',
+            content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`
+        },
+        {
+            path: 'xl/workbook.xml',
+            content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Bulk Upload Template" sheetId="1" r:id="rId1"/></sheets></workbook>`
+        },
+        {
+            path: 'xl/_rels/workbook.xml.rels',
+            content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>`
+        },
+        {
+            path: 'xl/worksheets/sheet1.xml',
+            content: createWorksheetXml(rows)
+        }
+    ];
+
+    return new Blob([createZip(files)], { type: XLSX_MIME_TYPE });
+}
+
+function downloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
+}
+
+function downloadCsvTemplate() {
     const rows = [TEMPLATE_HEADERS, ...SAMPLE_ROWS];
     const csv = rows
         .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
         .join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'bulk-translation-template.csv';
-    link.click();
-    URL.revokeObjectURL(url);
+    downloadBlob(blob, 'bulk-translation-template.csv');
+}
+
+function downloadXlsxTemplate() {
+    const rows = [TEMPLATE_HEADERS, ...SAMPLE_ROWS];
+    downloadBlob(createXlsxBlob(rows), 'bulk-translation-template.xlsx');
 }
 
 function formatStatus(status) {
@@ -219,8 +402,11 @@ export default function BulkUploadPage() {
                                     <Button type="submit" loading={loading} disabled={languagesLoading}>
                                         Upload Translation File
                                     </Button>
-                                    <Button type="button" variant="secondary" onClick={downloadTemplate}>
+                                    <Button type="button" variant="secondary" onClick={downloadCsvTemplate}>
                                         Download CSV Template
+                                    </Button>
+                                    <Button type="button" variant="secondary" onClick={downloadXlsxTemplate}>
+                                        Download XLSX Template
                                     </Button>
                                 </div>
                             </form>
