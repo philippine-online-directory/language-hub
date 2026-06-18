@@ -29,6 +29,7 @@ import AdminTranslationsPage from './pages/AdminTranslationsPage/AdminTranslatio
 import AdminImportBatchesPage from './pages/AdminImportBatchesPage/AdminImportBatchesPage';
 import TranslatePage from './pages/TranslatePage/TranslatePage';
 import SeoUpdater from './components/SeoUpdater/SeoUpdater';
+import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 import './App.css';
 
 function ProtectedRoute({ children }){
@@ -211,6 +212,7 @@ function AppContent(){
                         </AdminRoute>
                     }
                 />
+                <Route path="*" element={<NotFoundPage />} />
             </Routes>
         </>
     );

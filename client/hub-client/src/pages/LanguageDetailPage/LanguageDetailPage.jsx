@@ -8,6 +8,7 @@ import Pagination from '../../components/Pagination/Pagination';
 import Button from '../../components/Button/Button';
 import Input from '../../components/Input/Input';
 import MissingWordsSidebar from '../../components/MissingWordsSidebar/MissingWordsSidebar';
+import { setRobotsDirective } from '../../utils/seoMeta';
 import styles from './LanguageDetailPage.module.css';
 
 const SORT_OPTIONS = [
@@ -61,6 +62,12 @@ export default function LanguageDetailPage() {
     const gridRef = useRef(null);
 
     useEffect(() => { setMounted(true); }, []);
+
+    useEffect(() => {
+        if (!langLoading && (langError || !language)) {
+            setRobotsDirective('noindex,follow');
+        }
+    }, [langLoading, langError, language]);
 
     useEffect(() => {
         setCurrentPage(1);

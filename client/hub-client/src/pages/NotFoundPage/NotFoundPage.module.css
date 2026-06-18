@@ -1,0 +1,48 @@
+.notFoundPage {
+  align-items: center;
+  background: var(--bg-body);
+  display: flex;
+  justify-content: center;
+  min-height: calc(100vh - 80px);
+  padding: 80px 24px;
+}
+
+.panel {
+  max-width: 520px;
+  text-align: center;
+}
+
+.kicker {
+  color: #C0763A;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin: 0 0 12px;
+  text-transform: uppercase;
+}
+
+.title {
+  color: var(--text-primary);
+  font-family: 'Fraunces', serif;
+  font-size: 42px;
+  font-weight: 600;
+  line-height: 50px;
+  margin: 0 0 14px;
+}
+
+.text {
+  color: var(--text-secondary);
+  font-size: 17px;
+  line-height: 26px;
+  margin: 0 0 28px;
+}
+
+.link {
+  background: #C0763A;
+  border-radius: 999px;
+  color: #fff;
+  display: inline-flex;
+  font-weight: 700;
+  padding: 13px 22px;
+  text-decoration: none;
+}

@@ -6,6 +6,7 @@ import WordDisplay from '../../components/WordDisplay/WordDisplay';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
 import ConfirmDeleteModal from '../../components/ConfirmDeleteModal/ConfirmDeleteModal';
+import { setRobotsDirective } from '../../utils/seoMeta';
 import styles from './SetDetailPage.module.css';
 
 export default function SetDetailPage() {
@@ -43,6 +44,12 @@ export default function SetDetailPage() {
 
     fetchSet();
   }, [setId]);
+
+  useEffect(() => {
+    if (!loading && (error || !set)) {
+      setRobotsDirective('noindex,follow');
+    }
+  }, [loading, error, set]);
 
   const handleRemoveConfirm = async () => {
     if (!pendingRemove) return;

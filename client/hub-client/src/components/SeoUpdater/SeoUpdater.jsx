@@ -1,9 +1,46 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { setRobotsDirective, upsertMeta } from '../../utils/seoMeta';
 
 const SITE_URL = 'https://www.philippineonlinedictionary.com';
 const SITE_NAME = 'Philippine Online Dictionary';
 const DEFAULT_DESCRIPTION = 'Explore community-built dictionaries for Philippine languages, contribute translations, and help preserve endangered languages.';
+
+const PRIVATE_PATH_PATTERNS = [
+    /^\/admin(?:\/|$)/,
+    /^\/contribute(?:\/|$)/,
+    /^\/contributions(?:\/|$)/,
+    /^\/login$/,
+    /^\/register$/,
+    /^\/profile\/me$/,
+    /^\/sets\/create$/,
+    /^\/sets\/[^/]+\/edit$/,
+    /^\/sets\/[^/]+\/games(?:\/|$)/,
+    /^\/sets\/[^/]+\/sessions$/,
+];
+
+const INDEXABLE_PATH_PATTERNS = [
+    /^\/$/,
+    /^\/about$/,
+    /^\/site-guide$/,
+    /^\/translate$/,
+    /^\/common-words$/,
+    /^\/languages$/,
+    /^\/languages\/[^/]+$/,
+    /^\/languages\/[^/]+\/missing-words$/,
+    /^\/sets$/,
+    /^\/sets\/[^/]+$/,
+    /^\/users$/,
+    /^\/profile\/[^/]+$/,
+];
+
+function isPrivatePath(pathname) {
+    return PRIVATE_PATH_PATTERNS.some((pattern) => pattern.test(pathname));
+}
+
+function isIndexablePath(pathname) {
+    return INDEXABLE_PATH_PATTERNS.some((pattern) => pattern.test(pathname));
+}
 
 function titleFromSlug(slug = '') {
     return slug
@@ -18,6 +55,14 @@ function getMetadata(pathname) {
     const missingWordsMatch = pathname.match(/^\/languages\/([^/]+)\/missing-words$/);
     const setMatch = pathname.match(/^\/sets\/([^/]+)$/);
     const profileMatch = pathname.match(/^\/profile\/([^/]+)$/);
+
+    if (isPrivatePath(pathname)) {
+        return {
+            title: SITE_NAME,
+            description: DEFAULT_DESCRIPTION,
+            noindex: true,
+        };
+    }
 
     if (pathname === '/') {
         return {
@@ -109,6 +154,7 @@ function getMetadata(pathname) {
         return {
             title: `Join ${SITE_NAME}`,
             description: 'Create an account to contribute Philippine language translations and build vocabulary sets.',
+            noindex: true,
         };
     }
 
@@ -116,26 +162,15 @@ function getMetadata(pathname) {
         return {
             title: `Log In | ${SITE_NAME}`,
             description: 'Log in to contribute translations and manage your Philippine language learning sets.',
+            noindex: true,
         };
     }
 
     return {
         title: SITE_NAME,
         description: DEFAULT_DESCRIPTION,
+        noindex: !isIndexablePath(pathname),
     };
-}
-
-function upsertMeta(selector, attributes) {
-    let tag = document.head.querySelector(selector);
-
-    if (!tag) {
-        tag = document.createElement('meta');
-        document.head.appendChild(tag);
-    }
-
-    Object.entries(attributes).forEach(([key, value]) => {
-        tag.setAttribute(key, value);
-    });
 }
 
 function upsertCanonical(href) {
@@ -161,6 +196,7 @@ export default function SeoUpdater() {
 
         document.title = metadata.title;
 
+        setRobotsDirective(metadata.noindex ? 'noindex,follow' : 'index,follow');
         upsertMeta('meta[name="description"]', {
             name: 'description',
             content: metadata.description,

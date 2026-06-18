@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { profileService } from '../../api/profileService';
 import Card from '../../components/Card/Card';
 import WordDisplay from '../../components/WordDisplay/WordDisplay';
+import { setRobotsDirective } from '../../utils/seoMeta';
 import styles from './PublicProfilePage.module.css';
 
 export default function PublicProfilePage() {
@@ -18,6 +19,12 @@ export default function PublicProfilePage() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!loading && (error || !profile)) {
+      setRobotsDirective('noindex,follow');
+    }
+  }, [loading, error, profile]);
 
   useEffect(() => {
     const fetchProfile = async () => {
