@@ -198,7 +198,7 @@ export default function LanguagesPage() {
             {/* Word of the day */}
             <div className={styles.container}>
                 <header className={styles.header}>
-                    <h1 className={styles.title}>Word of the Day</h1>
+                    <h2 className={styles.title}>Word of the Day</h2>
                     <p className={styles.subtitle}>
                         {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                     </p>

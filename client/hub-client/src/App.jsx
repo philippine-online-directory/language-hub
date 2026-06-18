@@ -28,6 +28,7 @@ import AdminLanguagesPage from './pages/AdminLanguagesPage/AdminLanguagesPage';
 import AdminTranslationsPage from './pages/AdminTranslationsPage/AdminTranslationsPage';
 import AdminImportBatchesPage from './pages/AdminImportBatchesPage/AdminImportBatchesPage';
 import TranslatePage from './pages/TranslatePage/TranslatePage';
+import SeoUpdater from './components/SeoUpdater/SeoUpdater';
 import './App.css';
 
 function ProtectedRoute({ children }){
@@ -83,6 +84,7 @@ function AdminRoute({ children }){
 function AppContent(){
     return (
         <>
+            <SeoUpdater />
             <Navbar />
             <Routes>
                 {/* Public Routes */}
