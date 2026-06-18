@@ -6,7 +6,7 @@ import WordDisplay from '../../components/WordDisplay/WordDisplay';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
 import ConfirmDeleteModal from '../../components/ConfirmDeleteModal/ConfirmDeleteModal';
-import { setRobotsDirective } from '../../utils/seoMeta';
+import { clearJsonLd, setJsonLd, setRobotsDirective } from '../../utils/seoMeta';
 import styles from './SetDetailPage.module.css';
 
 export default function SetDetailPage() {
@@ -50,6 +50,31 @@ export default function SetDetailPage() {
       setRobotsDirective('noindex,follow');
     }
   }, [loading, error, set]);
+
+  useEffect(() => {
+    if (!set) return;
+
+    const url = `https://www.philippineonlinedictionary.com/sets/${set.id}`;
+    setJsonLd('pod-page-jsonld', {
+      '@type': 'CreativeWork',
+      '@id': `${url}#vocabulary-set`,
+      name: set.name,
+      description: set.description,
+      url,
+      about: set.language ? {
+        '@type': 'Language',
+        name: set.language.name,
+        alternateName: set.language.isoCode || undefined,
+      } : undefined,
+      author: set.owner ? {
+        '@type': 'Person',
+        name: set.owner.username,
+        url: `https://www.philippineonlinedictionary.com/profile/${set.owner.id}`,
+      } : undefined,
+    });
+
+    return () => clearJsonLd('pod-page-jsonld');
+  }, [set]);
 
   const handleRemoveConfirm = async () => {
     if (!pendingRemove) return;

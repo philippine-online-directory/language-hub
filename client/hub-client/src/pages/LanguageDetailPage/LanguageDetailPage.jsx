@@ -8,7 +8,7 @@ import Pagination from '../../components/Pagination/Pagination';
 import Button from '../../components/Button/Button';
 import Input from '../../components/Input/Input';
 import MissingWordsSidebar from '../../components/MissingWordsSidebar/MissingWordsSidebar';
-import { setRobotsDirective } from '../../utils/seoMeta';
+import { clearJsonLd, setJsonLd, setRobotsDirective } from '../../utils/seoMeta';
 import styles from './LanguageDetailPage.module.css';
 
 const SORT_OPTIONS = [
@@ -68,6 +68,22 @@ export default function LanguageDetailPage() {
             setRobotsDirective('noindex,follow');
         }
     }, [langLoading, langError, language]);
+
+    useEffect(() => {
+        if (!language) return;
+
+        const url = `https://www.philippineonlinedictionary.com/languages/${language.slug}`;
+        setJsonLd('pod-page-jsonld', {
+            '@type': 'DefinedTermSet',
+            '@id': `${url}#dictionary`,
+            name: `${language.name} Dictionary`,
+            url,
+            description: language.preservationNote || `Community-built dictionary for ${language.name}.`,
+            inLanguage: language.isoCode || undefined,
+        });
+
+        return () => clearJsonLd('pod-page-jsonld');
+    }, [language]);
 
     useEffect(() => {
         setCurrentPage(1);

@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { profileService } from '../../api/profileService';
 import Card from '../../components/Card/Card';
 import WordDisplay from '../../components/WordDisplay/WordDisplay';
-import { setRobotsDirective } from '../../utils/seoMeta';
+import { clearJsonLd, setJsonLd, setRobotsDirective } from '../../utils/seoMeta';
 import styles from './PublicProfilePage.module.css';
 
 export default function PublicProfilePage() {
@@ -25,6 +25,25 @@ export default function PublicProfilePage() {
       setRobotsDirective('noindex,follow');
     }
   }, [loading, error, profile]);
+
+  useEffect(() => {
+    if (!profile) return;
+
+    const url = `https://www.philippineonlinedictionary.com/profile/${userId}`;
+    setJsonLd('pod-page-jsonld', {
+      '@type': 'ProfilePage',
+      '@id': `${url}#profile`,
+      url,
+      name: `${profile.username} - Philippine Online Dictionary Contributor`,
+      mainEntity: {
+        '@type': 'Person',
+        name: profile.username,
+        url,
+      },
+    });
+
+    return () => clearJsonLd('pod-page-jsonld');
+  }, [profile, userId]);
 
   useEffect(() => {
     const fetchProfile = async () => {

@@ -17,3 +17,27 @@ export function setRobotsDirective(content) {
         content,
     });
 }
+
+export function setJsonLd(id, graph) {
+    let tag = document.getElementById(id);
+
+    if (!tag) {
+        tag = document.createElement('script');
+        tag.type = 'application/ld+json';
+        tag.id = id;
+        document.head.appendChild(tag);
+    }
+
+    tag.textContent = JSON.stringify({
+        '@context': 'https://schema.org',
+        '@graph': Array.isArray(graph) ? graph : [graph],
+    });
+}
+
+export function clearJsonLd(id) {
+    const tag = document.getElementById(id);
+
+    if (tag) {
+        tag.remove();
+    }
+}

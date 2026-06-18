@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { setRobotsDirective, upsertMeta } from '../../utils/seoMeta';
+import { clearJsonLd, setJsonLd, setRobotsDirective, upsertMeta } from '../../utils/seoMeta';
 
 const SITE_URL = 'https://www.philippineonlinedictionary.com';
 const SITE_NAME = 'Philippine Online Dictionary';
@@ -48,6 +48,85 @@ function titleFromSlug(slug = '') {
         .filter(Boolean)
         .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
         .join(' ');
+}
+
+function labelFromSegment(segment) {
+    if (segment === 'languages') return 'Dictionaries';
+    if (segment === 'missing-words') return 'Missing Common Words';
+    if (segment === 'common-words') return 'Common Words';
+    if (segment === 'site-guide') return 'Site Guide';
+    if (segment === 'sets') return 'Sets and Games';
+    if (segment === 'users') return 'Community Contributors';
+    if (segment === 'profile') return 'Contributor Profile';
+    if (segment === 'translate') return 'Translator';
+
+    return titleFromSlug(segment);
+}
+
+function getBreadcrumbItems(pathname) {
+    if (pathname === '/') return [];
+
+    const segments = pathname.split('/').filter(Boolean);
+    const breadcrumbs = [
+        {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: SITE_URL,
+        },
+    ];
+
+    segments.forEach((segment, index) => {
+        const path = `/${segments.slice(0, index + 1).join('/')}`;
+        breadcrumbs.push({
+            '@type': 'ListItem',
+            position: index + 2,
+            name: labelFromSegment(segment),
+            item: `${SITE_URL}${path}`,
+        });
+    });
+
+    return breadcrumbs;
+}
+
+function getRouteJsonLd(pathname, canonicalUrl) {
+    const graph = [
+        {
+            '@type': 'Organization',
+            '@id': `${SITE_URL}/#organization`,
+            name: SITE_NAME,
+            url: SITE_URL,
+        },
+        {
+            '@type': 'WebSite',
+            '@id': `${SITE_URL}/#website`,
+            name: SITE_NAME,
+            url: SITE_URL,
+            publisher: {
+                '@id': `${SITE_URL}/#organization`,
+            },
+        },
+        {
+            '@type': 'WebPage',
+            '@id': `${canonicalUrl}#webpage`,
+            url: canonicalUrl,
+            name: getMetadata(pathname).title,
+            isPartOf: {
+                '@id': `${SITE_URL}/#website`,
+            },
+        },
+    ];
+
+    const breadcrumbs = getBreadcrumbItems(pathname);
+    if (breadcrumbs.length > 0) {
+        graph.push({
+            '@type': 'BreadcrumbList',
+            '@id': `${canonicalUrl}#breadcrumbs`,
+            itemListElement: breadcrumbs,
+        });
+    }
+
+    return graph;
 }
 
 function getMetadata(pathname) {
@@ -234,6 +313,8 @@ export default function SeoUpdater() {
             content: metadata.description,
         });
         upsertCanonical(canonicalUrl);
+        setJsonLd('pod-route-jsonld', getRouteJsonLd(pathname, canonicalUrl));
+        clearJsonLd('pod-page-jsonld');
     }, [location.pathname]);
 
     return null;
