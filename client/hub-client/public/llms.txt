@@ -1,0 +1,25 @@
+# Philippine Online Dictionary
+
+Philippine Online Dictionary is a community-built dictionary and language-learning site for Philippine languages. The site helps visitors explore dictionaries, contribute translations, and practice vocabulary sets.
+
+## Core Pages
+
+- [Home](https://www.philippineonlinedictionary.com/)
+- [Dictionaries](https://www.philippineonlinedictionary.com/languages)
+- [Common Words](https://www.philippineonlinedictionary.com/common-words)
+- [Translator](https://www.philippineonlinedictionary.com/translate)
+- [Sets and Games](https://www.philippineonlinedictionary.com/sets)
+- [Community Contributors](https://www.philippineonlinedictionary.com/users)
+- [About](https://www.philippineonlinedictionary.com/about)
+- [Site Guide](https://www.philippineonlinedictionary.com/site-guide)
+
+## Important Content Types
+
+- Language dictionary pages use `/languages/{language-slug}`.
+- Missing common word pages use `/languages/{language-slug}/missing-words`.
+- Public vocabulary set pages use `/sets/{set-id}`.
+- Public contributor profiles use `/profile/{user-id}`.
+
+## Access
+
+Public dictionary, set, profile, guide, and about pages are intended for indexing. Authenticated contribution, profile management, admin, and private learning-session pages are not primary citation targets.

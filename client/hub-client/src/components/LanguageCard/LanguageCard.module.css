@@ -1,3 +1,9 @@
+.languageLink {
+  color: inherit;
+  display: block;
+  text-decoration: none;
+}
+
 .languageCard {
   display: flex;
   flex-direction: column;
