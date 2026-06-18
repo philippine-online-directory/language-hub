@@ -52,6 +52,8 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.get('/sitemap.xml', seoController.getSitemap)
+app.get('/indexnow-key.txt', seoController.getIndexNowKey)
+app.post('/seo/indexnow', seoController.submitIndexNowUrls)
 
 app.use('/', authRouter)
 app.use('/contributions', contributionRouter)
