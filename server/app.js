@@ -17,6 +17,7 @@ import wordOfTheDayRouter from "./routes/wordOfTheDayRouter.js";
 import translationUpdateRequestRouter from "./routes/translationUpdateRequest.js";
 import subscribeRouter from "./routes/subscribeRouter.js";
 import importBatchRouter from "./routes/importBatchRouter.js";
+import seoController from "./controllers/seoController.js";
 import './jobs/emailScheduler.js'
 
 
@@ -50,6 +51,7 @@ if (process.env.NODE_ENV === 'production') {
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+app.get('/sitemap.xml', seoController.getSitemap)
 
 app.use('/', authRouter)
 app.use('/contributions', contributionRouter)
