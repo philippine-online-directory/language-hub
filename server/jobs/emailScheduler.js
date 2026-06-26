@@ -1,6 +1,6 @@
 import cron from 'node-cron';
 import prisma from '../prisma.js'
-import brevo from '../brevo.js';
+import emailService from '../services/emailService.js';
 import wordOfTheDayService from '../services/wordOfTheDayService.js';
 import { wordOfTheDayTemplate } from './helpers/emailTemplate.js';
 
@@ -48,9 +48,8 @@ cron.schedule('0 8 * * *', async () => {
 
   for (const user of todaysBatch) {
     try {
-      await brevo.transactionalEmails.sendTransacEmail({
+      await emailService.sendEmail({
         subject: `[POD] ${user.reminderType === "WORD" ? "Here's today's Word of the Day!" : "Still haven't checked today's word?"}`,
-        sender: { name: "Philippine Online Dictionary", email: "philippineonlinedirectory.auto@gmail.com" },
         to: [{ email: user.email }],
         htmlContent: user.reminderType === "WORD" ? wordTemplate : checkTemplate
       });
@@ -66,9 +65,8 @@ cron.schedule('0 8 * * *', async () => {
 
   for (const guest of guestBatch) {
     try {
-      await brevo.transactionalEmails.sendTransacEmail({
+      await emailService.sendEmail({
         subject: "[POD] Here's today's Word of the Day!",
-        sender: { name: "Philippine Online Dictionary", email: "philippineonlinedirectory.auto@gmail.com" },
         to: [{ email: guest.email }],
         htmlContent: wordOfTheDayTemplate(...templateArgs, guest.unsubscribeToken)
       });

@@ -2,20 +2,29 @@ import brevo from '../brevo.js';
 import { passwordResetTemplate } from '../jobs/helpers/emailTemplate.js';
 
 const SENDER = {
-  name: "Philippine Online Dictionary",
-  email: "philippineonlinedirectory.auto@gmail.com"
+  name: process.env.EMAIL_FROM_NAME || "Philippine Online Dictionary",
+  email: process.env.EMAIL_FROM_ADDRESS || "no-reply@philippineonlinedictionary.com"
 };
 
-async function sendPasswordResetEmail(email, resetUrl) {
+async function sendEmail({ to, subject, htmlContent }) {
   await brevo.transactionalEmails.sendTransacEmail({
-    subject: "[POD] Reset your password",
+    subject,
     sender: SENDER,
+    to,
+    htmlContent
+  });
+}
+
+async function sendPasswordResetEmail(email, resetUrl) {
+  await sendEmail({
+    subject: "[POD] Reset your password",
     to: [{ email }],
     htmlContent: passwordResetTemplate(resetUrl)
   });
 }
 
 const emailService = {
+  sendEmail,
   sendPasswordResetEmail
 };
 
