@@ -40,12 +40,6 @@ export default function LanguageCard({ language }){
                     </div>
                 </div>
 
-                {language.preservationNote && (
-                    <p className={styles.preservationNote}>{language.preservationNote}</p>
-                )}
-                {language.culturalBackground && (
-                    <p className={styles.culturalBackground}>{language.culturalBackground}</p>
-                )}
             </Card>
         </Link>
     ) 

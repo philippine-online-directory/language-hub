@@ -52,7 +52,7 @@ function titleFromSlug(slug = '') {
 
 function labelFromSegment(segment) {
     if (segment === 'languages') return 'Dictionaries';
-    if (segment === 'missing-words') return 'Missing Common Words';
+    if (segment === 'missing-words') return 'Words Needing Translation';
     if (segment === 'common-words') return 'Common Words';
     if (segment === 'site-guide') return 'Site Guide';
     if (segment === 'sets') return 'Sets and Games';
@@ -168,8 +168,8 @@ function getMetadata(pathname) {
     if (missingWordsMatch) {
         const languageName = titleFromSlug(missingWordsMatch[1]);
         return {
-            title: `${languageName} Missing Common Words | POD`,
-            description: `Help complete the ${languageName} dictionary by contributing missing common words and translations.`,
+            title: `${languageName} Words Needing Translation | POD`,
+            description: `Help complete the ${languageName} dictionary by contributing words needing translation.`,
         };
     }
 

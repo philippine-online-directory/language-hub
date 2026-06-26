@@ -55,10 +55,10 @@ export default function MissingCommonWordsPage() {
                 if (err.response?.status === 404) {
                     setError('Language not found.');
                 } else {
-                    setError('Failed to load missing common words. Please try again.');
+                    setError('Failed to load words needing translation. Please try again.');
                 }
 
-                console.error('Error fetching missing common words:', err);
+                console.error('Error fetching words needing translation:', err);
             } finally {
                 if (!cancelled) setLoading(false);
             }
@@ -76,7 +76,7 @@ export default function MissingCommonWordsPage() {
                 <header className={styles.header}>
                     <div className={styles.headerContent}>
                         <h1 className={styles.title}>
-                            {language ? `${language.name} Missing Core Words` : 'Missing Core Words'}
+                            {language ? `${language.name} Words Needing Translation` : 'Words Needing Translation'}
                         </h1>
                         <p className={styles.subtitle}>
                             Words from the tracked 2,809 common-word list that do not yet have any translation record for this language.
@@ -92,7 +92,7 @@ export default function MissingCommonWordsPage() {
                 {loading ? (
                     <div className={styles.loadingState}>
                         <div className={styles.loadingSpinner} />
-                        <p>Loading missing words...</p>
+                        <p>Loading words needing translation...</p>
                     </div>
                 ) : error ? (
                     <div className={styles.errorCard}>
@@ -108,7 +108,7 @@ export default function MissingCommonWordsPage() {
                 ) : (
                     <>
                         <p className={styles.resultCount}>
-                            {pagination?.total.toLocaleString()} missing common words
+                            {pagination?.total.toLocaleString()} words needing translation
                         </p>
 
                         <div className={styles.wordList}>

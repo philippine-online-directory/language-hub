@@ -99,7 +99,7 @@ const getMissingCommonWords = [
  * Query params:
  *   text           - search wordText (contains)
  *   definition     - search englishDefinition (contains)
- *   status         - 'VERIFIED' | 'ALL'         (default: 'VERIFIED')
+ *   status         - 'VERIFIED' | 'ALL'         (default: 'ALL')
  *   sortBy         - 'alpha-asc' | 'alpha-desc' | 'date-asc' | 'date-desc'  (default: 'alpha-asc')
  *   coreWordsOnly  - 'true' | 'false'           (default: 'false')
  *   page           - number                     (default: 1)
@@ -111,7 +111,7 @@ const getTranslations = [
         const {
             text,
             definition,
-            status = 'VERIFIED',
+            status = 'ALL',
             sortBy = 'alpha-asc',
             coreWordsOnly,
             page,
@@ -124,7 +124,7 @@ const getTranslations = [
 
         // Validate status
         const VALID_STATUSES = ['VERIFIED', 'UNVERIFIED', 'ALL'];
-        const resolvedStatus = VALID_STATUSES.includes(status) ? status : 'VERIFIED';
+        const resolvedStatus = VALID_STATUSES.includes(status) ? status : 'ALL';
 
         try {
             const result = await languageService.getTranslations(slug, {

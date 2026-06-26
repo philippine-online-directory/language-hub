@@ -41,7 +41,7 @@ export default function MissingWordsSidebar({ slug, onWordClick, defaultOpen }) 
                 setMissingPagination(result.pagination || null);
             } catch {
                 if (cancelled) return;
-                setMissingError('Failed to load missing words.');
+                setMissingError('Failed to load words needing translation.');
             } finally {
                 if (!cancelled) setMissingLoading(false);
             }
@@ -59,7 +59,7 @@ export default function MissingWordsSidebar({ slug, onWordClick, defaultOpen }) 
         <div className={styles.sidebar}>
             <div className={styles.header}>
                 <h3 className={styles.title}>
-                    Missing Common Words
+                    Words Needing Translation
                     {slug && (
                         <span className={styles.count}>
                             ({missingPagination ? total.toLocaleString() : '…'})
@@ -79,11 +79,11 @@ export default function MissingWordsSidebar({ slug, onWordClick, defaultOpen }) 
             {isOpen && (
                 <div className={styles.body}>
                     {!slug ? (
-                        <p className={styles.placeholder}>Select a language to see missing words</p>
+                        <p className={styles.placeholder}>Select a language to see words needing translation</p>
                     ) : missingLoading ? (
                         <div className={styles.loadingState}>
                             <div className={styles.spinner} />
-                            <p>Loading missing words…</p>
+                            <p>Loading words needing translation…</p>
                         </div>
                     ) : missingError ? (
                         <div className={styles.errorCard}>

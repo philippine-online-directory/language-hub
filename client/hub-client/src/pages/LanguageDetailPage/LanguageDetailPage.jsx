@@ -19,8 +19,8 @@ const SORT_OPTIONS = [
 ];
 
 const STATUS_OPTIONS = [
-    { value: 'VERIFIED', label: 'Verified only' },
     { value: 'ALL',      label: 'All entries' },
+    { value: 'VERIFIED', label: 'Verified only' },
 ];
 
 const SEARCH_MODE_OPTIONS = [
@@ -49,7 +49,7 @@ export default function LanguageDetailPage() {
 
     const [searchQuery,   setSearchQuery]   = useState('');
     const [searchMode,    setSearchMode]    = useState('text');
-    const [statusMode,    setStatusMode]    = useState('VERIFIED');
+    const [statusMode,    setStatusMode]    = useState('ALL');
     const [sortBy,        setSortBy]        = useState('alpha-asc');
     const [coreWordsOnly, setCoreWordsOnly] = useState(false);
     const [currentPage,   setCurrentPage]   = useState(1);
@@ -188,7 +188,7 @@ export default function LanguageDetailPage() {
     const handleResetFilters = useCallback(() => {
         setSearchQuery('');
         setSearchMode('text');
-        setStatusMode('VERIFIED');
+        setStatusMode('ALL');
         setSortBy('alpha-asc');
         setCoreWordsOnly(false);
         setCurrentPage(1);
@@ -204,13 +204,13 @@ export default function LanguageDetailPage() {
     }, [slug, isAuthenticated, navigate]);
 
     const isFiltered =
-        statusMode !== 'VERIFIED' ||
+        statusMode !== 'ALL'      ||
         sortBy !== 'alpha-asc'    ||
         coreWordsOnly             ||
         !!searchQuery.trim();
 
     const activeFilterCount = [
-        statusMode !== 'VERIFIED',
+        statusMode !== 'ALL',
         sortBy !== 'alpha-asc',
         coreWordsOnly,
         !!searchQuery.trim(),
@@ -281,6 +281,9 @@ export default function LanguageDetailPage() {
                         </div>
                         {language.preservationNote && (
                             <p className={styles.preservationNote}>{language.preservationNote}</p>
+                        )}
+                        {language.culturalBackground && (
+                            <p className={styles.preservationNote}>{language.culturalBackground}</p>
                         )}
                     </div>
 
@@ -413,7 +416,7 @@ export default function LanguageDetailPage() {
                                 <label className={styles.controlLabel}>Status</label>
                                 <div className={styles.selectWrapper}>
                                     <select
-                                        className={`${styles.select} ${statusMode !== 'VERIFIED' ? styles.selectActive : ''}`}
+                                        className={`${styles.select} ${statusMode !== 'ALL' ? styles.selectActive : ''}`}
                                         value={statusMode}
                                         onChange={e => setStatusMode(e.target.value)}
                                         aria-label="Verification status"

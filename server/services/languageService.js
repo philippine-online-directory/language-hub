@@ -170,7 +170,7 @@ async function findLanguageByName(phrase, page = 1, limit = 20) {
 
 
 async function getTranslations(slug, {
-    status = 'VERIFIED',
+    status = 'ALL',
     page = 1,
     limit = 20,
     textSearch,

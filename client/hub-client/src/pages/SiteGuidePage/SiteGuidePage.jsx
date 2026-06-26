@@ -66,7 +66,7 @@ const guideSections = [
             {
                 number: '04',
                 title: 'The Checkmark (✓) — Verified Translation',
-                description: 'A green checkmark means the translation has been reviewed and verified by an admin. Verified entries are shown by default when you browse a language dictionary.',
+                description: 'A green checkmark means the translation has been reviewed and verified by an admin. All entries are shown by default when you browse a language dictionary.',
             },
             {
                 number: '05',

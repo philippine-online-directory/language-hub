@@ -32,7 +32,7 @@ export default function MissingWordsBottomSheet({ isOpen, onClose, slug, onWordC
                 className={styles.sheet}
                 role="dialog"
                 aria-modal="true"
-                aria-label="Missing Common Words"
+                aria-label="Words Needing Translation"
                 tabIndex={-1}
                 onClick={(e) => e.stopPropagation()}
             >
