@@ -18,9 +18,13 @@ async function auth(req, res, next){
                 username: true,
                 role: true,
                 createdAt: true,
+                tokenVersion: true,
             }
         });
         if (!req.user) return res.status(401).json({ error: 'User no longer exists' });
+        if ((decoded.tokenVersion ?? 0) !== req.user.tokenVersion) {
+            return res.status(401).json({ error: 'Invalid token' });
+        }
         next();
     }
     catch (err) {

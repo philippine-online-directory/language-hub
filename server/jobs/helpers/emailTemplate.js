@@ -1,5 +1,78 @@
 const APP_URL = process.env.APP_URL || 'http://localhost:5173';
 
+export function passwordResetTemplate(resetUrl) {
+  return `
+    <html>
+      <head>
+        <style>
+          body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #F6F4EF;
+            margin: 0;
+            padding: 20px;
+          }
+          .card {
+            background: #ffffff;
+            border-radius: 20px;
+            border: 1px solid rgba(229, 231, 235, 0.6);
+            padding: 10px;
+            max-width: 640px;
+            margin: auto;
+            box-shadow: 0 12px 32px rgba(192, 118, 58, 0.15);
+          }
+          .header {
+            text-align: center;
+            background: #C0763A;
+            color: #ffffff;
+            padding: 20px;
+            border-radius: 16px 16px 0 0;
+            font-family: 'Fraunces', serif;
+            font-size: 24px;
+            font-weight: 600;
+          }
+          .intro {
+            font-size: 16px;
+            line-height: 24px;
+            color: #6B7280;
+            margin: 24px 0;
+            text-align: center;
+          }
+          .cta {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 12px 20px;
+            background: #C0763A;
+            color: #ffffff !important;
+            text-decoration: none !important;
+            border-radius: 8px;
+            font-weight: 600;
+          }
+          .footer {
+            margin-top: 32px;
+            font-size: 14px;
+            color: #6B7280;
+            text-align: center;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="card">
+          <div class="header">Philippine Online Dictionary</div>
+          <div class="intro">
+            We received a request to reset your password. This link expires in 1 hour.
+          </div>
+          <div style="text-align:center;">
+            <a href="${resetUrl}" class="cta">Reset Password</a>
+          </div>
+          <div class="footer">
+            If you did not request a password reset, you can ignore this email.
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+}
+
 export function wordOfTheDayTemplate(formattedDate, word, language, definition, example, unsubscribeToken = null) {
   return `
     <html>
