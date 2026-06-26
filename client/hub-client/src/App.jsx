@@ -25,12 +25,14 @@ const CommonWordsPage = lazy(() => import('./pages/CommonWordsPage/CommonWordsPa
 const ContributePage = lazy(() => import('./pages/ContributePage/ContributePage'));
 const CreateEditSetPage = lazy(() => import('./pages/CreateEditSetPage/CreateEditSetPage'));
 const FlashcardGame = lazy(() => import('./pages/FlashcardGame/FlashcardGame'));
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage/ForgotPasswordPage'));
 const GameSessionsPage = lazy(() => import('./pages/GameSessionsPage/GameSessionsPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage/LoginPage'));
 const MatchingGame = lazy(() => import('./pages/MatchingGame/MatchingGame'));
 const MissingCommonWordsPage = lazy(() => import('./pages/MissingCommonWordsPage/MissingCommonWordsPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage/ProfilePage'));
 const RegisterPage = lazy(() => import('./pages/RegisterPage/RegisterPage'));
+const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage/ResetPasswordPage'));
 const UserContributionsPage = lazy(() => import('./pages/UserContributionsPage/UserContributionsPage'));
 const WritingGame = lazy(() => import('./pages/WritingGame/WritingGame'));
 
@@ -110,6 +112,8 @@ function AppContent(){
                     <Route path="/site-guide" element={<SiteGuidePage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                    <Route path="/reset-password" element={<ResetPasswordPage />} />
                     <Route path="/translate" element={<TranslatePage />} />
                     
                     {/* Language Routes */}

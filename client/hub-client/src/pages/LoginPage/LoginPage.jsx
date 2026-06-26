@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
@@ -8,6 +8,7 @@ import styles from './LoginPage.module.css';
 
 export default function LoginPage(){
     const navigate = useNavigate();
+    const location = useLocation();
     const [searchParams] = useSearchParams();
     const { login } = useAuth();
     const [formData, setFormData] = useState({
@@ -19,6 +20,7 @@ export default function LoginPage(){
 
     const redirectTo = searchParams.get('redirect') || '/';
     const isContributeIntent = searchParams.get('intent') === 'contribute';
+    const successMessage = location.state?.message;
 
     const handleChange = (e) => {
         setFormData({
@@ -88,6 +90,7 @@ export default function LoginPage(){
                     )}
 
                     {errors.submit && <div className={styles.error}>{errors.submit}</div>}
+                    {successMessage && <div className={styles.success}>{successMessage}</div>}
 
                     <form noValidate onSubmit={handleSubmit} className={styles.form}>
                         <Input
@@ -111,6 +114,12 @@ export default function LoginPage(){
                         placeholder="Enter your password"
                         error={errors.password}
                         />
+
+                        <div className={styles.forgotPasswordLink}>
+                            <Link to="/forgot-password" className={styles.link}>
+                                Forgot password?
+                            </Link>
+                        </div>
 
                         <Button type="submit" fullWidth loading={loading}>
                             Login

@@ -13,6 +13,16 @@ async function login(credentials){
     return response.data;
 }
 
+async function forgotPassword(email){
+    const response = await api.post('/forgot-password', { email });
+    return response.data;
+}
+
+async function resetPassword(resetData){
+    const response = await api.post('/reset-password', resetData);
+    return response.data;
+}
+
 async function logout(){
     localStorage.removeItem('authToken');
 }
@@ -27,6 +37,8 @@ async function isAuthenticated(){
 export const authService = {
     register,
     login,
+    forgotPassword,
+    resetPassword,
     logout,
     getToken,
     isAuthenticated

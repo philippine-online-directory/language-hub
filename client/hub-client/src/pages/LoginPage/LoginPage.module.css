@@ -205,6 +205,18 @@
   animation: pulse 1s ease-in-out infinite;
 }
 
+.success {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.05) 100%);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #15803D;
+  padding: 14px 16px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  line-height: 20px;
+  animation: slideDown 0.3s ease-out;
+}
+
 @keyframes errorShake {
   0%, 100% {
     transform: translateX(0);
@@ -241,6 +253,12 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.forgotPasswordLink {
+  text-align: right;
+  margin-top: -8px;
+  font-size: 14px;
 }
 
 .registerLink {
