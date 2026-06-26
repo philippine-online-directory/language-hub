@@ -72,7 +72,7 @@ export default function ProfilePage() {
 
     try {
       await profileService.setMyProfile({ reminderType: newReminderType });
-    } catch (err) {
+    } catch {
       setError("Could not update reminder settings. Please try again.");
     }
   };
