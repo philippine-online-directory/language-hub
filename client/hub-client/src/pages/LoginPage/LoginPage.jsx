@@ -46,6 +46,18 @@ export default function LoginPage(){
         return newErrors
     }
 
+    const getLoginErrorMessage = (err) => {
+        const data = err.response?.data;
+
+        if (data?.message) return data.message;
+        if (data?.error) return data.error;
+        if (Array.isArray(data?.errors) && data.errors[0]?.message) {
+            return data.errors[0].message;
+        }
+
+        return 'Login failed. Please try again.';
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -63,7 +75,7 @@ export default function LoginPage(){
             navigate(redirectTo);
         }
         catch (err) {
-            setErrors(err.response?.data?.message || 'Login failed. Please try again.');
+            setErrors({ submit: getLoginErrorMessage(err) });
         }
         finally {
             setLoading(false);

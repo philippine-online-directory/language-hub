@@ -15,6 +15,7 @@ export default function AdminLanguagesPage(){
     const [editingId, setEditingId] = useState(null);
     const [mounted, setMounted] = useState(false);
     const [pendingDeleteLanguage, setPendingDeleteLanguage] = useState(null);
+    const [saving, setSaving] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         isoCode: '',
@@ -69,14 +70,47 @@ export default function AdminLanguagesPage(){
         }
     };
 
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+
+        if (errors[e.target.name]) {
+            setErrors({ ...errors, [e.target.name]: '' });
+        }
+    };
+
+    const validate = () => {
+        const newErrors = {};
+        const speakerCount = Number(formData.speakerCount);
+
+        if (!formData.name.trim()) {
+            newErrors.name = 'Language name is required';
+        }
+
+        if (formData.speakerCount && (!Number.isInteger(speakerCount) || speakerCount < 0)) {
+            newErrors.speakerCount = 'Speaker count must be a positive whole number';
+        }
+
+        return newErrors;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setErrors({});
+        const validationErrors = validate();
+
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
 
         const submitData = {
             ...formData,
+            name: formData.name.trim(),
+            isoCode: formData.isoCode.trim(),
             speakerCount: formData.speakerCount ? parseInt(formData.speakerCount) : null,
         };
+
+        setSaving(true);
+        setErrors({});
 
         try {
             if (editingId) {
@@ -91,6 +125,8 @@ export default function AdminLanguagesPage(){
             await fetchLanguages();
         } catch (err) {
             setErrors({ submit: err.response?.data?.message || 'Failed to save language' });
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -152,8 +188,10 @@ export default function AdminLanguagesPage(){
                             <Input
                                 label="Language Name"
                                 type="text"
+                                name="name"
                                 value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                onChange={handleChange}
+                                error={errors.name}
                                 required
                                 placeholder="e.g., Ibanag"
                             />
@@ -161,8 +199,9 @@ export default function AdminLanguagesPage(){
                             <Input
                                 label="ISO Code (optional)"
                                 type="text"
+                                name="isoCode"
                                 value={formData.isoCode}
-                                onChange={(e) => setFormData({ ...formData, isoCode: e.target.value })}
+                                onChange={handleChange}
                                 placeholder="e.g., ibg"
                                 disabled={!!editingId}
                             />
@@ -170,8 +209,10 @@ export default function AdminLanguagesPage(){
                             <Input
                                 label="Speaker Count"
                                 type="number"
+                                name="speakerCount"
                                 value={formData.speakerCount}
-                                onChange={(e) => setFormData({ ...formData, speakerCount: e.target.value })}
+                                onChange={handleChange}
+                                error={errors.speakerCount}
                                 placeholder="Optional"
                             />
 
@@ -198,10 +239,10 @@ export default function AdminLanguagesPage(){
                             </div>
 
                             <div className={styles.actions}>
-                                <Button type="submit" variant="primary">
+                                <Button type="submit" variant="primary" loading={saving}>
                                     {editingId ? 'Save Changes' : 'Add Language'}
                                 </Button>
-                                <Button type="button" variant="secondary" onClick={handleCancel}>
+                                <Button type="button" variant="secondary" onClick={handleCancel} disabled={saving}>
                                     Cancel
                                 </Button>
                             </div>
