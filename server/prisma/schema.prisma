@@ -20,18 +20,34 @@ model User {
   username           String
   createdAt          DateTime      @default(now())
   role               Role          @default(LEARNER)
+  tokenVersion       Int           @default(0)
   reminderType       ReminderType?
   lastReminderSentAt DateTime?
 
   contributions         Translation[] @relation("PrimaryAuthor")
   secondaryTranslations Translation[] @relation("secondaryAuthors")
 
-  createdSets VocabSet[]
-  gameScores  GameSession[]
+  createdSets         VocabSet[]
+  gameScores          GameSession[]
+  passwordResetTokens PasswordResetToken[]
 
   submittedRequests TranslationUpdateRequest[]
   importBatches     ImportBatch[]              @relation("ImportBatchUploader")
   reviewedBatches   ImportBatch[]              @relation("ImportBatchReviewer")
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 model Language {
