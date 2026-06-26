@@ -7,7 +7,6 @@ async function contributeTranslation(
     {
         languageId,
         wordText,
-        ipa,
         englishDefinition,
         exampleSentence,
         audioUrl,
@@ -37,7 +36,6 @@ async function contributeTranslation(
             authorId: userId,
             languageId,
             wordText,
-            ipa: ipa || null,
             englishDefinition,
             exampleSentence: exampleSentence || null,
             audioUrl: audioUrl || null,

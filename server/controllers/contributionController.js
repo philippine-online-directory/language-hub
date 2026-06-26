@@ -7,9 +7,6 @@ import validationErrorCheck from '../middleware/expressValidate.js'
 const validateContribution = [
     body('wordText').notEmpty()
         .trim(),
-    body('ipa')
-        .optional({ checkFalsy: true })
-        .trim(),
     body('englishDefinition').notEmpty()
         .trim(),
     body('exampleSentence')

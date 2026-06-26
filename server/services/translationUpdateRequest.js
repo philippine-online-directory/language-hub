@@ -43,7 +43,7 @@ async function acceptTranslationUpdateRequest(requestId) {
   }
 
   const ALLOWED_PROPOSAL_FIELDS = [
-    'wordText', 'ipa', 'englishDefinition', 'exampleSentence',
+    'wordText', 'englishDefinition', 'exampleSentence',
     'audioUrl', 'partOfSpeech', 'usageComment'
   ];
   const safeData = Object.fromEntries(

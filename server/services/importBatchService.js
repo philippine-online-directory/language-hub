@@ -9,7 +9,6 @@ const IMPORT_FIELDS = [
     'wordText',
     'englishDefinition',
     'partOfSpeech',
-    'ipa',
     'exampleSentence',
     'usageComment'
 ];
@@ -27,9 +26,6 @@ const HEADER_ALIASES = {
     englishdefinition: 'englishDefinition',
     partofspeech: 'partOfSpeech',
     pos: 'partOfSpeech',
-    ipa: 'ipa',
-    pronunciation: 'ipa',
-    pronunciationipa: 'ipa',
     examplesentence: 'exampleSentence',
     example: 'exampleSentence',
     sentence: 'exampleSentence',
@@ -183,7 +179,6 @@ async function createTranslationForRow({ userId, languageId, status, data }) {
             authorId: userId,
             languageId,
             wordText: data.wordText,
-            ipa: data.ipa || null,
             englishDefinition: data.englishDefinition,
             exampleSentence: data.exampleSentence || null,
             audioUrl: null,
@@ -318,7 +313,6 @@ async function createImportBatch(user, { languageId, rightsConfirmed, file }) {
                 rowNumber: parsedRow.rowNumber,
                 wordText: data.wordText || null,
                 englishDefinition: data.englishDefinition || null,
-                ipa: data.ipa || null,
                 exampleSentence: data.exampleSentence || null,
                 partOfSpeech: data.partOfSpeech || null,
                 usageComment: data.usageComment || null,
