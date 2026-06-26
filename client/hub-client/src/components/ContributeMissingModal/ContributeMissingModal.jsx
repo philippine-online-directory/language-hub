@@ -26,7 +26,6 @@ export default function ContributeMissingModal({ translation, fieldsToContribute
     const MAX_RECORDING_SECONDS = 10;
 
     const [formData, setFormData] = useState({
-        ipa: '',
         exampleSentence: '',
         partOfSpeech: '',
         usageComment: ''
@@ -217,7 +216,6 @@ export default function ContributeMissingModal({ translation, fieldsToContribute
         
         try {
           if (
-              !formData.ipa &&
               !formData.partOfSpeech &&
               !formData.usageComment &&
               !formData.exampleSentence &&
@@ -295,7 +293,6 @@ export default function ContributeMissingModal({ translation, fieldsToContribute
         setSuccess(true);
         setErrors({});
         setFormData({
-          ipa: '',
           exampleSentence: '',
           partOfSpeech: '',
           usageComment: ''
@@ -368,17 +365,6 @@ export default function ContributeMissingModal({ translation, fieldsToContribute
                               <option value="other">Other</option>
                           </select>
                       </div>
-                    )}
-
-                    {fieldsToContribute.includes('ipa') && (
-                      <Input
-                          label="Pronunciation (IPA)"
-                          type="text"
-                          name="ipa"
-                          value={formData.ipa}
-                          onChange={handleChange}
-                          placeholder="Optional: International Phonetic Alphabet notation"
-                      />
                     )}
 
                     {fieldsToContribute.includes('exampleSentence') && (

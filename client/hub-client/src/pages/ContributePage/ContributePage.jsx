@@ -118,7 +118,6 @@ export default function ContributePage() {
     const [formData, setFormData] = useState({
         languageId: '',
         wordText: '',
-        ipa: '',
         englishDefinition: '',
         exampleSentence: '',
         partOfSpeech: '',
@@ -415,7 +414,6 @@ export default function ContributePage() {
             setFormData({
                 languageId: formData.languageId,
                 wordText: '',
-                ipa: '',
                 englishDefinition: '',
                 exampleSentence: '',
                 partOfSpeech: '',
@@ -543,15 +541,6 @@ export default function ContributePage() {
                                                 error={errors.wordText}
                                                 required
                                                 placeholder="Enter the word in the native language"
-                                            />
-
-                                            <Input
-                                                label="Pronunciation (IPA)"
-                                                type="text"
-                                                name="ipa"
-                                                value={formData.ipa}
-                                                onChange={handleChange}
-                                                placeholder="Optional: International Phonetic Alphabet notation"
                                             />
                                         </div>
                                     )}
@@ -794,7 +783,6 @@ export default function ContributePage() {
                                             <dl className={styles.reviewList}>
                                                 <ReviewRow label="Language" value={languages.find(l => l.id === formData.languageId)?.name} />
                                                 <ReviewRow label="Word or Phrase" value={formData.wordText} />
-                                                {formData.ipa && <ReviewRow label="Pronunciation (IPA)" value={formData.ipa} />}
                                                 {formData.partOfSpeech && (
                                                     <ReviewRow
                                                         label="Part of Speech"

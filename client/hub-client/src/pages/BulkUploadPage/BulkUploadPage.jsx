@@ -10,14 +10,13 @@ const TEMPLATE_HEADERS = [
     'wordText',
     'englishDefinition',
     'partOfSpeech',
-    'ipa',
     'exampleSentence',
     'usageComment'
 ];
 
 const SAMPLE_ROWS = [
-    ['bahay', 'house', 'noun', "/ba'haj/", 'Malaki ang bahay namin.', 'Use for a house or home where someone lives.'],
-    ['tubig', 'water', '', '', '', '']
+    ['bahay', 'house', 'noun', 'Malaki ang bahay namin.', 'Use for a house or home where someone lives.'],
+    ['tubig', 'water', '', '', '']
 ];
 
 const XLSX_MIME_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
@@ -472,7 +471,6 @@ export default function BulkUploadPage() {
 
                                 <h3>Optional fields</h3>
                                 <p><code>partOfSpeech</code> - noun, verb, phrase, etc.</p>
-                                <p><code>ipa</code> - pronunciation in IPA.</p>
                                 <p><code>exampleSentence</code> - sentence using the word.</p>
                                 <p><code>usageComment</code> - note on how the word might be used.</p>
                             </div>

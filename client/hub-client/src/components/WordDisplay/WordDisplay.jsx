@@ -10,7 +10,6 @@ import ContributeMissingModal from '../ContributeMissingModal/ContributeMissingM
 import { createPortal } from 'react-dom';
 
 const COMPLETABLE_FIELDS = [
-    { key: 'ipa',             label: 'IPA pronunciation' },
     { key: 'audioUrl',        label: 'Audio pronunciation' },
     { key: 'exampleSentence', label: 'Example sentence' },
     { key: 'usageComment',    label: 'Usage / notes comment' },
