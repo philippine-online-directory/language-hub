@@ -96,10 +96,15 @@ async function setMyProfile(userId, updates) {
   if (!userId) throw new Error("Must be logged in to update your profile");
 
   const { reminderType } = updates;
+  const disabledReminderTypes = ['WORD', 'CHECKWORD'];
 
   await prisma.user.update({
     where: { id: userId },
-    data: { reminderType },
+    data: {
+      reminderType: disabledReminderTypes.includes(reminderType)
+        ? null
+        : reminderType
+    },
   });
 
 }

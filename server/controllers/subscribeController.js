@@ -1,6 +1,14 @@
 import subscribeService from '../services/subscribeService.js'
 
+const isWordOfTheDayEnabled = () => false;
+
 const subscribe = async (req, res, next) => {
+    if (!isWordOfTheDayEnabled()) {
+        return res.status(503).json({
+            message: 'Word of the Day subscriptions are currently disabled'
+        });
+    }
+
     const { email } = req.body;
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {

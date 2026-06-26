@@ -4,7 +4,11 @@ import brevo from '../brevo.js';
 import wordOfTheDayService from '../services/wordOfTheDayService.js';
 import { wordOfTheDayTemplate } from './helpers/emailTemplate.js';
 
+const isWordOfTheDayEnabled = () => false;
+
 cron.schedule('0 0 * * *', async () => {
+    if (!isWordOfTheDayEnabled()) return;
+
     await wordOfTheDayService.assignWordOfTheDay();
 }, {
     scheduled: true,
@@ -13,6 +17,7 @@ cron.schedule('0 0 * * *', async () => {
 
 // Run every day at 8 AM Philippine Standard Time
 cron.schedule('0 8 * * *', async () => {
+  if (!isWordOfTheDayEnabled()) return;
 
   // Get current date in Philippine Standard Time
   const now = new Date();
