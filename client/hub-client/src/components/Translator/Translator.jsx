@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { translatorService } from '../../api/translatorService';
 import LanguagePickerModal from '../LanguagePickerModal/LanguagePickerModal';
 import useDebounce from '../../hooks/useDebounce';
@@ -21,7 +21,7 @@ export default function Translator({ compact = false }) {
     // Blocks: digits, symbols like $, @, #, etc.
     const validate = (text) => {
         if (!text || !text.trim()) return '';
-        if (/[^a-zA-Z\u00C0-\u024F\s'.,\-]/.test(text.trim())) return 'Only letters, hyphens, apostrophes, periods, and commas are allowed';
+        if (/[^a-zA-Z\u00C0-\u024F\s'.,-]/.test(text.trim())) return 'Only letters, hyphens, apostrophes, periods, and commas are allowed';
         return '';
     };
 
@@ -57,7 +57,7 @@ export default function Translator({ compact = false }) {
                     direction
                 );
                 setResults(data.results);
-            } catch (err) {
+            } catch {
                 setInputError('Something went wrong. Please try again.');
                 setResults(null);
             } finally {

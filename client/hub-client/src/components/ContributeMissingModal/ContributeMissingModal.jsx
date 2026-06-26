@@ -33,7 +33,7 @@ export default function ContributeMissingModal({ translation, fieldsToContribute
 
     const cleanFormData = (data) => {
       return Object.fromEntries(
-        Object.entries(data).filter(([_, value]) => value !== '')
+        Object.entries(data).filter(([, value]) => value !== '')
       );
     };
 
@@ -266,7 +266,7 @@ export default function ContributeMissingModal({ translation, fieldsToContribute
                 
                 clearInterval(progressInterval);
                 setUploadProgress(100);
-            } catch (uploadError) {
+            } catch {
                 setErrors({
                     submit: 'Failed to upload audio file. Please try again.',
                 });

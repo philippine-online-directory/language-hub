@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Card from '../Card/Card';
 import styles from './UpdateWordDisplay.module.css';
