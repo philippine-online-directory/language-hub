@@ -85,8 +85,7 @@ async function findLanguageBySlug(slug) {
         prisma.translation.groupBy({
             by: ['authorId'],
             where: {
-                language: { slug },
-                status: 'VERIFIED'
+                language: { slug }
             },
             _count: { authorId: true },
             orderBy: [
@@ -107,7 +106,6 @@ async function findLanguageBySlug(slug) {
         const earliestContributions = await prisma.translation.findMany({
             where: {
                 language: { slug },
-                status: 'VERIFIED',
                 authorId: { in: authorIds }
             },
             select: { authorId: true, createdAt: true },

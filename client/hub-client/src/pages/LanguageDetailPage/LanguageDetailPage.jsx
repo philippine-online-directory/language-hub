@@ -320,7 +320,7 @@ export default function LanguageDetailPage() {
                                                 {contributor.username}
                                             </span>
                                             <span className={styles.contributorCount}>
-                                                {contributor.count} verified {contributor.count === 1 ? 'word' : 'words'}
+                                                {contributor.count} {contributor.count === 1 ? 'word' : 'words'}
                                             </span>
                                         </>
                                     );
