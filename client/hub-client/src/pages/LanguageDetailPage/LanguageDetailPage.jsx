@@ -279,11 +279,21 @@ export default function LanguageDetailPage() {
                                 </span>
                             )}
                         </div>
-                        {language.preservationNote && (
-                            <p className={styles.preservationNote}>{language.preservationNote}</p>
-                        )}
-                        {language.culturalBackground && (
-                            <p className={styles.preservationNote}>{language.culturalBackground}</p>
+                        {(language.preservationNote || language.culturalBackground) && (
+                            <div className={styles.languageNotes}>
+                                {language.preservationNote && (
+                                    <section className={styles.languageNoteBlock}>
+                                        <h2 className={styles.languageNoteHeading}>Preservation note</h2>
+                                        <p className={styles.languageNoteText}>{language.preservationNote}</p>
+                                    </section>
+                                )}
+                                {language.culturalBackground && (
+                                    <section className={styles.languageNoteBlock}>
+                                        <h2 className={styles.languageNoteHeading}>Cultural background</h2>
+                                        <p className={styles.languageNoteText}>{language.culturalBackground}</p>
+                                    </section>
+                                )}
+                            </div>
                         )}
                     </div>
 

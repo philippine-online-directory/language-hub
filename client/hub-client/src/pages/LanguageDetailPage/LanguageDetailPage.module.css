@@ -150,16 +150,38 @@
   font-size: 14px;
 }
 
-.preservationNote {
-  font-size: 16px;
-  line-height: 26px;
-  color: var(--text-secondary);
-  padding: 14px;
-  background: rgba(192, 118, 58, 0.06);
-  border: 1px solid rgba(192, 118, 58, 0.18);
-  border-left: 4px solid #C0763A;
+.languageNotes {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+  max-width: 900px;
+}
+
+.languageNoteBlock {
+  padding: 16px 18px;
+  background: linear-gradient(135deg, rgba(192, 118, 58, 0.07) 0%, rgba(192, 118, 58, 0.03) 100%);
+  border: 1px solid rgba(192, 118, 58, 0.16);
+  border-left: 3px solid rgba(192, 118, 58, 0.75);
   border-radius: 12px;
+}
+
+.languageNoteHeading {
+  margin: 0 0 7px;
+  font-size: 11px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #C0763A;
+}
+
+.languageNoteText {
   margin: 0;
+  max-width: 72ch;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  text-wrap: pretty;
 }
 
 .languageNameRow {
@@ -925,6 +947,11 @@ a.podiumCard:hover {
     line-height: 44px;
   }
 
+  .languageNotes {
+    margin-top: 16px;
+    gap: 10px;
+  }
+
   .sectionTitle {
     font-size: 26px;
     line-height: 34px;
@@ -965,6 +992,15 @@ a.podiumCard:hover {
   .languageName {
     font-size: 28px;
     line-height: 36px;
+  }
+
+  .languageNoteBlock {
+    padding: 14px 15px;
+  }
+
+  .languageNoteText {
+    font-size: 15px;
+    line-height: 1.65;
   }
 
   .controlPanel {
