@@ -91,24 +91,6 @@ export default function UpdateWordDisplay({ request, defaultExpanded = false }){
                                 </div>
                             </div>
 
-                            <div className={styles.differenceGroupRow}>
-                              {translation.ipa && (
-                                <span
-                                  className={`${styles.ipa} ${
-                                    proposedData.ipa ? `${styles.removedValue} ${styles.strikeThrough}` : ""
-                                  }`}
-                                >
-                                  {translation.ipa}
-                                </span>
-                              )}
-                          
-                              {proposedData.ipa && (
-                                <span className={`${styles.ipa} ${styles.addedValue}`}>
-                                  {proposedData.ipa}
-                                </span>
-                              )}  
-                            </div>
-
                             <div className={styles.divider} />
 
                             <p className={styles.definition}>{translation.englishDefinition}</p>

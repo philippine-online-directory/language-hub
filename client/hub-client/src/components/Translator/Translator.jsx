@@ -250,9 +250,6 @@ export default function Translator({ compact = false }) {
                                         {result.partOfSpeech && (
                                             <span className={styles.metaTag}>{result.partOfSpeech}</span>
                                         )}
-                                        {result.ipa && (
-                                            <span className={styles.ipaTag}>/{result.ipa}/</span>
-                                        )}
                                     </div>
                                 </div>
                             ))}

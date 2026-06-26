@@ -310,19 +310,13 @@ export default function WritingGame() {
                                         </svg>
                                         <span>Hints</span>
                                     </div>
-                                    {currentWord.ipa && (
-                                        <div className={styles.hintItem}>
-                                            <span className={styles.hintLabel}>Pronunciation:</span>
-                                            <span className={styles.hintValue}>{currentWord.ipa}</span>
-                                        </div>
-                                    )}
                                     {currentWord.exampleSentence && (
                                         <div className={styles.hintItem}>
                                             <span className={styles.hintLabel}>Example:</span>
                                             <span className={styles.hintValue}>{currentWord.exampleSentence}</span>
                                         </div>
                                     )}
-                                    {!currentWord.ipa && !currentWord.exampleSentence && (
+                                    {!currentWord.exampleSentence && (
                                         <p className={styles.noHints}>No hints available for this word</p>
                                     )}
                                 </Card>

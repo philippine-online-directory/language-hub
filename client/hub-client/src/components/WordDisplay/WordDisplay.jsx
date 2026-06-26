@@ -208,10 +208,6 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                                 </div>
                             </div>
 
-                            {translation.ipa && (
-                                <p className={styles.ipa}>{translation.ipa}</p>
-                            )}
-
                             <div className={styles.divider} />
 
                             <p className={styles.definition}>{translation.englishDefinition}</p>

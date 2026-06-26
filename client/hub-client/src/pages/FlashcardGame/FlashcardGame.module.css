@@ -352,14 +352,6 @@
   letter-spacing: -0.02em;
 }
 
-.ipa {
-  font-size: 18px;
-  color: #C0763A;
-  font-style: italic;
-  margin: 0;
-  letter-spacing: 0.02em;
-}
-
 .languageBadge {
   display: inline-flex;
   align-items: center;

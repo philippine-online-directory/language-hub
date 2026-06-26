@@ -224,9 +224,6 @@ export default function FlashcardGame() {
                                 <div className={styles.cardContent}>
                                     <div className={styles.cardLabel}>Word</div>
                                     <h2 className={styles.wordText}>{currentWord.wordText}</h2>
-                                    {currentWord.ipa && (
-                                        <p className={styles.ipa}>{currentWord.ipa}</p>
-                                    )}
                                     {currentWord.language && (
                                         <div className={styles.languageBadge}>
                                             {currentWord.language.name}
@@ -266,7 +263,7 @@ export default function FlashcardGame() {
                         </div>
                     </div>
 
-                    {isFlipped && (currentWord.exampleSentence || currentWord.ipa) && (
+                    {isFlipped && currentWord.exampleSentence && (
                         <div className={styles.detailsSection}>
                             <button
                                 className={styles.detailsToggle}
@@ -291,12 +288,6 @@ export default function FlashcardGame() {
 
                             {showDetails && (
                                 <Card className={styles.detailsCard}>
-                                    {currentWord.ipa && (
-                                        <div className={styles.detailItem}>
-                                            <h3 className={styles.detailLabel}>Pronunciation</h3>
-                                            <p className={styles.detailValue}>{currentWord.ipa}</p>
-                                        </div>
-                                    )}
                                     {currentWord.exampleSentence && (
                                         <div className={styles.detailItem}>
                                             <h3 className={styles.detailLabel}>Example Sentence</h3>
