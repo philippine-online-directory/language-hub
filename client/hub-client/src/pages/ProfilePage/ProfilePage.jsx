@@ -302,36 +302,18 @@ export default function ProfilePage() {
               <h2>Reminders</h2>
               <select
                 className={styles.select}
-                value={profile.reminderType ?? "NULL"} 
+                value="NULL"
                 onChange={(e) => {
                   const value = e.target.value === "NULL" ? null : e.target.value;
                   handleReminderChange(value);
                 }}
               >
                 <option value="NULL">No reminders</option>
-                <option value="CHECKWORD">Check Word of the Day</option>
-                <option value="WORD">Word of the Day</option>
               </select>
 
-              {profile.reminderType === null && (
-                <p key={profile.reminderType} className={styles.reminderExplanation}>
-                  You won’t receive any reminder emails.
-                </p>
-              )}
-
-              {profile.reminderType === "CHECKWORD" && (
-                <p key={profile.reminderType} className={styles.reminderExplanation}>
-                  If you haven’t looked at the Word of the Day yet, we’ll send you a gentle
-                  reminder email encouraging you to check it out.
-                </p>
-              )}
-
-              {profile.reminderType === "WORD" && (
-                <p key={profile.reminderType} className={styles.reminderExplanation}>
-                  You’ll get the Word of the Day delivered straight to your inbox each day,
-                  so you never miss it.
-                </p>
-              )}
+              <p className={styles.reminderExplanation}>
+                You won’t receive any reminder emails.
+              </p>
             </div>
           )}
         </div>
