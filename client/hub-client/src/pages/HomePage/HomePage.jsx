@@ -37,9 +37,9 @@ export default function HomePage() {
                             ) : (
                                 <Button
                                     variant="secondary"
-                                    onClick={() => navigate('/login')}
+                                    onClick={() => navigate('/login?redirect=/contribute&intent=contribute')}
                                 >
-                                    Login or register to contribute
+                                    Contribute to a dictionary
                                 </Button>
                             )}
                         </div>

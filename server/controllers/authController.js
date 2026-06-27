@@ -110,10 +110,10 @@ const loginUser = [
                 }
             })
 
-            if (!user) return res.status(400).json({ error: "Incorrect username or password, or user does not exist" });
+            if (!user) return res.status(400).json({ error: "Incorrect username or password" });
 
             const valid = await bcrypt.compare(password, user.password)
-            if (!valid) return res.status(400).json({ error: "Incorrect username or password, or user does not exist" })
+            if (!valid) return res.status(400).json({ error: "Incorrect username or password" })
 
             const token = signAuthToken(user)
 
