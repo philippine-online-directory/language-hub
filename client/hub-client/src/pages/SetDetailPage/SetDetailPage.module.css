@@ -146,7 +146,7 @@
 
 .gamesCard {
   margin-bottom: 48px;
-  text-align: center;
+  text-align: left;
   background: linear-gradient(135deg, var(--bg-surface) 0%, rgba(192, 118, 58, 0.05) 100%);
   backdrop-filter: blur(20px);
   position: relative;
@@ -191,24 +191,103 @@
   position: relative;
 }
 
-.gamesDescription {
-  font-size: 16px;
-  color: var(--text-secondary);
-  margin-bottom: 24px;
-}
-
-.gameButtons {
+.gamesHeader {
   display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
   position: relative;
   z-index: 1;
 }
 
-.viewSessions {
+.gamesEyebrow {
   display: inline-block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #C0763A;
+}
+
+.gamesDescription {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 0;
+}
+
+.gameOptions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.gameOption {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 156px;
+  padding: 18px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-rgba);
+  border-radius: 12px;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.gameOption:hover {
+  border-color: rgba(192, 118, 58, 0.45);
+  box-shadow: 0 14px 36px rgba(192, 118, 58, 0.12);
+  transform: translateY(-2px);
+}
+
+.gameOption:focus-visible {
+  outline: 3px solid rgba(192, 118, 58, 0.25);
+  outline-offset: 2px;
+}
+
+.gameOptionTitle {
+  margin-bottom: 8px;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.gameOptionDescription {
+  flex: 1;
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--text-secondary);
+}
+
+.gameOptionAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 18px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #C0763A;
+}
+
+.gameOptionAction svg {
+  width: 15px;
+  height: 15px;
+  transition: transform 0.2s ease;
+}
+
+.gameOption:hover .gameOptionAction svg {
+  transform: translateX(3px);
+}
+
+.viewSessions {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
   font-size: 15px;
   color: #C0763A;
   text-decoration: none;
@@ -311,8 +390,12 @@
     flex-direction: column;
   }
 
-  .gameButtons {
+  .gamesHeader {
     flex-direction: column;
+  }
+
+  .gameOptions {
+    grid-template-columns: 1fr;
   }
 
   .wordsGrid {

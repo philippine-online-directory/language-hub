@@ -80,13 +80,6 @@
   color: var(--text-secondary);
 }
 
-.gamesNote {
-  margin-top: 8px;
-  font-size: 14px;
-  color: #C0763A;
-  font-weight: 500;
-}
-
 .signInLink {
   color: #C0763A;
   font-weight: 600;
@@ -113,6 +106,56 @@
 .helpButton:hover {
   color: #C0763A;
   text-decoration-color: #C0763A;
+}
+
+.gamesGuide {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: center;
+  padding: 22px 24px;
+  margin-bottom: 36px;
+  background: rgba(192, 118, 58, 0.07);
+  border: 1px solid rgba(192, 118, 58, 0.18);
+  border-radius: 12px;
+  animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.15s backwards;
+}
+
+.guideEyebrow {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #C0763A;
+}
+
+.guideText {
+  max-width: 620px;
+  margin: 0;
+  font-size: 15px;
+  line-height: 24px;
+  color: var(--text-primary);
+}
+
+.guideSteps {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.guideStep {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 7px 11px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-rgba);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
 }
 
 .controls {
@@ -316,6 +359,42 @@
   color: #C0763A;
 }
 
+.gameAccess {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-rgba);
+  position: relative;
+  z-index: 1;
+}
+
+.gameStatus {
+  font-size: 13px;
+  font-weight: 600;
+  color: #C0763A;
+}
+
+.openSet {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.openSet svg {
+  width: 15px;
+  height: 15px;
+  transition: transform 0.2s ease;
+}
+
+.setCard:hover .openSet svg {
+  transform: translateX(3px);
+}
+
 .setActions {
   display: flex;
   gap: 8px;
@@ -377,6 +456,7 @@
 @media (prefers-reduced-motion: reduce) {
   .setsPage,
   .header,
+  .gamesGuide,
   .controls,
   .loadingState,
   .empty,
@@ -425,6 +505,14 @@
     font-size: 16px;
   }
 
+  .gamesGuide {
+    grid-template-columns: 1fr;
+  }
+
+  .guideSteps {
+    justify-content: flex-start;
+  }
+
   .tabs {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -457,6 +545,14 @@
 
   .subtitle {
     font-size: 14px;
+  }
+
+  .gamesGuide {
+    padding: 18px;
+  }
+
+  .guideStep {
+    width: 100%;
   }
 
   .tabs {

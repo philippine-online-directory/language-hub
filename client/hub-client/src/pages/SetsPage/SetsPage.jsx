@@ -164,9 +164,6 @@ export default function SetsPage(){
                                 : 'Discover sets created by other learners'
                             }
                         </p>
-                        <p className={styles.gamesNote}>
-                            To play games, open any set below — your own or a public one.
-                        </p>
                         <button className={styles.helpButton} onClick={() => setHelpOpen(true)}>
                             <svg viewBox="0 0 20 20" fill="currentColor" width="15" height="15">
                                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
@@ -180,6 +177,20 @@ export default function SetsPage(){
                         </Button>
                     )}
                 </header>
+
+                <section className={styles.gamesGuide} aria-label="How to find games">
+                    <div className={styles.guideHeader}>
+                        <span className={styles.guideEyebrow}>Games live inside sets</span>
+                        <p className={styles.guideText}>
+                            Choose any set with words, then pick Flashcards, Matching, or Writing from that set page.
+                        </p>
+                    </div>
+                    <div className={styles.guideSteps}>
+                        <span className={styles.guideStep}>1. Open a set</span>
+                        <span className={styles.guideStep}>2. Choose a game</span>
+                        <span className={styles.guideStep}>3. Practice and track progress</span>
+                    </div>
+                </section>
 
                 {/* Controls */}
                 <div className={styles.controls}>
@@ -309,6 +320,17 @@ export default function SetsPage(){
                                                         by {set.owner.username}
                                                     </span>
                                                 )}
+                                            </div>
+                                            <div className={styles.gameAccess}>
+                                                <span className={styles.gameStatus}>
+                                                    {(set._count?.setWords || 0) > 0 ? 'Games available' : 'Add words to play'}
+                                                </span>
+                                                <span className={styles.openSet}>
+                                                    Open set
+                                                    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                        <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L13.586 10H4a1 1 0 110-2h9.586l-3.293-3.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                                                    </svg>
+                                                </span>
                                             </div>
                                             {viewMode === 'my' && (
                                                 <div className={styles.setActions}>

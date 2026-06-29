@@ -130,6 +130,26 @@ export default function SetDetailPage() {
 
   const isOwner = user && set.owner?.username === user.username;
   const hasWords = set.setWords && set.setWords.length > 0;
+  const gameOptions = [
+    {
+      key: 'flashcard',
+      title: 'Flashcards',
+      description: 'Review each word at your own pace.',
+      to: `/sets/${setId}/games/flashcard`,
+    },
+    {
+      key: 'matching',
+      title: 'Matching',
+      description: 'Pair words with the right translation.',
+      to: `/sets/${setId}/games/matching`,
+    },
+    {
+      key: 'writing',
+      title: 'Writing',
+      description: 'Type answers from memory.',
+      to: `/sets/${setId}/games/writing`,
+    },
+  ];
 
   return (
     <div className={styles.setDetailPage}>
@@ -183,33 +203,37 @@ export default function SetDetailPage() {
 
         {hasWords && (
           <Card className={styles.gamesCard}>
-            <h2 className={styles.sectionTitle}>Practice with Games</h2>
-            <p className={styles.gamesDescription}>
-              Test your knowledge with interactive learning games
-            </p>
-            <div className={styles.gameButtons}>
-              <Button 
-                variant="primary"
-                onClick={() => navigate(`/sets/${setId}/games/flashcard`)}
-              >
-                Flashcards
-              </Button>
-              <Button 
-                variant="primary"
-                onClick={() => navigate(`/sets/${setId}/games/matching`)}
-              >
-                Matching
-              </Button>
-              <Button 
-                variant="primary"
-                onClick={() => navigate(`/sets/${setId}/games/writing`)}
-              >
-                Writing
-              </Button>
+            <div className={styles.gamesHeader}>
+              <div>
+                <span className={styles.gamesEyebrow}>Ready to practice</span>
+                <h2 className={styles.sectionTitle}>Choose a game for this set</h2>
+                <p className={styles.gamesDescription}>
+                  Games use the {set.setWords.length} words saved in this set.
+                </p>
+              </div>
+              <Link to={`/sets/${setId}/sessions`} className={styles.viewSessions}>
+                View practice history
+              </Link>
             </div>
-            <Link to={`/sets/${setId}/sessions`} className={styles.viewSessions}>
-              View past game sessions
-            </Link>
+            <div className={styles.gameOptions}>
+              {gameOptions.map((game) => (
+                <button
+                  key={game.key}
+                  type="button"
+                  className={styles.gameOption}
+                  onClick={() => navigate(game.to)}
+                >
+                  <span className={styles.gameOptionTitle}>{game.title}</span>
+                  <span className={styles.gameOptionDescription}>{game.description}</span>
+                  <span className={styles.gameOptionAction}>
+                    Play
+                    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L13.586 10H4a1 1 0 110-2h9.586l-3.293-3.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </span>
+                </button>
+              ))}
+            </div>
           </Card>
         )}
 
