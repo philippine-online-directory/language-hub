@@ -1,16 +1,9 @@
-import { useState, useEffect } from 'react';
 import Translator from '../../components/Translator/Translator';
 import styles from './TranslatePage.module.css';
 
 export default function TranslatePage() {
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
     return (
-        <div className={`${styles.translatePage} ${mounted ? styles.mounted : ''}`}>
+        <div className={styles.translatePage}>
             <div className={styles.backgroundPattern}></div>
 
             <div className={styles.container}>

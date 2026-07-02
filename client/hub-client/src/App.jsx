@@ -1,6 +1,7 @@
 import { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { AuthProvider } from './context/AuthContext';
+import { useAuth } from './context/useAuth';
 import Navbar from './components/Navbar/Navbar';
 import LanguagesPage from './pages/LanguagesPage/LanguagesPage';
 import LanguageDetailPage from './pages/LanguageDetailPage/LanguageDetailPage';

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { setService } from '../../api/setService';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 import WordDisplay from '../../components/WordDisplay/WordDisplay';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';

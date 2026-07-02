@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { languageService } from '../../api/languageService';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 import useDebounce from '../../hooks/useDebounce';
 import WordDisplay from '../../components/WordDisplay/WordDisplay';
 import Pagination from '../../components/Pagination/Pagination';

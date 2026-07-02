@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Card from '../Card/Card';
 import Button from '../Button/Button';
 import AddToSetModal from '../AddToSetModal/AddToSetModal';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 import { setService } from '../../api/setService';
 import styles from './WordDisplay.module.css';
 import ContributeMissingModal from '../ContributeMissingModal/ContributeMissingModal';

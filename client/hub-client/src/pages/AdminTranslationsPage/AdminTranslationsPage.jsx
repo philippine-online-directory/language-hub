@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 import { languageService } from '../../api/languageService';
 import { translationUpdateRequestService } from '../../api/translationUpdateRequestService';
 import Button from '../../components/Button/Button';
