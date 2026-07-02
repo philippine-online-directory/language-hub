@@ -78,6 +78,10 @@
   color: var(--text-primary);
 }
 
+.requiredMark {
+  color: #DC2626;
+}
+
 .select,
 .fileInput {
   font-family: 'IBM Plex Sans', system-ui, sans-serif;

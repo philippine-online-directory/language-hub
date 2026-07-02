@@ -69,16 +69,12 @@ const GUIDE_BY_INPUT_MODE = {
         ]
     },
     paste: {
-        title: 'How to Paste Rows',
+        title: 'Paste Rows',
         steps: [
-            'Choose the language these words belong to.',
-            'Open your spreadsheet in Excel, Google Sheets, Airtable, or another table tool.',
-            'Put one word or phrase on each row.',
-            'Make sure each row has a word and an English definition. The other fields can be blank.',
-            'Select the rows you want to upload. Include the header row if you have one.',
-            'Copy the selected cells, then paste them into the text box on this page.',
-            'Click Review Pasted Rows.',
-            'Check that each column goes to the right field, fix any rows that say they need review, then submit.'
+            'Paste copied spreadsheet cells into the text box.',
+            'Headers are optional.',
+            'Each row needs a word and an English definition.',
+            'Review the rows before submitting.'
         ]
     },
     table: {
@@ -862,7 +858,9 @@ export default function BulkUploadPage() {
                                                     <label key={field} className={styles.mappingField}>
                                                         <span>
                                                             {FIELD_LABELS[field]}
-                                                            {(field === 'wordText' || field === 'englishDefinition') ? ' *' : ''}
+                                                            {(field === 'wordText' || field === 'englishDefinition') && (
+                                                                <span className={styles.requiredMark} aria-label="required"> *</span>
+                                                            )}
                                                         </span>
                                                         <select
                                                             value={columnMapping[field] ?? ''}
@@ -886,8 +884,8 @@ export default function BulkUploadPage() {
                                                 <thead>
                                                     <tr>
                                                         <th>Row</th>
-                                                        <th>Word *</th>
-                                                        <th>English definition *</th>
+                                                        <th>Word <span className={styles.requiredMark} aria-label="required">*</span></th>
+                                                        <th>English definition <span className={styles.requiredMark} aria-label="required">*</span></th>
                                                         <th>Part of speech</th>
                                                         <th>Example sentence</th>
                                                         <th>Usage note</th>
