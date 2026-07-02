@@ -96,7 +96,8 @@
 }
 
 .select:focus,
-.fileInput:focus {
+.fileInput:focus,
+.textarea:focus {
   outline: none;
   border-color: #C0763A;
   box-shadow: 0 0 0 4px rgba(192, 118, 58, 0.1);
@@ -128,6 +129,35 @@
 .fileInput::file-selector-button:hover {
   background: linear-gradient(135deg, #A96432 0%, #C0763A 100%);
   transform: translateY(-1px);
+}
+
+.modeSwitch {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.modeOption {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: var(--text-primary);
+  background: var(--input-bg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modeOption input {
+  margin: 0;
+}
+
+.activeMode {
+  border-color: #C0763A;
+  box-shadow: 0 0 0 4px rgba(192, 118, 58, 0.08);
 }
 
 .uploadSection {
@@ -172,6 +202,40 @@
   font-size: 14px;
   color: var(--text-placeholder);
   margin: 4px 0 0;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 180px;
+  resize: vertical;
+  box-sizing: border-box;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 13px 16px;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 22px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pastePreview {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-surface);
+  overflow: hidden;
+}
+
+.previewHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .checkboxRow {
@@ -411,6 +475,14 @@
 @media (max-width: 560px) {
   .bulkUploadPage {
     padding: 28px 16px;
+  }
+
+  .modeSwitch {
+    grid-template-columns: 1fr;
+  }
+
+  .previewHeader {
+    flex-direction: column;
   }
 
   .actions {

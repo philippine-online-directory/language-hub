@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { importBatchService } from '../../api/importBatchService';
 import { languageService } from '../../api/languageService';
@@ -18,6 +18,28 @@ const SAMPLE_ROWS = [
     ['bahay', 'house', 'noun', 'Malaki ang bahay namin.', 'Use for a house or home where someone lives.'],
     ['tubig', 'water', '', '', '']
 ];
+
+const HEADER_ALIASES = {
+    word: 'wordText',
+    words: 'wordText',
+    phrase: 'wordText',
+    wordtext: 'wordText',
+    wordorphrase: 'wordText',
+    nativeword: 'wordText',
+    english: 'englishDefinition',
+    meaning: 'englishDefinition',
+    definition: 'englishDefinition',
+    englishdefinition: 'englishDefinition',
+    partofspeech: 'partOfSpeech',
+    pos: 'partOfSpeech',
+    examplesentence: 'exampleSentence',
+    example: 'exampleSentence',
+    sentence: 'exampleSentence',
+    usagecomment: 'usageComment',
+    usage: 'usageComment',
+    note: 'usageComment',
+    notes: 'usageComment'
+};
 
 const UPLOAD_PROGRESS_LABELS = [
     'Uploading file...',
@@ -223,14 +245,107 @@ function downloadXlsxTemplate() {
     downloadBlob(createXlsxBlob(rows), 'bulk-translation-template.xlsx');
 }
 
+function normalizeHeader(header) {
+    return String(header || '')
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '');
+}
+
+function parseDelimitedLine(line, separator) {
+    const cells = [];
+    let cell = '';
+    let inQuotes = false;
+
+    for (let index = 0; index < line.length; index += 1) {
+        const char = line[index];
+        const nextChar = line[index + 1];
+
+        if (char === '"' && inQuotes && nextChar === '"') {
+            cell += '"';
+            index += 1;
+        } else if (char === '"') {
+            inQuotes = !inQuotes;
+        } else if (char === separator && !inQuotes) {
+            cells.push(cell.trim());
+            cell = '';
+        } else {
+            cell += char;
+        }
+    }
+
+    cells.push(cell.trim());
+    return cells;
+}
+
+function parsePastedRows(value) {
+    const lines = value
+        .split(/\r\n|\n|\r/)
+        .filter(line => line.trim());
+
+    if (lines.length === 0) return [];
+
+    const rawRows = lines.map((line) => {
+        const separator = line.includes('\t') ? '\t' : ',';
+        return parseDelimitedLine(line, separator);
+    });
+
+    const headerFields = rawRows[0].map(header => HEADER_ALIASES[normalizeHeader(header)]);
+    const hasHeader = headerFields.filter(Boolean).length >= 2;
+    const fields = hasHeader ? headerFields : TEMPLATE_HEADERS;
+    const rows = hasHeader ? rawRows.slice(1) : rawRows;
+    const firstRowNumber = hasHeader ? 2 : 1;
+
+    return rows
+        .map((row, index) => {
+            const data = TEMPLATE_HEADERS.reduce((acc, field) => ({ ...acc, [field]: '' }), {});
+
+            row.forEach((cell, columnIndex) => {
+                const field = fields[columnIndex];
+                if (field && TEMPLATE_HEADERS.includes(field)) {
+                    data[field] = cell.trim();
+                }
+            });
+
+            return {
+                rowNumber: firstRowNumber + index,
+                data
+            };
+        })
+        .filter(row => TEMPLATE_HEADERS.some(field => row.data[field]));
+}
+
+function csvEscape(value) {
+    return `"${String(value || '').replace(/"/g, '""')}"`;
+}
+
+function createCsvFileFromRows(rows) {
+    const csv = [
+        TEMPLATE_HEADERS.map(csvEscape).join(','),
+        ...rows.map(row => TEMPLATE_HEADERS.map(field => csvEscape(row.data[field])).join(','))
+    ].join('\n');
+
+    return new File([csv], 'pasted-translations.csv', { type: 'text/csv;charset=utf-8;' });
+}
+
 function formatStatus(status) {
     return status.replace(/_/g, ' ').toLowerCase();
+}
+
+function getPastedRowIssue(row) {
+    const missing = [];
+    if (!row.data.wordText) missing.push('word');
+    if (!row.data.englishDefinition) missing.push('English definition');
+    if (missing.length === 0) return '';
+    return `Missing ${missing.join(' and ')}`;
 }
 
 export default function BulkUploadPage() {
     const [languages, setLanguages] = useState([]);
     const [languageId, setLanguageId] = useState('');
+    const [inputMode, setInputMode] = useState('file');
     const [file, setFile] = useState(null);
+    const [pastedRowsText, setPastedRowsText] = useState('');
     const [rightsConfirmed, setRightsConfirmed] = useState(false);
     const [loading, setLoading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
@@ -239,6 +354,8 @@ export default function BulkUploadPage() {
     const [error, setError] = useState('');
     const [result, setResult] = useState(null);
     const [recentBatches, setRecentBatches] = useState([]);
+
+    const pastedRows = useMemo(() => parsePastedRows(pastedRowsText), [pastedRowsText]);
 
     useEffect(() => {
         const loadInitialData = async () => {
@@ -300,6 +417,12 @@ export default function BulkUploadPage() {
         setFile(selected);
     };
 
+    const handleInputModeChange = (mode) => {
+        setInputMode(mode);
+        setError('');
+        setResult(null);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -310,9 +433,21 @@ export default function BulkUploadPage() {
             return;
         }
 
-        if (!file) {
+        if (inputMode === 'file' && !file) {
             setError('Choose a CSV or XLSX file to upload.');
             return;
+        }
+
+        if (inputMode === 'paste') {
+            if (pastedRows.length === 0) {
+                setError('Paste at least one row to upload.');
+                return;
+            }
+
+            if (!pastedRows.some(row => !getPastedRowIssue(row))) {
+                setError('Paste at least one row with both a word and an English definition.');
+                return;
+            }
         }
 
         if (!rightsConfirmed) {
@@ -324,14 +459,16 @@ export default function BulkUploadPage() {
         setUploadProgress(8);
         setUploadProgressLabelIndex(0);
         try {
+            const uploadFile = inputMode === 'file' ? file : createCsvFileFromRows(pastedRows);
             const batch = await importBatchService.createImportBatch({
                 languageId,
-                file,
+                file: uploadFile,
                 rightsConfirmed
             });
             setResult(batch);
             setRecentBatches(prev => [batch, ...prev].slice(0, 5));
             setFile(null);
+            if (inputMode === 'paste') setPastedRowsText('');
             setRightsConfirmed(false);
             e.target.reset();
         } catch (err) {
@@ -379,38 +516,124 @@ export default function BulkUploadPage() {
                                 </div>
 
                                 <div className={styles.formGroup}>
-                                    <label htmlFor="file" className={styles.label}>CSV or XLSX file</label>
-                                    <div className={styles.uploadSection}>
-                                        <input
-                                            id="file"
-                                            type="file"
-                                            accept=".csv,.xlsx"
-                                            onChange={handleFileChange}
-                                            className={styles.fileInput}
-                                        />
-                                        {file && (
-                                            <div className={styles.fileInfo}>
-                                                <span>{file.name} ({(file.size / 1024).toFixed(1)} KB)</span>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        setFile(null);
-                                                        const fileInput = document.getElementById('file');
-                                                        if (fileInput) fileInput.value = '';
-                                                    }}
-                                                    className={styles.deleteButton}
-                                                    aria-label="Remove file"
-                                                >
-                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
-                                                        <line x1="18" y1="6" x2="6" y2="18" />
-                                                        <line x1="6" y1="6" x2="18" y2="18" />
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        )}
-                                        <p className={styles.hint}>CSV or XLSX only. Legacy XLS files are not supported.</p>
+                                    <span className={styles.label}>Bulk entry method</span>
+                                    <div className={styles.modeSwitch} role="radiogroup" aria-label="Bulk entry method">
+                                        <label className={`${styles.modeOption} ${inputMode === 'file' ? styles.activeMode : ''}`}>
+                                            <input
+                                                type="radio"
+                                                name="inputMode"
+                                                value="file"
+                                                checked={inputMode === 'file'}
+                                                onChange={() => handleInputModeChange('file')}
+                                            />
+                                            <span>Upload CSV/XLSX</span>
+                                        </label>
+                                        <label className={`${styles.modeOption} ${inputMode === 'paste' ? styles.activeMode : ''}`}>
+                                            <input
+                                                type="radio"
+                                                name="inputMode"
+                                                value="paste"
+                                                checked={inputMode === 'paste'}
+                                                onChange={() => handleInputModeChange('paste')}
+                                            />
+                                            <span>Paste spreadsheet rows</span>
+                                        </label>
                                     </div>
                                 </div>
+
+                                {inputMode === 'file' ? (
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="file" className={styles.label}>CSV or XLSX file</label>
+                                        <div className={styles.uploadSection}>
+                                            <input
+                                                id="file"
+                                                type="file"
+                                                accept=".csv,.xlsx"
+                                                onChange={handleFileChange}
+                                                className={styles.fileInput}
+                                            />
+                                            {file && (
+                                                <div className={styles.fileInfo}>
+                                                    <span>{file.name} ({(file.size / 1024).toFixed(1)} KB)</span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setFile(null);
+                                                            const fileInput = document.getElementById('file');
+                                                            if (fileInput) fileInput.value = '';
+                                                        }}
+                                                        className={styles.deleteButton}
+                                                        aria-label="Remove file"
+                                                    >
+                                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+                                                            <line x1="18" y1="6" x2="6" y2="18" />
+                                                            <line x1="6" y1="6" x2="18" y2="18" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            )}
+                                            <p className={styles.hint}>CSV or XLSX only. Legacy XLS files are not supported.</p>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="pastedRows" className={styles.label}>Paste rows from a spreadsheet</label>
+                                        <textarea
+                                            id="pastedRows"
+                                            value={pastedRowsText}
+                                            onChange={(e) => {
+                                                setPastedRowsText(e.target.value);
+                                                setResult(null);
+                                                setError('');
+                                            }}
+                                            className={styles.textarea}
+                                            rows={8}
+                                            placeholder={`wordText\tenglishDefinition\tpartOfSpeech\texampleSentence\tusageComment\nbahay\thouse\tnoun\tMalaki ang bahay namin.\tUse for a house or home where someone lives.`}
+                                        />
+                                        <p className={styles.hint}>
+                                            Copy from Excel, Google Sheets, Airtable, or a CSV. Headers are optional if columns are in template order.
+                                        </p>
+
+                                        {pastedRows.length > 0 && (
+                                            <div className={styles.pastePreview}>
+                                                <div className={styles.previewHeader}>
+                                                    <span>{pastedRows.length} row{pastedRows.length === 1 ? '' : 's'} ready to upload</span>
+                                                    <span>{pastedRows.filter(row => getPastedRowIssue(row)).length} need review</span>
+                                                </div>
+                                                <div className={styles.tableWrap}>
+                                                    <table className={styles.table}>
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Row</th>
+                                                                <th>Word</th>
+                                                                <th>English definition</th>
+                                                                <th>Part of speech</th>
+                                                                <th>Status</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {pastedRows.slice(0, 8).map(row => {
+                                                                const issue = getPastedRowIssue(row);
+                                                                return (
+                                                                    <tr key={row.rowNumber}>
+                                                                        <td>{row.rowNumber}</td>
+                                                                        <td>{row.data.wordText || '-'}</td>
+                                                                        <td>{row.data.englishDefinition || '-'}</td>
+                                                                        <td>{row.data.partOfSpeech || '-'}</td>
+                                                                        <td>{issue || 'Ready'}</td>
+                                                                    </tr>
+                                                                );
+                                                            })}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                {pastedRows.length > 8 && (
+                                                    <p className={styles.hint}>Showing the first 8 rows. The full pasted set will be uploaded.</p>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
 
                                 <label className={styles.checkboxRow}>
                                     <input
@@ -425,7 +648,7 @@ export default function BulkUploadPage() {
 
                                 <div className={styles.actions}>
                                     <Button type="submit" disabled={languagesLoading || loading}>
-                                        Upload Translation File
+                                        {inputMode === 'file' ? 'Upload Translation File' : 'Upload Pasted Rows'}
                                     </Button>
                                     <Button type="button" variant="secondary" onClick={downloadCsvTemplate}>
                                         Download CSV Template
@@ -505,15 +728,15 @@ export default function BulkUploadPage() {
                         <Card className={styles.guideCard}>
                             <h2 className={styles.sectionTitle}>How to Build Your File</h2>
                             <ol className={styles.steps}>
-                                <li>Download one of the templates first.</li>
+                                <li>Download one of the templates, upload your own spreadsheet, or paste rows directly.</li>
                                 <li>
                                     Inside the template, there are 2 valid translation rows/examples: one where both
                                     the required and optional fields are filled out, and one where only the required
                                     fields are filled out. Use it as a guide to add translations and rows to the template.
                                 </li>
                                 <li>Choose one language for the whole upload.</li>
-                                <li>Keep the header names in the first row and fill one translation per row.</li>
-                                <li>Upload CSV or XLSX. Old XLS files are not supported.</li>
+                                <li>Keep one translation per row. Headers can use names like word, meaning, example, or notes.</li>
+                                <li>Upload CSV/XLSX or paste rows from your spreadsheet. Old XLS files are not supported.</li>
                                 <li>Review the result for imported, duplicate, or invalid rows.</li>
                             </ol>
 
