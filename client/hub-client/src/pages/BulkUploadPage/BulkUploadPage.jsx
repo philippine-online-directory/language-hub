@@ -56,6 +56,46 @@ const UPLOAD_PROGRESS_LABELS = [
     'Checking duplicates...'
 ];
 
+const GUIDE_BY_INPUT_MODE = {
+    file: {
+        title: 'How to Build Your File',
+        steps: [
+            'Download one of the templates or upload your own spreadsheet.',
+            'Inside the template, there are 2 valid translation rows/examples: one where both the required and optional fields are filled out, and one where only the required fields are filled out. Use it as a guide to add translations and rows to the template.',
+            'Choose one language for the whole upload.',
+            'Keep one translation per row. Headers can use names like word, meaning, example, or notes.',
+            'Upload CSV/XLSX from your computer. Old XLS files are not supported.',
+            'Review the result for imported, duplicate, or invalid rows.'
+        ]
+    },
+    paste: {
+        title: 'How to Paste Rows',
+        steps: [
+            'Choose the language these words belong to.',
+            'Open your spreadsheet in Excel, Google Sheets, Airtable, or another table tool.',
+            'Put one word or phrase on each row.',
+            'Make sure each row has a word and an English definition. The other fields can be blank.',
+            'Select the rows you want to upload. Include the header row if you have one.',
+            'Copy the selected cells, then paste them into the text box on this page.',
+            'Click Review Pasted Rows.',
+            'Check that each column goes to the right field, fix any rows that say they need review, then submit.'
+        ]
+    },
+    table: {
+        title: 'How to Use the Blank Table',
+        steps: [
+            'Choose the language these words belong to.',
+            'Click Start Blank Table.',
+            'Type one word or phrase on each row.',
+            'Fill in Word and English definition for every row you want to upload.',
+            'Add part of speech, example sentence, or usage note only if you have them.',
+            'Click Add Row if you need more space. Click Remove for any row you do not want.',
+            'Make sure the rows you want to upload say Ready.',
+            'Confirm that you have permission to contribute the data, then submit.'
+        ]
+    }
+};
+
 const XLSX_MIME_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
 const CRC_TABLE = Array.from({ length: 256 }, (_, index) => {
@@ -431,6 +471,7 @@ export default function BulkUploadPage() {
         () => draftRows.filter(row => getDraftRowIssue(row)).length,
         [draftRows]
     );
+    const selectedGuide = GUIDE_BY_INPUT_MODE[inputMode];
 
     useEffect(() => {
         const loadInitialData = async () => {
@@ -990,18 +1031,11 @@ export default function BulkUploadPage() {
 
                     <aside className={styles.guideColumn}>
                         <Card className={styles.guideCard}>
-                            <h2 className={styles.sectionTitle}>How to Build Your File</h2>
+                            <h2 className={styles.sectionTitle}>{selectedGuide.title}</h2>
                             <ol className={styles.steps}>
-                                <li>Download one of the templates, upload your own spreadsheet, or paste rows directly.</li>
-                                <li>
-                                    Inside the template, there are 2 valid translation rows/examples: one where both
-                                    the required and optional fields are filled out, and one where only the required
-                                    fields are filled out. Use it as a guide to add translations and rows to the template.
-                                </li>
-                                <li>Choose one language for the whole upload.</li>
-                                <li>Keep one translation per row. Headers can use names like word, meaning, example, or notes.</li>
-                                <li>Upload CSV/XLSX or paste rows from your spreadsheet. Old XLS files are not supported.</li>
-                                <li>Review the result for imported, duplicate, or invalid rows.</li>
+                                {selectedGuide.steps.map(step => (
+                                    <li key={step}>{step}</li>
+                                ))}
                             </ol>
 
                             <div className={styles.fields}>
