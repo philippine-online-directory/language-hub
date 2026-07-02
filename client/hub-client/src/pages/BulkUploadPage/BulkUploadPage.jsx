@@ -19,6 +19,13 @@ const SAMPLE_ROWS = [
     ['tubig', 'water', '', '', '']
 ];
 
+const UPLOAD_PROGRESS_LABELS = [
+    'Uploading file...',
+    'Sending to server...',
+    'Processing rows...',
+    'Checking duplicates...'
+];
+
 const XLSX_MIME_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
 const CRC_TABLE = Array.from({ length: 256 }, (_, index) => {
@@ -226,6 +233,8 @@ export default function BulkUploadPage() {
     const [file, setFile] = useState(null);
     const [rightsConfirmed, setRightsConfirmed] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [uploadProgressLabelIndex, setUploadProgressLabelIndex] = useState(0);
     const [languagesLoading, setLanguagesLoading] = useState(true);
     const [error, setError] = useState('');
     const [result, setResult] = useState(null);
@@ -253,6 +262,22 @@ export default function BulkUploadPage() {
 
         loadInitialData();
     }, []);
+
+    useEffect(() => {
+        if (!loading) return undefined;
+
+        const intervalId = setInterval(() => {
+            setUploadProgress(prev => {
+                if (prev < 35) return prev + 7;
+                if (prev < 70) return prev + 4;
+                if (prev < 90) return prev + 2;
+                return Math.min(prev + 1, 92);
+            });
+            setUploadProgressLabelIndex(prev => (prev + 1) % UPLOAD_PROGRESS_LABELS.length);
+        }, 900);
+
+        return () => clearInterval(intervalId);
+    }, [loading]);
 
     const handleFileChange = (e) => {
         const selected = e.target.files[0];
@@ -296,6 +321,8 @@ export default function BulkUploadPage() {
         }
 
         setLoading(true);
+        setUploadProgress(8);
+        setUploadProgressLabelIndex(0);
         try {
             const batch = await importBatchService.createImportBatch({
                 languageId,
@@ -397,7 +424,7 @@ export default function BulkUploadPage() {
                                 {error && <div className={styles.error}>{error}</div>}
 
                                 <div className={styles.actions}>
-                                    <Button type="submit" loading={loading} disabled={languagesLoading}>
+                                    <Button type="submit" disabled={languagesLoading || loading}>
                                         Upload Translation File
                                     </Button>
                                     <Button type="button" variant="secondary" onClick={downloadCsvTemplate}>
@@ -407,6 +434,27 @@ export default function BulkUploadPage() {
                                         Download XLSX Template
                                     </Button>
                                 </div>
+
+                                {loading && (
+                                    <div className={styles.progressStatus} role="status" aria-live="polite">
+                                        <div className={styles.progressHeader}>
+                                            <span>{UPLOAD_PROGRESS_LABELS[uploadProgressLabelIndex]}</span>
+                                            <span>{uploadProgress}%</span>
+                                        </div>
+                                        <div
+                                            className={styles.progressTrack}
+                                            role="progressbar"
+                                            aria-valuemin="0"
+                                            aria-valuemax="100"
+                                            aria-valuenow={uploadProgress}
+                                        >
+                                            <div
+                                                className={styles.progressFill}
+                                                style={{ width: `${uploadProgress}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
                             </form>
                         </Card>
 
@@ -457,9 +505,14 @@ export default function BulkUploadPage() {
                         <Card className={styles.guideCard}>
                             <h2 className={styles.sectionTitle}>How to Build Your File</h2>
                             <ol className={styles.steps}>
+                                <li>Download one of the templates first.</li>
+                                <li>
+                                    Inside the template, there are 2 valid translation rows/examples: one where both
+                                    the required and optional fields are filled out, and one where only the required
+                                    fields are filled out. Use it as a guide to add translations and rows to the template.
+                                </li>
                                 <li>Choose one language for the whole upload.</li>
-                                <li>Use the header names below in the first row.</li>
-                                <li>Fill one translation per row.</li>
+                                <li>Keep the header names in the first row and fill one translation per row.</li>
                                 <li>Upload CSV or XLSX. Old XLS files are not supported.</li>
                                 <li>Review the result for imported, duplicate, or invalid rows.</li>
                             </ol>
