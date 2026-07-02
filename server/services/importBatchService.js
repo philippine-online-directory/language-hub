@@ -76,6 +76,55 @@ function mapRecord(record) {
     return mapped;
 }
 
+function inferColumnMapping(headers) {
+    const mapping = {};
+    IMPORT_FIELDS.forEach((field) => {
+        mapping[field] = '';
+    });
+
+    headers.forEach((header, index) => {
+        const field = HEADER_ALIASES[normalizeHeader(header)];
+        if (field && !mapping[field]) {
+            mapping[field] = String(index);
+        }
+    });
+
+    return mapping;
+}
+
+function rowsToPreview(rows) {
+    const headerRow = rows.find(row => row.some(cell => normalizeValue(cell)));
+    if (!headerRow) {
+        return {
+            headers: [],
+            rows: [],
+            suggestedMapping: inferColumnMapping([])
+        };
+    }
+
+    const headerIndex = rows.indexOf(headerRow);
+    const dataRows = rows
+        .slice(headerIndex + 1)
+        .filter(row => row.some(cell => normalizeValue(cell)));
+    const columnCount = Math.max(
+        headerRow.length,
+        ...dataRows.map(row => row.length)
+    );
+    const headers = Array.from({ length: columnCount }, (_, index) => {
+        const header = normalizeValue(headerRow[index]);
+        return header || `Column ${index + 1}`;
+    });
+
+    return {
+        headers,
+        rows: dataRows.map((row, index) => ({
+            rowNumber: headerIndex + index + 2,
+            values: headers.map((_, columnIndex) => normalizeValue(row[columnIndex]))
+        })),
+        suggestedMapping: inferColumnMapping(headers)
+    };
+}
+
 function rowsToRecords(rows) {
     const headerRow = rows.find(row => row.some(cell => normalizeValue(cell)));
     if (!headerRow) return [];
@@ -117,10 +166,38 @@ function parseCsv(buffer) {
     }
 }
 
+function parseCsvPreview(buffer) {
+    try {
+        const rows = parse(buffer.toString('utf8'), {
+            skip_empty_lines: true,
+            trim: true,
+            bom: true,
+            relax_column_count: true
+        });
+
+        return rowsToPreview(rows);
+    } catch {
+        const err = new Error('Could not parse CSV file. Check the header row and file formatting.');
+        err.statusCode = 400;
+        throw err;
+    }
+}
+
 async function parseXlsx(buffer) {
     try {
         const rows = await readSheet(buffer);
         return rowsToRecords(rows);
+    } catch {
+        const err = new Error('Could not parse XLSX file. Check that it is a valid spreadsheet.');
+        err.statusCode = 400;
+        throw err;
+    }
+}
+
+async function parseXlsxPreview(buffer) {
+    try {
+        const rows = await readSheet(buffer);
+        return rowsToPreview(rows);
     } catch {
         const err = new Error('Could not parse XLSX file. Check that it is a valid spreadsheet.');
         err.statusCode = 400;
@@ -143,6 +220,32 @@ async function parseImportFile(file) {
     const err = new Error('Only CSV and XLSX files are supported');
     err.statusCode = 400;
     throw err;
+}
+
+async function parseImportPreview(file) {
+    if (!file) {
+        const err = new Error('Import file is required');
+        err.statusCode = 400;
+        throw err;
+    }
+
+    const ext = path.extname(file.originalname).toLowerCase();
+    let preview;
+
+    if (ext === '.csv') {
+        preview = parseCsvPreview(file.buffer);
+    } else if (ext === '.xlsx') {
+        preview = await parseXlsxPreview(file.buffer);
+    } else {
+        const err = new Error('Only CSV and XLSX files are supported');
+        err.statusCode = 400;
+        throw err;
+    }
+
+    return {
+        fileName: file.originalname,
+        ...preview
+    };
 }
 
 async function getExistingDuplicateKeys(languageId) {
@@ -535,6 +638,7 @@ async function rollbackImportBatch(batchId, adminId) {
 }
 
 const importBatchService = {
+    parseImportPreview,
     createImportBatch,
     getUserImportBatches,
     getAdminImportBatches,

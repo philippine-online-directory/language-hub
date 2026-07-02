@@ -14,6 +14,14 @@ const TEMPLATE_HEADERS = [
     'usageComment'
 ];
 
+const FIELD_LABELS = {
+    wordText: 'Word',
+    englishDefinition: 'English definition',
+    partOfSpeech: 'Part of speech',
+    exampleSentence: 'Example sentence',
+    usageComment: 'Usage note'
+};
+
 const SAMPLE_ROWS = [
     ['bahay', 'house', 'noun', 'Malaki ang bahay namin.', 'Use for a house or home where someone lives.'],
     ['tubig', 'water', '', '', '']
@@ -278,12 +286,60 @@ function parseDelimitedLine(line, separator) {
     return cells;
 }
 
-function parsePastedRows(value) {
+function emptyRowData() {
+    return TEMPLATE_HEADERS.reduce((acc, field) => {
+        acc[field] = '';
+        return acc;
+    }, {});
+}
+
+function inferColumnMapping(headers) {
+    const mapping = emptyRowData();
+
+    TEMPLATE_HEADERS.forEach((field) => {
+        mapping[field] = '';
+    });
+
+    headers.forEach((header, index) => {
+        const field = HEADER_ALIASES[normalizeHeader(header)];
+        if (field && !mapping[field]) {
+            mapping[field] = String(index);
+        }
+    });
+
+    return mapping;
+}
+
+function sourceRowsToDraftRows(sourceRows, mapping) {
+    return sourceRows.map((sourceRow, index) => {
+        const data = emptyRowData();
+
+        TEMPLATE_HEADERS.forEach((field) => {
+            const sourceIndex = mapping[field];
+            data[field] = sourceIndex === '' ? '' : String(sourceRow.values[Number(sourceIndex)] || '').trim();
+        });
+
+        return {
+            id: `${sourceRow.rowNumber}-${index}`,
+            rowNumber: sourceRow.rowNumber,
+            data
+        };
+    });
+}
+
+function parsePastedPreview(value) {
     const lines = value
         .split(/\r\n|\n|\r/)
         .filter(line => line.trim());
 
-    if (lines.length === 0) return [];
+    if (lines.length === 0) {
+        return {
+            fileName: 'Pasted rows',
+            headers: [],
+            rows: [],
+            suggestedMapping: inferColumnMapping([])
+        };
+    }
 
     const rawRows = lines.map((line) => {
         const separator = line.includes('\t') ? '\t' : ',';
@@ -292,27 +348,35 @@ function parsePastedRows(value) {
 
     const headerFields = rawRows[0].map(header => HEADER_ALIASES[normalizeHeader(header)]);
     const hasHeader = headerFields.filter(Boolean).length >= 2;
-    const fields = hasHeader ? headerFields : TEMPLATE_HEADERS;
+    const dataRows = hasHeader ? rawRows.slice(1) : rawRows;
+    const columnCount = Math.max(
+        hasHeader ? rawRows[0].length : TEMPLATE_HEADERS.length,
+        ...dataRows.map(row => row.length)
+    );
+    const headers = Array.from({ length: columnCount }, (_, index) => {
+        if (hasHeader) return rawRows[0][index]?.trim() || `Column ${index + 1}`;
+        return TEMPLATE_HEADERS[index] || `Column ${index + 1}`;
+    });
     const rows = hasHeader ? rawRows.slice(1) : rawRows;
     const firstRowNumber = hasHeader ? 2 : 1;
 
-    return rows
-        .map((row, index) => {
-            const data = TEMPLATE_HEADERS.reduce((acc, field) => ({ ...acc, [field]: '' }), {});
-
-            row.forEach((cell, columnIndex) => {
-                const field = fields[columnIndex];
-                if (field && TEMPLATE_HEADERS.includes(field)) {
-                    data[field] = cell.trim();
-                }
-            });
-
-            return {
+    return {
+        fileName: 'Pasted rows',
+        headers,
+        rows: rows
+            .map((row, index) => ({
                 rowNumber: firstRowNumber + index,
-                data
-            };
-        })
-        .filter(row => TEMPLATE_HEADERS.some(field => row.data[field]));
+                values: headers.map((_, columnIndex) => String(row[columnIndex] || '').trim())
+            }))
+            .filter(row => row.values.some(Boolean)),
+        suggestedMapping: hasHeader ? inferColumnMapping(headers) : {
+            wordText: '0',
+            englishDefinition: '1',
+            partOfSpeech: '2',
+            exampleSentence: '3',
+            usageComment: '4'
+        }
+    };
 }
 
 function csvEscape(value) {
@@ -332,7 +396,7 @@ function formatStatus(status) {
     return status.replace(/_/g, ' ').toLowerCase();
 }
 
-function getPastedRowIssue(row) {
+function getDraftRowIssue(row) {
     const missing = [];
     if (!row.data.wordText) missing.push('word');
     if (!row.data.englishDefinition) missing.push('English definition');
@@ -346,8 +410,12 @@ export default function BulkUploadPage() {
     const [inputMode, setInputMode] = useState('file');
     const [file, setFile] = useState(null);
     const [pastedRowsText, setPastedRowsText] = useState('');
+    const [sourcePreview, setSourcePreview] = useState(null);
+    const [columnMapping, setColumnMapping] = useState(inferColumnMapping([]));
+    const [draftRows, setDraftRows] = useState([]);
     const [rightsConfirmed, setRightsConfirmed] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [previewLoading, setPreviewLoading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [uploadProgressLabelIndex, setUploadProgressLabelIndex] = useState(0);
     const [languagesLoading, setLanguagesLoading] = useState(true);
@@ -355,7 +423,14 @@ export default function BulkUploadPage() {
     const [result, setResult] = useState(null);
     const [recentBatches, setRecentBatches] = useState([]);
 
-    const pastedRows = useMemo(() => parsePastedRows(pastedRowsText), [pastedRowsText]);
+    const nonEmptyDraftRows = useMemo(
+        () => draftRows.filter(row => TEMPLATE_HEADERS.some(field => row.data[field])),
+        [draftRows]
+    );
+    const rowsNeedingReview = useMemo(
+        () => draftRows.filter(row => getDraftRowIssue(row)).length,
+        [draftRows]
+    );
 
     useEffect(() => {
         const loadInitialData = async () => {
@@ -396,10 +471,31 @@ export default function BulkUploadPage() {
         return () => clearInterval(intervalId);
     }, [loading]);
 
+    const resetReview = () => {
+        setSourcePreview(null);
+        setColumnMapping(inferColumnMapping([]));
+        setDraftRows([]);
+    };
+
+    const startReview = (preview) => {
+        if (preview.rows.length === 0) {
+            setError('No data rows were found to review.');
+            return;
+        }
+
+        const mapping = preview.suggestedMapping || inferColumnMapping(preview.headers);
+        setSourcePreview(preview);
+        setColumnMapping(mapping);
+        setDraftRows(sourceRowsToDraftRows(preview.rows, mapping));
+        setError('');
+        setResult(null);
+    };
+
     const handleFileChange = (e) => {
         const selected = e.target.files[0];
         setResult(null);
         setError('');
+        resetReview();
 
         if (!selected) {
             setFile(null);
@@ -421,6 +517,86 @@ export default function BulkUploadPage() {
         setInputMode(mode);
         setError('');
         setResult(null);
+        resetReview();
+    };
+
+    const handlePreviewFile = async () => {
+        setError('');
+        setResult(null);
+
+        if (!file) {
+            setError('Choose a CSV or XLSX file to review.');
+            return;
+        }
+
+        setPreviewLoading(true);
+        try {
+            const preview = await importBatchService.previewImportFile({ file });
+            startReview(preview);
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to preview import file.');
+        } finally {
+            setPreviewLoading(false);
+        }
+    };
+
+    const handlePreviewPastedRows = () => {
+        setError('');
+        setResult(null);
+
+        const preview = parsePastedPreview(pastedRowsText);
+        if (preview.rows.length === 0) {
+            setError('Paste at least one row to review.');
+            return;
+        }
+
+        startReview(preview);
+    };
+
+    const handleStartBlankTable = () => {
+        setError('');
+        setResult(null);
+        setSourcePreview(null);
+        setColumnMapping(inferColumnMapping([]));
+        setDraftRows(Array.from({ length: 10 }, (_, index) => ({
+            id: `blank-${index + 1}`,
+            rowNumber: index + 1,
+            data: emptyRowData()
+        })));
+    };
+
+    const handleColumnMappingChange = (field, sourceIndex) => {
+        const nextMapping = {
+            ...columnMapping,
+            [field]: sourceIndex
+        };
+        setColumnMapping(nextMapping);
+        if (sourcePreview) {
+            setDraftRows(sourceRowsToDraftRows(sourcePreview.rows, nextMapping));
+        }
+    };
+
+    const handleDraftCellChange = (rowId, field, value) => {
+        setDraftRows(prev => prev.map(row => (
+            row.id === rowId
+                ? { ...row, data: { ...row.data, [field]: value } }
+                : row
+        )));
+    };
+
+    const handleAddDraftRow = () => {
+        setDraftRows(prev => [
+            ...prev,
+            {
+                id: `manual-${Date.now()}`,
+                rowNumber: prev.length + 1,
+                data: emptyRowData()
+            }
+        ]);
+    };
+
+    const handleDeleteDraftRow = (rowId) => {
+        setDraftRows(prev => prev.filter(row => row.id !== rowId));
     };
 
     const handleSubmit = async (e) => {
@@ -433,21 +609,14 @@ export default function BulkUploadPage() {
             return;
         }
 
-        if (inputMode === 'file' && !file) {
-            setError('Choose a CSV or XLSX file to upload.');
+        if (nonEmptyDraftRows.length === 0) {
+            setError('Review at least one row before uploading.');
             return;
         }
 
-        if (inputMode === 'paste') {
-            if (pastedRows.length === 0) {
-                setError('Paste at least one row to upload.');
-                return;
-            }
-
-            if (!pastedRows.some(row => !getPastedRowIssue(row))) {
-                setError('Paste at least one row with both a word and an English definition.');
-                return;
-            }
+        if (!nonEmptyDraftRows.some(row => !getDraftRowIssue(row))) {
+            setError('At least one reviewed row needs both a word and an English definition.');
+            return;
         }
 
         if (!rightsConfirmed) {
@@ -459,7 +628,7 @@ export default function BulkUploadPage() {
         setUploadProgress(8);
         setUploadProgressLabelIndex(0);
         try {
-            const uploadFile = inputMode === 'file' ? file : createCsvFileFromRows(pastedRows);
+            const uploadFile = createCsvFileFromRows(nonEmptyDraftRows);
             const batch = await importBatchService.createImportBatch({
                 languageId,
                 file: uploadFile,
@@ -468,7 +637,8 @@ export default function BulkUploadPage() {
             setResult(batch);
             setRecentBatches(prev => [batch, ...prev].slice(0, 5));
             setFile(null);
-            if (inputMode === 'paste') setPastedRowsText('');
+            setPastedRowsText('');
+            resetReview();
             setRightsConfirmed(false);
             e.target.reset();
         } catch (err) {
@@ -538,6 +708,16 @@ export default function BulkUploadPage() {
                                             />
                                             <span>Paste spreadsheet rows</span>
                                         </label>
+                                        <label className={`${styles.modeOption} ${inputMode === 'table' ? styles.activeMode : ''}`}>
+                                            <input
+                                                type="radio"
+                                                name="inputMode"
+                                                value="table"
+                                                checked={inputMode === 'table'}
+                                                onChange={() => handleInputModeChange('table')}
+                                            />
+                                            <span>Start blank table</span>
+                                        </label>
                                     </div>
                                 </div>
 
@@ -559,6 +739,7 @@ export default function BulkUploadPage() {
                                                         type="button"
                                                         onClick={() => {
                                                             setFile(null);
+                                                            resetReview();
                                                             const fileInput = document.getElementById('file');
                                                             if (fileInput) fileInput.value = '';
                                                         }}
@@ -573,9 +754,18 @@ export default function BulkUploadPage() {
                                                 </div>
                                             )}
                                             <p className={styles.hint}>CSV or XLSX only. Legacy XLS files are not supported.</p>
+                                            <Button
+                                                type="button"
+                                                variant="secondary"
+                                                onClick={handlePreviewFile}
+                                                disabled={!file || previewLoading}
+                                                loading={previewLoading}
+                                            >
+                                                Review File
+                                            </Button>
                                         </div>
                                     </div>
-                                ) : (
+                                ) : inputMode === 'paste' ? (
                                     <div className={styles.formGroup}>
                                         <label htmlFor="pastedRows" className={styles.label}>Paste rows from a spreadsheet</label>
                                         <textarea
@@ -585,6 +775,7 @@ export default function BulkUploadPage() {
                                                 setPastedRowsText(e.target.value);
                                                 setResult(null);
                                                 setError('');
+                                                resetReview();
                                             }}
                                             className={styles.textarea}
                                             rows={8}
@@ -593,45 +784,118 @@ export default function BulkUploadPage() {
                                         <p className={styles.hint}>
                                             Copy from Excel, Google Sheets, Airtable, or a CSV. Headers are optional if columns are in template order.
                                         </p>
+                                        <Button
+                                            type="button"
+                                            variant="secondary"
+                                            onClick={handlePreviewPastedRows}
+                                            disabled={!pastedRowsText.trim()}
+                                        >
+                                            Review Pasted Rows
+                                        </Button>
+                                    </div>
+                                ) : (
+                                    <div className={styles.formGroup}>
+                                        <span className={styles.label}>Blank table editor</span>
+                                        <p className={styles.hint}>
+                                            Start with empty rows, then fill only the fields you have. Word and English definition are required.
+                                        </p>
+                                        <Button type="button" variant="secondary" onClick={handleStartBlankTable}>
+                                            Start Blank Table
+                                        </Button>
+                                    </div>
+                                )}
 
-                                        {pastedRows.length > 0 && (
-                                            <div className={styles.pastePreview}>
-                                                <div className={styles.previewHeader}>
-                                                    <span>{pastedRows.length} row{pastedRows.length === 1 ? '' : 's'} ready to upload</span>
-                                                    <span>{pastedRows.filter(row => getPastedRowIssue(row)).length} need review</span>
-                                                </div>
-                                                <div className={styles.tableWrap}>
-                                                    <table className={styles.table}>
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Row</th>
-                                                                <th>Word</th>
-                                                                <th>English definition</th>
-                                                                <th>Part of speech</th>
-                                                                <th>Status</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {pastedRows.slice(0, 8).map(row => {
-                                                                const issue = getPastedRowIssue(row);
-                                                                return (
-                                                                    <tr key={row.rowNumber}>
-                                                                        <td>{row.rowNumber}</td>
-                                                                        <td>{row.data.wordText || '-'}</td>
-                                                                        <td>{row.data.englishDefinition || '-'}</td>
-                                                                        <td>{row.data.partOfSpeech || '-'}</td>
-                                                                        <td>{issue || 'Ready'}</td>
-                                                                    </tr>
-                                                                );
-                                                            })}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                                {pastedRows.length > 8 && (
-                                                    <p className={styles.hint}>Showing the first 8 rows. The full pasted set will be uploaded.</p>
-                                                )}
+                                {draftRows.length > 0 && (
+                                    <div className={styles.reviewPanel}>
+                                        <div className={styles.previewHeader}>
+                                            <span>{sourcePreview?.fileName || 'Reviewed rows'}</span>
+                                            <span>
+                                                {nonEmptyDraftRows.length} row{nonEmptyDraftRows.length === 1 ? '' : 's'} ready,
+                                                {' '}{rowsNeedingReview} need review
+                                            </span>
+                                        </div>
+
+                                        {sourcePreview?.headers?.length > 0 && (
+                                            <div className={styles.mappingGrid}>
+                                                {TEMPLATE_HEADERS.map(field => (
+                                                    <label key={field} className={styles.mappingField}>
+                                                        <span>
+                                                            {FIELD_LABELS[field]}
+                                                            {(field === 'wordText' || field === 'englishDefinition') ? ' *' : ''}
+                                                        </span>
+                                                        <select
+                                                            value={columnMapping[field] ?? ''}
+                                                            onChange={(e) => handleColumnMappingChange(field, e.target.value)}
+                                                            className={styles.mappingSelect}
+                                                        >
+                                                            <option value="">Do not import</option>
+                                                            {sourcePreview.headers.map((header, index) => (
+                                                                <option key={`${header}-${index}`} value={String(index)}>
+                                                                    {header}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </label>
+                                                ))}
                                             </div>
                                         )}
+
+                                        <div className={styles.tableWrap}>
+                                            <table className={`${styles.table} ${styles.editorTable}`}>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Row</th>
+                                                        <th>Word *</th>
+                                                        <th>English definition *</th>
+                                                        <th>Part of speech</th>
+                                                        <th>Example sentence</th>
+                                                        <th>Usage note</th>
+                                                        <th>Status</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {draftRows.map(row => {
+                                                        const issue = getDraftRowIssue(row);
+                                                        return (
+                                                            <tr key={row.id}>
+                                                                <td>{row.rowNumber}</td>
+                                                                {TEMPLATE_HEADERS.map(field => (
+                                                                    <td key={field}>
+                                                                        <input
+                                                                            type="text"
+                                                                            value={row.data[field]}
+                                                                            onChange={(e) => handleDraftCellChange(row.id, field, e.target.value)}
+                                                                            className={styles.cellInput}
+                                                                            aria-label={`${FIELD_LABELS[field]} for row ${row.rowNumber}`}
+                                                                        />
+                                                                    </td>
+                                                                ))}
+                                                                <td>{issue || 'Ready'}</td>
+                                                                <td>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => handleDeleteDraftRow(row.id)}
+                                                                        className={styles.rowAction}
+                                                                    >
+                                                                        Remove
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                        );
+                                                    })}
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div className={styles.reviewActions}>
+                                            <Button type="button" variant="secondary" onClick={handleAddDraftRow}>
+                                                Add Row
+                                            </Button>
+                                            <Button type="button" variant="secondary" onClick={resetReview}>
+                                                Clear Review
+                                            </Button>
+                                        </div>
                                     </div>
                                 )}
 
@@ -648,7 +912,7 @@ export default function BulkUploadPage() {
 
                                 <div className={styles.actions}>
                                     <Button type="submit" disabled={languagesLoading || loading}>
-                                        {inputMode === 'file' ? 'Upload Translation File' : 'Upload Pasted Rows'}
+                                        Submit Reviewed Rows
                                     </Button>
                                     <Button type="button" variant="secondary" onClick={downloadCsvTemplate}>
                                         Download CSV Template

@@ -97,7 +97,9 @@
 
 .select:focus,
 .fileInput:focus,
-.textarea:focus {
+.textarea:focus,
+.mappingSelect:focus,
+.cellInput:focus {
   outline: none;
   border-color: #C0763A;
   box-shadow: 0 0 0 4px rgba(192, 118, 58, 0.1);
@@ -133,7 +135,7 @@
 
 .modeSwitch {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -220,7 +222,7 @@
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.pastePreview {
+.reviewPanel {
   border: 1px solid var(--border-color);
   border-radius: 8px;
   background: var(--bg-surface);
@@ -236,6 +238,75 @@
   font-size: 14px;
   font-weight: 500;
   border-bottom: 1px solid var(--border-color);
+}
+
+.mappingGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 14px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.mappingField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.mappingSelect {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 10px;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 14px;
+}
+
+.editorTable {
+  min-width: 980px;
+}
+
+.cellInput {
+  width: 100%;
+  min-width: 132px;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 8px 9px;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 14px;
+}
+
+.rowAction {
+  border: 1px solid #DC2626;
+  border-radius: 6px;
+  background: transparent;
+  color: #DC2626;
+  cursor: pointer;
+  padding: 7px 9px;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 13px;
+}
+
+.rowAction:hover {
+  background: #DC2626;
+  color: white;
+}
+
+.reviewActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 14px;
+  border-top: 1px solid var(--border-color);
 }
 
 .checkboxRow {
@@ -478,6 +549,10 @@
   }
 
   .modeSwitch {
+    grid-template-columns: 1fr;
+  }
+
+  .mappingGrid {
     grid-template-columns: 1fr;
   }
 

@@ -1,6 +1,16 @@
 import api from './axiosConfig';
 
 export const importBatchService = {
+    previewImportFile: async ({ file }) => {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await api.post('/import-batches/preview', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        return response.data;
+    },
+
     createImportBatch: async ({ languageId, file, rightsConfirmed }) => {
         const formData = new FormData();
         formData.append('languageId', languageId);

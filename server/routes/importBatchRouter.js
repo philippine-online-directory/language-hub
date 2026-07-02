@@ -4,6 +4,7 @@ import importBatchController from '../controllers/importBatchController.js'
 const importBatchRouter = Router();
 
 importBatchRouter.post('/', importBatchController.createImportBatch);
+importBatchRouter.post('/preview', importBatchController.previewImportFile);
 importBatchRouter.get('/', importBatchController.getUserImportBatches);
 
 importBatchRouter.get('/admin', importBatchController.getAdminImportBatches);

@@ -70,6 +70,24 @@ const createImportBatch = [
     }
 ];
 
+const previewImportFile = [
+    auth,
+    (req, res, next) => {
+        upload.single('file')(req, res, (err) => {
+            if (err) return handleImportError(err, res, next);
+            next();
+        });
+    },
+    async (req, res, next) => {
+        try {
+            const preview = await importBatchService.parseImportPreview(req.file);
+            res.status(200).json(preview);
+        } catch (err) {
+            handleImportError(err, res, next);
+        }
+    }
+];
+
 const getUserImportBatches = [
     auth,
     async (req, res, next) => {
@@ -162,6 +180,7 @@ const rollbackImportBatch = [
 ];
 
 const importBatchController = {
+    previewImportFile,
     createImportBatch,
     getUserImportBatches,
     getAdminImportBatches,
