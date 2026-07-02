@@ -13,6 +13,11 @@ async function login(credentials){
     return response.data;
 }
 
+async function getSession(){
+    const response = await api.get('/session');
+    return response.data;
+}
+
 async function forgotPassword(email){
     const response = await api.post('/forgot-password', { email });
     return response.data;
@@ -37,6 +42,7 @@ async function isAuthenticated(){
 export const authService = {
     register,
     login,
+    getSession,
     forgotPassword,
     resetPassword,
     logout,

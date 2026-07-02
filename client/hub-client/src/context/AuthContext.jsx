@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { authService } from '../api/authService';
-import { profileService } from '../api/profileService';
 
 const AuthContext = createContext(null);
 
@@ -14,7 +13,7 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(() => !!authService.getToken());
 
     useEffect(() => {
         const bootstrapAuth = async () => {
@@ -26,7 +25,7 @@ export function AuthProvider({ children }) {
             }
 
             try {
-                const userData = await profileService.getMyProfile();
+                const userData = await authService.getSession();
                 setUser(userData);
             } catch (err) {
                 console.error('Auth bootstrap failed:', err);
@@ -42,8 +41,7 @@ export function AuthProvider({ children }) {
 
     const login = async (credentials) => {
         const response = await authService.login(credentials);
-        const userData = await profileService.getMyProfile();
-        setUser(userData);
+        setUser(response.user);
         return response;
     };
 

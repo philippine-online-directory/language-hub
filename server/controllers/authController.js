@@ -2,6 +2,7 @@ import prisma from '../prisma.js'
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken'
+import auth from '../middleware/auth.js'
 import validationErrorCheck from '../middleware/expressValidate.js';
 import emailService from '../services/emailService.js';
 import "dotenv/config";
@@ -17,6 +18,11 @@ function signAuthToken(user) {
         process.env.JWT_SECRET,
         { expiresIn: '7d' }
     );
+}
+
+function toAuthUser(user) {
+    const { password, tokenVersion, ...authUser } = user
+    return authUser
 }
 
 function hashResetToken(token) {
@@ -89,7 +95,7 @@ const registerUser = [
 
             const token = signAuthToken(user)
 
-            res.status(201).json({ user, token })
+            res.status(201).json({ user: toAuthUser(user), token })
         }
         catch (err) {
             next(err)
@@ -117,7 +123,7 @@ const loginUser = [
 
             const token = signAuthToken(user)
 
-            res.status(200).json({ user, token })
+            res.status(200).json({ user: toAuthUser(user), token })
         }
         catch (err) {
             next(err)
@@ -226,12 +232,24 @@ const resetPassword = [
     }
 ]
 
+const getSession = [
+    auth,
+    async (req, res, next) => {
+        try {
+            res.status(200).json(toAuthUser(req.user))
+        }
+        catch (err) {
+            next(err)
+        }
+    }
+]
 
 const authController = {
     registerUser,
     loginUser,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    getSession
 }
 
 export default authController

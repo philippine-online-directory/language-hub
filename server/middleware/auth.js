@@ -18,6 +18,7 @@ async function auth(req, res, next){
                 username: true,
                 role: true,
                 createdAt: true,
+                reminderType: true,
                 tokenVersion: true,
             }
         });

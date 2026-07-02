@@ -100,141 +100,147 @@ function AdminRoute({ children }){
 }
 
 function AppContent(){
+    const { loading: authLoading } = useAuth();
+
     return (
         <>
             <SeoUpdater />
             <Navbar />
-            <Suspense fallback={<RouteLoading />}>
-                <Routes>
-                    {/* Public Routes */}
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/about" element={<AboutPage />} />
-                    <Route path="/site-guide" element={<SiteGuidePage />} />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
-                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                    <Route path="/reset-password" element={<ResetPasswordPage />} />
-                    <Route path="/translate" element={<TranslatePage />} />
-                    
-                    {/* Language Routes */}
-                    <Route path="/common-words" element={<CommonWordsPage />} />
-                    <Route path="/languages" element={<LanguagesPage />} />
-                    <Route path="/languages/:slug/missing-words" element={<MissingCommonWordsPage />} />
-                    <Route path="/languages/:slug" element={<LanguageDetailPage />} />
-                    
-                    {/* Set Routes */}
-                    <Route path="/sets" element={<SetsPage />} />
-                    <Route path="/sets/:setId" element={<SetDetailPage />} />
-                    
-                    {/* Set Routes - Protected */}
-                    <Route
-                        path="/sets/create"
-                        element={
-                            <ProtectedRoute>
-                                <CreateEditSetPage />
-                            </ProtectedRoute>
-                        }
-                    />
-                    
-                    <Route
-                        path="/sets/:setId/edit"
-                        element={
-                            <ProtectedRoute>
-                                <CreateEditSetPage />
-                            </ProtectedRoute>
-                        }
-                    />
-                    
-                    {/* Game Routes */}
-                    <Route path="/sets/:setId/games/flashcard" element={<FlashcardGame />} />
-                    <Route path="/sets/:setId/games/matching" element={<MatchingGame />} />
-                    <Route path="/sets/:setId/games/writing" element={<WritingGame />} />
-                    <Route
-                        path="/sets/:setId/sessions"
-                        element={
-                            <ProtectedRoute>
-                                <GameSessionsPage />
-                            </ProtectedRoute>
-                        }
-                    />
-                    
-                    {/* User Routes */}
-                    <Route path="/users" element={<UsersPage />} />
-                    <Route path="/profile/:userId" element={<PublicProfilePage />} />
-                    
-                    {/* User Routes - Protected */}
-                    <Route
-                        path="/profile/me"
-                        element={<ProfilePage />}
-                    />
-                    
-                    {/* Contribution Routes - Protected */}
-                    <Route
-                        path="/contribute"
-                        element={
-                            <ProtectedRoute>
-                                <ContributePage />
-                            </ProtectedRoute>
-                        }
-                    />
+            {authLoading ? (
+                <RouteLoading />
+            ) : (
+                <Suspense fallback={<RouteLoading />}>
+                    <Routes>
+                        {/* Public Routes */}
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/about" element={<AboutPage />} />
+                        <Route path="/site-guide" element={<SiteGuidePage />} />
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/register" element={<RegisterPage />} />
+                        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                        <Route path="/reset-password" element={<ResetPasswordPage />} />
+                        <Route path="/translate" element={<TranslatePage />} />
 
-                    <Route
-                        path="/contribute/bulk"
-                        element={
-                            <ProtectedRoute>
-                                <BulkUploadPage />
-                            </ProtectedRoute>
-                        }
-                    />
-                    
-                    <Route
-                        path="/contributions"
-                        element={
-                            <ProtectedRoute>
-                                <UserContributionsPage />
-                            </ProtectedRoute>
-                        }
-                    />
-                    
-                    {/* Admin Routes */}
-                    <Route
-                        path="/admin"
-                        element={
-                            <AdminRoute>
-                                <AdminDashboard />
-                            </AdminRoute>
-                        }
-                    />
-                    
-                    <Route
-                        path="/admin/languages"
-                        element={
-                            <AdminRoute>
-                                <AdminLanguagesPage />
-                            </AdminRoute>
-                        }
-                    />
-                    
-                    <Route
-                        path="/admin/translations"
-                        element={
-                            <AdminRoute>
-                                <AdminTranslationsPage />
-                            </AdminRoute>
-                        }
-                    />
+                        {/* Language Routes */}
+                        <Route path="/common-words" element={<CommonWordsPage />} />
+                        <Route path="/languages" element={<LanguagesPage />} />
+                        <Route path="/languages/:slug/missing-words" element={<MissingCommonWordsPage />} />
+                        <Route path="/languages/:slug" element={<LanguageDetailPage />} />
 
-                    <Route
-                        path="/admin/import-batches"
-                        element={
-                            <AdminRoute>
-                                <AdminImportBatchesPage />
-                            </AdminRoute>
-                        }
-                    />
-                    <Route path="*" element={<NotFoundPage />} />
-                </Routes>
-            </Suspense>
+                        {/* Set Routes */}
+                        <Route path="/sets" element={<SetsPage />} />
+                        <Route path="/sets/:setId" element={<SetDetailPage />} />
+
+                        {/* Set Routes - Protected */}
+                        <Route
+                            path="/sets/create"
+                            element={
+                                <ProtectedRoute>
+                                    <CreateEditSetPage />
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/sets/:setId/edit"
+                            element={
+                                <ProtectedRoute>
+                                    <CreateEditSetPage />
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        {/* Game Routes */}
+                        <Route path="/sets/:setId/games/flashcard" element={<FlashcardGame />} />
+                        <Route path="/sets/:setId/games/matching" element={<MatchingGame />} />
+                        <Route path="/sets/:setId/games/writing" element={<WritingGame />} />
+                        <Route
+                            path="/sets/:setId/sessions"
+                            element={
+                                <ProtectedRoute>
+                                    <GameSessionsPage />
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        {/* User Routes */}
+                        <Route path="/users" element={<UsersPage />} />
+                        <Route path="/profile/:userId" element={<PublicProfilePage />} />
+
+                        {/* User Routes - Protected */}
+                        <Route
+                            path="/profile/me"
+                            element={<ProfilePage />}
+                        />
+
+                        {/* Contribution Routes - Protected */}
+                        <Route
+                            path="/contribute"
+                            element={
+                                <ProtectedRoute>
+                                    <ContributePage />
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/contribute/bulk"
+                            element={
+                                <ProtectedRoute>
+                                    <BulkUploadPage />
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/contributions"
+                            element={
+                                <ProtectedRoute>
+                                    <UserContributionsPage />
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        {/* Admin Routes */}
+                        <Route
+                            path="/admin"
+                            element={
+                                <AdminRoute>
+                                    <AdminDashboard />
+                                </AdminRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/admin/languages"
+                            element={
+                                <AdminRoute>
+                                    <AdminLanguagesPage />
+                                </AdminRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/admin/translations"
+                            element={
+                                <AdminRoute>
+                                    <AdminTranslationsPage />
+                                </AdminRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/admin/import-batches"
+                            element={
+                                <AdminRoute>
+                                    <AdminImportBatchesPage />
+                                </AdminRoute>
+                            }
+                        />
+                        <Route path="*" element={<NotFoundPage />} />
+                    </Routes>
+                </Suspense>
+            )}
         </>
     );
 }

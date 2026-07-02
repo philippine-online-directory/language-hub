@@ -47,7 +47,7 @@ function ContributeModal({ onClose, onLogin, onRegister }) {
 export default function Navbar(){
     const navigate = useNavigate();
     const location = useLocation();
-    const { user, logout } = useAuth();
+    const { user, loading: authLoading, logout } = useAuth();
     const [scrolled, setScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [showContributeModal, setShowContributeModal] = useState(false);
@@ -75,6 +75,10 @@ export default function Navbar(){
 
     const handleContributeClick = (e) => {
         e.preventDefault();
+        if (authLoading) {
+            return;
+        }
+
         if (user) {
             navigate('/contribute');
         } else {
@@ -177,7 +181,7 @@ export default function Navbar(){
                         </Link>
 
                         {/* Authenticated-only tabs */}
-                        {user && (
+                        {!authLoading && user && (
                             <>
                                 <Link
                                     to="/contributions"
@@ -204,7 +208,7 @@ export default function Navbar(){
                     </div>
 
                     <div className={styles.actions}>
-                        {user && (
+                        {!authLoading && user && (
                             <>
                                 <Link to="/profile/me" className={styles.profileButton}>
                                     <div className={styles.avatar}>

@@ -13,6 +13,7 @@ const passwordResetLimiter = rateLimit({
 
 authRouter.post('/register', authController.registerUser)
 authRouter.post('/login', authController.loginUser)
+authRouter.get('/session', authController.getSession)
 authRouter.post('/forgot-password', passwordResetLimiter, authController.forgotPassword)
 authRouter.post('/reset-password', passwordResetLimiter, authController.resetPassword)
 
