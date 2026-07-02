@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { setService } from '../../api/setService';
-import { useAuth } from '../../context/useAuth';
+import { useAuth } from '../../context/AuthContext';
 import useDebounce from '../../hooks/useDebounce';
 import Card from '../../components/Card/Card';
 import Button from '../../components/Button/Button';

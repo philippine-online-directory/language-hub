@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../context/useAuth';
+import { useAuth } from '../../context/AuthContext';
 import Card from '../../components/Card/Card';
 import styles from './AdminDashboard.module.css';
 

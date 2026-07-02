@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAuth } from '../../context/useAuth';
+import { useAuth } from '../../context/AuthContext';
 import { subscribeService } from '../../api/subscribeService';
 import { profileService } from '../../api/profileService';
 import styles from './WordOfTheDaySignup.module.css';

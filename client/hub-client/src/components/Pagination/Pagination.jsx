@@ -55,7 +55,7 @@ export default function Pagination({
           </svg>
         </button>
 
-        {pages.map((page) => {
+        {pages.map((page, index) => {
           if (typeof page === 'string') {
             return (
               <span key={page} className={styles.ellipsis}>

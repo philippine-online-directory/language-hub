@@ -20,6 +20,12 @@
   }
 }
 
+.translatePage.mounted {
+  animation: none;
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .backgroundPattern {
   position: absolute;
   top: 0;

@@ -1,7 +1,16 @@
-import { useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { authService } from '../api/authService';
 import { profileService } from '../api/profileService';
-import { AuthContext } from './AuthContextValue';
+
+const AuthContext = createContext(null);
+
+export function useAuth() {
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error('useAuth must be used within AuthProvider');
+    }
+    return context;
+}
 
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
