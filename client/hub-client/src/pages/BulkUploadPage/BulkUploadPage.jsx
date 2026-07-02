@@ -68,15 +68,6 @@ const GUIDE_BY_INPUT_MODE = {
             'Review the result for imported, duplicate, or invalid rows.'
         ]
     },
-    paste: {
-        title: 'Paste Rows',
-        steps: [
-            'Paste copied spreadsheet cells into the text box.',
-            'Headers are optional.',
-            'Each row needs a word and an English definition.',
-            'Review the rows before submitting.'
-        ]
-    },
     table: {
         title: 'How to Use the Blank Table',
         steps: [
@@ -296,32 +287,6 @@ function normalizeHeader(header) {
         .replace(/[^a-z0-9]/g, '');
 }
 
-function parseDelimitedLine(line, separator) {
-    const cells = [];
-    let cell = '';
-    let inQuotes = false;
-
-    for (let index = 0; index < line.length; index += 1) {
-        const char = line[index];
-        const nextChar = line[index + 1];
-
-        if (char === '"' && inQuotes && nextChar === '"') {
-            cell += '"';
-            index += 1;
-        } else if (char === '"') {
-            inQuotes = !inQuotes;
-        } else if (char === separator && !inQuotes) {
-            cells.push(cell.trim());
-            cell = '';
-        } else {
-            cell += char;
-        }
-    }
-
-    cells.push(cell.trim());
-    return cells;
-}
-
 function emptyRowData() {
     return TEMPLATE_HEADERS.reduce((acc, field) => {
         acc[field] = '';
@@ -363,58 +328,6 @@ function sourceRowsToDraftRows(sourceRows, mapping) {
     });
 }
 
-function parsePastedPreview(value) {
-    const lines = value
-        .split(/\r\n|\n|\r/)
-        .filter(line => line.trim());
-
-    if (lines.length === 0) {
-        return {
-            fileName: 'Pasted rows',
-            headers: [],
-            rows: [],
-            suggestedMapping: inferColumnMapping([])
-        };
-    }
-
-    const rawRows = lines.map((line) => {
-        const separator = line.includes('\t') ? '\t' : ',';
-        return parseDelimitedLine(line, separator);
-    });
-
-    const headerFields = rawRows[0].map(header => HEADER_ALIASES[normalizeHeader(header)]);
-    const hasHeader = headerFields.filter(Boolean).length >= 2;
-    const dataRows = hasHeader ? rawRows.slice(1) : rawRows;
-    const columnCount = Math.max(
-        hasHeader ? rawRows[0].length : TEMPLATE_HEADERS.length,
-        ...dataRows.map(row => row.length)
-    );
-    const headers = Array.from({ length: columnCount }, (_, index) => {
-        if (hasHeader) return rawRows[0][index]?.trim() || `Column ${index + 1}`;
-        return TEMPLATE_HEADERS[index] || `Column ${index + 1}`;
-    });
-    const rows = hasHeader ? rawRows.slice(1) : rawRows;
-    const firstRowNumber = hasHeader ? 2 : 1;
-
-    return {
-        fileName: 'Pasted rows',
-        headers,
-        rows: rows
-            .map((row, index) => ({
-                rowNumber: firstRowNumber + index,
-                values: headers.map((_, columnIndex) => String(row[columnIndex] || '').trim())
-            }))
-            .filter(row => row.values.some(Boolean)),
-        suggestedMapping: hasHeader ? inferColumnMapping(headers) : {
-            wordText: '0',
-            englishDefinition: '1',
-            partOfSpeech: '2',
-            exampleSentence: '3',
-            usageComment: '4'
-        }
-    };
-}
-
 function csvEscape(value) {
     return `"${String(value || '').replace(/"/g, '""')}"`;
 }
@@ -425,7 +338,7 @@ function createCsvFileFromRows(rows) {
         ...rows.map(row => TEMPLATE_HEADERS.map(field => csvEscape(row.data[field])).join(','))
     ].join('\n');
 
-    return new File([csv], 'pasted-translations.csv', { type: 'text/csv;charset=utf-8;' });
+    return new File([csv], 'reviewed-translations.csv', { type: 'text/csv;charset=utf-8;' });
 }
 
 function formatStatus(status) {
@@ -445,7 +358,6 @@ export default function BulkUploadPage() {
     const [languageId, setLanguageId] = useState('');
     const [inputMode, setInputMode] = useState('file');
     const [file, setFile] = useState(null);
-    const [pastedRowsText, setPastedRowsText] = useState('');
     const [sourcePreview, setSourcePreview] = useState(null);
     const [columnMapping, setColumnMapping] = useState(inferColumnMapping([]));
     const [draftRows, setDraftRows] = useState([]);
@@ -577,19 +489,6 @@ export default function BulkUploadPage() {
         }
     };
 
-    const handlePreviewPastedRows = () => {
-        setError('');
-        setResult(null);
-
-        const preview = parsePastedPreview(pastedRowsText);
-        if (preview.rows.length === 0) {
-            setError('Paste at least one row to review.');
-            return;
-        }
-
-        startReview(preview);
-    };
-
     const handleStartBlankTable = () => {
         setError('');
         setResult(null);
@@ -674,7 +573,6 @@ export default function BulkUploadPage() {
             setResult(batch);
             setRecentBatches(prev => [batch, ...prev].slice(0, 5));
             setFile(null);
-            setPastedRowsText('');
             resetReview();
             setRightsConfirmed(false);
             e.target.reset();
@@ -735,16 +633,6 @@ export default function BulkUploadPage() {
                                             />
                                             <span>Upload CSV/XLSX</span>
                                         </label>
-                                        <label className={`${styles.modeOption} ${inputMode === 'paste' ? styles.activeMode : ''}`}>
-                                            <input
-                                                type="radio"
-                                                name="inputMode"
-                                                value="paste"
-                                                checked={inputMode === 'paste'}
-                                                onChange={() => handleInputModeChange('paste')}
-                                            />
-                                            <span>Paste spreadsheet rows</span>
-                                        </label>
                                         <label className={`${styles.modeOption} ${inputMode === 'table' ? styles.activeMode : ''}`}>
                                             <input
                                                 type="radio"
@@ -801,34 +689,6 @@ export default function BulkUploadPage() {
                                                 Review File
                                             </Button>
                                         </div>
-                                    </div>
-                                ) : inputMode === 'paste' ? (
-                                    <div className={styles.formGroup}>
-                                        <label htmlFor="pastedRows" className={styles.label}>Paste rows from a spreadsheet</label>
-                                        <textarea
-                                            id="pastedRows"
-                                            value={pastedRowsText}
-                                            onChange={(e) => {
-                                                setPastedRowsText(e.target.value);
-                                                setResult(null);
-                                                setError('');
-                                                resetReview();
-                                            }}
-                                            className={styles.textarea}
-                                            rows={8}
-                                            placeholder={`wordText\tenglishDefinition\tpartOfSpeech\texampleSentence\tusageComment\nbahay\thouse\tnoun\tMalaki ang bahay namin.\tUse for a house or home where someone lives.`}
-                                        />
-                                        <p className={styles.hint}>
-                                            Copy from Excel, Google Sheets, Airtable, or a CSV. Headers are optional if columns are in template order.
-                                        </p>
-                                        <Button
-                                            type="button"
-                                            variant="secondary"
-                                            onClick={handlePreviewPastedRows}
-                                            disabled={!pastedRowsText.trim()}
-                                        >
-                                            Review Pasted Rows
-                                        </Button>
                                     </div>
                                 ) : (
                                     <div className={styles.formGroup}>

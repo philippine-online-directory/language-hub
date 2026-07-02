@@ -101,7 +101,6 @@
 
 .select:focus,
 .fileInput:focus,
-.textarea:focus,
 .mappingSelect:focus,
 .cellInput:focus {
   outline: none;
@@ -139,7 +138,7 @@
 
 .modeSwitch {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -208,22 +207,6 @@
   font-size: 14px;
   color: var(--text-placeholder);
   margin: 4px 0 0;
-}
-
-.textarea {
-  width: 100%;
-  min-height: 180px;
-  resize: vertical;
-  box-sizing: border-box;
-  border: 2px solid var(--border);
-  border-radius: 12px;
-  padding: 13px 16px;
-  background: var(--input-bg);
-  color: var(--text-primary);
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
-  font-size: 15px;
-  line-height: 22px;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .reviewPanel {
