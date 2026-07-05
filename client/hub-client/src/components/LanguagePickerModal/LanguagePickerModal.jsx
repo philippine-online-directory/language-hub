@@ -48,6 +48,7 @@ export default function LanguagePickerModal({ isOpen, onClose, onSelect, selecte
     // Focus search input when opened
     useEffect(() => {
         if (isOpen && searchRef.current) {
+            if (window.matchMedia('(max-width: 640px)').matches) return;
             setTimeout(() => searchRef.current?.focus(), 100);
         }
     }, [isOpen]);

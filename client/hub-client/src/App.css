@@ -27,7 +27,7 @@
   --border-rgba: rgba(229, 231, 235, 0.8);
   --heading-gradient: linear-gradient(135deg, #1F2937 0%, #C0763A 100%);
   --scrollbar-track: #F6F4EF;
-  --input-bg: rgba(255, 255, 255, 0.9);
+  --input-bg: #ffffff;
   --input-bg-focus: #ffffff;
   --disabled-bg: #F3F4F6;
   --stripe-bg: rgba(0, 0, 0, 0.02);
@@ -46,8 +46,8 @@
     --border-rgba: rgba(192, 118, 58, 0.2);
     --heading-gradient: #F0EBE3;
     --scrollbar-track: #1A1410;
-    --input-bg: rgba(42, 32, 24, 0.9);
-    --input-bg-focus: #2A2018;
+    --input-bg: #3D3023;
+    --input-bg-focus: #463728;
     --disabled-bg: #2A2018;
     --stripe-bg: rgba(255, 255, 255, 0.04);
   }

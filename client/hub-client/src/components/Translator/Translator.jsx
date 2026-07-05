@@ -205,7 +205,7 @@ export default function Translator({ compact = false }) {
 
                     {selectedLanguage && !inputText && !loading && (
                         <div className={styles.outputIdle}>
-                            <p>Start typing a word on the left…</p>
+                            <p>Start typing a word to translate…</p>
                         </div>
                     )}
 
