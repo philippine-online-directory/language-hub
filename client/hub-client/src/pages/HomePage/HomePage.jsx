@@ -1,12 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/Button/Button';
 import Translator from '../../components/Translator/Translator';
 import styles from './HomePage.module.css';
 
 export default function HomePage() {
     const navigate = useNavigate();
-    const { isAuthenticated } = useAuth();
 
     return (
         <div className={styles.homePage}>
@@ -27,21 +25,12 @@ export default function HomePage() {
                             >
                                 Explore Dictionaries
                             </Button>
-                            {isAuthenticated ? (
-                                <Button
-                                    variant="secondary"
-                                    onClick={() => navigate('/contribute')}
-                                >
-                                    Contribute here
-                                </Button>
-                            ) : (
-                                <Button
-                                    variant="secondary"
-                                    onClick={() => navigate('/login?redirect=/contribute&intent=contribute')}
-                                >
-                                    Contribute to a dictionary
-                                </Button>
-                            )}
+                            <Button
+                                variant="secondary"
+                                onClick={() => navigate('/contribute')}
+                            >
+                                Contribute to a dictionary
+                            </Button>
                         </div>
                     </div>
                     <section className={styles.translatorSection}>
