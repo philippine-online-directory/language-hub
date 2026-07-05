@@ -34,6 +34,9 @@ model User {
   submittedRequests TranslationUpdateRequest[]
   importBatches     ImportBatch[]              @relation("ImportBatchUploader")
   reviewedBatches   ImportBatch[]              @relation("ImportBatchReviewer")
+
+  @@index([createdAt])
+  @@index([lastReminderSentAt])
 }
 
 model PasswordResetToken {
@@ -96,6 +99,14 @@ model Translation {
   commonWord    CommonWord?      @relation(fields: [commonWordId], references: [id])
   commonWordId  Int?
   importRows    ImportBatchRow[]
+
+  @@index([languageId, status, wordText])
+  @@index([languageId, status, createdAt])
+  @@index([languageId, commonWordId])
+  @@index([languageId, englishDefinition])
+  @@index([authorId, createdAt])
+  @@index([commonWordId])
+  @@index([usedAsWordOfTheDay, status])
 }
 
 model ImportBatch {
@@ -120,6 +131,11 @@ model ImportBatch {
   reviewedBy   User?   @relation("ImportBatchReviewer", fields: [reviewedById], references: [id])
 
   rows ImportBatchRow[]
+
+  @@index([languageId, createdAt])
+  @@index([uploadedById, createdAt])
+  @@index([reviewedById])
+  @@index([status, createdAt])
 }
 
 model ImportBatchRow {
@@ -138,6 +154,9 @@ model ImportBatchRow {
 
   translationId String?
   translation   Translation? @relation(fields: [translationId], references: [id], onDelete: SetNull)
+
+  @@index([importBatchId, rowNumber])
+  @@index([translationId])
 }
 
 model TranslationUpdateRequest {
@@ -150,6 +169,10 @@ model TranslationUpdateRequest {
 
   proposedData Json
   createdAt    DateTime @default(now())
+
+  @@index([languageId, createdAt])
+  @@index([translationId])
+  @@index([submittedById, createdAt])
 }
 
 model VocabSet {
@@ -169,6 +192,10 @@ model VocabSet {
 
   setWords     SetWord[]
   gameSessions GameSession[]
+
+  @@index([ownerId, createdAt])
+  @@index([isPublic, createdAt])
+  @@index([languageId])
 }
 
 model SetWord {
@@ -179,6 +206,7 @@ model SetWord {
   vocabSet    VocabSet    @relation(fields: [vocabSetId], references: [id], onDelete: Cascade)
 
   @@id([translationId, vocabSetId])
+  @@index([vocabSetId])
 }
 
 model GameSession {
@@ -193,6 +221,9 @@ model GameSession {
 
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   vocabSet VocabSet @relation(fields: [vocabSetId], references: [id], onDelete: Cascade)
+
+  @@index([userId, vocabSetId, gameType])
+  @@index([vocabSetId])
 }
 
 model WordOfTheDay {
@@ -208,6 +239,8 @@ model CommonWord {
   word String
 
   translations Translation[]
+
+  @@index([word])
 }
 
 model GuestEmailSubscription {

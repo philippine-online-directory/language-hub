@@ -31,6 +31,7 @@ export default function Translator({ compact = false }) {
         if (!text) {
             setResults(null);
             setInputError('');
+            setLoading(false);
             return;
         }
 
@@ -38,6 +39,7 @@ export default function Translator({ compact = false }) {
         if (err) {
             setInputError(err);
             setResults(null);
+            setLoading(false);
             return;
         }
 
@@ -45,8 +47,12 @@ export default function Translator({ compact = false }) {
 
         if (!selectedLanguage) {
             setResults(null);
+            setLoading(false);
             return;
         }
+
+        let ignore = false;
+        const controller = new AbortController();
 
         const run = async () => {
             setLoading(true);
@@ -54,18 +60,29 @@ export default function Translator({ compact = false }) {
                 const data = await translatorService.translate(
                     selectedLanguage.slug,
                     text,
-                    direction
+                    direction,
+                    controller.signal
                 );
-                setResults(data.results);
-            } catch {
+                if (!ignore) {
+                    setResults(data.results);
+                }
+            } catch (err) {
+                if (ignore || err.code === 'ERR_CANCELED') return;
                 setInputError('Something went wrong. Please try again.');
                 setResults(null);
             } finally {
-                setLoading(false);
+                if (!ignore) {
+                    setLoading(false);
+                }
             }
         };
 
         run();
+
+        return () => {
+            ignore = true;
+            controller.abort();
+        };
     }, [debouncedInput, direction, selectedLanguage]);
 
     const handleInputChange = (e) => {
