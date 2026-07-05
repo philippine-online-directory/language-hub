@@ -379,6 +379,12 @@
     padding: 40px 18px 72px;
   }
 
+  .sectionNav {
+    position: static;
+    top: auto;
+    z-index: auto;
+  }
+
   .sectionBlock {
     padding: 26px 20px 28px;
   }

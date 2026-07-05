@@ -263,6 +263,7 @@
   transform-style: preserve-3d;
   transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
+  will-change: transform;
 }
 
 .flashcardWrapper.flipped {
@@ -271,14 +272,20 @@
 
 .flashcard {
   position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+.flashcard:nth-child(1) {
+  transform: rotateY(0deg) translateZ(0.1px);
 }
 
 .flashcard:nth-child(2) {
-  transform: rotateY(180deg);
+  transform: rotateY(180deg) translateZ(0.1px);
 }
 
 .cardFace {
@@ -295,6 +302,9 @@
   justify-content: space-between;
   position: relative;
   overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -302,7 +312,7 @@
   background: var(--bg-elevated);
   border-color: rgba(192, 118, 58, 0.3);
   box-shadow: 0 20px 60px rgba(192, 118, 58, 0.15);
-  transform: translateY(-4px);
+  transform: translateY(-4px) translateZ(0);
 }
 
 .cardFace::before {
