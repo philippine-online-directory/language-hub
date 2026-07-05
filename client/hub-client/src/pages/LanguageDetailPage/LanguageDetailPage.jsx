@@ -309,11 +309,7 @@ export default function LanguageDetailPage() {
                         <div className={styles.podiumSection}>
                             <p className={styles.podiumSectionTitle}>🏆 Top Contributors</p>
                             <div className={styles.contributorsPodium}>
-                                {(language.topContributors.length >= 3
-                                    ? [language.topContributors[1], language.topContributors[0], language.topContributors[2]]
-                                    : language.topContributors
-                                ).map((contributor) => {
-                                    const index = language.topContributors.indexOf(contributor);
+                                {language.topContributors.map((contributor, index) => {
                                     const rank = index + 1;
                                     const rankMeta = [
                                         { label: '1st', colorClass: styles.rankGold },

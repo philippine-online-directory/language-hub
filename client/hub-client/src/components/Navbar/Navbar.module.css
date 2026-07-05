@@ -104,18 +104,21 @@
 .mobileMenuButton {
   display: none;
   flex-direction: column;
-  justify-content: space-around;
-  width: 32px;
-  height: 32px;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 0;
+  padding: 6px;
   z-index: 101;
+  flex-shrink: 0;
 }
 
 .mobileMenuButton span {
-  width: 100%;
+  width: 24px;
   height: 3px;
   background: var(--text-primary);
   border-radius: 2px;
@@ -124,7 +127,7 @@
 }
 
 .mobileMenuButton.open span:nth-child(1) {
-  transform: rotate(45deg) translateY(10px);
+  transform: translateY(8px) rotate(45deg);
   background: #C0763A;
 }
 
@@ -134,7 +137,7 @@
 }
 
 .mobileMenuButton.open span:nth-child(3) {
-  transform: rotate(-45deg) translateY(-10px);
+  transform: translateY(-8px) rotate(-45deg);
   background: #C0763A;
 }
 
@@ -360,6 +363,8 @@
 @media (max-width: 968px) {
   .mobileMenuButton {
     display: flex;
+    order: 3;
+    margin-left: auto;
   }
 
   .navLinks {
@@ -399,6 +404,7 @@
   }
 
   .actions {
+    order: 2;
     gap: 8px;
   }
 

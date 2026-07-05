@@ -797,16 +797,19 @@ a.podiumCard:hover {
 }
 
 .podiumRank1 {
+  order: 2;
   padding-top: 20px; 
   border-top: 3px solid #F59E0B;
 }
 
 .podiumRank2 {
+  order: 1;
   padding-top: 14px;
   border-top: 3px solid #9CA3AF;
 }
 
 .podiumRank3 {
+  order: 3;
   padding-top: 10px; 
   border-top: 3px solid #CD7F32;
 }
@@ -1048,6 +1051,7 @@ a.podiumCard:hover {
   .podiumRank1,
   .podiumRank2,
   .podiumRank3 {
+    order: initial;
     padding-top: 12px;
   }
 
