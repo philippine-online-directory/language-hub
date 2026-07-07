@@ -72,7 +72,7 @@ const GUIDE_BY_INPUT_MODE = {
         title: 'How to Use the Blank Table',
         steps: [
             'Choose the language these words belong to.',
-            'Click Start Blank Table.',
+            'Use the 10 blank rows already shown, or reset the table when you want to start over.',
             'Type one word or phrase on each row.',
             'Fill in Word and English definition for every row you want to upload.',
             'Add part of speech, example sentence, or usage note only if you have them.',
@@ -353,14 +353,22 @@ function getDraftRowIssue(row) {
     return `Missing ${missing.join(' and ')}`;
 }
 
+function createBlankDraftRows(count = 10) {
+    return Array.from({ length: count }, (_, index) => ({
+        id: `blank-${index + 1}`,
+        rowNumber: index + 1,
+        data: emptyRowData()
+    }));
+}
+
 export default function BulkUploadPage() {
     const [languages, setLanguages] = useState([]);
     const [languageId, setLanguageId] = useState('');
-    const [inputMode, setInputMode] = useState('file');
+    const [inputMode, setInputMode] = useState('table');
     const [file, setFile] = useState(null);
     const [sourcePreview, setSourcePreview] = useState(null);
     const [columnMapping, setColumnMapping] = useState(inferColumnMapping([]));
-    const [draftRows, setDraftRows] = useState([]);
+    const [draftRows, setDraftRows] = useState(() => createBlankDraftRows());
     const [rightsConfirmed, setRightsConfirmed] = useState(false);
     const [loading, setLoading] = useState(false);
     const [previewLoading, setPreviewLoading] = useState(false);
@@ -466,7 +474,13 @@ export default function BulkUploadPage() {
         setInputMode(mode);
         setError('');
         setResult(null);
-        resetReview();
+        if (mode === 'table') {
+            setSourcePreview(null);
+            setColumnMapping(inferColumnMapping([]));
+            setDraftRows(createBlankDraftRows());
+        } else {
+            resetReview();
+        }
     };
 
     const handlePreviewFile = async () => {
@@ -494,11 +508,7 @@ export default function BulkUploadPage() {
         setResult(null);
         setSourcePreview(null);
         setColumnMapping(inferColumnMapping([]));
-        setDraftRows(Array.from({ length: 10 }, (_, index) => ({
-            id: `blank-${index + 1}`,
-            rowNumber: index + 1,
-            data: emptyRowData()
-        })));
+        setDraftRows(createBlankDraftRows());
     };
 
     const handleColumnMappingChange = (field, sourceIndex) => {
@@ -631,7 +641,7 @@ export default function BulkUploadPage() {
                                                 checked={inputMode === 'file'}
                                                 onChange={() => handleInputModeChange('file')}
                                             />
-                                            <span>Upload CSV/XLSX</span>
+                                            <span>Upload a file</span>
                                         </label>
                                         <label className={`${styles.modeOption} ${inputMode === 'table' ? styles.activeMode : ''}`}>
                                             <input
@@ -641,7 +651,7 @@ export default function BulkUploadPage() {
                                                 checked={inputMode === 'table'}
                                                 onChange={() => handleInputModeChange('table')}
                                             />
-                                            <span>Start blank table</span>
+                                            <span>Use table editor</span>
                                         </label>
                                     </div>
                                 </div>
@@ -697,7 +707,7 @@ export default function BulkUploadPage() {
                                             Start with empty rows, then fill only the fields you have. Word and English definition are required.
                                         </p>
                                         <Button type="button" variant="secondary" onClick={handleStartBlankTable}>
-                                            Start Blank Table
+                                            Reset to 10 Blank Rows
                                         </Button>
                                     </div>
                                 )}

@@ -855,11 +855,11 @@ export default function ContributePage() {
                                 <div>
                                     <h3>Uploading many translations?</h3>
                                     <p>
-                                        Use bulk upload for CSV or XLSX files from institutions, websites, or language teams.
+                                        Use the faster table editor to add many rows at once, or bring in a spreadsheet when you have one.
                                     </p>
                                 </div>
                                 <Button type="button" variant="secondary" onClick={() => navigate('/contribute/bulk')}>
-                                    Bulk Upload CSV/XLSX
+                                    Open Bulk Row Editor
                                 </Button>
                             </div>
                             <Button type="button" variant="secondary" fullWidth onClick={() => navigate('/contributions')}>
