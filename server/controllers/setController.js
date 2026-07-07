@@ -5,9 +5,14 @@ const getUserSets = [
     auth,
     async (req, res, next) => {
         const { id } = req.user;
+        const { page, limit } = req.query;
 
         try {
-            const sets = await setService.getUserSets(id);
+            const sets = await setService.getUserSets(
+                id,
+                parseInt(page) || 1,
+                parseInt(limit) || 12
+            );
 
             res.status(200).json(sets)
         }
@@ -19,10 +24,14 @@ const getUserSets = [
 
 const getPublicSets = [
     async (req, res, next) => {
-        const { name } = req.query;
+        const { name, page, limit } = req.query;
 
         try {
-            const sets = await setService.getPublicSets(name);
+            const sets = await setService.getPublicSets(
+                name,
+                parseInt(page) || 1,
+                parseInt(limit) || 12
+            );
 
             res.status(200).json(sets);
         }
