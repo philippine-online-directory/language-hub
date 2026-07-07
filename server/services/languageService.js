@@ -28,12 +28,13 @@ async function attachSignedUrls(translations) {
 
 async function addLanguage({ name, speakerCount, isoCode, preservationNote, culturalBackground }) {
     const { slugify } = await import('../utils/slugify.js');
-    const slug = isoCode ? isoCode.toLowerCase().trim() : slugify(name);
+    const normalizedIsoCode = normalizeIsoCode(isoCode);
+    const slug = normalizedIsoCode || slugify(name);
     const addedLanguage = await prisma.language.create({
         data: {
             name,
             speakerCount,
-            isoCode: isoCode || null,
+            isoCode: normalizedIsoCode,
             slug,
             preservationNote,
             culturalBackground
@@ -44,15 +45,18 @@ async function addLanguage({ name, speakerCount, isoCode, preservationNote, cult
 
 async function updateLanguage(id, { name, speakerCount, isoCode, preservationNote, culturalBackground }) {
     if (!id) throw new Error('Id missing: Must have id to identify which language to update');
-
-    const { slugify } = await import('../utils/slugify.js');
-    const slug = isoCode ? isoCode.toLowerCase().trim() : slugify(name);
+    const normalizedIsoCode = normalizeIsoCode(isoCode);
 
     const updatedLanguage = await prisma.language.update({
         where: { id },
-        data: { name, speakerCount, isoCode: isoCode || null, slug, preservationNote, culturalBackground }
+        data: { name, speakerCount, isoCode: normalizedIsoCode, preservationNote, culturalBackground }
     });
     return updatedLanguage;
+}
+
+function normalizeIsoCode(isoCode) {
+    const normalized = isoCode?.trim().toLowerCase();
+    return normalized || null;
 }
 
 async function deleteLanguage(id) {

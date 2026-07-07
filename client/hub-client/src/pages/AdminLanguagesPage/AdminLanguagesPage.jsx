@@ -203,7 +203,6 @@ export default function AdminLanguagesPage(){
                                 value={formData.isoCode}
                                 onChange={handleChange}
                                 placeholder="e.g., ibg"
-                                disabled={!!editingId}
                             />
 
                             <Input
