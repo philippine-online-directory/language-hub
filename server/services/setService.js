@@ -1,6 +1,13 @@
 import prisma from '../prisma.js'
 import languageService from './languageService.js'
 
+const LANGUAGE_SUMMARY_SELECT = {
+    id: true,
+    name: true,
+    isoCode: true,
+    slug: true
+};
+
 async function getUserSets(userId, page = 1, limit = 12){
     if (!userId) throw new Error("Must be logged in to view sets");
 
@@ -14,7 +21,7 @@ async function getUserSets(userId, page = 1, limit = 12){
         prisma.vocabSet.findMany({
             where,
             include: {
-                language: true,
+                language: { select: LANGUAGE_SUMMARY_SELECT },
                 _count: {
                     select: {
                         setWords: true
@@ -56,7 +63,7 @@ async function getPublicSets(setName, page = 1, limit = 12){
         prisma.vocabSet.findMany({
             where,
             include: {
-                language: true,
+                language: { select: LANGUAGE_SUMMARY_SELECT },
                 owner: {
                     select: {
                         id: true,
@@ -95,7 +102,7 @@ async function getSetById(setId){
             id: setId
         },
         include: {
-            language: true,
+            language: { select: LANGUAGE_SUMMARY_SELECT },
             owner: {
                 select: {
                     id: true,
@@ -138,7 +145,7 @@ async function createSet(name, description, languageId, userId){
             isPublic: false
         },
         include: {
-            language: true,
+            language: { select: LANGUAGE_SUMMARY_SELECT },
             _count: {
                 select: {
                     setWords: true
@@ -175,7 +182,7 @@ async function updateSet(setId, data, userId){
             isPublic: data.isPublic
         },
         include: {
-            language: true,
+            language: { select: LANGUAGE_SUMMARY_SELECT },
             _count: {
                 select: {
                     setWords: true
@@ -208,7 +215,7 @@ async function getSetWords(setId){
             }
         },
         include: {
-            language: true,
+            language: { select: LANGUAGE_SUMMARY_SELECT },
             author: {
                 select: { id: true, username: true }
             }
@@ -263,7 +270,7 @@ async function getSetsContainingTranslation(translationId, userId){
             }
         },
         include: {
-            language: true,
+            language: { select: LANGUAGE_SUMMARY_SELECT },
             _count: {
                 select: {
                     setWords: true

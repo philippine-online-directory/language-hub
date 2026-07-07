@@ -12,6 +12,12 @@ const IMPORT_FIELDS = [
     'exampleSentence',
     'usageComment'
 ];
+const LANGUAGE_SUMMARY_SELECT = {
+    id: true,
+    name: true,
+    isoCode: true,
+    slug: true
+};
 
 const HEADER_ALIASES = {
     word: 'wordText',
@@ -445,7 +451,7 @@ async function getUserImportBatches(userId, page = 1, limit = 20) {
         prisma.importBatch.findMany({
             where,
             include: {
-                language: true
+                language: { select: LANGUAGE_SUMMARY_SELECT }
             },
             skip,
             take: limit,
@@ -476,7 +482,7 @@ async function getAdminImportBatches({ page = 1, limit = 20, status, languageId 
         prisma.importBatch.findMany({
             where,
             include: {
-                language: true,
+                language: { select: LANGUAGE_SUMMARY_SELECT },
                 uploadedBy: { select: { id: true, username: true, email: true } },
                 reviewedBy: { select: { id: true, username: true, email: true } }
             },
@@ -502,7 +508,7 @@ async function getImportBatch(batchId, user) {
     const batch = await prisma.importBatch.findUnique({
         where: { id: batchId },
         include: {
-            language: true,
+            language: { select: LANGUAGE_SUMMARY_SELECT },
             uploadedBy: { select: { id: true, username: true, email: true } },
             reviewedBy: { select: { id: true, username: true, email: true } },
             rows: {

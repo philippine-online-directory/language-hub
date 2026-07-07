@@ -1,5 +1,12 @@
 import prisma from '../prisma.js'
 
+const LANGUAGE_SUMMARY_SELECT = {
+    id: true,
+    name: true,
+    isoCode: true,
+    slug: true
+};
+
 async function searchUsers(username, page = 1, limit = 20){
     const skip = (page - 1) * limit;
     
@@ -67,7 +74,7 @@ async function getMyProfile(userId){
             },
             contributions: {
                 include: {
-                    language: true
+                    language: { select: LANGUAGE_SUMMARY_SELECT }
                 },
                 orderBy: {
                     createdAt: 'desc'
@@ -75,7 +82,7 @@ async function getMyProfile(userId){
             },
             createdSets: {
                 include: {
-                    language: true,
+                    language: { select: LANGUAGE_SUMMARY_SELECT },
                     _count: {
                         select: {
                             setWords: true
@@ -129,7 +136,7 @@ async function getPublicProfile(userId){
                     status: 'VERIFIED'
                 },
                 include: {
-                    language: true
+                    language: { select: LANGUAGE_SUMMARY_SELECT }
                 },
                 orderBy: {
                     createdAt: 'desc'
@@ -140,7 +147,7 @@ async function getPublicProfile(userId){
                     isPublic: true
                 },
                 include: {
-                    language: true,
+                    language: { select: LANGUAGE_SUMMARY_SELECT },
                     _count: {
                         select: {
                             setWords: true

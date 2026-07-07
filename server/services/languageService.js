@@ -1,6 +1,13 @@
 import prisma from '../prisma.js'
 import storageService from './storageService.js'
 
+const LANGUAGE_SUMMARY_SELECT = {
+    id: true,
+    name: true,
+    isoCode: true,
+    slug: true
+};
+
 /**
  * Helper to convert storage keys into signed URLs for a list of translations
  */
@@ -210,7 +217,7 @@ async function getTranslations(slug, {
         prisma.translation.findMany({
             where: whereClause,
             include: {
-                language: true,
+                language: { select: LANGUAGE_SUMMARY_SELECT },
                 author: { select: { id: true, username: true } },
                 secondaryAuthors: { select: { id: true, username: true } }
             },

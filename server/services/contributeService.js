@@ -2,6 +2,13 @@ import prisma from '../prisma.js'
 import storageService from './storageService.js'
 import { findCommonWordMatch } from './commonWordService.js'
 
+const LANGUAGE_SUMMARY_SELECT = {
+    id: true,
+    name: true,
+    isoCode: true,
+    slug: true
+};
+
 async function contributeTranslation(
     userId,
     {
@@ -44,7 +51,7 @@ async function contributeTranslation(
             usageComment: usageComment || null
         },
         include: {
-            language: true
+            language: { select: LANGUAGE_SUMMARY_SELECT }
         }
     });
 
@@ -78,7 +85,7 @@ async function getUserContributions(userId, page = 1, limit = 20){
         prisma.translation.findMany({
             where,
             include: {
-                language: true
+                language: { select: LANGUAGE_SUMMARY_SELECT }
             },
             skip,
             take: limit,
