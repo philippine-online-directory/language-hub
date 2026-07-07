@@ -3,8 +3,11 @@ import { useParams, Link } from 'react-router-dom';
 import { profileService } from '../../api/profileService';
 import Card from '../../components/Card/Card';
 import WordDisplay from '../../components/WordDisplay/WordDisplay';
+import Pagination from '../../components/Pagination/Pagination';
 import { clearJsonLd, setJsonLd, setRobotsDirective } from '../../utils/seoMeta';
 import styles from './PublicProfilePage.module.css';
+
+const PROFILE_ITEMS_PER_PAGE = 20;
 
 export default function PublicProfilePage() {
   const { userId } = useParams();
@@ -14,11 +17,22 @@ export default function PublicProfilePage() {
   const [activeTab, setActiveTab] = useState('contributions');
   const [mounted, setMounted] = useState(false);
   const [expandedId, setExpandedId] = useState(null);
+  const [contributionsPage, setContributionsPage] = useState(1);
+  const [setsPage, setSetsPage] = useState(1);
   const gridRef = useRef(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    setContributionsPage(1);
+    setSetsPage(1);
+  }, [userId]);
+
+  useEffect(() => {
+    setExpandedId(null);
+  }, [contributionsPage, setsPage, activeTab]);
 
   useEffect(() => {
     if (!loading && (error || !profile)) {
@@ -50,7 +64,11 @@ export default function PublicProfilePage() {
       setLoading(true);
       setError(null);
       try {
-        const data = await profileService.getPublicProfile(userId);
+        const data = await profileService.getPublicProfile(userId, {
+          contributionsPage,
+          setsPage,
+          limit: PROFILE_ITEMS_PER_PAGE
+        });
         setProfile(data);
       } catch (err) {
         setError('Failed to load profile. Please try again.');
@@ -61,7 +79,7 @@ export default function PublicProfilePage() {
     };
 
     fetchProfile();
-  }, [userId]);
+  }, [userId, contributionsPage, setsPage]);
 
   // Scroll animation observer for grid items
   useEffect(() => {
@@ -121,6 +139,8 @@ export default function PublicProfilePage() {
     month: 'long',
     year: 'numeric'
   });
+  const contributionsPagination = profile.contributionsPagination;
+  const createdSetsPagination = profile.createdSetsPagination;
 
   return (
     <div className={`${styles.publicProfilePage} ${mounted ? styles.mounted : ''}`}>
@@ -194,7 +214,7 @@ export default function PublicProfilePage() {
             <svg className={styles.tabIcon} viewBox="0 0 20 20" fill="currentColor">
               <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
             </svg>
-            Contributions ({profile.contributions?.length || 0})
+            Contributions ({contributionsPagination?.total ?? profile.contributions?.length ?? 0})
           </button>
           <button
             className={`${styles.tab} ${activeTab === 'sets' ? styles.activeTab : ''}`}
@@ -203,7 +223,7 @@ export default function PublicProfilePage() {
             <svg className={styles.tabIcon} viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clipRule="evenodd" />
             </svg>
-            Public Sets ({profile.createdSets?.filter(s => s.isPublic).length || 0})
+            Public Sets ({createdSetsPagination?.total ?? profile.createdSets?.length ?? 0})
           </button>
         </div>
 
@@ -218,22 +238,33 @@ export default function PublicProfilePage() {
                 <p>No contributions yet</p>
               </div>
             ) : (
-              <div className={styles.contributionsGrid} ref={gridRef}>
-                {profile.contributions?.map((contribution, index) => (
-                  <div 
-                    key={contribution.id}
-                    className={styles.animateItem}
-                    style={{ '--item-index': index }}
-                  >
-                    <WordDisplay
-                      translation={contribution}
-                      showAddToSet={false}
-                      expanded={expandedId === contribution.id}
-                      onToggle={setExpandedId}
-                    />
-                  </div>
-                ))}
-              </div>
+              <>
+                <div className={styles.contributionsGrid} ref={gridRef}>
+                  {profile.contributions?.map((contribution, index) => (
+                    <div 
+                      key={contribution.id}
+                      className={styles.animateItem}
+                      style={{ '--item-index': index }}
+                    >
+                      <WordDisplay
+                        translation={contribution}
+                        showAddToSet={false}
+                        expanded={expandedId === contribution.id}
+                        onToggle={setExpandedId}
+                      />
+                    </div>
+                  ))}
+                </div>
+                {contributionsPagination && contributionsPagination.totalPages > 1 && (
+                  <Pagination
+                    currentPage={contributionsPage}
+                    totalPages={contributionsPagination.totalPages}
+                    onPageChange={setContributionsPage}
+                    totalItems={contributionsPagination.total}
+                    itemsPerPage={contributionsPagination.limit}
+                  />
+                )}
+              </>
             )}
           </div>
         )}
@@ -241,7 +272,7 @@ export default function PublicProfilePage() {
         {/* Sets Tab */}
         {activeTab === 'sets' && (
           <div className={styles.contentSection}>
-            {profile.createdSets?.filter(s => s.isPublic).length === 0 ? (
+            {profile.createdSets?.length === 0 ? (
               <div className={styles.empty}>
                 <svg className={styles.emptyIcon} viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clipRule="evenodd" />
@@ -249,46 +280,57 @@ export default function PublicProfilePage() {
                 <p>No public sets</p>
               </div>
             ) : (
-              <div className={styles.setsGrid} ref={gridRef}>
-                {profile.createdSets?.filter(s => s.isPublic).map((set, index) => (
-                  <div
-                    key={set.id}
-                    className={styles.animateItem}
-                    style={{ '--item-index': index }}
-                  >
-                    <Link to={`/sets/${set.id}`} className={styles.setLink}>
-                      <Card hoverable className={styles.setCard}>
-                        <div className={styles.setHeader}>
-                          <h3 className={styles.setName}>{set.name}</h3>
-                          <span className={styles.publicBadge}>
-                            <svg className={styles.badgeIcon} viewBox="0 0 20 20" fill="currentColor">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clipRule="evenodd" />
-                            </svg>
-                            Public
-                          </span>
-                        </div>
-                        <p className={styles.setDescription}>{set.description}</p>
-                        <div className={styles.setMeta}>
-                          <span className={styles.metaItem}>
-                            <svg className={styles.metaIcon} viewBox="0 0 20 20" fill="currentColor">
-                              <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
-                            </svg>
-                            {set._count?.setWords || 0} words
-                          </span>
-                          {set.language && (
+              <>
+                <div className={styles.setsGrid} ref={gridRef}>
+                  {profile.createdSets?.map((set, index) => (
+                    <div
+                      key={set.id}
+                      className={styles.animateItem}
+                      style={{ '--item-index': index }}
+                    >
+                      <Link to={`/sets/${set.id}`} className={styles.setLink}>
+                        <Card hoverable className={styles.setCard}>
+                          <div className={styles.setHeader}>
+                            <h3 className={styles.setName}>{set.name}</h3>
+                            <span className={styles.publicBadge}>
+                              <svg className={styles.badgeIcon} viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clipRule="evenodd" />
+                              </svg>
+                              Public
+                            </span>
+                          </div>
+                          <p className={styles.setDescription}>{set.description}</p>
+                          <div className={styles.setMeta}>
                             <span className={styles.metaItem}>
                               <svg className={styles.metaIcon} viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.107 3.567 1 1 0 01-1.334-1.49 17.087 17.087 0 003.13-3.733 18.992 18.992 0 01-1.487-2.494 1 1 0 111.79-.89c.234.47.489.928.764 1.372.417-.934.752-1.913.997-2.927H3a1 1 0 110-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.982a.869.869 0 01.02.037l.99 1.98a1 1 0 11-1.79.895L15.383 16h-4.764l-.724 1.447a1 1 0 11-1.788-.894l.99-1.98.019-.038 2.99-5.982A1 1 0 0113 8zm-1.382 6h2.764L13 11.236 11.618 14z" clipRule="evenodd" />
+                                <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
                               </svg>
-                              {set.language.name}
+                              {set._count?.setWords || 0} words
                             </span>
-                          )}
-                        </div>
-                      </Card>
-                    </Link>
-                  </div>
-                ))}
-              </div>
+                            {set.language && (
+                              <span className={styles.metaItem}>
+                                <svg className={styles.metaIcon} viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.107 3.567 1 1 0 01-1.334-1.49 17.087 17.087 0 003.13-3.733 18.992 18.992 0 01-1.487-2.494 1 1 0 111.79-.89c.234.47.489.928.764 1.372.417-.934.752-1.913.997-2.927H3a1 1 0 110-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.982a.869.869 0 01.02.037l.99 1.98a1 1 0 11-1.79.895L15.383 16h-4.764l-.724 1.447a1 1 0 11-1.788-.894l.99-1.98.019-.038 2.99-5.982A1 1 0 0113 8zm-1.382 6h2.764L13 11.236 11.618 14z" clipRule="evenodd" />
+                                </svg>
+                                {set.language.name}
+                              </span>
+                            )}
+                          </div>
+                        </Card>
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+                {createdSetsPagination && createdSetsPagination.totalPages > 1 && (
+                  <Pagination
+                    currentPage={setsPage}
+                    totalPages={createdSetsPagination.totalPages}
+                    onPageChange={setSetsPage}
+                    totalItems={createdSetsPagination.total}
+                    itemsPerPage={createdSetsPagination.limit}
+                  />
+                )}
+              </>
             )}
           </div>
         )}

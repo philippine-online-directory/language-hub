@@ -1,8 +1,10 @@
 import api from './axiosConfig';
 
 export const profileService = {
-    getMyProfile: async () => {
-        const response = await api.get('/profile/me');
+    getMyProfile: async (options = {}) => {
+        const response = await api.get('/profile/me', {
+            params: options
+        });
         return response.data;
     },
 
@@ -10,8 +12,10 @@ export const profileService = {
         await api.patch('/profile/me', updates);
     },
 
-    getPublicProfile: async (userId) => {
-        const response = await api.get(`/profile/${userId}`);
+    getPublicProfile: async (userId, options = {}) => {
+        const response = await api.get(`/profile/${userId}`, {
+            params: options
+        });
         return response.data;
     },
 

@@ -5,7 +5,10 @@ import { profileService } from '../../api/profileService';
 import Card from '../../components/Card/Card';
 import Button from '../../components/Button/Button';
 import WordDisplay from '../../components/WordDisplay/WordDisplay';
+import Pagination from '../../components/Pagination/Pagination';
 import styles from './ProfilePage.module.css';
+
+const PROFILE_ITEMS_PER_PAGE = 20;
 
 export default function ProfilePage() {
   const { isAuthenticated, loading: authLoading } = useAuth();
@@ -14,7 +17,13 @@ export default function ProfilePage() {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('contributions');
   const [expandedId, setExpandedId] = useState(null);
+  const [contributionsPage, setContributionsPage] = useState(1);
+  const [setsPage, setSetsPage] = useState(1);
   const contentRef = useRef(null);
+
+  useEffect(() => {
+    setExpandedId(null);
+  }, [contributionsPage, setsPage, activeTab]);
 
   useEffect(() => {
     if (authLoading) return;
@@ -28,7 +37,11 @@ export default function ProfilePage() {
       setLoading(true);
       setError(null);
       try {
-        const data = await profileService.getMyProfile();
+        const data = await profileService.getMyProfile({
+          contributionsPage,
+          setsPage,
+          limit: PROFILE_ITEMS_PER_PAGE
+        });
         setProfile(data);
       } catch (err) {
         setError('Failed to load profile. Please try again.');
@@ -39,7 +52,7 @@ export default function ProfilePage() {
     };
 
     fetchProfile();
-  }, [isAuthenticated, authLoading]);
+  }, [isAuthenticated, authLoading, contributionsPage, setsPage]);
 
   // Scroll animation observer for grid items
   useEffect(() => {
@@ -76,6 +89,9 @@ export default function ProfilePage() {
       setError("Could not update reminder settings. Please try again.");
     }
   };
+
+  const contributionsPagination = profile?.contributionsPagination;
+  const createdSetsPagination = profile?.createdSetsPagination;
 
   if (authLoading || loading) {
     return (
@@ -195,13 +211,13 @@ export default function ProfilePage() {
             className={`${styles.tab} ${activeTab === 'contributions' ? styles.activeTab : ''}`}
             onClick={() => setActiveTab('contributions')}
           >
-            Contributions ({profile.contributions?.length || 0})
+            Contributions ({contributionsPagination?.total ?? profile.contributions?.length ?? 0})
           </button>
           <button
             className={`${styles.tab} ${activeTab === 'sets' ? styles.activeTab : ''}`}
             onClick={() => setActiveTab('sets')}
           >
-            My Sets ({profile.createdSets?.length || 0})
+            My Sets ({createdSetsPagination?.total ?? profile.createdSets?.length ?? 0})
           </button>
           <button
             className={`${styles.tab} ${activeTab === 'settings' ? styles.activeTab : ''}`}
@@ -228,22 +244,33 @@ export default function ProfilePage() {
                   </Link>
                 </div>
               ) : (
-                <div className={styles.contributionsGrid}>
-                  {profile.contributions?.map((contribution, index) => (
-                    <div 
-                      key={contribution.id} 
-                      className={styles.animateItem}
-                      style={{ '--item-index': index }}
-                    >
-                      <WordDisplay
-                        translation={contribution}
-                        showAddToSet={false}
-                        expanded={expandedId === contribution.id}
-                        onToggle={setExpandedId}
-                      />
-                    </div>
-                  ))}
-                </div>
+                <>
+                  <div className={styles.contributionsGrid}>
+                    {profile.contributions?.map((contribution, index) => (
+                      <div 
+                        key={contribution.id} 
+                        className={styles.animateItem}
+                        style={{ '--item-index': index }}
+                      >
+                        <WordDisplay
+                          translation={contribution}
+                          showAddToSet={false}
+                          expanded={expandedId === contribution.id}
+                          onToggle={setExpandedId}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  {contributionsPagination && contributionsPagination.totalPages > 1 && (
+                    <Pagination
+                      currentPage={contributionsPage}
+                      totalPages={contributionsPagination.totalPages}
+                      onPageChange={setContributionsPage}
+                      totalItems={contributionsPagination.total}
+                      itemsPerPage={contributionsPagination.limit}
+                    />
+                  )}
+                </>
               )}
             </>
           )}
@@ -263,36 +290,47 @@ export default function ProfilePage() {
                   </Link>
                 </div>
               ) : (
-                <div className={styles.setsGrid}>
-                  {profile.createdSets?.map((set, index) => (
-                    <Link 
-                      key={set.id} 
-                      to={`/sets/${set.id}`} 
-                      className={`${styles.setLink} ${styles.animateItem}`}
-                      style={{ '--item-index': index }}
-                    >
-                      <Card hoverable className={styles.setCard}>
-                        <div className={styles.setHeader}>
-                          <h3 className={styles.setName}>{set.name}</h3>
-                          {set.isPublic && <span className={styles.publicBadge}>Public</span>}
-                        </div>
-                        {set.description && (
-                          <p className={styles.setDescription}>{set.description}</p>
-                        )}
-                        <div className={styles.setMeta}>
-                          <span className={styles.metaItem}>
-                            {set._count?.setWords || 0} words
-                          </span>
-                          {set.language && (
-                            <span className={styles.metaItem}>
-                              {set.language.name}
-                            </span>
+                <>
+                  <div className={styles.setsGrid}>
+                    {profile.createdSets?.map((set, index) => (
+                      <Link 
+                        key={set.id} 
+                        to={`/sets/${set.id}`} 
+                        className={`${styles.setLink} ${styles.animateItem}`}
+                        style={{ '--item-index': index }}
+                      >
+                        <Card hoverable className={styles.setCard}>
+                          <div className={styles.setHeader}>
+                            <h3 className={styles.setName}>{set.name}</h3>
+                            {set.isPublic && <span className={styles.publicBadge}>Public</span>}
+                          </div>
+                          {set.description && (
+                            <p className={styles.setDescription}>{set.description}</p>
                           )}
-                        </div>
-                      </Card>
-                    </Link>
-                  ))}
-                </div>
+                          <div className={styles.setMeta}>
+                            <span className={styles.metaItem}>
+                              {set._count?.setWords || 0} words
+                            </span>
+                            {set.language && (
+                              <span className={styles.metaItem}>
+                                {set.language.name}
+                              </span>
+                            )}
+                          </div>
+                        </Card>
+                      </Link>
+                    ))}
+                  </div>
+                  {createdSetsPagination && createdSetsPagination.totalPages > 1 && (
+                    <Pagination
+                      currentPage={setsPage}
+                      totalPages={createdSetsPagination.totalPages}
+                      onPageChange={setSetsPage}
+                      totalItems={createdSetsPagination.total}
+                      itemsPerPage={createdSetsPagination.limit}
+                    />
+                  )}
+                </>
               )}
             </>
           )}

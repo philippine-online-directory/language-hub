@@ -52,51 +52,82 @@ async function searchUsers(username, page = 1, limit = 20){
     };
 }
 
-async function getMyProfile(userId){
+async function getMyProfile(userId, { contributionsPage = 1, setsPage = 1, limit = 20 } = {}){
     if (!userId) throw new Error("Must be logged in to view your profile");
 
-    const myProfile = await prisma.user.findUnique({
-        where: {
-            id: userId
-        },
-        select: {
-            email: true,
-            username: true,
-            createdAt: true,
-            reminderType: true,
-            role: true,
-            _count: {
-                select: {
-                    contributions: true,
-                    createdSets: true,
-                    gameScores: true
-                }
+    const contributionsWhere = { authorId: userId };
+    const setsWhere = { ownerId: userId };
+
+    const [profile, contributions, contributionsTotal, createdSets, setsTotal] = await Promise.all([
+        prisma.user.findUnique({
+            where: {
+                id: userId
             },
-            contributions: {
-                include: {
-                    language: { select: LANGUAGE_SUMMARY_SELECT }
-                },
-                orderBy: {
-                    createdAt: 'desc'
-                }
-            },
-            createdSets: {
-                include: {
-                    language: { select: LANGUAGE_SUMMARY_SELECT },
-                    _count: {
-                        select: {
-                            setWords: true
-                        }
+            select: {
+                email: true,
+                username: true,
+                createdAt: true,
+                reminderType: true,
+                role: true,
+                _count: {
+                    select: {
+                        contributions: true,
+                        createdSets: true,
+                        gameScores: true
                     }
-                },
-                orderBy: {
-                    createdAt: 'desc'
                 }
             }
-        }
-    })
+        }),
+        prisma.translation.findMany({
+            where: contributionsWhere,
+            include: {
+                language: { select: LANGUAGE_SUMMARY_SELECT }
+            },
+            skip: (contributionsPage - 1) * limit,
+            take: limit,
+            orderBy: {
+                createdAt: 'desc'
+            }
+        }),
+        prisma.translation.count({ where: contributionsWhere }),
+        prisma.vocabSet.findMany({
+            where: setsWhere,
+            include: {
+                language: { select: LANGUAGE_SUMMARY_SELECT },
+                _count: {
+                    select: {
+                        setWords: true
+                    }
+                }
+            },
+            skip: (setsPage - 1) * limit,
+            take: limit,
+            orderBy: {
+                createdAt: 'desc'
+            }
+        }),
+        prisma.vocabSet.count({ where: setsWhere })
+    ]);
 
-    return myProfile
+    if (!profile) return null;
+
+    return {
+        ...profile,
+        contributions,
+        createdSets,
+        contributionsPagination: {
+            page: contributionsPage,
+            limit,
+            total: contributionsTotal,
+            totalPages: Math.ceil(contributionsTotal / limit)
+        },
+        createdSetsPagination: {
+            page: setsPage,
+            limit,
+            total: setsTotal,
+            totalPages: Math.ceil(setsTotal / limit)
+        }
+    };
 }
 
 async function setMyProfile(userId, updates) {
@@ -116,52 +147,77 @@ async function setMyProfile(userId, updates) {
 
 }
 
-async function getPublicProfile(userId){
-    const user = await prisma.user.findUnique({
-        where: {
-            id: userId
-        },
-        select: {
-            username: true,
-            createdAt: true,
-            role: true,
-            _count: {
-                select: {
-                    contributions: true,
-                    createdSets: true
-                }
+async function getPublicProfile(userId, { contributionsPage = 1, setsPage = 1, limit = 20 } = {}){
+    const contributionsWhere = { authorId: userId, status: 'VERIFIED' };
+    const setsWhere = { ownerId: userId, isPublic: true };
+
+    const [profile, contributions, contributionsTotal, createdSets, setsTotal] = await Promise.all([
+        prisma.user.findUnique({
+            where: {
+                id: userId
             },
-            contributions: {
-                where: {
-                    status: 'VERIFIED'
-                },
-                include: {
-                    language: { select: LANGUAGE_SUMMARY_SELECT }
-                },
-                orderBy: {
-                    createdAt: 'desc'
-                }
-            },
-            createdSets: {
-                where: {
-                    isPublic: true
-                },
-                include: {
-                    language: { select: LANGUAGE_SUMMARY_SELECT },
-                    _count: {
-                        select: {
-                            setWords: true
-                        }
+            select: {
+                username: true,
+                createdAt: true,
+                role: true,
+                _count: {
+                    select: {
+                        contributions: true,
+                        createdSets: true
                     }
-                },
-                orderBy: {
-                    createdAt: 'desc'
                 }
             }
+        }),
+        prisma.translation.findMany({
+            where: contributionsWhere,
+            include: {
+                language: { select: LANGUAGE_SUMMARY_SELECT }
+            },
+            skip: (contributionsPage - 1) * limit,
+            take: limit,
+            orderBy: {
+                createdAt: 'desc'
+            }
+        }),
+        prisma.translation.count({ where: contributionsWhere }),
+        prisma.vocabSet.findMany({
+            where: setsWhere,
+            include: {
+                language: { select: LANGUAGE_SUMMARY_SELECT },
+                _count: {
+                    select: {
+                        setWords: true
+                    }
+                }
+            },
+            skip: (setsPage - 1) * limit,
+            take: limit,
+            orderBy: {
+                createdAt: 'desc'
+            }
+        }),
+        prisma.vocabSet.count({ where: setsWhere })
+    ]);
+
+    if (!profile) return null;
+
+    return {
+        ...profile,
+        contributions,
+        createdSets,
+        contributionsPagination: {
+            page: contributionsPage,
+            limit,
+            total: contributionsTotal,
+            totalPages: Math.ceil(contributionsTotal / limit)
+        },
+        createdSetsPagination: {
+            page: setsPage,
+            limit,
+            total: setsTotal,
+            totalPages: Math.ceil(setsTotal / limit)
         }
-    });
-    
-    return user;
+    };
 }
 
 const profileService = {

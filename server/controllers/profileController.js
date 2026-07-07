@@ -5,9 +5,14 @@ const getMyProfile = [
     auth,
     async (req, res, next) => {
         const { id } = req.user
+        const { contributionsPage, setsPage, limit } = req.query
 
         try {
-            const profile = await profileService.getMyProfile(id)
+            const profile = await profileService.getMyProfile(id, {
+                contributionsPage: parseInt(contributionsPage) || 1,
+                setsPage: parseInt(setsPage) || 1,
+                limit: parseInt(limit) || 20
+            })
 
             res.status(200).json(profile)
         }
@@ -36,9 +41,14 @@ const setMyProfile = [
 const getPublicProfile = [
     async (req, res, next) => {
         const { userId } = req.params
+        const { contributionsPage, setsPage, limit } = req.query
         
         try {
-            const profile = await profileService.getPublicProfile(userId)
+            const profile = await profileService.getPublicProfile(userId, {
+                contributionsPage: parseInt(contributionsPage) || 1,
+                setsPage: parseInt(setsPage) || 1,
+                limit: parseInt(limit) || 20
+            })
 
             res.status(200).json(profile)
         }
@@ -50,10 +60,14 @@ const getPublicProfile = [
 
 const searchUsers = [
     async (req, res, next) => {
-        const { name } = req.query
+        const { name, page, limit } = req.query
 
         try {
-            const users = await profileService.searchUsers(name)
+            const users = await profileService.searchUsers(
+                name,
+                parseInt(page) || 1,
+                parseInt(limit) || 20
+            )
 
             res.status(200).json(users)
         }
