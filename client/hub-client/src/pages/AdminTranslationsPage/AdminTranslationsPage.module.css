@@ -334,25 +334,10 @@
   transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
 }
 
-.translationItem::before {
-  content: '';
-  position: absolute;
-  inset: 10px auto 10px 10px;
-  width: 3px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, #C0763A, transparent);
-  opacity: 0;
-  transition: opacity 0.28s ease;
-}
-
 .translationItem:hover {
   transform: translateY(-2px);
   border-color: rgba(192, 118, 58, 0.32);
   box-shadow: 0 22px 54px rgba(31, 24, 18, 0.11);
-}
-
-.translationItem:hover::before {
-  opacity: 1;
 }
 
 .reviewCard {
