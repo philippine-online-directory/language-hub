@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import { languageService } from '../../api/languageService';
 import styles from './LanguagePickerModal.module.css';
 
+let cachedLanguages = null;
+
 export default function LanguagePickerModal({ isOpen, onClose, onSelect, selectedSlug }) {
     const [languages, setLanguages] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -15,6 +17,12 @@ export default function LanguagePickerModal({ isOpen, onClose, onSelect, selecte
         if (!isOpen) return;
 
         const fetchAll = async () => {
+            if (cachedLanguages) {
+                setLanguages(cachedLanguages);
+                setSearchQuery('');
+                return;
+            }
+
             setLoading(true);
             setError(null);
             try {
@@ -32,6 +40,7 @@ export default function LanguagePickerModal({ isOpen, onClose, onSelect, selecte
                     });
                 }
 
+                cachedLanguages = all;
                 setLanguages(all);
             } catch (err) {
                 setError('Failed to load languages.');
