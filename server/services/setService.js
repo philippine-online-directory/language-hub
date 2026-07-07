@@ -194,7 +194,7 @@ async function updateSet(setId, data, userId){
     return updatedSet;
 }
 
-async function getSetWords(setId){
+async function getSetWords(setId, page, limit){
     const existingSet = await prisma.vocabSet.findUnique({
         where: {
             id: setId
@@ -205,28 +205,60 @@ async function getSetWords(setId){
     })
 
     if (!existingSet) throw new Error("Set does not exist");
-    
-    const words = await prisma.translation.findMany({
-        where: {
-            setWords: {
-                some: {
-                    vocabSetId: setId
-                }
+
+    const where = {
+        setWords: {
+            some: {
+                vocabSetId: setId
             }
-        },
-        include: {
-            language: { select: LANGUAGE_SUMMARY_SELECT },
-            author: {
-                select: { id: true, username: true }
-            }
-        },
-        orderBy: {
-            createdAt: 'desc'
         }
-    });
+    };
+    const orderBy = {
+        createdAt: 'desc'
+    };
+    const shouldPaginate = Number.isInteger(page) && Number.isInteger(limit);
+
+    const [words, total] = shouldPaginate
+        ? await Promise.all([
+            prisma.translation.findMany({
+                where,
+                include: {
+                    language: { select: LANGUAGE_SUMMARY_SELECT },
+                    author: {
+                        select: { id: true, username: true }
+                    }
+                },
+                skip: (page - 1) * limit,
+                take: limit,
+                orderBy
+            }),
+            prisma.translation.count({ where })
+        ])
+        : [await prisma.translation.findMany({
+            where,
+            include: {
+                language: { select: LANGUAGE_SUMMARY_SELECT },
+                author: {
+                    select: { id: true, username: true }
+                }
+            },
+            orderBy
+        }), null];
 
     // Convert S3 keys to signed download URLs
     const wordsWithSignedUrls = await languageService.attachSignedUrls(words);
+
+    if (shouldPaginate) {
+        return {
+            translations: wordsWithSignedUrls,
+            pagination: {
+                page,
+                limit,
+                total,
+                totalPages: Math.ceil(total / limit)
+            }
+        };
+    }
 
     return wordsWithSignedUrls;
 }

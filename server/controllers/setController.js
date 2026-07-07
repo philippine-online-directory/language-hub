@@ -94,9 +94,14 @@ const updateSet = [
 const getSetWords = [
     async (req, res, next) => {
         const setId = req.params.setId || req.params.vocabSetId;
+        const { page, limit } = req.query;
         
         try {
-            const translations = await setService.getSetWords(setId);
+            const translations = await setService.getSetWords(
+                setId,
+                page ? parseInt(page) || 1 : undefined,
+                limit ? parseInt(limit) || 20 : undefined
+            );
 
             res.status(200).json(translations);
         }

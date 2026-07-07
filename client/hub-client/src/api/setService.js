@@ -37,8 +37,10 @@ export const setService = {
         return response.data;
     },
 
-    getSetWords: async (setId) => {
-        const response = await api.get(`/sets/${setId}/words`);
+    getSetWords: async (setId, options = {}) => {
+        const response = await api.get(`/sets/${setId}/words`, {
+            params: options
+        });
         return response.data;
     },
 

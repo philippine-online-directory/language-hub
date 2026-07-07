@@ -6,8 +6,11 @@ import WordDisplay from '../../components/WordDisplay/WordDisplay';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
 import ConfirmDeleteModal from '../../components/ConfirmDeleteModal/ConfirmDeleteModal';
+import Pagination from '../../components/Pagination/Pagination';
 import { clearJsonLd, setJsonLd, setRobotsDirective } from '../../utils/seoMeta';
 import styles from './SetDetailPage.module.css';
+
+const WORDS_PER_PAGE = 20;
 
 export default function SetDetailPage() {
   const { setId } = useParams();
@@ -19,6 +22,12 @@ export default function SetDetailPage() {
   const [expandedId, setExpandedId] = useState(null);
   const [pendingRemove, setPendingRemove] = useState(null);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [wordsPage, setWordsPage] = useState(1);
+  const [wordsPagination, setWordsPagination] = useState(null);
+
+  useEffect(() => {
+    setWordsPage(1);
+  }, [setId]);
 
   useEffect(() => {
     const fetchSet = async () => {
@@ -27,13 +36,14 @@ export default function SetDetailPage() {
       try {
         const [setInfo, translations] = await Promise.all([
           setService.getSetById(setId),
-          setService.getSetWords(setId)
+          setService.getSetWords(setId, { page: wordsPage, limit: WORDS_PER_PAGE })
         ]);
         const combinedData = {
           ...setInfo,
-          setWords: translations.map(translation => ({ translation }))
+          setWords: (translations.translations || []).map(translation => ({ translation }))
         };
         setSet(combinedData);
+        setWordsPagination(translations.pagination || null);
       } catch (err) {
         setError('Failed to load set. Please try again.');
         console.error('Error fetching set:', err);
@@ -43,7 +53,7 @@ export default function SetDetailPage() {
     };
 
     fetchSet();
-  }, [setId]);
+  }, [setId, wordsPage]);
 
   useEffect(() => {
     if (!loading && (error || !set)) {
@@ -129,7 +139,8 @@ export default function SetDetailPage() {
   }
 
   const isOwner = user && set.owner?.username === user.username;
-  const hasWords = set.setWords && set.setWords.length > 0;
+  const wordCount = set._count?.setWords ?? set.setWords?.length ?? 0;
+  const hasWords = wordCount > 0;
   const gameOptions = [
     {
       key: 'flashcard',
@@ -171,7 +182,7 @@ export default function SetDetailPage() {
             {set.description && <p className={styles.setDescription}>{set.description}</p>}
             <div className={styles.meta}>
               <span className={styles.metaItem}>
-                {set.setWords?.length || 0} words
+                {wordCount} words
               </span>
               {set.language && (
                 <span className={styles.metaItem}>{set.language.name}</span>
@@ -208,7 +219,7 @@ export default function SetDetailPage() {
                 <span className={styles.gamesEyebrow}>Ready to practice</span>
                 <h2 className={styles.sectionTitle}>Choose a game for this set</h2>
                 <p className={styles.gamesDescription}>
-                  Games use the {set.setWords.length} words saved in this set.
+                  Games use the {wordCount} words saved in this set.
                 </p>
               </div>
               <Link to={`/sets/${setId}/sessions`} className={styles.viewSessions}>
@@ -257,22 +268,33 @@ export default function SetDetailPage() {
               )}
             </div>
           ) : (
-            <div className={styles.wordsGrid}>
-              {set.setWords.map(({ translation }) => (
-                <div key={translation.id} className={styles.wordItem}>
-                  <WordDisplay translation={translation} showAddToSet={false} expanded={expandedId === translation.id} onToggle={setExpandedId} />
-                  {isOwner && (
-                    <Button
-                      variant="secondary"
-                      onClick={() => setPendingRemove({ id: translation.id, wordText: translation.wordText })}
-                      className={styles.removeButton}
-                    >
-                      Remove from Set
-                    </Button>
-                  )}
-                </div>
-              ))}
-            </div>
+            <>
+              <div className={styles.wordsGrid}>
+                {set.setWords.map(({ translation }) => (
+                  <div key={translation.id} className={styles.wordItem}>
+                    <WordDisplay translation={translation} showAddToSet={false} expanded={expandedId === translation.id} onToggle={setExpandedId} />
+                    {isOwner && (
+                      <Button
+                        variant="secondary"
+                        onClick={() => setPendingRemove({ id: translation.id, wordText: translation.wordText })}
+                        className={styles.removeButton}
+                      >
+                        Remove from Set
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {wordsPagination && wordsPagination.totalPages > 1 && (
+                <Pagination
+                  currentPage={wordsPage}
+                  totalPages={wordsPagination.totalPages}
+                  onPageChange={setWordsPage}
+                  totalItems={wordsPagination.total}
+                  itemsPerPage={wordsPagination.limit}
+                />
+              )}
+            </>
           )}
         </section>
       </div>
