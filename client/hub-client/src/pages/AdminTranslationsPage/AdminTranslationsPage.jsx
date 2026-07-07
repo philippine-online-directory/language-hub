@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { languageService } from '../../api/languageService';
 import { translationUpdateRequestService } from '../../api/translationUpdateRequestService';
-import Button from '../../components/Button/Button';
 import WordDisplay from '../../components/WordDisplay/WordDisplay';
 import UpdateWordDisplay from '../../components/UpdateWordDisplay/UpdateWordDisplay';
 import ConfirmDeleteModal from '../../components/ConfirmDeleteModal/ConfirmDeleteModal';
@@ -26,6 +25,11 @@ export default function AdminTranslationsPage(){
     const [expandedId, setExpandedId] = useState(null);
 
     const [isDeleting, setIsDeleting] = useState(false);
+    const visibleItemCount = filter === 'UPDATE'
+        ? translationUpdates.length
+        : filter === 'ALL'
+            ? translations.length + translationUpdates.length
+            : translations.length;
 
     useEffect(() => {
         setMounted(true);
@@ -229,7 +233,16 @@ export default function AdminTranslationsPage(){
             
             <div className={styles.container}>
                 <header className={styles.header}>
-                    <h1 className={styles.title}>Verify Translations</h1>
+                    <div>
+                        <p className={styles.eyebrow}>Admin review</p>
+                        <h1 className={styles.title}>Verify Translations</h1>
+                    </div>
+                    {!loading && (
+                        <div className={styles.queueCount} aria-label={`${visibleItemCount} review items`}>
+                            <span>{visibleItemCount}</span>
+                            queued
+                        </div>
+                    )}
                 </header>
 
                 <div className={styles.controls}>
@@ -256,7 +269,8 @@ export default function AdminTranslationsPage(){
                         )}
                     </div>
 
-                    <div className={styles.filterGroup}>
+                    <fieldset className={styles.filterGroup}>
+                        <legend className={styles.filterLegend}>Status</legend>
                         <label className={styles.radioLabel}>
                             <input
                                 type="radio"
@@ -297,7 +311,7 @@ export default function AdminTranslationsPage(){
                             />
                             <span>All</span>
                         </label>
-                    </div>
+                    </fieldset>
                 </div>
 
                 {loading ? (
@@ -316,62 +330,91 @@ export default function AdminTranslationsPage(){
                     <div className={styles.translationsGrid}>
                         {filter !== 'UPDATE' && (
                           translations.map((translation) => (
-                              <div key={translation.id} className={styles.translationItem}>
-                                <WordDisplay
-                                  translation={translation}
-                                  showAddToSet={false}
-                                  expanded={expandedId === translation.id}
-                                  onToggle={setExpandedId}
-                                />
+                              <article key={translation.id} className={styles.translationItem}>
+                                <div className={styles.reviewCard}>
+                                  <WordDisplay
+                                    translation={translation}
+                                    showAddToSet={false}
+                                    expanded={expandedId === translation.id}
+                                    onToggle={setExpandedId}
+                                  />
+                                </div>
                                 <div className={styles.adminActions}>
+                                  <span className={styles.actionLabel}>Decision</span>
                                   {translation.status === 'UNVERIFIED' ? (
-                                    <Button
-                                      variant="primary"
+                                    <button
+                                      type="button"
+                                      className={`${styles.reviewButton} ${styles.reviewButtonPrimary}`}
                                       onClick={() => handleVerify(translation.id)}
                                     >
-                                      Verify Translation
-                                    </Button>
+                                      <svg aria-hidden="true" viewBox="0 0 20 20" fill="none">
+                                        <path d="M4 10.5 8.2 14 16 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                                      </svg>
+                                      <span>Verify</span>
+                                    </button>
                                   ) : (
-                                    <Button
-                                      variant="secondary"
+                                    <button
+                                      type="button"
+                                      className={`${styles.reviewButton} ${styles.reviewButtonSecondary}`}
                                       onClick={() => handleUnverify(translation.id)}
                                     >
-                                      Mark as Unverified
-                                    </Button>
+                                      <svg aria-hidden="true" viewBox="0 0 20 20" fill="none">
+                                        <path d="M10 4v6l3.5 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                        <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="2" />
+                                      </svg>
+                                      <span>Unverify</span>
+                                    </button>
                                   )}
-                                  <Button
-                                    variant="danger"
+                                  <button
+                                    type="button"
+                                    className={`${styles.reviewButton} ${styles.reviewButtonDanger}`}
                                     onClick={() => handleDeleteClick(translation)}
+                                    aria-label={`Delete ${translation.wordText}`}
                                   >
-                                    Delete
-                                  </Button>
+                                    <svg aria-hidden="true" viewBox="0 0 20 20" fill="none">
+                                      <path d="M7 5V4a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 13 4v1m-8 0h10m-1 0-.6 10.1A1.5 1.5 0 0 1 11.9 16.5H8.1a1.5 1.5 0 0 1-1.5-1.4L6 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                    <span>Delete</span>
+                                  </button>
                                 </div>
-                              </div>
+                              </article>
                             ))
                         )}
 
                         {(filter === 'UPDATE' || filter === 'ALL') && (
                           translationUpdates.map((update) => (
-                              <div key={update.id} className={styles.translationItem}>
-                                <UpdateWordDisplay 
-                                  request={update} 
-                                  defaultExpanded={false}
-                                />
+                              <article key={update.id} className={styles.translationItem}>
+                                <div className={styles.reviewCard}>
+                                  <UpdateWordDisplay
+                                    request={update}
+                                    defaultExpanded={false}
+                                  />
+                                </div>
                                 <div className={styles.adminActions}>
-                                  <Button
-                                    variant="primary"
+                                  <span className={styles.actionLabel}>Update request</span>
+                                  <button
+                                    type="button"
+                                    className={`${styles.reviewButton} ${styles.reviewButtonPrimary}`}
                                     onClick={() => handleApprove(update.id)}
                                   >
-                                    Approve Update
-                                  </Button>
-                                  <Button
-                                    variant="danger"
+                                    <svg aria-hidden="true" viewBox="0 0 20 20" fill="none">
+                                      <path d="M4 10.5 8.2 14 16 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                    <span>Approve</span>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className={`${styles.reviewButton} ${styles.reviewButtonDanger}`}
                                     onClick={() => handleTranslationUpdateDeleteClick(update)}
+                                    aria-label={`Delete update for ${update.translation.wordText}`}
                                   >
-                                    Delete
-                                  </Button>
+                                    <svg aria-hidden="true" viewBox="0 0 20 20" fill="none">
+                                      <path d="M7 5V4a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 13 4v1m-8 0h10m-1 0-.6 10.1A1.5 1.5 0 0 1 11.9 16.5H8.1a1.5 1.5 0 0 1-1.5-1.4L6 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                    <span>Delete</span>
+                                  </button>
                                 </div>
-                              </div>
+                              </article>
                             ))
                         )}                      
                     </div>
