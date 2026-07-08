@@ -26,6 +26,36 @@ async function attachSignedUrls(translations) {
     );
 }
 
+async function getCompletionCountsByLanguageId(languageIds) {
+    if (languageIds.length === 0) return {};
+
+    const coveredCommonWords = await prisma.translation.findMany({
+        where: {
+            languageId: { in: languageIds },
+            commonWordId: { not: null }
+        },
+        select: {
+            languageId: true,
+            commonWordId: true
+        },
+        distinct: ['languageId', 'commonWordId']
+    });
+
+    return coveredCommonWords.reduce((counts, row) => {
+        counts[row.languageId] = (counts[row.languageId] || 0) + 1;
+        return counts;
+    }, {});
+}
+
+async function withLiveCompletionCounts(languages) {
+    const countsByLanguageId = await getCompletionCountsByLanguageId(languages.map(language => language.id));
+
+    return languages.map(language => ({
+        ...language,
+        completionCount: countsByLanguageId[language.id] || 0
+    }));
+}
+
 async function addLanguage({ name, speakerCount, isoCode, preservationNote, culturalBackground }) {
     const { slugify } = await import('../utils/slugify.js');
     const normalizedIsoCode = normalizeIsoCode(isoCode);
@@ -82,14 +112,16 @@ async function findLanguages(page = 1, limit = 20) {
         prisma.language.count()
     ]);
 
+    const languagesWithCompletionCounts = await withLiveCompletionCounts(languages);
+
     return {
-        languages,
+        languages: languagesWithCompletionCounts,
         pagination: { page, limit, total, totalPages: Math.ceil(total / limit) }
     };
 }
 
 async function findLanguageBySlug(slug) {
-    const [language, contributorGroups] = await Promise.all([
+    const [language, contributorGroups, coveredCommonWords] = await Promise.all([
         prisma.language.findUnique({
             where: { slug }
         }),
@@ -104,6 +136,14 @@ async function findLanguageBySlug(slug) {
                 { authorId: 'asc' }
             ],
             take: 3
+        }),
+        prisma.translation.findMany({
+            where: {
+                language: { slug },
+                commonWordId: { not: null }
+            },
+            select: { commonWordId: true },
+            distinct: ['commonWordId']
         })
     ]);
 
@@ -151,7 +191,7 @@ async function findLanguageBySlug(slug) {
             .map(({ id, username, count }) => ({ id, username, count }));
     }
 
-    return { ...language, topContributors };
+    return { ...language, completionCount: coveredCommonWords.length, topContributors };
 }
 
 async function findLanguageByName(phrase, page = 1, limit = 20) {
@@ -171,8 +211,10 @@ async function findLanguageByName(phrase, page = 1, limit = 20) {
         prisma.language.count({ where })
     ]);
 
+    const languagesWithCompletionCounts = await withLiveCompletionCounts(languages);
+
     return {
-        languages,
+        languages: languagesWithCompletionCounts,
         pagination: { page, limit, total, totalPages: Math.ceil(total / limit) }
     };
 }
