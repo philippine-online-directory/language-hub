@@ -480,13 +480,30 @@
 
 .steps {
   margin: 0 0 20px;
-  padding-left: 22px;
+  padding: 0;
+  list-style-position: inside;
   color: var(--text-primary);
   line-height: 24px;
+  counter-reset: guide-step;
+}
+
+.steps li {
+  margin: 0;
+  padding: 10px 12px;
+  border-left: 3px solid #C0763A;
+  border-radius: 8px;
+  background: rgba(192, 118, 58, 0.07);
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.steps li::marker {
+  color: #C0763A;
+  font-weight: 700;
 }
 
 .steps li + li {
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .fields {
@@ -497,32 +514,44 @@
 .fields h3 {
   color: var(--text-primary);
   font-size: 15px;
-  margin: 0 0 8px;
+  line-height: 20px;
+  margin: 0 0 10px;
+  font-weight: 700;
 }
 
 .fields h3:not(:first-child) {
   margin-top: 18px;
 }
 
+.requiredHeading,
+.optionalHeading {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 4px;
+  border-bottom: 2px solid currentColor;
+}
+
+.requiredHeading {
+  color: #DC2626 !important;
+}
+
+.optionalHeading {
+  color: #C0763A !important;
+}
+
 .fields p {
   margin: 0 0 8px;
   color: var(--text-secondary);
   line-height: 20px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .fields code {
   color: var(--text-primary);
   font-weight: 600;
-}
-
-.duplicateNote {
-  border: 1px solid #FCD9B6;
-  background: #FFF7ED;
-  color: #7C2D12;
-  border-radius: 8px;
-  padding: 12px;
-  font-size: 14px;
-  line-height: 20px;
 }
 
 .modalOverlay {

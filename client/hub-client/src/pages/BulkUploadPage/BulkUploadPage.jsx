@@ -975,7 +975,7 @@ export default function BulkUploadPage() {
                                 </svg>
                             </button>
                         </div>
-                        <GuideDetails selectedGuide={selectedGuide} showDuplicateNote={false} />
+                        <GuideDetails selectedGuide={selectedGuide} />
                     </Card>
                 </div>
             )}
@@ -987,12 +987,12 @@ function GuideContent({ selectedGuide }) {
     return (
         <Card className={styles.guideCard}>
             <h2 className={styles.sectionTitle}>{selectedGuide.title}</h2>
-            <GuideDetails selectedGuide={selectedGuide} showDuplicateNote />
+            <GuideDetails selectedGuide={selectedGuide} />
         </Card>
     );
 }
 
-function GuideDetails({ selectedGuide, showDuplicateNote }) {
+function GuideDetails({ selectedGuide }) {
     return (
         <>
             <ol className={styles.steps}>
@@ -1002,22 +1002,15 @@ function GuideDetails({ selectedGuide, showDuplicateNote }) {
             </ol>
 
             <div className={styles.fields}>
-                <h3>Required fields</h3>
+                <h3 className={styles.requiredHeading}>Required fields</h3>
                 <p><code>wordText</code> - word or phrase in the language.</p>
                 <p><code>englishDefinition</code> - English meaning.</p>
 
-                <h3>Optional fields</h3>
+                <h3 className={styles.optionalHeading}>Optional fields</h3>
                 <p><code>partOfSpeech</code> - noun, verb, phrase, etc.</p>
                 <p><code>exampleSentence</code> - sentence using the word.</p>
                 <p><code>usageComment</code> - note on how the word might be used.</p>
             </div>
-
-            {showDuplicateNote && (
-                <div className={styles.duplicateNote}>
-                    Duplicate check uses language, word, English definition, and part of speech.
-                    The same word can still be uploaded as both a noun and a verb.
-                </div>
-            )}
         </>
     );
 }
