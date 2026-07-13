@@ -40,6 +40,10 @@
   white-space: nowrap;
 }
 
+.mobileSheetBtn {
+  display: none;
+}
+
 .layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 360px;
@@ -637,8 +641,35 @@
     flex-direction: column;
   }
 
+  .mobileSheetBtn {
+    display: block;
+    width: 100%;
+    margin: 0 0 20px;
+    padding: 16px;
+    background: rgba(192, 118, 58, 0.07);
+    border: 1px solid rgba(192, 118, 58, 0.25);
+    border-radius: 10px;
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 600;
+    color: #C0763A;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  .mobileSheetBtn:hover {
+    background: rgba(192, 118, 58, 0.12);
+    border-color: rgba(192, 118, 58, 0.4);
+  }
+
   .layout {
     grid-template-columns: 1fr;
+  }
+
+  .missingWordsColumn {
+    display: none;
   }
 
   .summaryGrid {

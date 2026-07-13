@@ -4,6 +4,7 @@ import { importBatchService } from '../../api/importBatchService';
 import { languageService } from '../../api/languageService';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
+import MissingWordsBottomSheet from '../../components/MissingWordsSidebar/MissingWordsBottomSheet';
 import MissingWordsSidebar from '../../components/MissingWordsSidebar/MissingWordsSidebar';
 import styles from './BulkUploadPage.module.css';
 
@@ -379,6 +380,7 @@ export default function BulkUploadPage() {
     const [error, setError] = useState('');
     const [result, setResult] = useState(null);
     const [guideModalOpen, setGuideModalOpen] = useState(false);
+    const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
 
     const nonEmptyDraftRows = useMemo(
         () => draftRows.filter(row => TEMPLATE_HEADERS.some(field => row.data[field])),
@@ -545,6 +547,7 @@ export default function BulkUploadPage() {
         setResult(null);
         setSourcePreview(null);
         setColumnMapping(inferColumnMapping([]));
+        setMobileSheetOpen(false);
         setDraftRows(prev => {
             const rows = prev.length > 0 ? prev : createBlankDraftRows();
             const emptyDefinitionIndex = rows.findIndex(row => !row.data.englishDefinition.trim());
@@ -633,6 +636,17 @@ export default function BulkUploadPage() {
                     </div>
                     <Link to="/contribute" className={styles.singleLink}>Add one word instead</Link>
                 </header>
+
+                {inputMode === 'table' && selectedSlug && (
+                    <button
+                        type="button"
+                        className={styles.mobileSheetBtn}
+                        onClick={() => setMobileSheetOpen(true)}
+                        aria-haspopup="dialog"
+                    >
+                        View Missing Words
+                    </button>
+                )}
 
                 <div className={styles.layout}>
                     <section className={styles.mainColumn}>
@@ -939,7 +953,7 @@ export default function BulkUploadPage() {
                         )}
                     </section>
 
-                    <aside className={styles.guideColumn}>
+                    <aside className={`${styles.guideColumn} ${inputMode === 'table' ? styles.missingWordsColumn : ''}`}>
                         {inputMode === 'table' ? (
                             <MissingWordsSidebar
                                 slug={selectedSlug}
@@ -952,6 +966,13 @@ export default function BulkUploadPage() {
                     </aside>
                 </div>
             </div>
+
+            <MissingWordsBottomSheet
+                isOpen={mobileSheetOpen}
+                onClose={() => setMobileSheetOpen(false)}
+                slug={selectedSlug}
+                onWordClick={handleMissingWordClick}
+            />
 
             {guideModalOpen && (
                 <div className={styles.modalOverlay} onClick={() => setGuideModalOpen(false)}>
