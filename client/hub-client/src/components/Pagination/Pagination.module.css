@@ -100,6 +100,32 @@
   letter-spacing: 0.1em;
 }
 
+.compact {
+  margin-top: 0;
+  padding: 0;
+  gap: 12px;
+}
+
+.compact .paginationInfo {
+  font-size: 13px;
+}
+
+.compact .pagination {
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.compact .pageButton,
+.compact .ellipsis {
+  min-width: 32px;
+  height: 32px;
+  font-size: 13px;
+}
+
+.compact .navButton {
+  width: 32px;
+}
+
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   .paginationContainer {

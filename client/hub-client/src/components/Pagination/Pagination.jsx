@@ -5,7 +5,8 @@ export default function Pagination({
   totalPages, 
   onPageChange,
   totalItems,
-  itemsPerPage 
+  itemsPerPage,
+  compact = false
 }) {
   if (totalPages <= 1) return null;
 
@@ -38,7 +39,7 @@ export default function Pagination({
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
   return (
-    <div className={styles.paginationContainer}>
+    <div className={`${styles.paginationContainer} ${compact ? styles.compact : ''}`}>
       <div className={styles.paginationInfo}>
         Showing {startItem}-{endItem} of {totalItems}
       </div>
@@ -55,7 +56,7 @@ export default function Pagination({
           </svg>
         </button>
 
-        {pages.map((page, index) => {
+        {pages.map((page) => {
           if (typeof page === 'string') {
             return (
               <span key={page} className={styles.ellipsis}>

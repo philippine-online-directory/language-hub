@@ -104,27 +104,32 @@ export default function MissingWordsSidebar({ slug, onWordClick, defaultOpen, cl
                         </div>
                     ) : (
                         <>
-                            <div className={styles.wordsList}>
-                                {missingWords.map(word => (
-                                    <button
-                                        key={word.id}
-                                        type="button"
-                                        className={styles.wordCard}
-                                        onClick={() => onWordClick(word)}
-                                    >
-                                        <span className={styles.wordText}>{word.word}</span>
-                                        <span className={styles.wordHint}>{clickHint}</span>
-                                    </button>
-                                ))}
+                            <div className={styles.wordsScroller}>
+                                <div className={styles.wordsList}>
+                                    {missingWords.map(word => (
+                                        <button
+                                            key={word.id}
+                                            type="button"
+                                            className={styles.wordCard}
+                                            onClick={() => onWordClick(word)}
+                                        >
+                                            <span className={styles.wordText}>{word.word}</span>
+                                            <span className={styles.wordHint}>{clickHint}</span>
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                             {missingPagination && missingPagination.totalPages > 1 && (
-                                <Pagination
-                                    currentPage={missingPage}
-                                    totalPages={missingPagination.totalPages}
-                                    onPageChange={setMissingPage}
-                                    totalItems={missingPagination.total}
-                                    itemsPerPage={WORDS_PER_PAGE}
-                                />
+                                <div className={styles.paginationSlot}>
+                                    <Pagination
+                                        currentPage={missingPage}
+                                        totalPages={missingPagination.totalPages}
+                                        onPageChange={setMissingPage}
+                                        totalItems={missingPagination.total}
+                                        itemsPerPage={WORDS_PER_PAGE}
+                                        compact
+                                    />
+                                </div>
                             )}
                         </>
                     )}

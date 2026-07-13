@@ -3,7 +3,9 @@
   position: sticky;
   top: 100px;
   max-height: calc(100vh - 120px);
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   scrollbar-width: thin;
   scrollbar-color: rgba(192, 118, 58, 0.2) transparent;
 }
@@ -23,6 +25,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  flex-shrink: 0;
   margin-bottom: 16px;
   padding-bottom: 12px;
   border-bottom: 2px solid rgba(192, 118, 58, 0.15);
@@ -74,7 +77,10 @@
 /* ─── Body ───────────────────────────────────────────── */
 
 .body {
-  padding-bottom: 8px;
+  min-height: 0;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 }
 
 .placeholder {
@@ -179,11 +185,36 @@
 
 /* ─── Word list ──────────────────────────────────────── */
 
+.wordsScroller {
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(192, 118, 58, 0.2) transparent;
+}
+
+.wordsScroller::-webkit-scrollbar {
+  width: 4px;
+}
+
+.wordsScroller::-webkit-scrollbar-thumb {
+  background: rgba(192, 118, 58, 0.2);
+  border-radius: 2px;
+}
+
 .wordsList {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-bottom: 16px;
+  padding-bottom: 12px;
+}
+
+.paginationSlot {
+  flex-shrink: 0;
+  border-top: 2px solid rgba(192, 118, 58, 0.15);
+  background: var(--bg-body);
+  padding-top: 12px;
 }
 
 .wordCard {
