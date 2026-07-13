@@ -569,7 +569,9 @@ export default function BulkUploadPage() {
     };
 
     const handleDeleteDraftRow = (rowId) => {
-        setDraftRows(prev => prev.filter(row => row.id !== rowId));
+        setDraftRows(prev => prev
+            .filter(row => row.id !== rowId)
+            .map((row, index) => ({ ...row, rowNumber: index + 1 })));
     };
 
     const handleSubmit = async (e) => {
