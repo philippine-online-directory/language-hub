@@ -4,6 +4,7 @@ import { importBatchService } from '../../api/importBatchService';
 import { languageService } from '../../api/languageService';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
+import MissingWordsSidebar from '../../components/MissingWordsSidebar/MissingWordsSidebar';
 import styles from './BulkUploadPage.module.css';
 
 const TEMPLATE_HEADERS = [
@@ -77,7 +78,7 @@ const GUIDE_BY_INPUT_MODE = {
             'Fill in Word and English definition for every row you want to upload.',
             'Add part of speech, example sentence, or usage note only if you have them.',
             'Click Add Row if you need more space. Click Remove for any row you do not want.',
-            'Make sure the rows you want to upload say Ready.',
+            'Valid rows/translations are signaled by a green checkmark next to the row number.',
             'Confirm that you have permission to contribute the data, then submit.'
         ]
     }
@@ -378,6 +379,7 @@ export default function BulkUploadPage() {
     const [error, setError] = useState('');
     const [result, setResult] = useState(null);
     const [recentBatches, setRecentBatches] = useState([]);
+    const [guideModalOpen, setGuideModalOpen] = useState(false);
 
     const nonEmptyDraftRows = useMemo(
         () => draftRows.filter(row => TEMPLATE_HEADERS.some(field => row.data[field])),
@@ -388,6 +390,7 @@ export default function BulkUploadPage() {
         [draftRows]
     );
     const selectedGuide = GUIDE_BY_INPUT_MODE[inputMode];
+    const selectedSlug = languages.find(language => language.id === languageId)?.slug ?? null;
 
     useEffect(() => {
         const loadInitialData = async () => {
@@ -534,11 +537,40 @@ export default function BulkUploadPage() {
         setDraftRows(prev => [
             ...prev,
             {
-                id: `manual-${Date.now()}`,
+                id: `manual-${Date.now()}-${prev.length + 1}`,
                 rowNumber: prev.length + 1,
                 data: emptyRowData()
             }
         ]);
+    };
+
+    const handleMissingWordClick = (word) => {
+        setInputMode('table');
+        setError('');
+        setResult(null);
+        setSourcePreview(null);
+        setColumnMapping(inferColumnMapping([]));
+        setDraftRows(prev => {
+            const rows = prev.length > 0 ? prev : createBlankDraftRows();
+            const emptyDefinitionIndex = rows.findIndex(row => !row.data.englishDefinition.trim());
+
+            if (emptyDefinitionIndex >= 0) {
+                return rows.map((row, index) => (
+                    index === emptyDefinitionIndex
+                        ? { ...row, data: { ...row.data, englishDefinition: word.word } }
+                        : row
+                ));
+            }
+
+            return [
+                ...rows,
+                {
+                    id: `manual-${Date.now()}-${rows.length + 1}`,
+                    rowNumber: rows.length + 1,
+                    data: { ...emptyRowData(), englishDefinition: word.word }
+                }
+            ];
+        });
     };
 
     const handleDeleteDraftRow = (rowId) => {
@@ -706,9 +738,14 @@ export default function BulkUploadPage() {
                                         <p className={styles.hint}>
                                             Start with empty rows, then fill only the fields you have. Word and English definition are required.
                                         </p>
-                                        <Button type="button" variant="secondary" onClick={handleStartBlankTable}>
-                                            Reset to 10 Blank Rows
-                                        </Button>
+                                        <div className={styles.tableIntroActions}>
+                                            <Button type="button" variant="secondary" onClick={handleStartBlankTable}>
+                                                Reset to 10 Blank Rows
+                                            </Button>
+                                            <Button type="button" variant="secondary" onClick={() => setGuideModalOpen(true)}>
+                                                How to Use the Table
+                                            </Button>
+                                        </div>
                                     </div>
                                 )}
 
@@ -768,7 +805,16 @@ export default function BulkUploadPage() {
                                                         const issue = getDraftRowIssue(row);
                                                         return (
                                                             <tr key={row.id}>
-                                                                <td>{row.rowNumber}</td>
+                                                                <td className={styles.rowNumberCell}>
+                                                                    <span>{row.rowNumber}</span>
+                                                                    {!issue && (
+                                                                        <span className={styles.validIcon} aria-label={`Row ${row.rowNumber} is valid`}>
+                                                                            <svg viewBox="0 0 20 20" aria-hidden="true">
+                                                                                <path d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0l-3.5-3.5a1 1 0 0 1 1.4-1.4l2.8 2.8 6.8-6.8a1 1 0 0 1 1.4 0z" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    )}
+                                                                </td>
                                                                 {TEMPLATE_HEADERS.map(field => (
                                                                     <td key={field}>
                                                                         <input
@@ -780,7 +826,7 @@ export default function BulkUploadPage() {
                                                                         />
                                                                     </td>
                                                                 ))}
-                                                                <td>{issue || 'Ready'}</td>
+                                                                <td>{issue}</td>
                                                                 <td>
                                                                     <button
                                                                         type="button"
@@ -898,30 +944,15 @@ export default function BulkUploadPage() {
                     </section>
 
                     <aside className={styles.guideColumn}>
-                        <Card className={styles.guideCard}>
-                            <h2 className={styles.sectionTitle}>{selectedGuide.title}</h2>
-                            <ol className={styles.steps}>
-                                {selectedGuide.steps.map(step => (
-                                    <li key={step}>{step}</li>
-                                ))}
-                            </ol>
-
-                            <div className={styles.fields}>
-                                <h3>Required fields</h3>
-                                <p><code>wordText</code> - word or phrase in the language.</p>
-                                <p><code>englishDefinition</code> - English meaning.</p>
-
-                                <h3>Optional fields</h3>
-                                <p><code>partOfSpeech</code> - noun, verb, phrase, etc.</p>
-                                <p><code>exampleSentence</code> - sentence using the word.</p>
-                                <p><code>usageComment</code> - note on how the word might be used.</p>
-                            </div>
-
-                            <div className={styles.duplicateNote}>
-                                Duplicate check uses language, word, English definition, and part of speech.
-                                The same word can still be uploaded as both a noun and a verb.
-                            </div>
-                        </Card>
+                        {inputMode === 'table' ? (
+                            <MissingWordsSidebar
+                                slug={selectedSlug}
+                                onWordClick={handleMissingWordClick}
+                                clickHint="Add to table"
+                            />
+                        ) : (
+                            <GuideContent selectedGuide={selectedGuide} />
+                        )}
 
                         {recentBatches.length > 0 && (
                             <Card className={styles.guideCard}>
@@ -939,7 +970,72 @@ export default function BulkUploadPage() {
                     </aside>
                 </div>
             </div>
+
+            {guideModalOpen && (
+                <div className={styles.modalOverlay} role="presentation" onMouseDown={() => setGuideModalOpen(false)}>
+                    <div
+                        className={styles.modal}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="bulk-table-guide-title"
+                        onMouseDown={(e) => e.stopPropagation()}
+                    >
+                        <div className={styles.modalHeader}>
+                            <h2 id="bulk-table-guide-title" className={styles.sectionTitle}>{selectedGuide.title}</h2>
+                            <button
+                                type="button"
+                                className={styles.modalClose}
+                                onClick={() => setGuideModalOpen(false)}
+                                aria-label="Close guide"
+                            >
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+                                    <line x1="18" y1="6" x2="6" y2="18" />
+                                    <line x1="6" y1="6" x2="18" y2="18" />
+                                </svg>
+                            </button>
+                        </div>
+                        <GuideDetails selectedGuide={selectedGuide} />
+                    </div>
+                </div>
+            )}
         </div>
+    );
+}
+
+function GuideContent({ selectedGuide }) {
+    return (
+        <Card className={styles.guideCard}>
+            <h2 className={styles.sectionTitle}>{selectedGuide.title}</h2>
+            <GuideDetails selectedGuide={selectedGuide} />
+        </Card>
+    );
+}
+
+function GuideDetails({ selectedGuide }) {
+    return (
+        <>
+            <ol className={styles.steps}>
+                {selectedGuide.steps.map(step => (
+                    <li key={step}>{step}</li>
+                ))}
+            </ol>
+
+            <div className={styles.fields}>
+                <h3>Required fields</h3>
+                <p><code>wordText</code> - word or phrase in the language.</p>
+                <p><code>englishDefinition</code> - English meaning.</p>
+
+                <h3>Optional fields</h3>
+                <p><code>partOfSpeech</code> - noun, verb, phrase, etc.</p>
+                <p><code>exampleSentence</code> - sentence using the word.</p>
+                <p><code>usageComment</code> - note on how the word might be used.</p>
+            </div>
+
+            <div className={styles.duplicateNote}>
+                Duplicate check uses language, word, English definition, and part of speech.
+                The same word can still be uploaded as both a noun and a verb.
+            </div>
+        </>
     );
 }
 

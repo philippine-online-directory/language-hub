@@ -5,7 +5,7 @@ import styles from './MissingWordsSidebar.module.css';
 
 const WORDS_PER_PAGE = 20;
 
-export default function MissingWordsSidebar({ slug, onWordClick, defaultOpen }) {
+export default function MissingWordsSidebar({ slug, onWordClick, defaultOpen, clickHint = 'Click to translate' }) {
     const [isOpen, setIsOpen] = useState(() => {
         if (defaultOpen !== undefined) return defaultOpen;
         return typeof window !== 'undefined' ? !window.matchMedia('(max-width: 768px)').matches : true;
@@ -113,7 +113,7 @@ export default function MissingWordsSidebar({ slug, onWordClick, defaultOpen }) 
                                         onClick={() => onWordClick(word)}
                                     >
                                         <span className={styles.wordText}>{word.word}</span>
-                                        <span className={styles.wordHint}>Click to translate</span>
+                                        <span className={styles.wordHint}>{clickHint}</span>
                                     </button>
                                 ))}
                             </div>

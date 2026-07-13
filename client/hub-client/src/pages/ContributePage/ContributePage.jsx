@@ -859,7 +859,7 @@ export default function ContributePage() {
                                     </p>
                                 </div>
                                 <Button type="button" variant="secondary" onClick={() => navigate('/contribute/bulk')}>
-                                    Open Bulk Row Editor
+                                    Add Many Translations
                                 </Button>
                             </div>
                             <Button type="button" variant="secondary" fullWidth onClick={() => navigate('/contributions')}>

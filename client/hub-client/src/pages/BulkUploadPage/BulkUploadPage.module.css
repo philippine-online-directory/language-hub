@@ -209,6 +209,12 @@
   margin: 4px 0 0;
 }
 
+.tableIntroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .reviewPanel {
   border: 1px solid var(--border-color);
   border-radius: 8px;
@@ -270,6 +276,25 @@
   color: var(--text-primary);
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   font-size: 14px;
+}
+
+.rowNumberCell {
+  white-space: nowrap;
+}
+
+.validIcon {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  margin-left: 8px;
+  vertical-align: middle;
+  color: #15803D;
+}
+
+.validIcon svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
 }
 
 .rowAction {
@@ -516,6 +541,53 @@
   border-bottom: 1px solid var(--border-color);
 }
 
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(17, 24, 39, 0.48);
+}
+
+.modal {
+  width: min(640px, 100%);
+  max-height: min(760px, calc(100vh - 48px));
+  overflow-y: auto;
+  border-radius: 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  padding: 24px;
+  box-shadow: 0 24px 70px rgba(17, 24, 39, 0.24);
+}
+
+.modalHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.modalClose {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  background: var(--bg-surface);
+  cursor: pointer;
+}
+
+.modalClose:hover {
+  color: var(--text-primary);
+  border-color: #C0763A;
+}
+
 @media (max-width: 900px) {
   .header {
     flex-direction: column;
@@ -548,6 +620,10 @@
   }
 
   .actions {
+    flex-direction: column;
+  }
+
+  .tableIntroActions {
     flex-direction: column;
   }
 
