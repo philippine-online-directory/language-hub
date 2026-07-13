@@ -5,7 +5,13 @@ import styles from './MissingWordsSidebar.module.css';
 
 const WORDS_PER_PAGE = 20;
 
-export default function MissingWordsSidebar({ slug, onWordClick, defaultOpen, clickHint = 'Click to translate' }) {
+export default function MissingWordsSidebar({
+    slug,
+    onWordClick,
+    defaultOpen,
+    clickHint = 'Click to translate',
+    showToggle = true
+}) {
     const [isOpen, setIsOpen] = useState(() => {
         if (defaultOpen !== undefined) return defaultOpen;
         return typeof window !== 'undefined' ? !window.matchMedia('(max-width: 768px)').matches : true;
@@ -66,14 +72,16 @@ export default function MissingWordsSidebar({ slug, onWordClick, defaultOpen, cl
                         </span>
                     )}
                 </h3>
-                <button
-                    type="button"
-                    className={styles.toggleBtn}
-                    onClick={() => setIsOpen(o => !o)}
-                    aria-expanded={isOpen}
-                >
-                    {isOpen ? 'Hide' : 'Show'}
-                </button>
+                {showToggle && (
+                    <button
+                        type="button"
+                        className={styles.toggleBtn}
+                        onClick={() => setIsOpen(o => !o)}
+                        aria-expanded={isOpen}
+                    >
+                        {isOpen ? 'Hide' : 'Show'}
+                    </button>
+                )}
             </div>
 
             {isOpen && (
