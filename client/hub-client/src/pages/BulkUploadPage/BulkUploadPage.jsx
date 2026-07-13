@@ -378,7 +378,6 @@ export default function BulkUploadPage() {
     const [languagesLoading, setLanguagesLoading] = useState(true);
     const [error, setError] = useState('');
     const [result, setResult] = useState(null);
-    const [recentBatches, setRecentBatches] = useState([]);
     const [guideModalOpen, setGuideModalOpen] = useState(false);
 
     const nonEmptyDraftRows = useMemo(
@@ -396,14 +395,10 @@ export default function BulkUploadPage() {
         const loadInitialData = async () => {
             setLanguagesLoading(true);
             try {
-                const [languageResult, batchResult] = await Promise.all([
-                    languageService.getLanguages(1, 1000),
-                    importBatchService.getMyImportBatches(1, 5)
-                ]);
+                const languageResult = await languageService.getLanguages(1, 1000);
                 const loadedLanguages = languageResult.languages || [];
                 setLanguages(loadedLanguages);
                 if (loadedLanguages.length > 0) setLanguageId(loadedLanguages[0].id);
-                setRecentBatches(batchResult.batches || []);
             } catch (err) {
                 console.error('Failed to load bulk upload data:', err);
                 setError('Failed to load bulk upload data. Please refresh the page.');
@@ -613,7 +608,6 @@ export default function BulkUploadPage() {
                 rightsConfirmed
             });
             setResult(batch);
-            setRecentBatches(prev => [batch, ...prev].slice(0, 5));
             setFile(null);
             resetReview();
             setRightsConfirmed(false);
@@ -953,32 +947,19 @@ export default function BulkUploadPage() {
                         ) : (
                             <GuideContent selectedGuide={selectedGuide} />
                         )}
-
-                        {recentBatches.length > 0 && (
-                            <Card className={styles.guideCard}>
-                                <h2 className={styles.sectionTitle}>Recent Bulk Uploads</h2>
-                                <div className={styles.recentList}>
-                                    {recentBatches.map(batch => (
-                                        <div key={batch.id} className={styles.recentItem}>
-                                            <span>{batch.fileName}</span>
-                                            <span>{formatStatus(batch.status)}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </Card>
-                        )}
                     </aside>
                 </div>
             </div>
 
             {guideModalOpen && (
-                <div className={styles.modalOverlay} role="presentation" onMouseDown={() => setGuideModalOpen(false)}>
-                    <div
+                <div className={styles.modalOverlay} onClick={() => setGuideModalOpen(false)}>
+                    <Card
                         className={styles.modal}
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="bulk-table-guide-title"
-                        onMouseDown={(e) => e.stopPropagation()}
+                        onClick={(e) => e.stopPropagation()}
+                        asDiv
                     >
                         <div className={styles.modalHeader}>
                             <h2 id="bulk-table-guide-title" className={styles.sectionTitle}>{selectedGuide.title}</h2>
@@ -994,8 +975,8 @@ export default function BulkUploadPage() {
                                 </svg>
                             </button>
                         </div>
-                        <GuideDetails selectedGuide={selectedGuide} />
-                    </div>
+                        <GuideDetails selectedGuide={selectedGuide} showDuplicateNote={false} />
+                    </Card>
                 </div>
             )}
         </div>
@@ -1006,12 +987,12 @@ function GuideContent({ selectedGuide }) {
     return (
         <Card className={styles.guideCard}>
             <h2 className={styles.sectionTitle}>{selectedGuide.title}</h2>
-            <GuideDetails selectedGuide={selectedGuide} />
+            <GuideDetails selectedGuide={selectedGuide} showDuplicateNote />
         </Card>
     );
 }
 
-function GuideDetails({ selectedGuide }) {
+function GuideDetails({ selectedGuide, showDuplicateNote }) {
     return (
         <>
             <ol className={styles.steps}>
@@ -1031,10 +1012,12 @@ function GuideDetails({ selectedGuide }) {
                 <p><code>usageComment</code> - note on how the word might be used.</p>
             </div>
 
-            <div className={styles.duplicateNote}>
-                Duplicate check uses language, word, English definition, and part of speech.
-                The same word can still be uploaded as both a noun and a verb.
-            </div>
+            {showDuplicateNote && (
+                <div className={styles.duplicateNote}>
+                    Duplicate check uses language, word, English definition, and part of speech.
+                    The same word can still be uploaded as both a noun and a verb.
+                </div>
+            )}
         </>
     );
 }

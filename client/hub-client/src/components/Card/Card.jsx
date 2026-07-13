@@ -1,6 +1,6 @@
 import styles from './Card.module.css'
 
-export default function Card({ children, onClick, hoverable = false, className = '', asDiv = false }){
+export default function Card({ children, onClick, hoverable = false, className = '', asDiv = false, ...props }){
     const classes = [
         styles.card,
         onClick ? styles.clickable : '',
@@ -11,7 +11,7 @@ export default function Card({ children, onClick, hoverable = false, className =
     const Component = (onClick && !asDiv) ? 'button' : 'div';
 
     return (
-        <Component className={classes} onClick={onClick}>
+        <Component className={classes} onClick={onClick} {...props}>
             {children}
         </Component>
     )
