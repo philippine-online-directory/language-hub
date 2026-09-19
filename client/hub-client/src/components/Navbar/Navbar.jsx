@@ -91,7 +91,9 @@ export default function Navbar(){
                     <button
                         className={`${styles.mobileMenuButton} ${mobileMenuOpen ? styles.open : ''}`}
                         onClick={() => setMobileMenuPath(mobileMenuOpen ? null : location.pathname)}
-                        aria-label="Toggle menu"
+                        aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+                        aria-expanded={mobileMenuOpen}
+                        aria-controls="primary-navigation"
                     >
                         <span></span>
                         <span></span>
@@ -99,7 +101,7 @@ export default function Navbar(){
                     </button>
 
                     {/* Desktop Navigation */}
-                    <div className={`${styles.navLinks} ${mobileMenuOpen ? styles.mobileMenuOpen : ''}`}>
+                    <div id="primary-navigation" className={`${styles.navLinks} ${mobileMenuOpen ? styles.mobileMenuOpen : ''}`}>
                         {/* Dictionaries — show for all users */}
                         <Link
                             to="/languages"
@@ -191,6 +193,17 @@ export default function Navbar(){
                             </svg>
                             <span>About</span>
                         </Link>
+
+                        {!authLoading && user && (
+                            <div className={styles.mobileAccountActions}>
+                                <Link to="/profile/me" className={styles.mobileAccountLink}>
+                                    Account: {user.username}
+                                </Link>
+                                <button type="button" className={styles.mobileLogoutButton} onClick={handleLogout}>
+                                    Log out
+                                </button>
+                            </div>
+                        )}
                     </div>
 
                     <div className={styles.actions}>

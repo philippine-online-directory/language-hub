@@ -342,6 +342,10 @@
   white-space: nowrap;
 }
 
+.mobileAccountActions {
+  display: none;
+}
+
 /* ============================================
    REDUCED MOTION
    ============================================ */
@@ -374,33 +378,7 @@
    RESPONSIVE
    ============================================ */
 
-@media (max-width: 1280px) {
-  /* Hide text labels on medium screens, keep icons */
-  .navLink span {
-    display: none;
-  }
-
-  .navLink {
-    padding: 10px;
-  }
-
-  .linkIcon {
-    width: 18px;
-    height: 18px;
-    opacity: 0.8;
-  }
-
-  .logoutButton {
-    width: 42px;
-    padding: 0;
-  }
-
-  .logoutButton span {
-    display: none;
-  }
-}
-
-@media (max-width: 968px) {
+@media (max-width: 1400px) {
   .mobileMenuButton {
     display: flex;
     order: 3;
@@ -422,13 +400,17 @@
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
     transform: translateY(-100%);
     opacity: 0;
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    visibility: hidden;
+    max-height: calc(100dvh - 80px);
+    overflow-y: auto;
+    transition: transform 220ms ease, opacity 180ms ease, visibility 220ms;
     pointer-events: none;
   }
 
   .navLinks.mobileMenuOpen {
     transform: translateY(0);
     opacity: 1;
+    visibility: visible;
     pointer-events: all;
   }
 
@@ -438,7 +420,6 @@
     justify-content: flex-start;
   }
 
-  /* Restore text labels in mobile menu */
   .navLink span {
     display: inline;
   }
@@ -464,6 +445,7 @@
 
   .navLinks {
     top: 70px;
+    max-height: calc(100dvh - 70px);
   }
 
   .container {
@@ -476,6 +458,43 @@
 
   .actions {
     flex-direction: row;
+  }
+}
+
+@media (max-width: 640px) {
+  .actions {
+    display: none;
+  }
+
+  .mobileAccountActions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding-top: 16px;
+    margin-top: 8px;
+    border-top: 1px solid var(--border-rgba);
+  }
+
+  .mobileAccountLink,
+  .mobileLogoutButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-rgba);
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .mobileLogoutButton {
+    color: #C0763A;
+    border-color: rgba(192, 118, 58, 0.3);
   }
 }
 
