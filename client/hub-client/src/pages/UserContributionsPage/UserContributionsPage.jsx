@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { contributionService } from '../../api/contributionService';
 import WordDisplay from '../../components/WordDisplay/WordDisplay';
 import Pagination from '../../components/Pagination/Pagination';
+import LoadingSkeleton from '../../components/LoadingSkeleton/LoadingSkeleton';
 import styles from './UserContributionsPage.module.css';
 
 export default function UserContributionsPage() {
@@ -59,10 +60,7 @@ export default function UserContributionsPage() {
                 {error && <div className={styles.error}>{error}</div>}
 
                 {loading ? (
-                    <div className={styles.loadingState}>
-                        <div className={styles.loadingSpinner}></div>
-                        <p>Loading contributions...</p>
-                    </div>
+                    <LoadingSkeleton variant="compact" label="Loading contributions" />
                 ) : contributions.length === 0 ? (
                     <div className={styles.empty}>
                         <svg className={styles.emptyIcon} viewBox="0 0 20 20" fill="currentColor">

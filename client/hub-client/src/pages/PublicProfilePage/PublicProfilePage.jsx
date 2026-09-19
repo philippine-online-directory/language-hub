@@ -4,6 +4,7 @@ import { profileService } from '../../api/profileService';
 import Card from '../../components/Card/Card';
 import WordDisplay from '../../components/WordDisplay/WordDisplay';
 import Pagination from '../../components/Pagination/Pagination';
+import LoadingSkeleton from '../../components/LoadingSkeleton/LoadingSkeleton';
 import { clearJsonLd, setJsonLd, setRobotsDirective } from '../../utils/seoMeta';
 import styles from './PublicProfilePage.module.css';
 
@@ -84,10 +85,7 @@ export default function PublicProfilePage() {
     return (
       <div className={styles.publicProfilePage}>
         <div className={styles.container}>
-          <div className={styles.loadingState}>
-            <div className={styles.loadingSpinner}></div>
-            <p>Loading profile...</p>
-          </div>
+          <LoadingSkeleton variant="game" label="Loading profile" />
         </div>
       </div>
     );

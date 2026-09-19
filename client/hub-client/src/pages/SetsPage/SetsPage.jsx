@@ -9,6 +9,7 @@ import Input from '../../components/Input/Input';
 import Pagination from '../../components/Pagination/Pagination';
 import SetsGamesHelpModal from '../../components/SetsGamesHelpModal/SetsGamesHelpModal';
 import ConfirmDeleteModal from '../../components/ConfirmDeleteModal/ConfirmDeleteModal';
+import LoadingSkeleton from '../../components/LoadingSkeleton/LoadingSkeleton';
 import styles from './SetsPage.module.css';
 
 export default function SetsPage(){
@@ -212,10 +213,7 @@ export default function SetsPage(){
 
                 {/* Loading State */}
                 {loading ? (
-                    <div className={styles.loadingState}>
-                        <div className={styles.loadingSpinner}></div>
-                        <p>Loading sets...</p>
-                    </div>
+                    <LoadingSkeleton label="Loading sets" />
                 ) : sets.length === 0 ? (
                     /* Empty State */
                     <div className={styles.empty}>

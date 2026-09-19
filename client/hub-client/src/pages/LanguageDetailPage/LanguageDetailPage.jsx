@@ -8,6 +8,7 @@ import Pagination from '../../components/Pagination/Pagination';
 import Button from '../../components/Button/Button';
 import Input from '../../components/Input/Input';
 import MissingWordsSidebar from '../../components/MissingWordsSidebar/MissingWordsSidebar';
+import LoadingSkeleton from '../../components/LoadingSkeleton/LoadingSkeleton';
 import { clearJsonLd, setJsonLd, setRobotsDirective } from '../../utils/seoMeta';
 import styles from './LanguageDetailPage.module.css';
 
@@ -197,10 +198,7 @@ export default function LanguageDetailPage() {
             <div className={`${styles.languageDetailPage} ${mounted ? styles.mounted : ''}`}>
                 <div className={styles.backgroundPattern} />
                 <div className={styles.container}>
-                    <div className={styles.loadingState}>
-                        <div className={styles.loadingSpinner} />
-                        <p>Loading language…</p>
-                    </div>
+                    <LoadingSkeleton variant="game" label="Loading language" />
                 </div>
             </div>
         );
@@ -506,10 +504,7 @@ export default function LanguageDetailPage() {
                             {translationsOpen && (
                                 <>
                                     {translationsLoading ? (
-                                        <div className={styles.colLoadingState}>
-                                            <div className={styles.loadingSpinner} />
-                                            <p>Loading translations…</p>
-                                        </div>
+                                        <LoadingSkeleton variant="compact" label="Loading translations" />
                                     ) : translationsError ? (
                                         <div className={styles.errorCard}>
                                             <svg viewBox="0 0 20 20" fill="currentColor" className={styles.errorIcon}>

@@ -6,6 +6,7 @@ import Card from '../../components/Card/Card';
 import Button from '../../components/Button/Button';
 import WordDisplay from '../../components/WordDisplay/WordDisplay';
 import Pagination from '../../components/Pagination/Pagination';
+import LoadingSkeleton from '../../components/LoadingSkeleton/LoadingSkeleton';
 import styles from './ProfilePage.module.css';
 
 const PROFILE_ITEMS_PER_PAGE = 20;
@@ -70,10 +71,7 @@ export default function ProfilePage() {
     return (
       <div className={styles.profilePage}>
         <div className={styles.container}>
-          <div className={styles.loadingState}>
-            <div className={styles.loadingSpinner}></div>
-            <p>Loading profile...</p>
-          </div>
+          <LoadingSkeleton variant="game" label="Loading profile" />
         </div>
       </div>
     );

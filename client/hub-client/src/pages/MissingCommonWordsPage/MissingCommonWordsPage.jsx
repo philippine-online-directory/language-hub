@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { languageService } from '../../api/languageService';
 import Pagination from '../../components/Pagination/Pagination';
 import Button from '../../components/Button/Button';
+import LoadingSkeleton from '../../components/LoadingSkeleton/LoadingSkeleton';
 import styles from './MissingCommonWordsPage.module.css';
 
 const COMMON_WORDS_PER_PAGE = 20;
@@ -90,10 +91,7 @@ export default function MissingCommonWordsPage() {
                 </header>
 
                 {loading ? (
-                    <div className={styles.loadingState}>
-                        <div className={styles.loadingSpinner} />
-                        <p>Loading words needing translation...</p>
-                    </div>
+                    <LoadingSkeleton variant="compact" label="Loading words needing translation" />
                 ) : error ? (
                     <div className={styles.errorCard}>
                         <p>{error}</p>

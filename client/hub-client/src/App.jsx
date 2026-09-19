@@ -14,6 +14,7 @@ import SiteGuidePage from './pages/SiteGuidePage/SiteGuidePage';
 import TranslatePage from './pages/TranslatePage/TranslatePage';
 import SeoUpdater from './components/SeoUpdater/SeoUpdater';
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
+import LoadingSkeleton from './components/LoadingSkeleton/LoadingSkeleton';
 import './App.css';
 
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard/AdminDashboard'));
@@ -38,13 +39,8 @@ const WritingGame = lazy(() => import('./pages/WritingGame/WritingGame'));
 
 function RouteLoading() {
     return (
-        <div style={{
-            textAlign: 'center',
-            padding: '48px',
-            color: '#6B7280',
-            fontSize: '16px'
-        }}>
-            Loading...
+        <div className="route-skeleton">
+            <LoadingSkeleton label="Loading page" />
         </div>
     );
 }
@@ -54,16 +50,7 @@ function ProtectedRoute({ children }){
     const location = useLocation();
 
     if (loading) {
-        return (
-            <div style={{
-                textAlign: 'center',
-                padding: '48px',
-                color: '#6B7280',
-                fontSize: '16px'
-            }}>
-                Loading...
-            </div>
-        );
+        return <RouteLoading />;
     }
 
     if (!isAuthenticated) {
@@ -80,16 +67,7 @@ function AdminRoute({ children }){
     const { user, loading } = useAuth();
 
     if (loading) {
-        return (
-            <div style={{ 
-                textAlign: 'center', 
-                padding: '48px',
-                color: '#6B7280',
-                fontSize: '16px'
-            }}>
-                Loading...
-            </div>
-        );
+        return <RouteLoading />;
     }
 
     if (!user || user.role !== 'ADMIN') {

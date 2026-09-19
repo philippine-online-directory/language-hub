@@ -5,6 +5,7 @@ import useDebounce from '../../hooks/useDebounce';
 import Card from '../../components/Card/Card';
 import Input from '../../components/Input/Input';
 import Pagination from '../../components/Pagination/Pagination';
+import LoadingSkeleton from '../../components/LoadingSkeleton/LoadingSkeleton';
 import styles from './UsersPage.module.css';
 
 export default function UsersPage() {
@@ -96,10 +97,7 @@ export default function UsersPage() {
                 {error && <div className={styles.error}>{error}</div>}
 
                 {loading ? (
-                    <div className={styles.loadingState}>
-                        <div className={styles.loadingSpinner}></div>
-                        <p>Loading users...</p>
-                    </div>
+                    <LoadingSkeleton label="Loading community members" />
                 ) : users.length === 0 ? (
                     <div className={styles.empty}>
                         <svg className={styles.emptyIcon} viewBox="0 0 20 20" fill="currentColor">

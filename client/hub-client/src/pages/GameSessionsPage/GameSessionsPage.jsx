@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { gameService } from '../../api/gameService';
 import { setService } from '../../api/setService';
 import Card from '../../components/Card/Card';
+import LoadingSkeleton from '../../components/LoadingSkeleton/LoadingSkeleton';
 import styles from './GameSessionsPage.module.css';
 
 export default function GameSessionsPage() {
@@ -100,10 +101,7 @@ export default function GameSessionsPage() {
     return (
       <div className={styles.gameSessionsPage}>
         <div className={styles.container}>
-          <div className={styles.loading}>
-            <div className={styles.spinner}></div>
-            <p>Loading sessions...</p>
-          </div>
+          <LoadingSkeleton variant="compact" label="Loading sessions" />
         </div>
       </div>
     );

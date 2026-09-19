@@ -5,6 +5,7 @@ import { gameService } from '../../api/gameService';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
+import LoadingSkeleton from '../../components/LoadingSkeleton/LoadingSkeleton';
 import styles from './FlashcardGame.module.css';
 
 export default function FlashcardGame() {
@@ -158,10 +159,7 @@ export default function FlashcardGame() {
         return (
             <div className={styles.flashcardGame}>
                 <div className={styles.container}>
-                    <div className={styles.loading}>
-                        <div className={styles.spinner}></div>
-                        <p>Loading flashcards...</p>
-                    </div>
+                    <LoadingSkeleton variant="game" label="Loading flashcards" />
                 </div>
             </div>
         );

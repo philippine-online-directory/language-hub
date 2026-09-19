@@ -6,6 +6,7 @@ import LanguageCard from '../../components/LanguageCard/LanguageCard';
 import Pagination from '../../components/Pagination/Pagination';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
+import LoadingSkeleton from '../../components/LoadingSkeleton/LoadingSkeleton';
 import styles from './LanguagesPage.module.css';
 
 export default function LanguagesPage() {
@@ -103,10 +104,7 @@ export default function LanguagesPage() {
                 {error && <div className={styles.error}>{error}</div>}
 
                 {loading ? (
-                    <div className={styles.loadingState}>
-                        <div className={styles.loadingSpinner}></div>
-                        <p>Loading languages...</p>
-                    </div>
+                    <LoadingSkeleton label="Loading languages" />
                 ) : languages.length === 0 ? (
                     <div className={styles.empty}>
                         <svg className={styles.emptyIcon} viewBox="0 0 20 20" fill="currentColor">

@@ -1,0 +1,141 @@
+.skeleton {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  animation: skeletonEnter 180ms ease-out both;
+}
+
+.item {
+  min-height: 11rem;
+  padding: 1.5rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-rgba);
+  border-radius: 12px;
+}
+
+.heading,
+.line,
+.shortLine,
+.footer,
+.eyebrow {
+  position: relative;
+  overflow: hidden;
+  background: rgba(192, 118, 58, 0.1);
+  border-radius: 6px;
+}
+
+.heading::after,
+.line::after,
+.shortLine::after,
+.footer::after,
+.eyebrow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(192, 118, 58, 0.12), transparent);
+  transform: translateX(-100%);
+  animation: skeletonShimmer 1.5s ease-in-out infinite;
+}
+
+.heading {
+  width: 58%;
+  height: 1.4rem;
+  margin-bottom: 1.25rem;
+}
+
+.line,
+.shortLine {
+  height: 0.7rem;
+  margin-bottom: 0.7rem;
+}
+
+.line {
+  width: 92%;
+}
+
+.shortLine {
+  width: 68%;
+}
+
+.footer {
+  width: 100%;
+  height: 2.25rem;
+  margin-top: 1.75rem;
+}
+
+.eyebrow {
+  width: 5rem;
+  height: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.compact {
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+.compact .item {
+  min-height: auto;
+  padding: 1rem;
+}
+
+.game {
+  display: block;
+  max-width: 46rem;
+  margin: 0 auto;
+}
+
+.game .item {
+  min-height: 22rem;
+  padding: 2.5rem;
+}
+
+.game .heading {
+  width: 42%;
+  height: 2rem;
+  margin: 3rem auto 1.5rem;
+}
+
+.game .line,
+.game .shortLine {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.game .footer {
+  width: 10rem;
+  margin: 4rem auto 0;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes skeletonEnter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes skeletonShimmer {
+  to { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton,
+  .heading::after,
+  .line::after,
+  .shortLine::after,
+  .footer::after,
+  .eyebrow::after {
+    animation: none;
+  }
+}

@@ -5,6 +5,7 @@ import { translationUpdateRequestService } from '../../api/translationUpdateRequ
 import WordDisplay from '../../components/WordDisplay/WordDisplay';
 import UpdateWordDisplay from '../../components/UpdateWordDisplay/UpdateWordDisplay';
 import ConfirmDeleteModal from '../../components/ConfirmDeleteModal/ConfirmDeleteModal';
+import LoadingSkeleton from '../../components/LoadingSkeleton/LoadingSkeleton';
 import styles from './AdminTranslationsPage.module.css';
 
 
@@ -315,10 +316,7 @@ export default function AdminTranslationsPage(){
                 </div>
 
                 {loading ? (
-                    <div className={styles.loadingState}>
-                        <div className={styles.loadingSpinner}></div>
-                        <p>Loading translations...</p>
-                    </div>
+                    <LoadingSkeleton variant="compact" label="Loading translations" />
                 ) : (translations.length === 0 && filter !== 'UPDATE') || (filter === 'UPDATE' && translationUpdates.length === 0) ? (
                     <div className={styles.empty}>
                         <svg className={styles.emptyIcon} viewBox="0 0 20 20" fill="currentColor">

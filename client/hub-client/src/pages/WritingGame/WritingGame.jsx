@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
 import Input from '../../components/Input/Input';
+import LoadingSkeleton from '../../components/LoadingSkeleton/LoadingSkeleton';
 import styles from './WritingGame.module.css';
 
 export default function WritingGame() {
@@ -170,10 +171,7 @@ export default function WritingGame() {
         return (
             <div className={styles.writingGame}>
                 <div className={styles.container}>
-                    <div className={styles.loading}>
-                        <div className={styles.spinner}></div>
-                        <p>Loading game...</p>
-                    </div>
+                    <LoadingSkeleton variant="game" label="Loading writing game" />
                 </div>
             </div>
         );

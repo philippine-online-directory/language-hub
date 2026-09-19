@@ -5,6 +5,7 @@ import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
 import Input from '../../components/Input/Input';
 import ConfirmDeleteModal from '../../components/ConfirmDeleteModal/ConfirmDeleteModal';
+import LoadingSkeleton from '../../components/LoadingSkeleton/LoadingSkeleton';
 import styles from './AdminLanguagesPage.module.css';
 
 export default function AdminLanguagesPage(){
@@ -250,10 +251,7 @@ export default function AdminLanguagesPage(){
                 )}
 
                 {loading ? (
-                    <div className={styles.loadingState}>
-                        <div className={styles.loadingSpinner}></div>
-                        <p>Loading languages...</p>
-                    </div>
+                    <LoadingSkeleton variant="compact" label="Loading languages" />
                 ) : (
                     <div className={styles.languagesList}>
                         {languages.map((language) => (

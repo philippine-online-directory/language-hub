@@ -5,6 +5,7 @@ import { languageService } from '../../api/languageService';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
+import LoadingSkeleton from '../../components/LoadingSkeleton/LoadingSkeleton';
 import styles from './CreateEditSetPage.module.css';
 
 export default function CreateEditSetPage(){
@@ -142,10 +143,10 @@ export default function CreateEditSetPage(){
             <div className={`${styles.createEditSetPage} ${mounted ? styles.mounted : ''}`}>
                 <div className={styles.backgroundPattern}></div>
                 <div className={styles.container}>
-                    <div className={styles.loadingState}>
-                        <div className={styles.loadingSpinner}></div>
-                        <p>{loadingSet ? 'Loading set...' : 'Loading languages...'}</p>
-                    </div>
+                    <LoadingSkeleton
+                        variant="game"
+                        label={loadingSet ? 'Loading set' : 'Loading languages'}
+                    />
                 </div>
             </div>
         );

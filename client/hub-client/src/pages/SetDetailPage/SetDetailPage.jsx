@@ -7,6 +7,7 @@ import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
 import ConfirmDeleteModal from '../../components/ConfirmDeleteModal/ConfirmDeleteModal';
 import Pagination from '../../components/Pagination/Pagination';
+import LoadingSkeleton from '../../components/LoadingSkeleton/LoadingSkeleton';
 import { clearJsonLd, setJsonLd, setRobotsDirective } from '../../utils/seoMeta';
 import styles from './SetDetailPage.module.css';
 
@@ -122,7 +123,7 @@ export default function SetDetailPage() {
     return (
       <div className={styles.setDetailPage}>
         <div className={styles.container}>
-          <div className={styles.loading}>Loading set...</div>
+          <LoadingSkeleton variant="game" label="Loading set" />
         </div>
       </div>
     );
