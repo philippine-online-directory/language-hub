@@ -60,7 +60,7 @@ export default function UserContributionsPage() {
                 {error && <div className={styles.error}>{error}</div>}
 
                 {loading ? (
-                    <LoadingSkeleton variant="compact" label="Loading contributions" />
+                    <LoadingSkeleton variant="contributions" label="Loading contributions" />
                 ) : contributions.length === 0 ? (
                     <div className={styles.empty}>
                         <svg className={styles.emptyIcon} viewBox="0 0 20 20" fill="currentColor">

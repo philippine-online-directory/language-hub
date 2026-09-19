@@ -14,28 +14,264 @@
   border-radius: 12px;
 }
 
-.heading,
-.line,
-.shortLine,
-.footer,
-.eyebrow {
+.bone {
   position: relative;
   overflow: hidden;
   background: rgba(192, 118, 58, 0.1);
   border-radius: 6px;
 }
 
-.heading::after,
-.line::after,
-.shortLine::after,
-.footer::after,
-.eyebrow::after {
+.bone::after {
   content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(90deg, transparent, rgba(192, 118, 58, 0.12), transparent);
   transform: translateX(-100%);
   animation: skeletonShimmer 1.5s ease-in-out infinite;
+}
+
+.languages {
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+}
+
+.languageCard {
+  min-height: 12.25rem;
+  padding: 1.5rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-rgba);
+  border-radius: 12px;
+}
+
+.languageTitle {
+  width: 48%;
+  height: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.chipRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.isoChip {
+  width: 3rem;
+  height: 1.75rem;
+}
+
+.speakerLine {
+  width: 7.5rem;
+  height: 0.75rem;
+}
+
+.wordCount {
+  width: 7rem;
+  height: 1.9rem;
+  margin-top: 1rem;
+}
+
+.progressLabels {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.progressText {
+  width: 9rem;
+  height: 0.6rem;
+}
+
+.progressPercent {
+  width: 2rem;
+  height: 0.6rem;
+}
+
+.progressTrack {
+  width: 100%;
+  height: 0.4rem;
+  margin-top: 0.5rem;
+  border-radius: 999px;
+}
+
+.dictionary,
+.contributions {
+  display: block;
+}
+
+.dictionaryHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  min-height: 12rem;
+  padding: 1.5rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-rgba);
+  border-radius: 16px;
+}
+
+.dictionaryHeaderCopy {
+  flex: 1;
+}
+
+.dictionaryTitle {
+  width: min(21rem, 62%);
+  height: 3.5rem;
+  margin-bottom: 0.9rem;
+}
+
+.noteLine,
+.noteLineShort {
+  height: 0.8rem;
+  margin-top: 1.5rem;
+}
+
+.noteLine { width: min(42rem, 88%); }
+.noteLineShort { width: min(32rem, 66%); margin-top: 0.65rem; }
+
+.headerButton {
+  width: 9.5rem;
+  height: 2.75rem;
+}
+
+.sectionHeading {
+  width: 13rem;
+  height: 2.25rem;
+  margin: 3rem 0 1.25rem;
+}
+
+.controlPanel {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-rgba);
+  border-radius: 16px;
+}
+
+.searchField {
+  width: 100%;
+  height: 3rem;
+}
+
+.filterRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+  gap: 0.75rem;
+}
+
+.filterField {
+  height: 2.75rem;
+}
+
+.filterToggle {
+  width: 8rem;
+  height: 2.75rem;
+}
+
+.dictionaryBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 18rem;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.wordRows,
+.contributionRows {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.wordRow {
+  min-height: 6.25rem;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-rgba);
+  border-radius: 12px;
+}
+
+.wordRow > div:first-child {
+  flex: 1;
+}
+
+.wordTitle {
+  width: min(11rem, 70%);
+  height: 1.45rem;
+}
+
+.wordDefinition {
+  width: min(15rem, 88%);
+  height: 0.7rem;
+  margin-top: 0.75rem;
+}
+
+.wordAction {
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 50%;
+}
+
+.sidebarSkeleton {
+  min-height: 14rem;
+  padding: 1.5rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-rgba);
+  border-radius: 16px;
+}
+
+.sidebarTitle {
+  width: 72%;
+  height: 1.35rem;
+  margin-bottom: 1.5rem;
+}
+
+.sidebarLine,
+.sidebarLineShort {
+  height: 0.7rem;
+  margin-bottom: 0.8rem;
+}
+
+.sidebarLine { width: 100%; }
+.sidebarLineShort { width: 64%; }
+
+.statSkeletons {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.statSkeleton {
+  min-height: 7.5rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-rgba);
+  border-radius: 16px;
+}
+
+.statValue {
+  width: 3.5rem;
+  height: 2.5rem;
+}
+
+.statLabel {
+  width: 7.5rem;
+  height: 0.7rem;
+}
+
+.contributionRows {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .heading {
@@ -131,11 +367,36 @@
 
 @media (prefers-reduced-motion: reduce) {
   .skeleton,
-  .heading::after,
-  .line::after,
-  .shortLine::after,
-  .footer::after,
-  .eyebrow::after {
+  .bone::after {
     animation: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .languages,
+  .wordRows,
+  .contributionRows,
+  .statSkeletons,
+  .dictionaryBody,
+  .filterRow {
+    grid-template-columns: 1fr;
+  }
+
+  .dictionaryHeader {
+    flex-direction: column;
+  }
+
+  .dictionaryTitle {
+    width: 78%;
+    height: 2.75rem;
+  }
+
+  .headerButton,
+  .filterToggle {
+    width: 100%;
+  }
+
+  .sidebarSkeleton {
+    display: none;
   }
 }

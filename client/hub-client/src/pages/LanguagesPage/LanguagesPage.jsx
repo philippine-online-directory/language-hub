@@ -104,7 +104,7 @@ export default function LanguagesPage() {
                 {error && <div className={styles.error}>{error}</div>}
 
                 {loading ? (
-                    <LoadingSkeleton label="Loading languages" />
+                    <LoadingSkeleton variant="languages" label="Loading languages" />
                 ) : languages.length === 0 ? (
                     <div className={styles.empty}>
                         <svg className={styles.emptyIcon} viewBox="0 0 20 20" fill="currentColor">

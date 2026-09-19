@@ -198,7 +198,7 @@ export default function LanguageDetailPage() {
             <div className={`${styles.languageDetailPage} ${mounted ? styles.mounted : ''}`}>
                 <div className={styles.backgroundPattern} />
                 <div className={styles.container}>
-                    <LoadingSkeleton variant="game" label="Loading language" />
+                    <LoadingSkeleton variant="dictionary" label="Loading dictionary" />
                 </div>
             </div>
         );
