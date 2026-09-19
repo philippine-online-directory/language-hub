@@ -48,29 +48,15 @@ export default function Navbar(){
     const navigate = useNavigate();
     const location = useLocation();
     const { user, loading: authLoading, logout } = useAuth();
-    const [scrolled, setScrolled] = useState(false);
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const [showContributeModal, setShowContributeModal] = useState(false);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 20);
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    // Close mobile menu on route change
-    useEffect(() => {
-        setMobileMenuOpen(false);
-        setShowContributeModal(false);
-    }, [location]);
+    const [mobileMenuPath, setMobileMenuPath] = useState(null);
+    const [contributeModalPath, setContributeModalPath] = useState(null);
+    const mobileMenuOpen = mobileMenuPath === location.pathname;
+    const showContributeModal = contributeModalPath === location.pathname;
 
     const handleLogout = () => {
         logout();
         navigate('/login');
-        setMobileMenuOpen(false);
+        setMobileMenuPath(null);
     };
 
     const handleContributeClick = (e) => {
@@ -82,9 +68,9 @@ export default function Navbar(){
         if (user) {
             navigate('/contribute');
         } else {
-            setShowContributeModal(true);
+            setContributeModalPath(location.pathname);
         }
-        setMobileMenuOpen(false);
+        setMobileMenuPath(null);
     };
 
     const isActive = (path) => location.pathname === path;
@@ -94,7 +80,7 @@ export default function Navbar(){
 
     return (
         <>
-            <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ''}`}>
+            <nav className={styles.navbar}>
                 <div className={styles.container}>
                     <Link to="/" className={styles.logo}>
                         <span className={styles.logoText}>Philippine Online</span>
@@ -104,7 +90,7 @@ export default function Navbar(){
                     {/* Mobile Menu Button */}
                     <button
                         className={`${styles.mobileMenuButton} ${mobileMenuOpen ? styles.open : ''}`}
-                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                        onClick={() => setMobileMenuPath(mobileMenuOpen ? null : location.pathname)}
                         aria-label="Toggle menu"
                     >
                         <span></span>
@@ -216,9 +202,19 @@ export default function Navbar(){
                                     </div>
                                     <span className={styles.username}>{user.username}</span>
                                 </Link>
-                                <Button variant="secondary" onClick={handleLogout}>
-                                    Logout
-                                </Button>
+                                <button
+                                    type="button"
+                                    className={styles.logoutButton}
+                                    onClick={handleLogout}
+                                    aria-label="Log out"
+                                    title="Log out"
+                                >
+                                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                        <path d="M8 4H4.75A1.75 1.75 0 003 5.75v8.5A1.75 1.75 0 004.75 16H8" />
+                                        <path d="M12.5 6.5L16 10l-3.5 3.5M7 10h9" />
+                                    </svg>
+                                    <span>Log out</span>
+                                </button>
                             </>
                         )}
                     </div>
@@ -227,13 +223,13 @@ export default function Navbar(){
 
             {showContributeModal && (
                 <ContributeModal
-                    onClose={() => setShowContributeModal(false)}
+                    onClose={() => setContributeModalPath(null)}
                     onLogin={() => {
-                        setShowContributeModal(false);
+                        setContributeModalPath(null);
                         navigate('/login?redirect=/contribute&intent=contribute');
                     }}
                     onRegister={() => {
-                        setShowContributeModal(false);
+                        setContributeModalPath(null);
                         navigate('/register?redirect=/contribute&intent=contribute');
                     }}
                 />
