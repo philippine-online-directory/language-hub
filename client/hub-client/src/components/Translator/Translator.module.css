@@ -26,6 +26,7 @@
   align-items: center;
   padding: 0 24px;
   min-width: 0;
+  transition: opacity 140ms ease, transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .langFixed {
@@ -149,6 +150,19 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  transition: opacity 140ms ease, transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.swapping .langSlot:first-child,
+.swapping .inputPanel {
+  opacity: 0;
+  transform: translateX(10px);
+}
+
+.swapping .langSlot:last-child,
+.swapping .outputPanel {
+  opacity: 0;
+  transform: translateX(-10px);
 }
 
 .panelDivider {
@@ -500,6 +514,8 @@
 @media (prefers-reduced-motion: reduce) {
   .swapBtn svg,
   .translator,
+  .langSlot,
+  .panel,
   .langPickerBtn,
   .chevron,
   .swapBtn {

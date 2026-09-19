@@ -13,9 +13,17 @@ export default function Translator({ compact = false }) {
     const [inputError, setInputError] = useState('');
     const [modalOpen, setModalOpen] = useState(false);
     const [swapCount, setSwapCount] = useState(0);
+    const [isSwapping, setIsSwapping] = useState(false);
     const inputRef = useRef(null);
+    const swapTimerRef = useRef(null);
+    const swapFrameRef = useRef(null);
 
     const debouncedInput = useDebounce(inputText, 500);
+
+    useEffect(() => () => {
+        clearTimeout(swapTimerRef.current);
+        cancelAnimationFrame(swapFrameRef.current);
+    }, []);
 
     // Allows: letters (including accented), spaces, hyphens, apostrophes
     // Blocks: digits, symbols like $, @, #, etc.
@@ -97,27 +105,37 @@ export default function Translator({ compact = false }) {
     };
 
     const handleSwap = () => {
-        if (!selectedLanguage) return;
+        if (!selectedLanguage || isSwapping) return;
 
-        setSwapCount(c => c + 1);
+        const completeSwap = () => {
+            setSwapCount(c => c + 1);
 
-        const newDirection = direction === 'en-to-lang' ? 'lang-to-en' : 'en-to-lang';
+            if (results && results.length === 1) {
+                const result = results[0];
+                const newInputText = direction === 'en-to-lang'
+                    ? result.wordText
+                    : result.englishDefinition;
+                setInputText(newInputText);
+            } else {
+                setInputText('');
+            }
 
-        // If there's a single result, populate its text into the input for the new direction
-        if (results && results.length === 1) {
-            const result = results[0];
-            const newInputText = direction === 'en-to-lang'
-                ? result.wordText
-                : result.englishDefinition;
-            setInputText(newInputText);
-        } else {
-            setInputText('');
+            setResults(null);
+            setLoading(false);
+            setDirection(direction === 'en-to-lang' ? 'lang-to-en' : 'en-to-lang');
+            inputRef.current?.focus();
+        };
+
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            completeSwap();
+            return;
         }
 
-        setResults(null);
-        setLoading(false);
-        setDirection(newDirection);
-        inputRef.current?.focus();
+        setIsSwapping(true);
+        swapTimerRef.current = setTimeout(() => {
+            completeSwap();
+            swapFrameRef.current = requestAnimationFrame(() => setIsSwapping(false));
+        }, 140);
     };
 
     const leftLabel = direction === 'en-to-lang' ? 'English' : (selectedLanguage?.name ?? 'Select language');
@@ -143,7 +161,10 @@ export default function Translator({ compact = false }) {
     );
 
     return (
-        <div className={`${styles.translator} ${compact ? styles.compact : ''}`}>
+        <div
+            className={`${styles.translator} ${compact ? styles.compact : ''} ${isSwapping ? styles.swapping : ''}`}
+            aria-busy={isSwapping}
+        >
             {/* Language bar */}
             <div className={styles.langBar}>
                 <div className={styles.langSlot}>
@@ -154,10 +175,10 @@ export default function Translator({ compact = false }) {
 
                 <div className={styles.swapZone}>
                     <button
-                        className={`${styles.swapBtn} ${!selectedLanguage ? styles.swapDisabled : ''}`}
+                        className={`${styles.swapBtn} ${!selectedLanguage || isSwapping ? styles.swapDisabled : ''}`}
                         style={{ '--swap-rotation': `${swapCount * 180}deg` }}
                         onClick={handleSwap}
-                        disabled={!selectedLanguage}
+                        disabled={!selectedLanguage || isSwapping}
                         aria-label="Swap translation direction"
                         title={!selectedLanguage ? 'Select a language first' : 'Swap direction'}
                     >
