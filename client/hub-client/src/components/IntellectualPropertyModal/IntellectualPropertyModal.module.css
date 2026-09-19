@@ -52,7 +52,7 @@
 }
 
 .modalTitle {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 22px;
   font-weight: 600;
   color: var(--text-primary);
@@ -126,7 +126,7 @@
 }
 
 .sectionTitle {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 15px;
   font-weight: 600;
   color: var(--text-primary);

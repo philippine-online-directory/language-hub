@@ -65,7 +65,7 @@
 }
 
 .languageName {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 48px;
   line-height: 56px;
   font-weight: 600;
@@ -175,7 +175,7 @@
 }
 
 .sectionTitle {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 32px;
   line-height: 40px;
   font-weight: 600;
@@ -270,7 +270,7 @@
   font-size: 14px;
   font-weight: 600;
   color: var(--text-primary);
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-sans);
   cursor: pointer;
   outline: none;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -486,7 +486,7 @@
 }
 
 .columnTitle {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 20px;
   font-weight: 600;
   color: var(--text-primary);
@@ -500,7 +500,7 @@
   font-size: 14px;
   font-weight: 500;
   color: var(--text-placeholder);
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-sans);
 }
 
 .toggleColBtn {
@@ -515,7 +515,7 @@
   transition: all 0.2s ease;
   white-space: nowrap;
   flex-shrink: 0;
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-sans);
 }
 .toggleColBtn:hover {
   background: rgba(192, 118, 58, 0.14);
@@ -555,7 +555,7 @@
   cursor: pointer;
   text-align: left;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-sans);
   width: 100%;
 }
 .missingWordCard:hover {

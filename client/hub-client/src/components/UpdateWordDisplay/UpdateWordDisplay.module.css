@@ -36,7 +36,7 @@
 }
 
 .wordCollapsed {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 24px;
   line-height: 32px;
   font-weight: 600;
@@ -110,7 +110,7 @@
 }
 
 .word {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 28px;
   line-height: 36px;
   font-weight: 500;
@@ -230,7 +230,7 @@
   left: 8px;
   font-size: 24px;
   color: rgba(192, 118, 58, 0.3);
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
 }
 
 .footer {
@@ -491,7 +491,7 @@
 }
 
 .missingPopupTitle {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 13px;
   font-weight: 600;
   color: #92400E;
@@ -516,7 +516,7 @@
   font-size: 13px;
   line-height: 18px;
   color: var(--text-secondary);
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-sans);
 }
 
 .missingDot {

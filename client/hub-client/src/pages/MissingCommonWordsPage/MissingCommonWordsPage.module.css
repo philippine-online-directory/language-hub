@@ -62,7 +62,7 @@
 }
 
 .title {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 44px;
   line-height: 52px;
   font-weight: 600;

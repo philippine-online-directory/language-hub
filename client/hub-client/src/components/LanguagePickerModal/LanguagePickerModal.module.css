@@ -52,7 +52,7 @@
 }
 
 .modalTitle {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 22px;
   font-weight: 600;
   color: var(--text-primary);
@@ -232,7 +232,7 @@
   font-size: 12px;
   font-weight: 600;
   color: var(--text-placeholder);
-  font-family: monospace;
+  font-family: var(--font-mono);
   background: var(--border-rgba);
   padding: 3px 8px;
   border-radius: 6px;

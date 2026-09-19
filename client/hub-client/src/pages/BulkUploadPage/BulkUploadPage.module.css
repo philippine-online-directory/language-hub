@@ -89,7 +89,7 @@
 
 .select,
 .fileInput {
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: 16px;
   width: 100%;
   border: 2px solid var(--border);
@@ -263,7 +263,7 @@
   padding: 9px 10px;
   background: var(--input-bg);
   color: var(--text-primary);
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: 14px;
 }
 
@@ -280,7 +280,7 @@
   padding: 8px 9px;
   background: var(--input-bg);
   color: var(--text-primary);
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: 14px;
 }
 
@@ -310,7 +310,7 @@
   color: #DC2626;
   cursor: pointer;
   padding: 7px 9px;
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: 13px;
 }
 
@@ -655,7 +655,7 @@
     background: rgba(192, 118, 58, 0.07);
     border: 1px solid rgba(192, 118, 58, 0.25);
     border-radius: 10px;
-    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    font-family: var(--font-sans);
     font-size: 16px;
     line-height: 22px;
     font-weight: 600;

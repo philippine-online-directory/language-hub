@@ -47,7 +47,7 @@
 }
 
 .title {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 40px;
   line-height: 48px;
   font-weight: 600;
@@ -230,7 +230,7 @@
 }
 
 .stepTitle {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 22px;
   font-weight: 600;
   color: var(--text-primary);
@@ -276,7 +276,7 @@
 
 .select,
 .textarea {
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: 16px;
   padding: 13px 16px;
   border: 2px solid var(--border);
@@ -312,7 +312,7 @@
   border-radius: 8px;
   color: #A65F2A;
   cursor: pointer;
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: 13px;
   font-weight: 500;
   line-height: 18px;
@@ -362,7 +362,7 @@
 }
 
 .fileInput {
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: 15px;
   padding: 13px 16px;
   border: 2px solid var(--border);
@@ -428,7 +428,7 @@
   border: 1.5px solid var(--border);
   border-radius: 20px;
   background: var(--bg-elevated);
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: 14px;
   font-weight: 500;
   color: var(--text-primary);
@@ -502,7 +502,7 @@
   background: transparent;
   border: none;
   border-radius: 8px;
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: 14px;
   font-weight: 500;
   color: var(--text-secondary);
@@ -669,7 +669,7 @@
   padding: 13px 26px;
   border: none;
   border-radius: 12px;
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
@@ -762,7 +762,7 @@
   border: 1.5px solid #DC2626;
   border-radius: 8px;
   color: #DC2626;
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -1042,7 +1042,7 @@
     background: rgba(192, 118, 58, 0.07);
     border: 1px solid rgba(192, 118, 58, 0.25);
     border-radius: 10px;
-    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    font-family: var(--font-sans);
     font-size: 14px;
     font-weight: 600;
     color: #C0763A;

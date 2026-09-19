@@ -57,7 +57,7 @@
 }
 
 .title {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 48px;
   line-height: 56px;
   font-weight: 600;
@@ -136,7 +136,7 @@
 
 .select,
 .textarea {
-  font-family: 'IBM Plex Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans);
   font-size: 15px;
   padding: 14px 16px;
   border: 2px solid var(--border);

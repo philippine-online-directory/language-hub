@@ -37,7 +37,7 @@
 }
 
 .title {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 16px;
   font-weight: 600;
   color: var(--text-primary);
@@ -52,7 +52,7 @@
   font-size: 13px;
   font-weight: 500;
   color: var(--text-placeholder);
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-sans);
 }
 
 .toggleBtn {
@@ -67,7 +67,7 @@
   transition: all 0.2s ease;
   white-space: nowrap;
   flex-shrink: 0;
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-sans);
 }
 .toggleBtn:hover {
   background: rgba(192, 118, 58, 0.14);
@@ -149,7 +149,7 @@
   background: transparent;
   border: 1.5px solid rgba(192, 118, 58, 0.4);
   border-radius: 8px;
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: 13px;
   font-weight: 600;
   color: #C0763A;
@@ -229,7 +229,7 @@
   cursor: pointer;
   text-align: left;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-sans);
   width: 100%;
 }
 .wordCard:hover {

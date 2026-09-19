@@ -26,7 +26,7 @@
 }
 
 .resultsTitle {
-    font-family: 'Fraunces', serif;
+    font-family: var(--font-serif);
     font-size: 32px;
     font-weight: 700;
     color: var(--text-primary);
@@ -140,7 +140,7 @@
 }
 
 .title {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 48px;
   line-height: 1.2;
   font-weight: 600;
@@ -195,7 +195,7 @@
   font-size: 28px;
   font-weight: 600;
   color: #C0763A;
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   line-height: 1;
 }
 
@@ -232,7 +232,7 @@
 }
 
 .completeMessage h2 {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 32px;
   font-weight: 600;
   color: var(--text-primary);
@@ -321,7 +321,7 @@
 }
 
 .wordCard .cardContent {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 22px;
   font-weight: 600;
   line-height: 1.3;

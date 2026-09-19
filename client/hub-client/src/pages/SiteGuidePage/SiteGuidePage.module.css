@@ -41,7 +41,7 @@
 }
 
 .pageTitle {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 48px;
   font-weight: 700;
   color: #ffffff;
@@ -167,7 +167,7 @@
 }
 
 .sectionTitle {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 32px;
   line-height: 1.12;
   font-weight: 600;
@@ -217,7 +217,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 18px;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -230,7 +230,7 @@
 }
 
 .stepTitle {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 21px;
   font-weight: 600;
   color: var(--text-primary);
@@ -271,7 +271,7 @@
 }
 
 .calloutTitle {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 28px;
   line-height: 1.12;
   font-weight: 600;

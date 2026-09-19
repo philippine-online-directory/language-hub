@@ -36,7 +36,7 @@
 }
 
 .heroTitle {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 56px;
   line-height: 64px;
   font-weight: 600;
@@ -108,7 +108,7 @@
 }
 
 .featureTitle {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 24px;
   line-height: 32px;
   font-weight: 500;
@@ -134,7 +134,7 @@
 }
 
 .translatorTitle {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 32px;
   line-height: 40px;
   font-weight: 500;
@@ -219,7 +219,7 @@
 }
 
 .ctaTitle {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 32px;
   line-height: 40px;
   font-weight: 500;

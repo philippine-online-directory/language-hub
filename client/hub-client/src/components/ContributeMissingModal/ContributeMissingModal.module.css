@@ -46,7 +46,7 @@
 }
 
 .title {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 28px;
   line-height: 36px;
   font-weight: 600;
@@ -409,7 +409,7 @@
 }
 
 .title {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
   font-size: 40px;
   line-height: 48px;
   font-weight: 600;
@@ -544,7 +544,7 @@
 
 .select,
 .textarea {
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: 16px;
   padding: 14px 16px;
   border: 2px solid var(--border);
@@ -568,7 +568,7 @@
 }
 
 .fileInput {
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: 16px;
   padding: 14px 16px;
   border: 2px solid var(--border);
@@ -629,7 +629,7 @@
   padding: 4px;
   background: rgba(243, 244, 246, 0.5);
   border-radius: 10px;
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
 }
 
 .modeButton {
@@ -643,7 +643,7 @@
   color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
 }
 
 .modeButton:hover {
@@ -677,7 +677,7 @@
   flex-direction: column;
   gap: 16px;
   align-items: center;
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
 }
 
 .recordingContainer {
@@ -685,7 +685,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
 }
 
 /* Waveform Visualization */
@@ -725,7 +725,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
 }
 
 .recordingIndicator {
@@ -837,7 +837,7 @@
   background: white;
   border-radius: 10px;
   border: 1px solid rgba(229, 231, 235, 0.8);
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
 }
 
 .previewHeader {
@@ -933,7 +933,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
 }
 
 .uploadProgressBar {
@@ -969,7 +969,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-serif);
 }
 
 .errorText::before {
