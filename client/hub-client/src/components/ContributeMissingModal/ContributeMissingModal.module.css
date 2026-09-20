@@ -634,6 +634,10 @@
 
 .modeButton {
   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
   padding: 10px 16px;
   background: transparent;
   border: none;
@@ -822,12 +826,6 @@
   box-shadow: 0 6px 16px rgba(107, 114, 128, 0.4);
 }
 
-.recordIcon,
-.stopIcon {
-  font-size: 20px;
-  line-height: 1;
-}
-
 /* Recording Preview */
 .recordingPreview {
   display: flex;
@@ -912,6 +910,9 @@
 }
 
 .deleteButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 6px 12px;
   background: transparent;
   border: 1px solid #DC2626;
