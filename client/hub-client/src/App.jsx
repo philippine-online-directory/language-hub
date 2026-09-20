@@ -36,6 +36,7 @@ const RegisterPage = lazy(() => import('./pages/RegisterPage/RegisterPage'));
 const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage/ResetPasswordPage'));
 const UserContributionsPage = lazy(() => import('./pages/UserContributionsPage/UserContributionsPage'));
 const WritingGame = lazy(() => import('./pages/WritingGame/WritingGame'));
+const WordPage = lazy(() => import('./pages/WordPage/WordPage'));
 
 function RouteLoading() {
     return (
@@ -101,6 +102,7 @@ function AppContent(){
                     <Route path="/common-words" element={<CommonWordsPage />} />
                     <Route path="/languages" element={<LanguagesPage />} />
                     <Route path="/languages/:slug/missing-words" element={<MissingCommonWordsPage />} />
+                    <Route path="/languages/:languageSlug/words/:wordSlug" element={<WordPage />} />
                     <Route path="/languages/:slug" element={<LanguageDetailPage />} />
 
                     {/* Set Routes */}

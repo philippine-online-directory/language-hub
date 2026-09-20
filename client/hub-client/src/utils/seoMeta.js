@@ -18,6 +18,18 @@ export function setRobotsDirective(content) {
     });
 }
 
+export function setCanonicalUrl(href) {
+    let tag = document.head.querySelector('link[rel="canonical"]');
+
+    if (!tag) {
+        tag = document.createElement('link');
+        tag.setAttribute('rel', 'canonical');
+        document.head.appendChild(tag);
+    }
+
+    tag.setAttribute('href', href);
+}
+
 export function setJsonLd(id, graph) {
     let tag = document.getElementById(id);
 

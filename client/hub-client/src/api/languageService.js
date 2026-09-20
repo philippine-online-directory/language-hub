@@ -41,6 +41,11 @@ export const languageService = {
         return response.data;
     },
 
+    getWordBySlug: async (languageSlug, wordSlug, signal) => {
+        const response = await api.get(`/languages/${languageSlug}/words/${wordSlug}`, { signal });
+        return response.data;
+    },
+
     addLanguage: async (languageData) => {
         const response = await api.post('/languages', languageData);
         return response.data;

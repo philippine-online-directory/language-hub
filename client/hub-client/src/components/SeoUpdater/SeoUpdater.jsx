@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { clearJsonLd, setJsonLd, setRobotsDirective, upsertMeta } from '../../utils/seoMeta';
+import { clearJsonLd, setCanonicalUrl, setJsonLd, setRobotsDirective, upsertMeta } from '../../utils/seoMeta';
 
 const SITE_URL = 'https://www.philippineonlinedictionary.com';
 const SITE_NAME = 'Philippine Online Dictionary';
@@ -65,6 +65,7 @@ function labelFromSegment(segment) {
 
 function getBreadcrumbItems(pathname) {
     if (pathname === '/') return [];
+    if (/^\/languages\/[^/]+\/words\/[^/]+$/.test(pathname)) return [];
 
     const segments = pathname.split('/').filter(Boolean);
     const breadcrumbs = [
@@ -252,18 +253,6 @@ function getMetadata(pathname) {
     };
 }
 
-function upsertCanonical(href) {
-    let tag = document.head.querySelector('link[rel="canonical"]');
-
-    if (!tag) {
-        tag = document.createElement('link');
-        tag.setAttribute('rel', 'canonical');
-        document.head.appendChild(tag);
-    }
-
-    tag.setAttribute('href', href);
-}
-
 export default function SeoUpdater() {
     const location = useLocation();
 
@@ -312,7 +301,7 @@ export default function SeoUpdater() {
             name: 'twitter:description',
             content: metadata.description,
         });
-        upsertCanonical(canonicalUrl);
+        setCanonicalUrl(canonicalUrl);
         setJsonLd('pod-route-jsonld', getRouteJsonLd(pathname, canonicalUrl));
         clearJsonLd('pod-page-jsonld');
     }, [location.pathname]);
