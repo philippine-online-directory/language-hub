@@ -7,6 +7,7 @@ const languageRouter = Router();
 languageRouter.get('/', languageController.getLanguages)
 languageRouter.get('/common-words', languageController.getCommonWords)
 languageRouter.get('/:slug/missing-words', languageController.getMissingCommonWords);
+languageRouter.get('/:slug/words/:wordSlug', translationController.getPublicTranslation);
 languageRouter.get('/:slug', languageController.getLanguageByCode);
 
 // Admin protected language routes

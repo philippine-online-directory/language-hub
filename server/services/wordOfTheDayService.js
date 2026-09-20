@@ -8,7 +8,7 @@ const getWordOfTheDay = async () => {
         include: {
             translation: {
                 include: {
-                    language: { select: { name: true } },
+                    language: { select: { name: true, slug: true } },
                     author: { select: { id: true, username: true } },
                     secondaryAuthors: { select: { id: true, username: true } }
                 }

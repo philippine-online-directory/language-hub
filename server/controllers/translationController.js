@@ -17,6 +17,35 @@ const getTranslationInfo = [
     }
 ]
 
+const getPublicTranslation = [
+    async (req, res, next) => {
+        const { slug, wordSlug } = req.params;
+
+        try {
+            const translation = await translationService.findPublicTranslationBySlug(slug, wordSlug);
+
+            if (!translation) {
+                return res.status(404).json({ message: 'Word not found' });
+            }
+
+            const isComplete = Boolean(
+                translation.wordText?.trim() && translation.englishDefinition?.trim()
+            );
+
+            res.set(
+                'Cache-Control',
+                translation.status === 'VERIFIED' && isComplete
+                    ? 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400'
+                    : 'public, max-age=0, s-maxage=60'
+            );
+
+            return res.status(200).json(translation);
+        } catch (err) {
+            next(err);
+        }
+    }
+];
+
 const addTranslationToSet = [
     auth,
     async (req, res, next) => {
@@ -95,6 +124,7 @@ const deleteTranslation = [
 ]
 
 const translationController = {
+    getPublicTranslation,
     getTranslationInfo,
     addTranslationToSet,
     removeTranslationFromSet,

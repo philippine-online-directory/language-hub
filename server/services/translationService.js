@@ -1,6 +1,78 @@
 import prisma from '../prisma.js'
 import storageService from './storageService.js'
 
+const LANGUAGE_SUMMARY_SELECT = {
+    id: true,
+    name: true,
+    isoCode: true,
+    slug: true
+};
+
+export async function findPublicTranslationBySlug(languageSlug, wordSlug, prismaClient = prisma) {
+    const language = await prismaClient.language.findUnique({
+        where: { slug: languageSlug },
+        select: LANGUAGE_SUMMARY_SELECT
+    });
+
+    if (!language) return null;
+
+    const translation = await prismaClient.translation.findUnique({
+        where: {
+            languageId_slug: {
+                languageId: language.id,
+                slug: wordSlug
+            }
+        },
+        select: {
+            id: true,
+            slug: true,
+            wordText: true,
+            englishDefinition: true,
+            exampleSentence: true,
+            englishExampleSentence: true,
+            status: true,
+            createdAt: true,
+            publishedAt: true,
+            audioUrl: true,
+            partOfSpeech: true,
+            usageComment: true,
+            author: {
+                select: { id: true, username: true }
+            },
+            secondaryAuthors: {
+                select: { id: true, username: true }
+            },
+            setWords: {
+                where: { vocabSet: { isPublic: true } },
+                select: {
+                    vocabSet: {
+                        select: {
+                            id: true,
+                            name: true,
+                            description: true
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    if (!translation) return null;
+
+    const { author, secondaryAuthors, setWords, ...fields } = translation;
+    const audioUrl = fields.audioUrl
+        ? await storageService.generateDownloadUrl(fields.audioUrl)
+        : null;
+
+    return {
+        ...fields,
+        audioUrl,
+        language,
+        contributors: [author, ...secondaryAuthors],
+        publicSets: setWords.map(({ vocabSet }) => vocabSet)
+    };
+}
+
 async function findTranslationInfo(id) {
     const translation = await prisma.translation.findUnique({
         where: { id },
@@ -83,7 +155,10 @@ async function updateTranslationStatus(id, status) {
     try {
         const updatedTranslation = await prisma.translation.update({
             where: { id },
-            data: { status }
+            data: {
+                status,
+                ...(status === 'VERIFIED' ? { publishedAt: new Date() } : {})
+            }
         });
         return updatedTranslation;
     } catch (err) {
@@ -113,6 +188,7 @@ async function deleteTranslation(id) {
 }
 
 const translationService = {
+    findPublicTranslationBySlug,
     findTranslationInfo,
     addTranslationToSet,
     removeTranslationFromSet,

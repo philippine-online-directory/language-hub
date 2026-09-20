@@ -4,6 +4,7 @@ const SITE_URL = (process.env.SITE_URL || 'https://www.philippineonlinedictionar
 const INDEXNOW_KEY = process.env.INDEXNOW_KEY;
 const INDEXNOW_ENDPOINT = process.env.INDEXNOW_ENDPOINT || 'https://api.indexnow.org/indexnow';
 const INDEXNOW_KEY_PATH = '/indexnow-key.txt';
+const SITEMAP_URL_LIMIT = 50000;
 
 const STATIC_ROUTES = [
     '/',
@@ -74,9 +75,9 @@ function renderUrl({ loc, lastmod }) {
     return `  <url>\n    <loc>${escapeXml(loc)}</loc>${lastmodTag}\n  </url>`;
 }
 
-async function getSitemapXml() {
-    const [languages, sets, profiles] = await Promise.all([
-        prisma.language.findMany({
+export async function getSitemapXml(prismaClient = prisma) {
+    const [languages, sets, profiles, translations] = await Promise.all([
+        prismaClient.language.findMany({
             select: {
                 slug: true,
             },
@@ -84,7 +85,7 @@ async function getSitemapXml() {
                 name: 'asc',
             },
         }),
-        prisma.vocabSet.findMany({
+        prismaClient.vocabSet.findMany({
             where: {
                 isPublic: true,
             },
@@ -96,7 +97,7 @@ async function getSitemapXml() {
                 updatedAt: 'desc',
             },
         }),
-        prisma.user.findMany({
+        prismaClient.user.findMany({
             where: {
                 OR: [
                     { contributions: { some: { status: 'VERIFIED' } } },
@@ -109,6 +110,24 @@ async function getSitemapXml() {
             },
             orderBy: {
                 createdAt: 'desc',
+            },
+        }),
+        prismaClient.translation.findMany({
+            where: {
+                status: 'VERIFIED',
+                wordText: { not: '' },
+                englishDefinition: { not: '' },
+            },
+            select: {
+                slug: true,
+                publishedAt: true,
+                createdAt: true,
+                language: {
+                    select: { slug: true },
+                },
+            },
+            orderBy: {
+                publishedAt: 'desc',
             },
         }),
     ]);
@@ -127,7 +146,15 @@ async function getSitemapXml() {
             loc: absoluteUrl(`/profile/${profile.id}`),
             lastmod: formatDate(profile.createdAt),
         })),
+        ...translations.map((translation) => ({
+            loc: absoluteUrl(`/languages/${translation.language.slug}/words/${translation.slug}`),
+            lastmod: formatDate(translation.publishedAt || translation.createdAt),
+        })),
     ];
+
+    if (urls.length > SITEMAP_URL_LIMIT) {
+        throw new Error(`Sitemap contains ${urls.length} URLs; add a sitemap index before exceeding ${SITEMAP_URL_LIMIT}`);
+    }
 
     return [
         '<?xml version="1.0" encoding="UTF-8"?>',
