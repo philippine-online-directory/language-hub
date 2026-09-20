@@ -3,6 +3,7 @@ import { parse } from 'csv-parse/sync'
 import { readSheet } from 'read-excel-file/node'
 import prisma from '../prisma.js'
 import { findCommonWordMatch } from './commonWordService.js'
+import { createTranslationWithSlug } from '../utils/translationSlug.js'
 
 const REQUIRED_FIELDS = ['wordText', 'englishDefinition'];
 const IMPORT_FIELDS = [
@@ -283,7 +284,7 @@ async function createTranslationForRow({ userId, languageId, status, data }) {
         ? (await prisma.translation.count({ where: { languageId, commonWordId: commonWord.id } })) === 0
         : false;
 
-    const translation = await prisma.translation.create({
+    const translation = await createTranslationWithSlug(prisma, {
         data: {
             authorId: userId,
             languageId,

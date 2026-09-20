@@ -1,6 +1,7 @@
 import prisma from '../prisma.js'
 import storageService from './storageService.js'
 import { findCommonWordMatch } from './commonWordService.js'
+import { createTranslationWithSlug } from '../utils/translationSlug.js'
 
 const LANGUAGE_SUMMARY_SELECT = {
     id: true,
@@ -48,7 +49,7 @@ export async function contributeTranslation(
         ? (await prismaClient.translation.count({ where: { languageId, commonWordId: commonWord.id } })) === 0
         : false;
 
-    const contributedTranslation = await prismaClient.translation.create({
+    const contributedTranslation = await createTranslationWithSlug(prismaClient, {
         data: {
             authorId: userId,
             languageId,

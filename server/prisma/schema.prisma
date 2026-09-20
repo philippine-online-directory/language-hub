@@ -71,6 +71,7 @@ model Language {
 
 model Translation {
   id                     String    @id @default(cuid())
+  slug                   String
   wordText               String
   englishDefinition      String
   exampleSentence        String?
@@ -101,6 +102,7 @@ model Translation {
   commonWordId  Int?
   importRows    ImportBatchRow[]
 
+  @@unique([languageId, slug])
   @@index([languageId, status, wordText])
   @@index([languageId, status, createdAt])
   @@index([languageId, commonWordId])
