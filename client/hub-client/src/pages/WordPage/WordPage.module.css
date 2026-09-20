@@ -9,6 +9,31 @@
   margin: 0 auto;
 }
 
+.loadedContent .breadcrumbs,
+.loadedContent .backLink,
+.loadedContent .entry {
+  animation: wordEntryReveal 440ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.loadedContent .backLink {
+  animation-delay: 45ms;
+}
+
+.loadedContent .entry {
+  animation-delay: 90ms;
+}
+
+@keyframes wordEntryReveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .breadcrumbs {
   display: flex;
   align-items: center;
@@ -320,5 +345,13 @@
 
   .errorPanel {
     padding: 48px 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loadedContent .breadcrumbs,
+  .loadedContent .backLink,
+  .loadedContent .entry {
+    animation: none;
   }
 }

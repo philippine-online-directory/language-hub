@@ -34,7 +34,54 @@ function WordRowSkeleton({ index }) {
     );
 }
 
+function WordEntrySkeleton({ label }) {
+    return (
+        <div className={`${styles.skeleton} ${styles.wordEntry}`} role="status" aria-label={label} aria-live="polite">
+            <div className={styles.wordEntryBreadcrumbs} aria-hidden="true">
+                <div className={`${styles.breadcrumbShort} ${styles.bone}`} />
+                <div className={`${styles.breadcrumbLong} ${styles.bone}`} />
+                <div className={`${styles.breadcrumbMedium} ${styles.bone}`} />
+            </div>
+            <div className={`${styles.wordEntryBack} ${styles.bone}`} aria-hidden="true" />
+            <div className={styles.wordEntryCard} aria-hidden="true">
+                <div className={styles.wordEntryHeader}>
+                    <div className={`${styles.wordEntryEyebrow} ${styles.bone}`} />
+                    <div className={`${styles.wordEntryTitle} ${styles.bone}`} />
+                    <div className={styles.wordEntryMeta}>
+                        <div className={`${styles.wordEntryChip} ${styles.bone}`} />
+                        <div className={`${styles.wordEntryStatus} ${styles.bone}`} />
+                    </div>
+                </div>
+                <div className={styles.wordEntryDefinition}>
+                    <div className={`${styles.wordEntryLabel} ${styles.bone}`} />
+                    <div className={`${styles.wordEntryDefinitionLine} ${styles.bone}`} />
+                    <div className={`${styles.wordEntryDefinitionShort} ${styles.bone}`} />
+                </div>
+                <div className={styles.wordEntryDetails}>
+                    {Array.from({ length: 4 }, (_, index) => (
+                        <div className={styles.wordEntryDetail} key={index}>
+                            <div className={`${styles.wordEntryDetailTitle} ${styles.bone}`} />
+                            <div className={`${styles.wordEntryDetailLine} ${styles.bone}`} />
+                            {index === 1 && <div className={`${styles.wordEntryDetailShort} ${styles.bone}`} />}
+                        </div>
+                    ))}
+                </div>
+                <div className={styles.wordEntrySets}>
+                    <div className={`${styles.wordEntryEyebrow} ${styles.bone}`} />
+                    <div className={`${styles.wordEntrySetsTitle} ${styles.bone}`} />
+                    <div className={`${styles.wordEntrySetCard} ${styles.bone}`} />
+                </div>
+            </div>
+            <StatusLabel label={label} />
+        </div>
+    );
+}
+
 export default function LoadingSkeleton({ variant = 'cards', label = 'Loading content' }) {
+    if (variant === 'wordEntry') {
+        return <WordEntrySkeleton label={label} />;
+    }
+
     if (variant === 'languages') {
         return (
             <div className={`${styles.skeleton} ${styles.languages}`} role="status" aria-label={label} aria-live="polite">

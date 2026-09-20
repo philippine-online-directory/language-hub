@@ -74,7 +74,7 @@ export default function WordPage() {
         return (
             <main className={styles.page}>
                 <div className={styles.container}>
-                    <LoadingSkeleton label="Loading word entry" />
+                    <LoadingSkeleton variant="wordEntry" label="Loading word entry" />
                 </div>
             </main>
         );
@@ -106,7 +106,7 @@ export default function WordPage() {
 
     return (
         <main className={styles.page}>
-            <div className={styles.container}>
+            <div className={`${styles.container} ${styles.loadedContent}`}>
                 <nav className={styles.breadcrumbs} aria-label="Breadcrumb">
                     <Link to="/">Home</Link>
                     <span aria-hidden="true">›</span>

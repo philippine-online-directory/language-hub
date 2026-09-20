@@ -221,6 +221,11 @@ a:not(.no-effect):hover::after {
   padding: 72px 0;
 }
 
+.route-skeleton--word-entry {
+  width: min(100% - 48px, 980px);
+  padding: 40px 0 88px;
+}
+
 @keyframes pageEnter {
   from {
     opacity: 0;

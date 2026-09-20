@@ -38,10 +38,10 @@ const UserContributionsPage = lazy(() => import('./pages/UserContributionsPage/U
 const WritingGame = lazy(() => import('./pages/WritingGame/WritingGame'));
 const WordPage = lazy(() => import('./pages/WordPage/WordPage'));
 
-function RouteLoading() {
+function RouteLoading({ variant }) {
     return (
-        <div className="route-skeleton">
-            <LoadingSkeleton label="Loading page" />
+        <div className={`route-skeleton ${variant === 'wordEntry' ? 'route-skeleton--word-entry' : ''}`}>
+            <LoadingSkeleton variant={variant} label={variant === 'wordEntry' ? 'Loading word entry' : 'Loading page'} />
         </div>
     );
 }
@@ -80,12 +80,13 @@ function AdminRoute({ children }){
 
 function AppContent(){
     const location = useLocation();
+    const isWordEntry = /^\/languages\/[^/]+\/words\/[^/]+\/?$/.test(location.pathname);
 
     return (
         <>
             <SeoUpdater />
             <Navbar />
-            <Suspense fallback={<RouteLoading />}>
+            <Suspense fallback={<RouteLoading variant={isWordEntry ? 'wordEntry' : undefined} />}>
                 <div key={location.pathname} className="page-enter">
                     <Routes>
                     {/* Public Routes */}
