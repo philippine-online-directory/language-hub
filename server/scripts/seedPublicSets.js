@@ -34,6 +34,14 @@ const PUBLIC_SETS = [
         minimumWords: 15
     },
     {
+        languageSlug: 'sgb',
+        ownerUsername: 'Rachel13',
+        name: 'Family and Community',
+        description: 'Ayta Mag-Antsi words for family members, friends, and people in the community.',
+        meanings: ['child', 'friend', 'father', 'mother', 'person', 'man', 'family', 'wife', 'baby', 'woman', 'people'],
+        minimumWords: 10
+    },
+    {
         languageSlug: 'tagbanua',
         ownerUsername: '8man',
         name: 'Calamian Coast and Sea',
@@ -124,14 +132,6 @@ const PUBLIC_SETS = [
         description: 'A focused collection of Itbayat verbs for actions and everyday activities.',
         wordTexts: ['sonyiten', 'viot', 'omhinawa', 'asleb', 'ayan', 'xotoen', 'tomanyis', 'omoyog', 'madngey', 'tayoen', 'lipet', 'atta', 'akto', 'adsilen'],
         minimumWords: 14
-    },
-    {
-        languageSlug: 'itbayat',
-        ownerUsername: 'QMs0riano',
-        name: 'a little bit of everything',
-        description: 'A mixed Itbayat set with descriptions, objects, places, and a few extra actions.',
-        wordTexts: ['toxos', 'kani', 'hiraxem', 'soso', 'rapos', 'mabkox', 'maharawi', 'lima', 'hawa', 'hanaynyed', 'pakox', 'tokpox', 'soong', 'maraxawa', 'tomayo', 'matta', 'mangtokto'],
-        minimumWords: 16
     }
 ];
 
