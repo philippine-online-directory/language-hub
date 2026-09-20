@@ -1,5 +1,5 @@
 export function getWordCardToggleTarget(isExpanded, translationId, action) {
-    if ((action === 'card' || action === 'expand') && !isExpanded) {
+    if (action === 'expand' && !isExpanded) {
         return translationId;
     }
 

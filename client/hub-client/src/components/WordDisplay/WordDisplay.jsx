@@ -23,6 +23,8 @@ const COMPACT_ALERT_FIELDS = new Set(['audioUrl', 'partOfSpeech']);
 function MissingFieldsBadge({ translation, setShowContributeModal, setFieldsToContribute, isCardExpanded }) {
     const [open, setOpen] = useState(false);
     const wrapperRef = useRef(null);
+    const popupId = `missing-fields-${translation.id}`;
+    const tooltipId = `missing-fields-tooltip-${translation.id}`;
 
     const allMissingFields = COMPLETABLE_FIELDS.filter(f => !translation?.[f.key]);
     const missingFields = isCardExpanded
@@ -53,10 +55,11 @@ function MissingFieldsBadge({ translation, setShowContributeModal, setFieldsToCo
 
     return (
         <div
-            className={styles.missingBadgeWrapper}
+            className={`${styles.missingBadgeWrapper} ${open ? styles.missingBadgeWrapperOpen : ''}`}
             ref={wrapperRef}
         >
             <button
+                type="button"
                 className={`${styles.missingBadge} ${isCardExpanded ? styles.detailsBadge : ''} ${open ? styles.missingBadgeActive : ''}`}
                 onClick={(e) => {
                     e.stopPropagation();
@@ -66,6 +69,8 @@ function MissingFieldsBadge({ translation, setShowContributeModal, setFieldsToCo
                     ? `${missingFields.length} detail${missingFields.length !== 1 ? 's' : ''} available to add`
                     : `${missingFields.length} missing field${missingFields.length !== 1 ? 's' : ''}`}
                 aria-expanded={open}
+                aria-controls={popupId}
+                aria-describedby={isCardExpanded ? tooltipId : undefined}
             >
                 {isCardExpanded ? (
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
@@ -81,8 +86,15 @@ function MissingFieldsBadge({ translation, setShowContributeModal, setFieldsToCo
                 )}
             </button>
 
+            {isCardExpanded && (
+                <span id={tooltipId} role="tooltip" className={styles.missingTooltip}>
+                    Add missing information
+                </span>
+            )}
+
             {open && (
                 <div
+                    id={popupId}
                     className={`${styles.missingPopup} ${isCardExpanded ? styles.detailsPopup : ''}`}
                     role="dialog"
                     aria-label="Missing fields"
@@ -104,6 +116,7 @@ function MissingFieldsBadge({ translation, setShowContributeModal, setFieldsToCo
                           className={styles.contributeButton}
                           onClick={(e) => {
                             e.stopPropagation();
+                            setOpen(false);
                             setShowContributeModal(true);
                             setFieldsToContribute(missingFields.map(f => f.key));
                           }}
@@ -198,10 +211,6 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
         else setIsExpandedInternal(target !== null);
     };
 
-    const handleCardClick = () => {
-        applyToggle('card');
-    };
-
     const handleQuickView = (e) => {
         e.stopPropagation();
         applyToggle('expand');
@@ -216,24 +225,22 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
         <>
             <div
                 ref={wrapperRef}
-                className={`${styles.wordDisplayWrapper} ${isExpanded ? styles.expanded : ''}`}
-                onClick={handleCardClick}
+                className={`${styles.wordDisplayWrapper} ${isExpanded ? styles.expanded : ''} ${wordPath && !isExpanded ? styles.linked : ''}`}
             >
                 <Card className={`${styles.wordDisplay} ${isExpanded ? styles.expandedCard : styles.collapsedCard}`}>
                     {!isExpanded ? (
                         /* Collapsed View */
                         <div className={styles.collapsedView}>
+                            {wordPath && (
+                                <Link
+                                    to={wordPath}
+                                    className={`no-effect ${styles.cardEntryLink}`}
+                                    aria-label={`View full entry for ${displayedTranslation.wordText}`}
+                                />
+                            )}
                             <div className={styles.collapsedWordGroup}>
                                 <h2 className={styles.wordCollapsed}>
-                                    {wordPath ? (
-                                        <Link
-                                            to={wordPath}
-                                            className={styles.wordLink}
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            {displayedTranslation.wordText}
-                                        </Link>
-                                    ) : displayedTranslation.wordText}
+                                    {displayedTranslation.wordText}
                                 </h2>
                                 {displayedTranslation.englishDefinition && (
                                     <span className={styles.wordEnglish}>{displayedTranslation.englishDefinition}</span>
@@ -386,16 +393,6 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                                 </div>
 
                                 <div className={styles.footerActions}>
-                                    {wordPath && (
-                                        <Link
-                                            to={wordPath}
-                                            className={styles.fullEntryLink}
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            View full entry
-                                            <span aria-hidden="true">→</span>
-                                        </Link>
-                                    )}
                                     {showAddToSet && isAuthenticated && (
                                         <Button
                                             variant="secondary"
@@ -410,6 +407,16 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                                             {loadingSets ? 'Loading...' :
                                                 setsContainingTranslation.length > 0 ? 'Remove from Set' : 'Add to Set'}
                                         </Button>
+                                    )}
+                                    {wordPath && (
+                                        <Link
+                                            to={wordPath}
+                                            className={styles.fullEntryLink}
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            View full entry
+                                            <span aria-hidden="true">→</span>
+                                        </Link>
                                     )}
                                 </div>
                             </div>

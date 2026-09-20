@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { getWordCardToggleTarget } from './wordCardBehavior.js';
 
-test('collapsed card empty space and Quick view both expand the word', () => {
-    assert.equal(getWordCardToggleTarget(false, 'word-1', 'card'), 'word-1');
+test('only Quick view expands a collapsed word', () => {
+    assert.equal(getWordCardToggleTarget(false, 'word-1', 'card'), undefined);
     assert.equal(getWordCardToggleTarget(false, 'word-1', 'expand'), 'word-1');
 });
 
