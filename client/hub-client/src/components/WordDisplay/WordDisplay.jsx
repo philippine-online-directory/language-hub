@@ -53,7 +53,7 @@ function MissingFieldsBadge({ translation, setShowContributeModal, setFieldsToCo
 
     return (
         <div
-            className={`${styles.missingBadgeWrapper} ${!isCardExpanded ? styles.missingBadgeInert : ''}`}
+            className={styles.missingBadgeWrapper}
             ref={wrapperRef}
         >
             <button

@@ -35,7 +35,7 @@ const getPublicTranslation = [
             res.set(
                 'Cache-Control',
                 translation.status === 'VERIFIED' && isComplete
-                    ? 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400'
+                    ? 'public, max-age=60, s-maxage=900, stale-while-revalidate=60'
                     : 'public, max-age=0, s-maxage=60'
             );
 

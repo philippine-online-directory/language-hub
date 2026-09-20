@@ -39,6 +39,7 @@ export default function WordPage() {
         async function fetchWord() {
             setLoading(true);
             setError(null);
+            setWord(null);
 
             try {
                 const result = await languageService.getWordBySlug(

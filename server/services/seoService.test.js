@@ -13,6 +13,15 @@ test('sitemap includes only complete verified word records returned by its filte
                 translationQuery = args;
                 return [{
                     slug: 'maayo',
+                    wordText: 'Maayo',
+                    englishDefinition: 'Good',
+                    publishedAt: new Date('2026-09-18T00:00:00Z'),
+                    createdAt: new Date('2026-09-17T00:00:00Z'),
+                    language: { slug: 'cebuano' }
+                }, {
+                    slug: 'incomplete-word',
+                    wordText: 'Incomplete',
+                    englishDefinition: ' ',
                     publishedAt: new Date('2026-09-18T00:00:00Z'),
                     createdAt: new Date('2026-09-17T00:00:00Z'),
                     language: { slug: 'cebuano' }
@@ -30,5 +39,5 @@ test('sitemap includes only complete verified word records returned by its filte
     });
     assert.match(sitemap, /\/languages\/cebuano\/words\/maayo/);
     assert.match(sitemap, /<lastmod>2026-09-18<\/lastmod>/);
-    assert.doesNotMatch(sitemap, /unverified-word/);
+    assert.doesNotMatch(sitemap, /incomplete-word/);
 });

@@ -114,5 +114,5 @@ test('public word controller caches complete verified words', async () => {
         translationService.findPublicTranslationBySlug = originalLookup;
     }
 
-    assert.match(cacheControl, /s-maxage=3600/);
+    assert.match(cacheControl, /s-maxage=900/);
 });

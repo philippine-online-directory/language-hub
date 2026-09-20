@@ -120,6 +120,8 @@ export async function getSitemapXml(prismaClient = prisma) {
             },
             select: {
                 slug: true,
+                wordText: true,
+                englishDefinition: true,
                 publishedAt: true,
                 createdAt: true,
                 language: {
@@ -146,7 +148,9 @@ export async function getSitemapXml(prismaClient = prisma) {
             loc: absoluteUrl(`/profile/${profile.id}`),
             lastmod: formatDate(profile.createdAt),
         })),
-        ...translations.map((translation) => ({
+        ...translations.filter((translation) => (
+            translation.wordText.trim() && translation.englishDefinition.trim()
+        )).map((translation) => ({
             loc: absoluteUrl(`/languages/${translation.language.slug}/words/${translation.slug}`),
             lastmod: formatDate(translation.publishedAt || translation.createdAt),
         })),
