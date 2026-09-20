@@ -8,6 +8,8 @@ import { setService } from '../../api/setService';
 import styles from './WordDisplay.module.css';
 import ContributeMissingModal from '../ContributeMissingModal/ContributeMissingModal';
 import { createPortal } from 'react-dom';
+import { getWordCardToggleTarget } from '../../utils/wordCardBehavior';
+import { getWordPath } from '../../utils/wordEntry';
 
 const COMPLETABLE_FIELDS = [
     { key: 'audioUrl',        label: 'Audio pronunciation' },
@@ -132,6 +134,8 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
     const previousHeightRef = useRef(null);
     const heightAnimationRef = useRef(null);
     const displayedTranslation = translationOverride ?? translation;
+    const wordPath = getWordPath(displayedTranslation);
+    const detailsId = `word-details-${displayedTranslation.id}`;
 
     useEffect(() => {
         setTranslationOverride(null);
@@ -186,17 +190,26 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
         checkSets();
     }, [translation?.id, isAuthenticated]);
 
+    const applyToggle = (action) => {
+        const target = getWordCardToggleTarget(isExpanded, translation.id, action);
+        if (target === undefined) return;
+
+        if (onToggle) onToggle(target);
+        else setIsExpandedInternal(target !== null);
+    };
+
     const handleCardClick = () => {
-        if (!isExpanded) {
-            if (onToggle) onToggle(translation.id);
-            else setIsExpandedInternal(true);
-        }
+        applyToggle('card');
+    };
+
+    const handleQuickView = (e) => {
+        e.stopPropagation();
+        applyToggle('expand');
     };
 
     const handleCollapse = (e) => {
         e.stopPropagation();
-        if (onToggle) onToggle(null);
-        else setIsExpandedInternal(false);
+        applyToggle('collapse');
     };
 
     return (
@@ -211,7 +224,17 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                         /* Collapsed View */
                         <div className={styles.collapsedView}>
                             <div className={styles.collapsedWordGroup}>
-                                <h2 className={styles.wordCollapsed}>{displayedTranslation.wordText}</h2>
+                                <h2 className={styles.wordCollapsed}>
+                                    {wordPath ? (
+                                        <Link
+                                            to={wordPath}
+                                            className={styles.wordLink}
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            {displayedTranslation.wordText}
+                                        </Link>
+                                    ) : displayedTranslation.wordText}
+                                </h2>
                                 {displayedTranslation.englishDefinition && (
                                     <span className={styles.wordEnglish}>{displayedTranslation.englishDefinition}</span>
                                 )}
@@ -222,17 +245,36 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                                     <div className={styles.verifiedBadgeSmall}>✓</div>
                                 )}
                                 <MissingFieldsBadge translation={displayedTranslation} setShowContributeModal={setShowContributeModal} setFieldsToContribute={setFieldsToContribute} isCardExpanded={false} />
-                                <svg className={styles.detailsIndicator} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                                    <polyline points="9 18 15 12 9 6"></polyline>
-                                </svg>
+                                <button
+                                    type="button"
+                                    className={styles.quickViewButton}
+                                    onClick={handleQuickView}
+                                    aria-expanded={false}
+                                    aria-controls={detailsId}
+                                >
+                                    <span>Quick view</span>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                                        <polyline points="9 18 15 12 9 6"></polyline>
+                                    </svg>
+                                </button>
                             </div>
                         </div>
                     ) : (
                         /* Expanded View */
-                        <div className={styles.expandedView}>
+                        <div className={styles.expandedView} id={detailsId}>
                             <div className={styles.expandedHeader}>
                                 <div className={styles.wordHeader}>
-                                    <h2 className={styles.word}>{displayedTranslation.wordText}</h2>
+                                    <h2 className={styles.word}>
+                                        {wordPath ? (
+                                            <Link
+                                                to={wordPath}
+                                                className={styles.wordLink}
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                {displayedTranslation.wordText}
+                                            </Link>
+                                        ) : displayedTranslation.wordText}
+                                    </h2>
                                     {displayedTranslation.partOfSpeech && (
                                         <span className={styles.partOfSpeechBadge}>
                                             {displayedTranslation.partOfSpeech}
@@ -242,13 +284,15 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                                 <div className={styles.expandedHeaderActions}>
                                     <MissingFieldsBadge translation={displayedTranslation} setShowContributeModal={setShowContributeModal} setFieldsToContribute={setFieldsToContribute} isCardExpanded={true} />
                                     <button
+                                        type="button"
                                         className={styles.collapseButton}
                                         onClick={handleCollapse}
-                                        aria-label="Collapse"
+                                        aria-expanded={true}
+                                        aria-controls={detailsId}
                                     >
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                                        <span>Collapse</span>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                                            <polyline points="18 15 12 9 6 15"></polyline>
                                         </svg>
                                     </button>
                                 </div>
@@ -263,7 +307,7 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                                     <div className={styles.divider} />
                                     <div className={styles.audioPlayer}>
                                         <label className={styles.audioLabel}>Audio Pronunciation:</label>
-                                        <audio controls src={displayedTranslation.audioUrl} className={styles.audio}>
+                                        <audio controls src={displayedTranslation.audioUrl} className={styles.audio} onClick={(e) => e.stopPropagation()}>
                                             Your browser does not support the audio element.
                                         </audio>
                                     </div>
@@ -341,21 +385,33 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                                     )}
                                 </div>
 
-                                {showAddToSet && isAuthenticated && (
-                                    <Button
-                                        variant="secondary"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setModalMode(setsContainingTranslation.length > 0 ? 'remove' : 'add');
-                                            setShowModal(true);
-                                        }}
-                                        className={styles.addButton}
-                                        disabled={loadingSets}
-                                    >
-                                        {loadingSets ? 'Loading...' :
-                                            setsContainingTranslation.length > 0 ? 'Remove from Set' : 'Add to Set'}
-                                    </Button>
-                                )}
+                                <div className={styles.footerActions}>
+                                    {wordPath && (
+                                        <Link
+                                            to={wordPath}
+                                            className={styles.fullEntryLink}
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            View full entry
+                                            <span aria-hidden="true">→</span>
+                                        </Link>
+                                    )}
+                                    {showAddToSet && isAuthenticated && (
+                                        <Button
+                                            variant="secondary"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setModalMode(setsContainingTranslation.length > 0 ? 'remove' : 'add');
+                                                setShowModal(true);
+                                            }}
+                                            className={styles.addButton}
+                                            disabled={loadingSets}
+                                        >
+                                            {loadingSets ? 'Loading...' :
+                                                setsContainingTranslation.length > 0 ? 'Remove from Set' : 'Add to Set'}
+                                        </Button>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     )}

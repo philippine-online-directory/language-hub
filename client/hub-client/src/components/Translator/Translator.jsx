@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { translatorService } from '../../api/translatorService';
 import LanguagePickerModal from '../LanguagePickerModal/LanguagePickerModal';
 import useDebounce from '../../hooks/useDebounce';
@@ -277,9 +278,12 @@ export default function Translator({ compact = false }) {
                             {results.map((result) => (
                                 <div key={result.id} className={styles.resultCard}>
                                     <div className={styles.resultHeader}>
-                                        <span className={styles.resultWord}>
+                                        <Link
+                                            to={`/languages/${selectedLanguage.slug}/words/${result.slug}`}
+                                            className={styles.resultWord}
+                                        >
                                             {direction === 'en-to-lang' ? result.wordText : result.englishDefinition}
-                                        </span>
+                                        </Link>
                                         {result.status === 'UNVERIFIED' && (
                                             <span className={styles.unverifiedBadge}>
                                                 <svg viewBox="0 0 20 20" fill="currentColor" width="12" height="12">

@@ -371,6 +371,15 @@
   color: var(--text-primary);
   letter-spacing: -0.01em;
   line-height: 1.3;
+  text-decoration: underline;
+  text-decoration-color: rgba(192, 118, 58, 0.35);
+  text-underline-offset: 4px;
+  transition: color 160ms ease, text-decoration-color 160ms ease;
+}
+
+.resultWord:hover {
+  color: #A95F29;
+  text-decoration-color: currentColor;
 }
 
 .resultMeta {

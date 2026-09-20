@@ -115,9 +115,49 @@
   background: rgba(192, 118, 58, 0.08);
 }
 
-.detailsIndicator {
-  flex-shrink: 0;
-  color: var(--text-placeholder);
+.wordLink {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(192, 118, 58, 0.35);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition: color 160ms ease, text-decoration-color 160ms ease;
+}
+
+.wordLink:hover {
+  color: #A95F29;
+  text-decoration-color: currentColor;
+}
+
+.quickViewButton,
+.collapseButton {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 12px;
+  border: 1px solid var(--border-rgba);
+  border-radius: 9px;
+  color: var(--text-secondary);
+  background: var(--disabled-bg);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+
+.quickViewButton:hover,
+.collapseButton:hover {
+  color: #A95F29;
+  background: rgba(192, 118, 58, 0.08);
+  border-color: rgba(192, 118, 58, 0.3);
+}
+
+.quickViewButton:active,
+.collapseButton:active {
+  transform: translateY(1px);
 }
 
 /* Expanded State */
@@ -204,28 +244,7 @@
 }
 
 .collapseButton {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(107, 114, 128, 0.1);
-  border: 1px solid var(--border-rgba);
-  border-radius: 8px;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
   flex-shrink: 0;
-}
-
-.collapseButton:hover {
-  background: rgba(192, 118, 58, 0.1);
-  border-color: rgba(192, 118, 58, 0.3);
-  color: #C0763A;
-}
-
-.collapseButton:active {
-  background: rgba(192, 118, 58, 0.16);
 }
 
 .divider {
@@ -488,6 +507,23 @@
   margin-top: auto;
 }
 
+.footerActions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.fullEntryLink {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 4px;
+  color: #A95F29;
+  font-weight: 700;
+}
+
 .addButton::before {
   content: '+';
   position: absolute;
@@ -744,10 +780,6 @@
     line-height: 32px;
   }
 
-  .collapseButton {
-    width: 28px;
-    height: 28px;
-  }
 }
 
 @media (max-width: 480px) {
@@ -796,6 +828,41 @@
   }
 
   .footer button {
+    width: 100%;
+  }
+
+  .collapsedView {
+    gap: 12px;
+  }
+
+  .collapsedRight {
+    gap: 6px;
+  }
+
+  .quickViewButton,
+  .collapseButton {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .quickViewButton span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .collapseButton {
+    padding: 0 12px;
+  }
+
+  .footerActions,
+  .fullEntryLink {
     width: 100%;
   }
 }
