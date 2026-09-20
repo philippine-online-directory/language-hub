@@ -7,7 +7,8 @@
     "test": "node --import tsx/esm --test services/*.test.js",
     "dev": "tsx --watch app.js",
     "dev:debug": "tsx --watch --inspect app.js",
-    "start": "node --import tsx/esm app.js"
+    "start": "node --import tsx/esm app.js",
+    "seed:public-sets": "node --import tsx/esm scripts/seedPublicSets.js"
   },
   "keywords": [],
   "author": "",
