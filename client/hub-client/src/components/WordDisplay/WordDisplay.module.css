@@ -538,6 +538,23 @@
   gap: 10px;
 }
 
+.removeButton {
+  min-height: 44px;
+  padding: 8px 4px;
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.removeButton:hover {
+  color: #A95F29;
+  text-decoration: underline;
+}
+
 .fullEntryLink {
   display: inline-flex;
   min-height: 44px;

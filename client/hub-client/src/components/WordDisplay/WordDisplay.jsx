@@ -221,6 +221,12 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
         applyToggle('collapse');
     };
 
+    const openSetModal = (e, mode = 'add') => {
+        e.stopPropagation();
+        setModalMode(mode);
+        setShowModal(true);
+    };
+
     return (
         <>
             <div
@@ -396,17 +402,21 @@ export default function WordDisplay({ translation, showAddToSet = true, defaultE
                                     {showAddToSet && isAuthenticated && (
                                         <Button
                                             variant="secondary"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setModalMode(setsContainingTranslation.length > 0 ? 'remove' : 'add');
-                                                setShowModal(true);
-                                            }}
+                                            onClick={openSetModal}
                                             className={styles.addButton}
                                             disabled={loadingSets}
                                         >
-                                            {loadingSets ? 'Loading...' :
-                                                setsContainingTranslation.length > 0 ? 'Remove from Set' : 'Add to Set'}
+                                            {loadingSets ? 'Loading...' : 'Add to Set'}
                                         </Button>
+                                    )}
+                                    {showAddToSet && isAuthenticated && setsContainingTranslation.length > 0 && (
+                                        <button
+                                            type="button"
+                                            className={styles.removeButton}
+                                            onClick={(e) => openSetModal(e, 'remove')}
+                                        >
+                                            Remove from set
+                                        </button>
                                     )}
                                     {wordPath && (
                                         <Link

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { setService } from '../../api/setService';
 import Button from '../Button/Button';
 import Card from '../Card/Card';
@@ -10,8 +10,35 @@ export default function AddToSetModal({ translation, mode = 'add', setsContainin
     const [selectedSetId, setSelectedSetId] = useState('');
     const [error, setError] = useState(null);
     const [processing, setProcessing] = useState(false);
+    const dialogRef = useRef(null);
 
     const isRemoveMode = mode === 'remove';
+
+    useEffect(() => {
+        const previousFocus = document.activeElement;
+        dialogRef.current?.focus();
+        return () => previousFocus?.focus();
+    }, []);
+
+    const handleDialogKeyDown = (event) => {
+        if (event.key === 'Escape') {
+            onClose(false);
+            return;
+        }
+        if (event.key !== 'Tab') return;
+
+        const controls = [...event.currentTarget.querySelectorAll('button:not(:disabled), input:not(:disabled)')];
+        if (controls.length === 0) return;
+        const first = controls[0];
+        const last = controls[controls.length - 1];
+        if (event.shiftKey && (document.activeElement === first || document.activeElement === event.currentTarget)) {
+            event.preventDefault();
+            last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+        }
+    };
 
     useEffect(() => {
         const fetchSets = async () => {
@@ -71,9 +98,9 @@ export default function AddToSetModal({ translation, mode = 'add', setsContainin
     };
 
     return (
-        <div className={styles.modalOverlay} onClick={onClose}>
-            <Card className={styles.modal} onClick={(e) => e.stopPropagation()} asDiv>
-                <h2 className={styles.title}>{isRemoveMode ? 'Remove from Set' : 'Add to Set'}</h2>
+        <div className={styles.modalOverlay} onClick={() => onClose(false)}>
+            <Card className={styles.modal} onClick={(e) => e.stopPropagation()} onKeyDown={handleDialogKeyDown} asDiv ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="add-to-set-title" tabIndex={-1}>
+                <h2 id="add-to-set-title" className={styles.title}>{isRemoveMode ? 'Remove from Set' : 'Add to Set'}</h2>
                 <p className={styles.subtitle}>
                     {isRemoveMode ? 'Remove' : 'Add'} "<strong>{translation.wordText}</strong>" {isRemoveMode ? 'from one of your vocabulary sets' : 'to one of your vocabulary sets'}
                 </p>
@@ -152,7 +179,7 @@ export default function AddToSetModal({ translation, mode = 'add', setsContainin
                             isRemoveMode ? 'Remove from Set' : 'Add to Set'
                         )}
                     </Button>
-                    <Button variant="secondary" onClick={onClose} fullWidth>
+                    <Button variant="secondary" onClick={() => onClose(false)} fullWidth>
                         Cancel
                     </Button>
                 </div>

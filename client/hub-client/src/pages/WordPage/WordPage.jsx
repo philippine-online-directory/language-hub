@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { languageService } from '../../api/languageService';
+import { setService } from '../../api/setService';
+import { useAuth } from '../../context/AuthContext';
+import AddToSetModal from '../../components/AddToSetModal/AddToSetModal';
 import LoadingSkeleton from '../../components/LoadingSkeleton/LoadingSkeleton';
 import {
     clearJsonLd,
@@ -29,9 +32,33 @@ function updateMetadata(word) {
 
 export default function WordPage() {
     const { languageSlug, wordSlug } = useParams();
+    const { isAuthenticated } = useAuth();
     const [word, setWord] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [showAddToSetModal, setShowAddToSetModal] = useState(false);
+    const [setsContainingWord, setSetsContainingWord] = useState([]);
+    const [setsLoadedForWordId, setSetsLoadedForWordId] = useState(null);
+
+    useEffect(() => {
+        if (!word?.id || !isAuthenticated) return undefined;
+        let active = true;
+        setService.getSetsContainingTranslation(word.id)
+            .then((sets) => {
+                if (active) {
+                    setSetsContainingWord(sets || []);
+                    setSetsLoadedForWordId(word.id);
+                }
+            })
+            .catch((requestError) => {
+                console.error('Error checking sets:', requestError);
+                if (active) {
+                    setSetsContainingWord([]);
+                    setSetsLoadedForWordId(word.id);
+                }
+            });
+        return () => { active = false; };
+    }, [word?.id, isAuthenticated]);
 
     useEffect(() => {
         const controller = new AbortController();
@@ -40,6 +67,7 @@ export default function WordPage() {
             setLoading(true);
             setError(null);
             setWord(null);
+            setShowAddToSetModal(false);
 
             try {
                 const result = await languageService.getWordBySlug(
@@ -134,6 +162,17 @@ export default function WordPage() {
                                 {word.status === 'VERIFIED' ? 'Verified entry' : 'Awaiting verification'}
                             </span>
                         </div>
+                        {isAuthenticated && (
+                            <button
+                                type="button"
+                                className={styles.addToSetButton}
+                                onClick={() => setShowAddToSetModal(true)}
+                                disabled={setsLoadedForWordId !== word.id}
+                            >
+                                <span aria-hidden="true">+</span>
+                                {setsLoadedForWordId === word.id ? 'Add to set' : 'Loading sets...'}
+                            </button>
+                        )}
                     </header>
 
                     <section className={styles.definitionSection} aria-labelledby="definition-heading">
@@ -208,6 +247,20 @@ export default function WordPage() {
                     </section>
                 </article>
             </div>
+            {showAddToSetModal && (
+                <AddToSetModal
+                    translation={{ ...word, languageId: word.language.id }}
+                    setsContainingTranslation={setsContainingWord}
+                    onClose={(refreshNeeded) => {
+                        setShowAddToSetModal(false);
+                        if (refreshNeeded) {
+                            setService.getSetsContainingTranslation(word.id)
+                                .then((sets) => setSetsContainingWord(sets || []))
+                                .catch((requestError) => console.error('Error refreshing sets:', requestError));
+                        }
+                    }}
+                />
+            )}
         </main>
     );
 }
