@@ -93,6 +93,41 @@ test('translateWord matches native queries against the word text', async () => {
     assert.equal(result.primary.text, 'fine');
 });
 
+test('translateWord suggests similar english terms when nothing matches', async () => {
+    const prismaClient = fakePrisma([], [{ term: 'ruun' }], [{ text: 'run' }, { text: 'rune' }]);
+
+    const result = await translatorService.translateWord('sgb', 'To Ruun', 'en-to-lang', prismaClient);
+
+    assert.equal(prismaClient.calls.length, 3);
+    assert.match(prismaClient.calls[1].sql, /translation_english_terms/);
+    assert.match(prismaClient.calls[2].sql, /tt\."term" %/);
+    assert.ok(prismaClient.calls[2].values.includes('ruun'));
+    assert.deepEqual(result.suggestions, ['run', 'rune']);
+    assert.equal(result.primary, null);
+});
+
+test('translateWord suggests similar native words when nothing matches', async () => {
+    const prismaClient = fakePrisma([], [{ text: 'pinu' }]);
+
+    const result = await translatorService.translateWord('tagbanua', 'pinuu', 'lang-to-en', prismaClient);
+
+    assert.match(prismaClient.calls[1].sql, /t\."wordText" %/);
+    assert.deepEqual(result.suggestions, ['pinu']);
+});
+
+test('translateWord skips suggestions when results exist or the query is too short', async () => {
+    const withResults = fakePrisma([row({ id: '1' })]);
+    const shortQuery = fakePrisma([]);
+
+    const found = await translatorService.translateWord('sgb', 'light', 'en-to-lang', withResults);
+    const short = await translatorService.translateWord('sgb', 'ru', 'en-to-lang', shortQuery);
+
+    assert.equal(withResults.calls.length, 1);
+    assert.equal(shortQuery.calls.length, 1);
+    assert.deepEqual(found.suggestions, []);
+    assert.deepEqual(short.suggestions, []);
+});
+
 test('translateWord rejects invalid input', async () => {
     const prismaClient = fakePrisma();
 

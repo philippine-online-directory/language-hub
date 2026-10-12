@@ -2,6 +2,9 @@ import prisma from '../prisma.js'
 import { normalizePartOfSpeech } from '../utils/partOfSpeech.js'
 
 const MAX_RESULTS = 50;
+const MAX_SUGGESTIONS = 3;
+const MIN_SUGGESTION_LENGTH = 3;
+const MAX_SUGGESTION_WORDS = 3;
 
 function findEnglishMatches(prismaClient, slug, word) {
     return prismaClient.$queryRaw`
@@ -26,6 +29,36 @@ function findNativeMatches(prismaClient, slug, word) {
           AND lower(t."wordText") = lower(${word})
         ORDER BY t."status" DESC, t."createdAt" DESC
         LIMIT ${MAX_RESULTS}`;
+}
+
+// The term is resolved first and passed as a bound value so the planner
+// can use the trigram index instead of scanning the language's terms.
+async function suggestEnglishTerms(prismaClient, slug, word) {
+    const [normalized] = await prismaClient.$queryRaw`
+        SELECT "term" FROM translation_english_terms(${word}) ORDER BY "position" LIMIT 1`;
+    if (!normalized) return [];
+
+    return prismaClient.$queryRaw`
+        SELECT DISTINCT tt."term" AS "text", similarity(tt."term", ${normalized.term}) AS "score"
+        FROM "TranslationTerm" tt
+        JOIN "Language" l ON l."id" = tt."languageId"
+        WHERE l."slug" = ${slug}
+          AND tt."term" % ${normalized.term}
+          AND cardinality(string_to_array(tt."term", ' ')) <= ${MAX_SUGGESTION_WORDS}
+        ORDER BY "score" DESC, "text"
+        LIMIT ${MAX_SUGGESTIONS}`;
+}
+
+function suggestNativeWords(prismaClient, slug, word) {
+    return prismaClient.$queryRaw`
+        SELECT min(t."wordText") AS "text", max(similarity(t."wordText", ${word})) AS "score"
+        FROM "Translation" t
+        JOIN "Language" l ON l."id" = t."languageId"
+        WHERE l."slug" = ${slug}
+          AND t."wordText" % ${word}
+        GROUP BY lower(t."wordText")
+        ORDER BY "score" DESC, "text"
+        LIMIT ${MAX_SUGGESTIONS}`;
 }
 
 export function groupTranslations(rows, direction) {
@@ -71,11 +104,20 @@ async function translateWord(slug, word, direction, prismaClient = prisma) {
         throw new Error('Direction must be "en-to-lang" or "lang-to-en"');
     }
 
-    const rows = direction === 'en-to-lang'
+    const isEnglish = direction === 'en-to-lang';
+    const rows = isEnglish
         ? await findEnglishMatches(prismaClient, slug, trimmed)
         : await findNativeMatches(prismaClient, slug, trimmed);
 
-    return { query: trimmed, ...groupTranslations(rows, direction) };
+    let suggestions = [];
+    if (rows.length === 0 && trimmed.length >= MIN_SUGGESTION_LENGTH) {
+        const suggestionRows = isEnglish
+            ? await suggestEnglishTerms(prismaClient, slug, trimmed)
+            : await suggestNativeWords(prismaClient, slug, trimmed);
+        suggestions = suggestionRows.map((suggestion) => suggestion.text);
+    }
+
+    return { query: trimmed, ...groupTranslations(rows, direction), suggestions };
 }
 
 const translatorService = {
