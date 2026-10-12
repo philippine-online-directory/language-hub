@@ -4,8 +4,8 @@ const PUBLIC_SETS = [
     {
         languageSlug: 'sgb',
         ownerUsername: 'ulap_hapon',
-        name: 'Ayta Mag-Antsi Food & Cooking',
-        description: 'Common Ayta Mag-Antsi words for food, drinks, ingredients, and cooking.',
+        name: 'Pagkain',
+        description: 'food and cooking words',
         meanings: ['food', 'rice', 'meat', 'fruit', 'banana', 'coconut', 'salt', 'sugar', 'water', 'drink', 'eat', 'cook', 'egg', 'coffee', 'bread', 'milk', 'soup'],
         minimumWords: 14
     },
@@ -13,7 +13,7 @@ const PUBLIC_SETS = [
         languageSlug: 'sgb',
         ownerUsername: 'luntianTala',
         name: 'mga hayop',
-        description: 'Ayta Mag-Antsi names for familiar animals, birds, and insects.',
+        description: 'animals, birds and insects',
         meanings: ['animal', 'dog', 'cat', 'bird', 'chicken', 'pig', 'cow', 'carabao', 'horse', 'rat', 'snake', 'goat', 'insect'],
         minimumWords: 12
     },
@@ -21,7 +21,7 @@ const PUBLIC_SETS = [
         languageSlug: 'sgb',
         ownerUsername: 'banabaNotes',
         name: 'Home and Everyday Objects',
-        description: 'Useful Ayta Mag-Antsi words for the home and ordinary household objects.',
+        description: 'Things you find inside the house.',
         meanings: ['house', 'door', 'window', 'room', 'bed', 'chair', 'table', 'basket', 'pot', 'cooking pot', 'knife', 'spoon', 'plate', 'clothes', 'roof', 'wall'],
         minimumWords: 14
     },
@@ -29,7 +29,7 @@ const PUBLIC_SETS = [
         languageSlug: 'sgb',
         ownerUsername: 'Monica Miranda',
         name: 'Nature and Weather',
-        description: 'Ayta Mag-Antsi vocabulary for landscapes, plants, the sky, and weather.',
+        description: 'Words about the weather, the sky and plants.',
         meanings: ['sun', 'moon', 'star', 'sky', 'cloud', 'rain', 'wind', 'ocean', 'river', 'mountain', 'tree', 'flower', 'plant', 'sand', 'stone', 'fire', 'water', 'earth'],
         minimumWords: 15
     },
@@ -37,7 +37,7 @@ const PUBLIC_SETS = [
         languageSlug: 'sgb',
         ownerUsername: 'Rachel13',
         name: 'Family',
-        description: 'Ayta Mag-Antsi words for family members, friends, and people in the community.',
+        description: 'words for family and friends',
         meanings: ['child', 'friend', 'father', 'mother', 'person', 'man', 'family', 'wife', 'baby', 'woman', 'people'],
         minimumWords: 10
     },
@@ -45,7 +45,7 @@ const PUBLIC_SETS = [
         languageSlug: 'tagbanua',
         ownerUsername: '8man',
         name: 'dagat',
-        description: 'Calamian Tagbanua words connected to the coast, sea life, and island surroundings.',
+        description: 'sea and beach words',
         meanings: ['beach', 'island', 'ocean', 'water', 'wave'],
         wordTexts: ['bag̓itan', 'itu', 'samban', 'siruk', 'almang', 'gukguk', 'biyag-biyag', 'karawat', 'manlët', 'ranga-ranga'],
         minimumWords: 14
@@ -54,7 +54,7 @@ const PUBLIC_SETS = [
         languageSlug: 'tagbanua',
         ownerUsername: 'Marites Caballero',
         name: 'Food words',
-        description: 'Calamian Tagbanua vocabulary for food, crops, farming, and the harvest.',
+        description: 'Food and the things we plant.',
         meanings: ['food', 'fruit', 'plant', 'seed', 'tree', 'vegetable'],
         wordTexts: ['lumbuy', 'kandis', 'bëngël', 'bëtëng', 'suman', 'balayang', 'kaw̓ig̓an', 'tarata', 'sayuti', 'lug̓aw'],
         minimumWords: 14
@@ -63,7 +63,7 @@ const PUBLIC_SETS = [
         languageSlug: 'tagbanua',
         ownerUsername: 'Noel Banzon',
         name: 'At Home',
-        description: 'Calamian Tagbanua words for rooms, furniture, tools, and home life.',
+        description: 'Words for the house.',
         meanings: ['house', 'door', 'window', 'room', 'bed', 'chair', 'basket', 'cooking pot', 'knife', 'spoon', 'roof', 'wall'],
         wordTexts: ['arku', 'tangkungan', 'papag', 'lulubgan'],
         minimumWords: 14
@@ -72,7 +72,7 @@ const PUBLIC_SETS = [
         languageSlug: 'tagbanua',
         ownerUsername: 'tinay_m',
         name: 'verbs',
-        description: 'A practical mix of Calamian Tagbanua verbs for everyday activities.',
+        description: 'verbs i use every day',
         meanings: ['go', 'run', 'eat', 'drink', 'sleep', 'work', 'see', 'say', 'give', 'carry', 'wash', 'cook', 'buy', 'cry'],
         wordTexts: ['salya', 'usuy-usuy', 'tamyak'],
         minimumWords: 14
@@ -81,7 +81,7 @@ const PUBLIC_SETS = [
         languageSlug: 'ivv',
         ownerUsername: 'Jong',
         name: 'Easy Ivatan words',
-        description: 'A beginner-friendly mix of common Basco Ivatan words and ideas.',
+        description: 'for beginners',
         meanings: ['all', 'and', 'big', 'black', 'cold', 'day', 'dirty', 'dry', 'far', 'good', 'near', 'small', 'water', 'fire', 'house', 'dog', 'fish', 'mother', 'father', 'child'],
         minimumWords: 16
     },
@@ -89,7 +89,7 @@ const PUBLIC_SETS = [
         languageSlug: 'ivv',
         ownerUsername: 'mariatan',
         name: 'Body parts',
-        description: 'Basco Ivatan vocabulary for parts of the body and the senses.',
+        description: 'Parts of the body.',
         meanings: ['back', 'blood', 'ear', 'eye', 'hair', 'hand', 'head', 'mouth', 'neck', 'nose', 'skin', 'tooth', 'shoulder', 'hear', 'see'],
         minimumWords: 12
     },
@@ -97,7 +97,7 @@ const PUBLIC_SETS = [
         languageSlug: 'dumagat',
         ownerUsername: 'Tinayyy',
         name: 'Nature',
-        description: 'Casiguran Dumagat words for the sea, sky, weather, plants, and land.',
+        description: 'sky, sea, rain, plants',
         meanings: ['rain', 'star', 'stone', 'sky', 'plant', 'wind', 'water', 'flower', 'sea', 'cloud', 'fire', 'sand', 'moon'],
         minimumWords: 12
     },
@@ -105,7 +105,7 @@ const PUBLIC_SETS = [
         languageSlug: 'dumagat',
         ownerUsername: 'jenalyn27',
         name: 'Pandiwa',
-        description: 'Useful Casiguran Dumagat action words for daily conversation and play.',
+        description: 'action words',
         meanings: ['buy', 'eat', 'cry', 'cook', 'see', 'sit', 'say', 'hear', 'climb', 'sleep', 'walk', 'drink', 'choose', 'stand', 'work'],
         minimumWords: 14
     },
@@ -113,7 +113,7 @@ const PUBLIC_SETS = [
         languageSlug: 'ibg',
         ownerUsername: 'Rom3l',
         name: 'Ibanag Starter Words',
-        description: 'A varied starter collection of common Ibanag words for new learners.',
+        description: 'Good words to learn first.',
         meanings: ['above', 'all', 'and', 'at', 'back', 'below', 'big', 'bone', 'branch', 'cold', 'come', 'day', 'dirty', 'dog', 'drink', 'dry', 'ear', 'eat', 'egg', 'eye', 'far', 'father', 'fire', 'fish', 'flower', 'fruit', 'good'],
         minimumWords: 20
     },
@@ -121,7 +121,7 @@ const PUBLIC_SETS = [
         languageSlug: 'ibg',
         ownerUsername: 'ynaflores',
         name: 'body + verbs',
-        description: 'Ibanag words for the body, the senses, and everyday movement.',
+        description: 'body parts and some verbs',
         meanings: ['tooth', 'hand', 'back', 'eye', 'nose', 'shoulder', 'ear', 'neck', 'sleep', 'sit', 'stand', 'say', 'climb', 'eat', 'choose', 'drink', 'see', 'work', 'come', 'walk'],
         minimumWords: 18
     },
@@ -129,7 +129,7 @@ const PUBLIC_SETS = [
         languageSlug: 'itbayat',
         ownerUsername: 'QMs0riano',
         name: 'Itbayat Action Words',
-        description: 'A focused collection of Itbayat verbs for actions and everyday activities.',
+        description: 'Itbayat verbs',
         wordTexts: ['sonyiten', 'viot', 'omhinawa', 'asleb', 'ayan', 'xotoen', 'tomanyis', 'omoyog', 'madngey', 'tayoen', 'lipet', 'atta', 'akto', 'adsilen'],
         minimumWords: 14
     }
