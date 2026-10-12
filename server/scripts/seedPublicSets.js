@@ -12,7 +12,7 @@ const PUBLIC_SETS = [
     {
         languageSlug: 'sgb',
         ownerUsername: 'luntianTala',
-        name: 'Animals Around Us',
+        name: 'mga hayop',
         description: 'Ayta Mag-Antsi names for familiar animals, birds, and insects.',
         meanings: ['animal', 'dog', 'cat', 'bird', 'chicken', 'pig', 'cow', 'carabao', 'horse', 'rat', 'snake', 'goat', 'insect'],
         minimumWords: 12
@@ -36,7 +36,7 @@ const PUBLIC_SETS = [
     {
         languageSlug: 'sgb',
         ownerUsername: 'Rachel13',
-        name: 'Family and Community',
+        name: 'Family',
         description: 'Ayta Mag-Antsi words for family members, friends, and people in the community.',
         meanings: ['child', 'friend', 'father', 'mother', 'person', 'man', 'family', 'wife', 'baby', 'woman', 'people'],
         minimumWords: 10
@@ -44,7 +44,7 @@ const PUBLIC_SETS = [
     {
         languageSlug: 'tagbanua',
         ownerUsername: '8man',
-        name: 'Calamian Coast and Sea',
+        name: 'dagat',
         description: 'Calamian Tagbanua words connected to the coast, sea life, and island surroundings.',
         meanings: ['beach', 'island', 'ocean', 'water', 'wave'],
         wordTexts: ['bag̓itan', 'itu', 'samban', 'siruk', 'almang', 'gukguk', 'biyag-biyag', 'karawat', 'manlët', 'ranga-ranga'],
@@ -53,7 +53,7 @@ const PUBLIC_SETS = [
     {
         languageSlug: 'tagbanua',
         ownerUsername: 'Marites Caballero',
-        name: 'Food, Farming and Harvest',
+        name: 'Food words',
         description: 'Calamian Tagbanua vocabulary for food, crops, farming, and the harvest.',
         meanings: ['food', 'fruit', 'plant', 'seed', 'tree', 'vegetable'],
         wordTexts: ['lumbuy', 'kandis', 'bëngël', 'bëtëng', 'suman', 'balayang', 'kaw̓ig̓an', 'tarata', 'sayuti', 'lug̓aw'],
@@ -71,7 +71,7 @@ const PUBLIC_SETS = [
     {
         languageSlug: 'tagbanua',
         ownerUsername: 'tinay_m',
-        name: 'everyday action words',
+        name: 'verbs',
         description: 'A practical mix of Calamian Tagbanua verbs for everyday activities.',
         meanings: ['go', 'run', 'eat', 'drink', 'sleep', 'work', 'see', 'say', 'give', 'carry', 'wash', 'cook', 'buy', 'cry'],
         wordTexts: ['salya', 'usuy-usuy', 'tamyak'],
@@ -80,7 +80,7 @@ const PUBLIC_SETS = [
     {
         languageSlug: 'ivv',
         ownerUsername: 'Jong',
-        name: 'Basco Ivatan Starter Words',
+        name: 'Easy Ivatan words',
         description: 'A beginner-friendly mix of common Basco Ivatan words and ideas.',
         meanings: ['all', 'and', 'big', 'black', 'cold', 'day', 'dirty', 'dry', 'far', 'good', 'near', 'small', 'water', 'fire', 'house', 'dog', 'fish', 'mother', 'father', 'child'],
         minimumWords: 16
@@ -88,7 +88,7 @@ const PUBLIC_SETS = [
     {
         languageSlug: 'ivv',
         ownerUsername: 'mariatan',
-        name: 'Body and Senses',
+        name: 'Body parts',
         description: 'Basco Ivatan vocabulary for parts of the body and the senses.',
         meanings: ['back', 'blood', 'ear', 'eye', 'hair', 'hand', 'head', 'mouth', 'neck', 'nose', 'skin', 'tooth', 'shoulder', 'hear', 'see'],
         minimumWords: 12
@@ -96,7 +96,7 @@ const PUBLIC_SETS = [
     {
         languageSlug: 'dumagat',
         ownerUsername: 'Tinayyy',
-        name: 'Nature Around Us',
+        name: 'Nature',
         description: 'Casiguran Dumagat words for the sea, sky, weather, plants, and land.',
         meanings: ['rain', 'star', 'stone', 'sky', 'plant', 'wind', 'water', 'flower', 'sea', 'cloud', 'fire', 'sand', 'moon'],
         minimumWords: 12
@@ -104,7 +104,7 @@ const PUBLIC_SETS = [
     {
         languageSlug: 'dumagat',
         ownerUsername: 'jenalyn27',
-        name: 'Daily Actions',
+        name: 'Pandiwa',
         description: 'Useful Casiguran Dumagat action words for daily conversation and play.',
         meanings: ['buy', 'eat', 'cry', 'cook', 'see', 'sit', 'say', 'hear', 'climb', 'sleep', 'walk', 'drink', 'choose', 'stand', 'work'],
         minimumWords: 14
@@ -120,7 +120,7 @@ const PUBLIC_SETS = [
     {
         languageSlug: 'ibg',
         ownerUsername: 'ynaflores',
-        name: 'body and movement',
+        name: 'body + verbs',
         description: 'Ibanag words for the body, the senses, and everyday movement.',
         meanings: ['tooth', 'hand', 'back', 'eye', 'nose', 'shoulder', 'ear', 'neck', 'sleep', 'sit', 'stand', 'say', 'climb', 'eat', 'choose', 'drink', 'see', 'work', 'come', 'walk'],
         minimumWords: 18
