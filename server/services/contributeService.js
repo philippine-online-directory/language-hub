@@ -2,6 +2,7 @@ import prisma from '../prisma.js'
 import storageService from './storageService.js'
 import { findCommonWordMatch } from './commonWordService.js'
 import { createTranslationWithSlug } from '../utils/translationSlug.js'
+import { normalizePartOfSpeech } from '../utils/partOfSpeech.js'
 
 const LANGUAGE_SUMMARY_SELECT = {
     id: true,
@@ -60,7 +61,7 @@ export async function contributeTranslation(
                 ? englishExampleSentence
                 : null,
             audioUrl: audioUrl || null,
-            partOfSpeech: partOfSpeech || null,
+            partOfSpeech: normalizePartOfSpeech(partOfSpeech),
             commonWordId: commonWord ? commonWord.id : null,
             usageComment: usageComment || null
         },

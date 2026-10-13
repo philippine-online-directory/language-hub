@@ -453,6 +453,98 @@
   transform: translateY(0);
 }
 
+.suggestion {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.suggestionBtn {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-weight: 700;
+  color: #C0763A;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.suggestionBtn:hover {
+  color: #A95F29;
+}
+
+.groups {
+  animation: resultIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.groupsTitle {
+  margin: 4px 0 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-placeholder);
+  letter-spacing: 0.02em;
+}
+
+.groupList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+}
+
+.groupRow {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.groupLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: capitalize;
+}
+
+.groupEntries {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 0;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.groupEntry {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.groupEntry:not(:last-child)::after {
+  content: '·' / '';
+  margin: 0 8px;
+  color: var(--text-placeholder);
+}
+
+.groupEntryLink {
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.groupEntryLink:hover {
+  color: #A95F29;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.unverifiedMark {
+  flex-shrink: 0;
+  color: #D97706;
+}
+
 .compact .panel {
   padding: 16px 20px 12px;
 }
@@ -518,6 +610,11 @@
     right: auto;
     left: 12px;
   }
+
+  .groupRow {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -536,7 +633,8 @@
     background: rgba(229, 231, 235, 0.5);
   }
 
-  .resultCard {
+  .resultCard,
+  .groups {
     animation: none;
   }
 

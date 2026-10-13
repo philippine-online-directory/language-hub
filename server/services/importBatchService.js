@@ -4,6 +4,7 @@ import { readSheet } from 'read-excel-file/node'
 import prisma from '../prisma.js'
 import { findCommonWordMatch } from './commonWordService.js'
 import { createTranslationWithSlug } from '../utils/translationSlug.js'
+import { normalizePartOfSpeech } from '../utils/partOfSpeech.js'
 
 const REQUIRED_FIELDS = ['wordText', 'englishDefinition'];
 const IMPORT_FIELDS = [
@@ -292,7 +293,7 @@ async function createTranslationForRow({ userId, languageId, status, data }) {
             englishDefinition: data.englishDefinition,
             exampleSentence: data.exampleSentence || null,
             audioUrl: null,
-            partOfSpeech: data.partOfSpeech || null,
+            partOfSpeech: normalizePartOfSpeech(data.partOfSpeech),
             commonWordId: commonWord ? commonWord.id : null,
             usageComment: data.usageComment || null,
             status,

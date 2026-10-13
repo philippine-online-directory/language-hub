@@ -101,6 +101,7 @@ model Translation {
   commonWord    CommonWord?      @relation(fields: [commonWordId], references: [id])
   commonWordId  Int?
   importRows    ImportBatchRow[]
+  terms         TranslationTerm[]
 
   @@unique([languageId, slug])
   @@index([languageId, status, wordText])
@@ -110,6 +111,19 @@ model Translation {
   @@index([authorId, createdAt])
   @@index([commonWordId])
   @@index([usedAsWordOfTheDay, status])
+}
+
+// Searchable English terms split from Translation.englishDefinition.
+// Maintained by a database trigger; never write to it from application code.
+model TranslationTerm {
+  translationId String
+  translation   Translation @relation(fields: [translationId], references: [id], onDelete: Cascade)
+  languageId    String
+  term          String
+  position      Int
+
+  @@id([translationId, term])
+  @@index([languageId, term])
 }
 
 model ImportBatch {

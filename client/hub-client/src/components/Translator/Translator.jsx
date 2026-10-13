@@ -1,25 +1,37 @@
-import { useState, useEffect, useRef } from 'react';
+import { Fragment, useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { translatorService } from '../../api/translatorService';
 import LanguagePickerModal from '../LanguagePickerModal/LanguagePickerModal';
 import useDebounce from '../../hooks/useDebounce';
 import styles from './Translator.module.css';
 
+const TYPING_DEBOUNCE_MS = 500;
+
+function WarningIcon({ title, ...props }) {
+    return (
+        <svg viewBox="0 0 20 20" fill="currentColor" width="12" height="12" {...props}>
+            {title && <title>{title}</title>}
+            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+        </svg>
+    );
+}
+
 export default function Translator({ compact = false }) {
     const [selectedLanguage, setSelectedLanguage] = useState(null);
     const [direction, setDirection] = useState('en-to-lang'); // 'en-to-lang' | 'lang-to-en'
     const [inputText, setInputText] = useState('');
-    const [results, setResults] = useState(null);       // null = untouched, [] = no results, [...] = results
+    const [result, setResult] = useState(null);         // null = untouched, otherwise { primary, groups, suggestions }
     const [loading, setLoading] = useState(false);
     const [inputError, setInputError] = useState('');
     const [modalOpen, setModalOpen] = useState(false);
     const [swapCount, setSwapCount] = useState(0);
     const [isSwapping, setIsSwapping] = useState(false);
+    const [debounceDelay, setDebounceDelay] = useState(TYPING_DEBOUNCE_MS);
     const inputRef = useRef(null);
     const swapTimerRef = useRef(null);
     const swapFrameRef = useRef(null);
 
-    const debouncedInput = useDebounce(inputText, 500);
+    const debouncedInput = useDebounce(inputText, debounceDelay);
 
     useEffect(() => () => {
         clearTimeout(swapTimerRef.current);
@@ -38,7 +50,7 @@ export default function Translator({ compact = false }) {
         const text = debouncedInput.trim();
 
         if (!text) {
-            setResults(null);
+            setResult(null);
             setInputError('');
             setLoading(false);
             return;
@@ -47,7 +59,7 @@ export default function Translator({ compact = false }) {
         const err = validate(text);
         if (err) {
             setInputError(err);
-            setResults(null);
+            setResult(null);
             setLoading(false);
             return;
         }
@@ -55,7 +67,7 @@ export default function Translator({ compact = false }) {
         setInputError('');
 
         if (!selectedLanguage) {
-            setResults(null);
+            setResult(null);
             setLoading(false);
             return;
         }
@@ -73,12 +85,12 @@ export default function Translator({ compact = false }) {
                     controller.signal
                 );
                 if (!ignore) {
-                    setResults(data.results);
+                    setResult(data);
                 }
             } catch (err) {
                 if (ignore || err.code === 'ERR_CANCELED') return;
                 setInputError('Something went wrong. Please try again.');
-                setResults(null);
+                setResult(null);
             } finally {
                 if (!ignore) {
                     setLoading(false);
@@ -96,13 +108,21 @@ export default function Translator({ compact = false }) {
 
     const handleInputChange = (e) => {
         const val = e.target.value;
+        setDebounceDelay(TYPING_DEBOUNCE_MS);
         setInputText(val);
-        setResults(null);
+        setResult(null);
 
         if (inputError) {
             const err = validate(val);
             if (!err) setInputError('');
         }
+    };
+
+    const handleSuggestion = (suggestion) => {
+        setDebounceDelay(0);
+        setInputText(suggestion);
+        setResult(null);
+        inputRef.current?.focus();
     };
 
     const handleSwap = () => {
@@ -111,17 +131,9 @@ export default function Translator({ compact = false }) {
         const completeSwap = () => {
             setSwapCount(c => c + 1);
 
-            if (results && results.length === 1) {
-                const result = results[0];
-                const newInputText = direction === 'en-to-lang'
-                    ? result.wordText
-                    : result.englishDefinition;
-                setInputText(newInputText);
-            } else {
-                setInputText('');
-            }
+            setInputText(result?.primary?.text ?? '');
 
-            setResults(null);
+            setResult(null);
             setLoading(false);
             setDirection(direction === 'en-to-lang' ? 'lang-to-en' : 'en-to-lang');
             inputRef.current?.focus();
@@ -142,9 +154,12 @@ export default function Translator({ compact = false }) {
     const leftLabel = direction === 'en-to-lang' ? 'English' : (selectedLanguage?.name ?? 'Select language');
     const rightLabel = direction === 'en-to-lang' ? (selectedLanguage?.name ?? 'Select language') : 'English';
 
-    const showOutput = !loading && results !== null;
-    const hasResults = showOutput && results.length > 0;
-    const noResults = showOutput && results.length === 0;
+    const showOutput = !loading && result !== null;
+    const hasResults = showOutput && result.primary !== null;
+    const noResults = showOutput && result.primary === null;
+    const hasMultipleResults = hasResults
+        && result.groups.reduce((count, group) => count + group.entries.length, 0) > 1;
+    const wordPath = (entry) => `/languages/${selectedLanguage.slug}/words/${entry.slug}`;
     const languagePicker = (
         <button
             className={`${styles.langPickerBtn} ${!selectedLanguage ? styles.langPickerBtnEmpty : ''}`}
@@ -225,7 +240,7 @@ export default function Translator({ compact = false }) {
                     {inputText && (
                         <button
                             className={styles.clearBtn}
-                            onClick={() => { setInputText(''); setResults(null); setInputError(''); inputRef.current?.focus(); }}
+                            onClick={() => { setInputText(''); setResult(null); setInputError(''); inputRef.current?.focus(); }}
                             aria-label="Clear input"
                         >
                             <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
@@ -238,7 +253,7 @@ export default function Translator({ compact = false }) {
                 <div className={styles.panelDivider} />
 
                 {/* Output panel */}
-                <div className={`${styles.panel} ${styles.outputPanel}`}>
+                <div className={`${styles.panel} ${styles.outputPanel}`} aria-live="polite">
                     <div className={styles.panelLabel}>{rightLabel}</div>
 
                     {!selectedLanguage && !inputText && (
@@ -269,40 +284,80 @@ export default function Translator({ compact = false }) {
                                 <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
                             </svg>
                             <p>No translation found for this word yet.</p>
+                            {result.suggestions.length > 0 && (
+                                <div className={styles.suggestion}>
+                                    Did you mean{' '}
+                                    {result.suggestions.map((suggestion, index) => (
+                                        <Fragment key={suggestion}>
+                                            {index > 0 && ', '}
+                                            <button
+                                                type="button"
+                                                className={styles.suggestionBtn}
+                                                onClick={() => handleSuggestion(suggestion)}
+                                            >
+                                                {suggestion}
+                                            </button>
+                                        </Fragment>
+                                    ))}
+                                    ?
+                                </div>
+                            )}
                             <span>Try a different word or contribute one!</span>
                         </div>
                     )}
 
                     {hasResults && (
                         <div className={styles.resultsList}>
-                            {results.map((result) => (
-                                <div key={result.id} className={styles.resultCard}>
-                                    <div className={styles.resultHeader}>
-                                        <Link
-                                            to={`/languages/${selectedLanguage.slug}/words/${result.slug}`}
-                                            className={styles.resultWord}
-                                        >
-                                            {direction === 'en-to-lang' ? result.wordText : result.englishDefinition}
-                                        </Link>
-                                        {result.status === 'UNVERIFIED' && (
-                                            <span className={styles.unverifiedBadge}>
-                                                <svg viewBox="0 0 20 20" fill="currentColor" width="12" height="12">
-                                                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                                                </svg>
-                                                Unverified
-                                                <span className={styles.tooltip}>
-                                                    This translation hasn't been verified yet — it may be inaccurate.
-                                                </span>
+                            <div className={styles.resultCard}>
+                                <div className={styles.resultHeader}>
+                                    <Link to={wordPath(result.primary)} className={styles.resultWord}>
+                                        {result.primary.text}
+                                    </Link>
+                                    {result.primary.status === 'UNVERIFIED' && (
+                                        <span className={styles.unverifiedBadge}>
+                                            <WarningIcon />
+                                            Unverified
+                                            <span className={styles.tooltip}>
+                                                This translation hasn't been verified yet — it may be inaccurate.
                                             </span>
-                                        )}
-                                    </div>
-                                    <div className={styles.resultMeta}>
-                                        {result.partOfSpeech && (
-                                            <span className={styles.metaTag}>{result.partOfSpeech}</span>
-                                        )}
-                                    </div>
+                                        </span>
+                                    )}
                                 </div>
-                            ))}
+                                {result.primary.partOfSpeech !== 'other' && (
+                                    <div className={styles.resultMeta}>
+                                        <span className={styles.metaTag}>{result.primary.partOfSpeech}</span>
+                                    </div>
+                                )}
+                            </div>
+
+                            {hasMultipleResults && (
+                                <section className={styles.groups} aria-label={`All translations of ${result.query}`}>
+                                    <h3 className={styles.groupsTitle}>Translations of “{result.query}”</h3>
+                                    <dl className={styles.groupList}>
+                                        {result.groups.map((group) => (
+                                            <div key={group.partOfSpeech} className={styles.groupRow}>
+                                                <dt className={styles.groupLabel}>{group.partOfSpeech}</dt>
+                                                <dd className={styles.groupEntries}>
+                                                    {group.entries.map((entry) => (
+                                                        <span key={entry.id} className={styles.groupEntry}>
+                                                            <Link to={wordPath(entry)} className={styles.groupEntryLink}>
+                                                                {entry.text}
+                                                            </Link>
+                                                            {entry.status === 'UNVERIFIED' && (
+                                                                <WarningIcon
+                                                                    className={styles.unverifiedMark}
+                                                                    role="img"
+                                                                    title="Unverified translation"
+                                                                />
+                                                            )}
+                                                        </span>
+                                                    ))}
+                                                </dd>
+                                            </div>
+                                        ))}
+                                    </dl>
+                                </section>
+                            )}
                         </div>
                     )}
                 </div>

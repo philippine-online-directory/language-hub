@@ -10,8 +10,8 @@ const getTranslatedWord = [
                 return res.status(400).json({ error: 'Word is required' });
             }
 
-            const results = await translatorService.translateWord(slug, word, direction);
-            res.status(200).json({ results });
+            const result = await translatorService.translateWord(slug, word, direction);
+            res.status(200).json(result);
         } catch (err) {
             if (err.message === 'MULTI_WORD') {
                 return res.status(400).json({ error: 'MULTI_WORD' });
